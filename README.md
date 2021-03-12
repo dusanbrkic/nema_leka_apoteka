@@ -5,4 +5,3 @@
     Душан Бркић         SW42/2018   https://github.com/dusanbrkic
     Душан Хајдук        SW40/2018   https://github.com/HajdukDusan
     Никола Петровић     SW34/2018   https://github.com/nikolapetrovicSIIT
-    Немања Милутиновић  SW64/2018   https://github.com/nemanjam1337
