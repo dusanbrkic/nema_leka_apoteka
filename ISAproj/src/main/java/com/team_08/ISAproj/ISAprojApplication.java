@@ -1,4 +1,4 @@
-package com.example.ISAproj;
+package com.team_08.ISAproj;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
-public class IsAprojApplication {
+public class ISAprojApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IsAprojApplication.class, args);
+		SpringApplication.run(ISAprojApplication.class, args);
 		}
 
 		@GetMapping("/hello")
