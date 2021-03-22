@@ -1,6 +1,7 @@
 #ij ide settings
 .idea
 *.iml
+ISAproj/package.json
 
 # Compiled class file
 *.class
