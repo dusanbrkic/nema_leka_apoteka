@@ -1,7 +1,7 @@
-package model.repository;
+package com.team_08.ISAproj.repository;
 import java.util.Collection;
 
-import model.dao.Apoteka;
+import com.team_08.ISAproj.model.Apoteka;
 
 
 public interface ApotekaRepository {

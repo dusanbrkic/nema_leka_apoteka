@@ -1,4 +1,4 @@
-package model.controller;
+package com.team_08.ISAproj.controller;
 
 import java.util.Collection;
 
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import model.dao.Apoteka;
-import model.service.ApotekaService;
+import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.service.ApotekaService;
 
 
 @RestController

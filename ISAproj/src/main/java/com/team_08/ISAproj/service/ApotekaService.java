@@ -1,8 +1,8 @@
-package model.service;
+package com.team_08.ISAproj.service;
 
 import java.util.Collection;
 
-import model.dao.Apoteka;
+import com.team_08.ISAproj.model.Apoteka;
 
 public interface ApotekaService {
 

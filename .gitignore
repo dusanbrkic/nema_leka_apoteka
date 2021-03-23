@@ -5,6 +5,7 @@ ISAproj/package.json
 
 # Compiled class file
 *.class
+target
 
 # Log file
 *.log

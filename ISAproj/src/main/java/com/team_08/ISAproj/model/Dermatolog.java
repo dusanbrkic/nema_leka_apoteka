@@ -1,6 +1,4 @@
-package model.dao;
-
-import java.util.ArrayList;
+package com.team_08.ISAproj.model;
 
 public class Dermatolog extends Korisnik {
 

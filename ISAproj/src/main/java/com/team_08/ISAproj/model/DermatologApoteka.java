@@ -1,33 +1,35 @@
-package model.dao;
+package com.team_08.ISAproj.model;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-public class FarmaceutApoteka {
+public class DermatologApoteka {
 
-	private Farmaceut farmaceut;
+	
+	private Dermatolog dermatolog;
 	private Apoteka apoteka;
 	private ArrayList<Date> slobodniTermini;
 	private double cena;
 	private Date radnoVremePocetak;
 	private Date radnoVremeKraj;
-	public Farmaceut getFarmaceut() {
-		return farmaceut;
-	}
-	public FarmaceutApoteka() {
-	}
-	public FarmaceutApoteka(Farmaceut farmaceut, Apoteka apoteka, ArrayList<Date> slobodniTermini, double cena,
+	
+	
+	public DermatologApoteka(Dermatolog dermatolog, Apoteka apoteka, ArrayList<Date> slobodniTermini, double cena,
 			Date radnoVremePocetak, Date radnoVremeKraj) {
 		super();
-		this.farmaceut = farmaceut;
+		this.dermatolog = dermatolog;
 		this.apoteka = apoteka;
 		this.slobodniTermini = slobodniTermini;
 		this.cena = cena;
 		this.radnoVremePocetak = radnoVremePocetak;
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
-	public void setFarmaceut(Farmaceut farmaceut) {
-		this.farmaceut = farmaceut;
+	
+	public Dermatolog getDermatolog() {
+		return dermatolog;
+	}
+	public void setDermatolog(Dermatolog dermatolog) {
+		this.dermatolog = dermatolog;
 	}
 	public Apoteka getApoteka() {
 		return apoteka;
@@ -60,6 +62,4 @@ public class FarmaceutApoteka {
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
 
-	
-	
 }

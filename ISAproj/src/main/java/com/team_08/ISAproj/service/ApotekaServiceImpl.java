@@ -1,12 +1,11 @@
-package model.service;
+package com.team_08.ISAproj.service;
 
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import model.dao.Apoteka;
-import model.repository.ApotekaRepository;
-import model.repository.IMApotekaRepository;
+import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.repository.IMApotekaRepository;
 
 import org.springframework.stereotype.Service;
 

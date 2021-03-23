@@ -1,4 +1,4 @@
-package model.dao;
+package com.team_08.ISAproj.model;
 
 import java.util.Date;
 

@@ -1,10 +1,10 @@
-package model.repository;
+package com.team_08.ISAproj.repository;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import model.dao.Apoteka;
+import com.team_08.ISAproj.model.Apoteka;
 import org.springframework.stereotype.Repository;
 @Repository
 public class IMApotekaRepository implements ApotekaRepository {
@@ -12,6 +12,7 @@ public class IMApotekaRepository implements ApotekaRepository {
 	private static AtomicLong counter = new AtomicLong();
 	
 	private final HashMap<Long,Apoteka> apoteke = new HashMap<Long,Apoteka>();
+
 	@Override
 	public Collection<Apoteka> findAll() {
 		return this.apoteke.values();
@@ -19,6 +20,12 @@ public class IMApotekaRepository implements ApotekaRepository {
 
 	@Override
 	public Apoteka findOne(Long id) {
+		Apoteka a = new Apoteka();
+		a.setId(id);
+		a.setAdresa("Brata Balate 12");
+		a.setOpis("Najjaca apoteka na Balkanu!");
+		a.setProsecnaOcena(4.78);
+		apoteke.put(a.getId(), a);
 		return this.apoteke.get(id);
 	}
 
