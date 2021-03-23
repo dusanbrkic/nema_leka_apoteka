@@ -1,10 +1,17 @@
 package com.team_08.ISAproj.model;
 
+import java.util.ArrayList;
+
 public class Dermatolog extends Korisnik {
 
 	
 	private double prosecnaOcena;
 	private DermatologApoteka apoteke;
+	
+	
+	// connections
+	private ArrayList<Pacijent> pregledaniPacijenti;
+	private ArrayList<Pregled> pregledi;
 	
 	
 	public Dermatolog(double prosecnaOcena, DermatologApoteka apoteke) {

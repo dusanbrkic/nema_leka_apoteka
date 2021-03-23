@@ -10,8 +10,18 @@ public class Apoteka {
 	private String adresa;
 	private double prosecnaOcena;
 	private String opis;
+	
+	// connections
 	private ArrayList<DermatologApoteka> dermatolozi;
 	private ArrayList<FarmaceutApoteka> farmaceuti;
+	private ArrayList<Pregled> pregledi;
+	private ArrayList<Savetovanje> savetovanja;
+	private ArrayList<Pacijent> pretplaceniKorisnici;
+	private ArrayList<ApotekaLek> apotekaLek;
+	private ArrayList<Narudzbenica> narudzbenice;
+	private ArrayList<Promocija> promocije;
+	private ArrayList<AdminApoteke> admini;
+	
 	public Long getId() {
 		return id;
 	}
