@@ -14,6 +14,9 @@ Vue.component("Home", {
               <td>
                 <button v-on:click="redirectToHelloWorld">Hello World!</button>
               </td>
+              <td>
+              	<button v-on:click="redirectToApoteke">Apoteke</button>
+              </td>
             </tr>
           </table>
         </div>
@@ -22,6 +25,9 @@ Vue.component("Home", {
     methods: {
         redirectToHelloWorld: function () {
             app.$router.push("/helloWorld")
+        },
+        redirectToApoteke: function (){
+        	app.$router.push("/apoteka")
         }
     }
 });
