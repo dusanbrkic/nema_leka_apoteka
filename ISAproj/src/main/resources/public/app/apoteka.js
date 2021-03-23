@@ -1,18 +1,17 @@
 Vue.component("Apoteka", {
-    data: function () {
-        return {
-            apoteke: 'waiting for server response'
-        }
+    data() {
+    	
+        return { apoteke: 'Ne postoji apoteka sa ovim id'} 
+
     },
       mounted () {
-      	this.loadApoteka()
+      	this.loadApoteka(this.$route.params.id);
   	},
     template: `
     	<div>
-    	<ul>
-    		<li v-for="apoteka in apoteke" :key="apoteka.id">
-    		{{apoteka}}</li>
-    	</ul>
+    	<p>
+    		{{apoteke}}
+		</p>
    	  	<div>
         	<button v-on:click="redirectToHome">Home Page</button>
       	</div>
@@ -20,13 +19,12 @@ Vue.component("Apoteka", {
     `
     ,
     methods: {
-        loadApoteka: function () {
-            axios.get("http://localhost:8080/apoteke")
+    	loadApoteka(id){
+    		axios.get("http://localhost:8080/apoteke/" + id)
       		.then(response => (this.apoteke = response.data))
-        },
-        redirectToHome: function () {
+		},
+		redirectToHome: function () {
             app.$router.push("/")
         }
-    }
+	}
 });
-

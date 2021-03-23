@@ -1,12 +1,14 @@
 const Home  = { template: '<Home></Home>'}
 const HelloWorld = {template : '<HelloWorld></HelloWorld>'}
-const Apoteka = { template: '<Apoteka></Apoteka>'}
+const Apoteke = { template: '<Apoteke></Apoteke>'}
+const Apoteka = {template: '<Apoteka></Apoteka>'}
 const router = new VueRouter({
 	mode : 'hash',
 	routes : [
 		{path: '/', component: Home },
 		{path: '/helloWorld', component: HelloWorld },
-		{path: '/apoteka', component: Apoteka }
+		{path: '/apoteke', component: Apoteke},
+		{path: '/apoteka/:id', component: Apoteka}
 	]
 	
 });
