@@ -1,18 +1,11 @@
 package com.team_08.ISAproj.model;
 
+import com.team_08.ISAproj.model.enums.OblikLeka;
+import com.team_08.ISAproj.model.enums.TipLeka;
+
 import java.util.ArrayList;
 
 public class Lek {
-	
-	public enum OblikLeka {
-		PRASAK, KAPSULA, TABLETA, MAST,
-		PASTA, GEL, SIRUP, RASTVOR
-	}
-	
-	public enum TipLeka {
-		ANTIBIOTIK, ANALGETIK, HISTAMINIK
-	}
-	
 	private String sifra;
 	private String naziv;
 	private String upuctvo;

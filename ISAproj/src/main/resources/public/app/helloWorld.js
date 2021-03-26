@@ -20,7 +20,7 @@ Vue.component("HelloWorld", {
     methods: {
         loadHelloWorld: function () {
             axios
-                .get("/hello")
+                .get("hello")
                 .then((response) => (this.helloWorld = response.data))
         },
         redirectToHome: function () {

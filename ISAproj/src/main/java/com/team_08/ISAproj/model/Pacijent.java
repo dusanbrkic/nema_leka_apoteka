@@ -1,5 +1,7 @@
 package com.team_08.ISAproj.model;
 
+import com.team_08.ISAproj.model.enums.KorisnickaRola;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -30,7 +32,7 @@ public class Pacijent extends Korisnik{
 	}
 	public Pacijent(String username, String password, String ime, String prezime, Date datumRodjenja,
 			String emailAdresa) {
-		super(username, password, ime, prezime, datumRodjenja, emailAdresa);
+		super(username, password, ime, prezime, datumRodjenja, emailAdresa, KorisnickaRola.PACIJENT);
 	}
 
 	

@@ -1,5 +1,7 @@
 package com.team_08.ISAproj.model;
 
+import com.team_08.ISAproj.model.enums.KorisnickaRola;
+
 import java.util.Date;
 
 public class Korisnik {
@@ -11,6 +13,8 @@ public class Korisnik {
 	private String prezime;
 	private Date datumRodjenja;
 	private String emailAdresa;
+	private KorisnickaRola rola;
+	private CookieToken cookieToken;
 	
 	
 	// constructors
@@ -18,7 +22,7 @@ public class Korisnik {
 		super();
 	}
 	public Korisnik(String username, String password, String ime, String prezime, Date datumRodjenja,
-			String emailAdresa) {
+			String emailAdresa, KorisnickaRola rola) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -26,6 +30,8 @@ public class Korisnik {
 		this.prezime = prezime;
 		this.datumRodjenja = datumRodjenja;
 		this.emailAdresa = emailAdresa;
+		this.rola = rola;
+		this.cookieToken = new CookieToken(username, password);
 	}
 	
 	
@@ -42,5 +48,18 @@ public class Korisnik {
 	public void setDatumRodjenja(Date datumRodjenja) {this.datumRodjenja = datumRodjenja;}
 	public String getEmailAdresa() {return emailAdresa;}
 	public void setEmailAdresa(String emailAdresa) {this.emailAdresa = emailAdresa;}
-	
+	public KorisnickaRola getRola() {
+		return rola;
+	}
+	public void setRola(KorisnickaRola rola) {
+		this.rola = rola;
+	}
+
+	public CookieToken getCookieToken() {
+		return cookieToken;
+	}
+
+	public void setCookieToken(CookieToken cookieToken) {
+		this.cookieToken = cookieToken;
+	}
 }

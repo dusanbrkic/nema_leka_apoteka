@@ -38,7 +38,7 @@ Vue.component("Apoteka", {
     ,
     methods: {
     	loadApoteka(id){
-    		axios.get("http://localhost:8080/apoteke/" + id)
+    		axios.get("apoteke/" + id)
       		.then(response => (this.apoteke = response.data))
 		},
 		redirectToHome: function () {

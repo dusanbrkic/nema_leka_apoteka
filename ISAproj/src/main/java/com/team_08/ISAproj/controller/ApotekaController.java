@@ -2,6 +2,7 @@ package com.team_08.ISAproj.controller;
 
 import java.util.Collection;
 
+import com.team_08.ISAproj.service.ApotekaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.team_08.ISAproj.model.Apoteka;
-import com.team_08.ISAproj.service.ApotekaService;
 
 
 @RestController

@@ -18,6 +18,9 @@ Vue.component("Home", {
               <td>
               	<button v-on:click="redirectToApoteke">Apoteke</button>
               </td>
+              <td>
+                <button v-on:click="redirectToLogin">Uloguj se</button>
+              </td>
             </tr>
           </table>
           <label for="id">ID Apoteke:</label>
@@ -35,5 +38,8 @@ Vue.component("Home", {
     redirectToApoteka: function (id) {
       app.$router.push("/apoteka/" + id);
     },
+    redirectToLogin: function () {
+      app.$router.push("/login");
+    }
   },
 });
