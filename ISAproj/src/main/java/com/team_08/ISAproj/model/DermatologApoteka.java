@@ -1,20 +1,34 @@
 package com.team_08.ISAproj.model;
 
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
+@Entity(name = "DERMATOLOG_APOTEKA")
 public class DermatologApoteka {
+	@Id
+	@SequenceGenerator(name="DermatologApotekaSeqGen", sequenceName = "DermatologApotekaSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DermatologApotekaSeqGen")
+	private Long id;
 
-	
-	private Dermatolog dermatolog;
-	private Apoteka apoteka;
-	private ArrayList<Date> slobodniTermini;
+	@Column(name = "CENA")
 	private double cena;
+	@Column(name = "RADNO_VREME_POCETAK")
 	private Date radnoVremePocetak;
+	@Column(name = "RADNO_VREME_KRAJ")
 	private Date radnoVremeKraj;
-	
-	
-	public DermatologApoteka(Dermatolog dermatolog, Apoteka apoteka, ArrayList<Date> slobodniTermini, double cena,
+
+	@ElementCollection
+	private Set<Date> slobodniTermini;
+
+	//connections
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Dermatolog dermatolog;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Apoteka apoteka;
+
+
+	public DermatologApoteka(Dermatolog dermatolog, Apoteka apoteka, Set<Date> slobodniTermini, double cena,
 			Date radnoVremePocetak, Date radnoVremeKraj) {
 		super();
 		this.dermatolog = dermatolog;
@@ -24,7 +38,11 @@ public class DermatologApoteka {
 		this.radnoVremePocetak = radnoVremePocetak;
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
-	
+
+	public DermatologApoteka() {
+
+	}
+
 	public Dermatolog getDermatolog() {
 		return dermatolog;
 	}
@@ -37,10 +55,10 @@ public class DermatologApoteka {
 	public void setApoteka(Apoteka apoteka) {
 		this.apoteka = apoteka;
 	}
-	public ArrayList<Date> getSlobodniTermini() {
+	public Set<Date> getSlobodniTermini() {
 		return slobodniTermini;
 	}
-	public void setSlobodniTermini(ArrayList<Date> slobodniTermini) {
+	public void setSlobodniTermini(Set<Date> slobodniTermini) {
 		this.slobodniTermini = slobodniTermini;
 	}
 	public double getCena() {
@@ -62,4 +80,10 @@ public class DermatologApoteka {
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public Long getId() {
+		return id;
+	}
 }

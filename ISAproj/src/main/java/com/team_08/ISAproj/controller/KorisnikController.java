@@ -2,8 +2,8 @@ package com.team_08.ISAproj.controller;
 
 
 import com.team_08.ISAproj.dto.CookieRoleDTO;
-import com.team_08.ISAproj.model.CookieToken;
-import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.*;
+import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.KorisnikService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,12 @@ public class KorisnikController {
         if(k.getPassword().equals(password)){
             CookieToken ck = new CookieToken(username, password);
             k.setCookieToken(ck);
-            CookieRoleDTO cookieRoleDTO = new CookieRoleDTO(ck.getValue(), k.getRola());
+            KorisnickaRola korisnickaRola = null;
+            if(k instanceof Pacijent) korisnickaRola = KorisnickaRola.PACIJENT;
+            else if(k instanceof Dermatolog) korisnickaRola = KorisnickaRola.DERMATOLOG;
+            else if(k instanceof Farmaceut) korisnickaRola = KorisnickaRola.FARMACEUT;
+            else if(k instanceof AdminApoteke) korisnickaRola = KorisnickaRola.ADMIN_APOTEKE;
+            CookieRoleDTO cookieRoleDTO = new CookieRoleDTO(ck.getValue(), korisnickaRola);
             return new ResponseEntity<CookieRoleDTO>(cookieRoleDTO, HttpStatus.OK);
         }
 

@@ -1,36 +1,57 @@
 package com.team_08.ISAproj.model;
 
+import javax.persistence.*;
 import java.sql.Date;
-import java.util.ArrayList;
+import java.util.Set;
 
+@Entity(name = "NARUDZBENICA")
 public class Narudzbenica {
-
-	private Date rokPonuda;
+	@Id
+	@SequenceGenerator(name="NarudzbenicaSeqGen", sequenceName = "NarudzbenicaSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NarudzbenicaSeqGen")
+	private Long id;
+	@Column(name = "ROK_PONUDE")
+	private Date rokPonude;
 	
 	// connections
-	private ArrayList<NarudzbenicaLek> lekovi;
+	@OneToMany(mappedBy = "narudzbenica", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<NarudzbenicaLek> lekovi;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Apoteka apoteka;
 
-	public Narudzbenica(Date rokPonuda, ArrayList<NarudzbenicaLek> lekovi) {
+
+	public Narudzbenica(Date rokPonuda, Set<NarudzbenicaLek> lekovi) {
 		super();
-		this.rokPonuda = rokPonuda;
+		this.rokPonude = rokPonuda;
 		this.lekovi = lekovi;
+	}
+
+	public Narudzbenica() {
+
 	}
 
 	public Date getRokPonuda() {
-		return rokPonuda;
+		return rokPonude;
 	}
 
 	public void setRokPonuda(Date rokPonuda) {
-		this.rokPonuda = rokPonuda;
+		this.rokPonude = rokPonuda;
 	}
 
-	public ArrayList<NarudzbenicaLek> getLekovi() {
+	public Set<NarudzbenicaLek> getLekovi() {
 		return lekovi;
 	}
 
-	public void setLekovi(ArrayList<NarudzbenicaLek> lekovi) {
+	public void setLekovi(Set<NarudzbenicaLek> lekovi) {
 		this.lekovi = lekovi;
 	}
-	
-	
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getId() {
+		return id;
+	}
 }

@@ -1,22 +1,38 @@
 package com.team_08.ISAproj.model;
 
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
+@Entity(name = "FARMACEUT_APOTEKA")
 public class FarmaceutApoteka {
+	@Id
+	@SequenceGenerator(name="FarmaceutApotekaSeqGen", sequenceName = "FarmaceutApotekaSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FarmaceutApotekaSeqGen")
+	private Long id;
 
-	private Farmaceut farmaceut;
-	private Apoteka apoteka;
-	private ArrayList<Date> slobodniTermini;
+	@ElementCollection
+	private Set<Date> slobodniTermini;
+	@Column(name = "CENA")
 	private double cena;
+	@Column(name = "RADNO_VREME_POCETAK")
 	private Date radnoVremePocetak;
+	@Column(name = "RADNO_VREME_KRAJ")
 	private Date radnoVremeKraj;
+
+	//connections
+	@OneToOne(fetch = FetchType.EAGER)
+	private Farmaceut farmaceut;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Apoteka apoteka;
+
+
 	public Farmaceut getFarmaceut() {
 		return farmaceut;
 	}
 	public FarmaceutApoteka() {
 	}
-	public FarmaceutApoteka(Farmaceut farmaceut, Apoteka apoteka, ArrayList<Date> slobodniTermini, double cena,
+	public FarmaceutApoteka(Farmaceut farmaceut, Apoteka apoteka, Set<Date> slobodniTermini, double cena,
 			Date radnoVremePocetak, Date radnoVremeKraj) {
 		super();
 		this.farmaceut = farmaceut;
@@ -35,10 +51,10 @@ public class FarmaceutApoteka {
 	public void setApoteka(Apoteka apoteka) {
 		this.apoteka = apoteka;
 	}
-	public ArrayList<Date> getSlobodniTermini() {
+	public Set<Date> getSlobodniTermini() {
 		return slobodniTermini;
 	}
-	public void setSlobodniTermini(ArrayList<Date> slobodniTermini) {
+	public void setSlobodniTermini(Set<Date> slobodniTermini) {
 		this.slobodniTermini = slobodniTermini;
 	}
 	public double getCena() {
@@ -60,6 +76,12 @@ public class FarmaceutApoteka {
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
 
-	
-	
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getId() {
+		return id;
+	}
 }

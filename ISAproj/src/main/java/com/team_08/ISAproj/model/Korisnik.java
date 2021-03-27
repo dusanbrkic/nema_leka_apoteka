@@ -1,28 +1,40 @@
 package com.team_08.ISAproj.model;
 
-import com.team_08.ISAproj.model.enums.KorisnickaRola;
-
+import javax.persistence.*;
 import java.util.Date;
 
-public class Korisnik {
+@Entity(name = "KORISNIK")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Korisnik {
 
-	
+	@Id
+	@SequenceGenerator(name="KorisnikSeqGen", sequenceName = "KorisnikSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "KorisnikSeqGen")
+	private Long id;
+
+	@Column(name = "USERNAME", unique = true, nullable = false)
 	private String username;
+	@Column(name = "PASSWORD", nullable = false)
 	private String password;
+	@Column(name = "IME")
 	private String ime;
+	@Column(name = "PREZIME")
 	private String prezime;
+	@Column(name = "DATUM_RODJENJA")
 	private Date datumRodjenja;
+	@Column(name = "EMAIL_ADRESA", nullable = false)
 	private String emailAdresa;
-	private KorisnickaRola rola;
-	private CookieToken cookieToken;
-	
-	
+	@Column(name = "TOKEN")
+	private String cookieTokenValue;
+
+
+
 	// constructors
 	public Korisnik() {
 		super();
 	}
 	public Korisnik(String username, String password, String ime, String prezime, Date datumRodjenja,
-			String emailAdresa, KorisnickaRola rola) {
+			String emailAdresa) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -30,8 +42,6 @@ public class Korisnik {
 		this.prezime = prezime;
 		this.datumRodjenja = datumRodjenja;
 		this.emailAdresa = emailAdresa;
-		this.rola = rola;
-		this.cookieToken = new CookieToken(username, password);
 	}
 	
 	
@@ -48,18 +58,19 @@ public class Korisnik {
 	public void setDatumRodjenja(Date datumRodjenja) {this.datumRodjenja = datumRodjenja;}
 	public String getEmailAdresa() {return emailAdresa;}
 	public void setEmailAdresa(String emailAdresa) {this.emailAdresa = emailAdresa;}
-	public KorisnickaRola getRola() {
-		return rola;
-	}
-	public void setRola(KorisnickaRola rola) {
-		this.rola = rola;
-	}
 
-	public CookieToken getCookieToken() {
-		return cookieToken;
+	public String getCookieToken() {
+		return cookieTokenValue;
 	}
 
 	public void setCookieToken(CookieToken cookieToken) {
-		this.cookieToken = cookieToken;
+		this.cookieTokenValue = cookieToken.getValue();
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public Long getId() {
+		return id;
 	}
 }

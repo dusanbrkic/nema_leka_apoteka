@@ -1,14 +1,13 @@
 package com.team_08.ISAproj.repository;
-import java.util.Collection;
+import java.awt.print.Pageable;
+import java.util.List;
 
 import com.team_08.ISAproj.model.Apoteka;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
+public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 
-public interface ApotekaRepository {
-
-	Collection<Apoteka> findAll();
-	
-	Apoteka findOne(Long id);
-	
-	Apoteka create(Apoteka apoteka);
 }

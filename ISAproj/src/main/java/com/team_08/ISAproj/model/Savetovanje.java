@@ -1,28 +1,44 @@
 package com.team_08.ISAproj.model;
 
+import javax.persistence.*;
 import java.sql.Date;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Set;
 
+@Entity(name = "SAVETOVANJE")
 public class Savetovanje {
-	
+	@Id
+	@SequenceGenerator(name="SavetovanjeSeqGen", sequenceName = "SavetovanjeSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SavetovanjeSeqGen")
+	private Long id;
+	@Column(name = "VREME")
 	private Date vreme;
+	@Column(name = "TRAJANJE")
 	private Duration trajanje;
+	@Column(name = "CENA")
 	private double cena;
+	@Column(name = "KRAJ")
 	private Date kraj;
+	@Column(name = "DIJAGNOZA")
 	private String dijagnoza;
+	@Column(name = "SAVETOVANJE_OBAVLJENO")
 	private boolean savetovanjeObavljeno;
 	
 	// connections
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Apoteka apoteka;
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Farmaceut farmaceut;
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Pacijent pacijent;
-	private ArrayList<Lek> preporuceniLekovi;
-	
+	@ManyToMany(fetch = FetchType.LAZY)
+	private Set<Lek> preporuceniLekovi;
+
+
 	// constructors
 	public Savetovanje(Date vreme, Duration trajanje, double cena, Date kraj, String dijagnoza,
 			boolean savetovanjeObavljeno, Apoteka apoteka, Farmaceut farmaceut, Pacijent pacijent,
-			ArrayList<Lek> preporuceniLekovi) {
+			Set<Lek> preporuceniLekovi) {
 		super();
 		this.vreme = vreme;
 		this.trajanje = trajanje;
@@ -36,8 +52,11 @@ public class Savetovanje {
 		this.preporuceniLekovi = preporuceniLekovi;
 	}
 
-	
-	
+	public Savetovanje() {
+
+	}
+
+
 	// getters and setters
 	public Date getVreme() {return vreme;}
 	public void setVreme(Date vreme) {this.vreme = vreme;}
@@ -57,7 +76,13 @@ public class Savetovanje {
 	public void setFarmaceut(Farmaceut farmaceut) {this.farmaceut = farmaceut;}
 	public Pacijent getPacijent() {return pacijent;}
 	public void setPacijent(Pacijent pacijent) {this.pacijent = pacijent;}
-	public ArrayList<Lek> getPreporuceniLekovi() {return preporuceniLekovi;}
-	public void setPreporuceniLekovi(ArrayList<Lek> preporuceniLekovi) {this.preporuceniLekovi = preporuceniLekovi;}
-	
+	public Set<Lek> getPreporuceniLekovi() {return preporuceniLekovi;}
+	public void setPreporuceniLekovi(Set<Lek> preporuceniLekovi) {this.preporuceniLekovi = preporuceniLekovi;}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public Long getId() {
+		return id;
+	}
 }

@@ -3,25 +3,41 @@ package com.team_08.ISAproj.model;
 import com.team_08.ISAproj.model.enums.OblikLeka;
 import com.team_08.ISAproj.model.enums.TipLeka;
 
-import java.util.ArrayList;
+import javax.persistence.*;
+import java.util.Set;
 
+@Entity(name = "LEK")
 public class Lek {
+	@Id
+	@SequenceGenerator(name="LekSeqGen", sequenceName = "LekSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LekSeqGen")
+	private Long id;
+	@Column(name = "SIFRA", nullable = false, unique = true)
 	private String sifra;
+	@Column(name = "NAZIV")
 	private String naziv;
-	private String upuctvo;
+	@Column(name = "UPUTSTVO")
+	private String uputstvo;
+	@Column(name = "TIP_LEKA")
 	private TipLeka tip;
+	@Column(name = "OBLIK_LEKA")
 	private OblikLeka oblikLeka;
+	@Column(name = "SASTAV")
 	private String sastav;
-	private ArrayList<String> sifreZamenskihLekova;
+	@Column(name = "DODATNE_NAPOMENE")
 	private String dodatneNapomene;
+
+	@ElementCollection
+	private Set<String> sifreZamenskihLekova;
+
 	
 	// constructors
 	public Lek(String sifra, String naziv, String upuctvo, TipLeka tip, OblikLeka oblikLeka, String sastav,
-			ArrayList<String> sifreZamenskihLekova, String dodatneNapomene) {
+			Set<String> sifreZamenskihLekova, String dodatneNapomene) {
 		super();
 		this.sifra = sifra;
 		this.naziv = naziv;
-		this.upuctvo = upuctvo;
+		this.uputstvo = upuctvo;
 		this.tip = tip;
 		this.oblikLeka = oblikLeka;
 		this.sastav = sastav;
@@ -29,7 +45,11 @@ public class Lek {
 		this.dodatneNapomene = dodatneNapomene;
 	}
 
-	
+	public Lek() {
+
+	}
+
+
 	// getters and setters
 	public String getSifra() {
 		return sifra;
@@ -48,11 +68,11 @@ public class Lek {
 	}
 
 	public String getUpuctvo() {
-		return upuctvo;
+		return uputstvo;
 	}
 
 	public void setUpuctvo(String upuctvo) {
-		this.upuctvo = upuctvo;
+		this.uputstvo = upuctvo;
 	}
 
 	public TipLeka getTip() {
@@ -79,12 +99,20 @@ public class Lek {
 		this.sastav = sastav;
 	}
 
-	public ArrayList<String> getSifreZamenskihLekova() {
+	public Set<String> getSifreZamenskihLekova() {
 		return sifreZamenskihLekova;
 	}
 
-	public void setSifreZamenskihLekova(ArrayList<String> sifreZamenskihLekova) {
+	public void setSifreZamenskihLekova(Set<String> sifreZamenskihLekova) {
 		this.sifreZamenskihLekova = sifreZamenskihLekova;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getDodatneNapomene() {

@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.service;
 
 import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.repository.AdminApotekeRepository;
 import com.team_08.ISAproj.repository.DermatologRepository;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
@@ -25,6 +26,6 @@ public class KorisnikService {
     }
 
     public Korisnik findUser(String username) {
-        return new Korisnik();
+        return new Pacijent();
     }
 }

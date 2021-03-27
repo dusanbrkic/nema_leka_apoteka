@@ -1,27 +1,42 @@
 package com.team_08.ISAproj.model;
 
+import javax.persistence.*;
 import java.sql.Date;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Set;
 
+@Entity(name = "PREGLED")
 public class Pregled {
-	
+	@Id
+	@SequenceGenerator(name="PregledSeqGen", sequenceName = "PregledSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PregledSeqGen")
+	private Long id;
+	@Column(name = "VREME")
 	private Date vreme;
+	@Column(name = "TRAJANJE")
 	private Duration trajanje;
+	@Column(name = "CENA")
 	private double cena;
+	@Column(name = "KRAJ")
 	private Date kraj;
+	@Column(name = "DIJAGNOZA")
 	private String dijagnoza;
+	@Column(name = "PREGLED_OBAVLJEN")
 	private boolean pregledObavljen;
 	
 	// connections
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Dermatolog dermatolog;
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Pacijent pacijent;
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Apoteka apoteka;
-	private ArrayList<Lek> preporuceniLekovi;
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Set<Lek> preporuceniLekovi;
 	
 	// constructors
 	public Pregled(Date vreme, Duration trajanje, double cena, Date kraj, String dijagnoza, boolean pregledObavljen,
-			Dermatolog dermatolog, Pacijent pacijent, Apoteka apoteka, ArrayList<Lek> preporuceniLekovi) {
+			Dermatolog dermatolog, Pacijent pacijent, Apoteka apoteka, Set<Lek> preporuceniLekovi) {
 		super();
 		this.vreme = vreme;
 		this.trajanje = trajanje;
@@ -35,8 +50,21 @@ public class Pregled {
 		this.preporuceniLekovi = preporuceniLekovi;
 	}
 
-	
+	public Pregled() {
+
+	}
+
+
 	// getters and setters
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public Date getVreme() {return vreme;}
 	public void setVreme(Date vreme) {this.vreme = vreme;}
 	public Duration getTrajanje() {return trajanje;}
@@ -55,7 +83,7 @@ public class Pregled {
 	public void setPacijent(Pacijent pacijent) {this.pacijent = pacijent;}
 	public Apoteka getApoteka() {return apoteka;}
 	public void setApoteka(Apoteka apoteka) {this.apoteka = apoteka;}
-	public ArrayList<Lek> getPreporuceniLekovi() {return preporuceniLekovi;}
-	public void setPreporuceniLekovi(ArrayList<Lek> preporuceniLekovi) {this.preporuceniLekovi = preporuceniLekovi;}
+	public Set<Lek> getPreporuceniLekovi() {return preporuceniLekovi;}
+	public void setPreporuceniLekovi(Set<Lek> preporuceniLekovi) {this.preporuceniLekovi = preporuceniLekovi;}
 	
 }
