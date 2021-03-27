@@ -15,7 +15,7 @@ public class Apoteka {
 	@Column(name="ADRESA")
 	private String adresa;
 	@Column(name="PROSECNA_OCENA")
-	private double prosecnaOcena;
+	private Double prosecnaOcena;
 	@Column(name="OPIS")
 	private String opis;
 	

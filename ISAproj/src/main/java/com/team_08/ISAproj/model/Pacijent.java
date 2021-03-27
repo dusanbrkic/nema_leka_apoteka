@@ -9,9 +9,9 @@ import java.util.Set;
 @Entity(name = "PACIJENT")
 public class Pacijent extends Korisnik{
 	@Column(name = "POENI")
-	private int poeni;
+	private Integer poeni;
 	@Column(name = "BR_PENALA")
-	private int brPenala = 0;
+	private Integer brPenala = 0;
 	
 	//connections
 	@OneToMany(mappedBy = "pacijent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -8,7 +8,7 @@ import java.util.Set;
 public class Dermatolog extends Korisnik {
 
     @Column(name = "PROSECNA_OCENA")
-    private double prosecnaOcena;
+    private Double prosecnaOcena;
 
     // connections
     @OneToMany(mappedBy = "dermatolog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

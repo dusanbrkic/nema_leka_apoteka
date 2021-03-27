@@ -9,7 +9,7 @@ public class NarudzbenicaLek {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NarudzbenicaLekSeqGen")
 	private Long id;
 	@Column(name = "KOLICINA")
-	private int kolicina;
+	private Integer kolicina;
 	
 	//connections
 	@ManyToOne(fetch = FetchType.EAGER)

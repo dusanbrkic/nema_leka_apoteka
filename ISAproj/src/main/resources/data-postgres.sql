@@ -1,0 +1,1 @@
+insert into dermatolog (id, username, password, ime, prezime, email_adresa) values (1, 'dusan', 'dusan', 'Dusan', 'Brkic', 'dusanbrk@gmail.com')

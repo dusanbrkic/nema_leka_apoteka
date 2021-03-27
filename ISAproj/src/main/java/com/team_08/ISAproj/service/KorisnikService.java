@@ -26,6 +26,10 @@ public class KorisnikService {
     }
 
     public Korisnik findUser(String username) {
-        return new Pacijent();
+       Korisnik k = pacijentRepository.findOneByUsername(username);
+       if (k==null) k = dermatologRepository.findOneByUsername(username);
+       if (k==null) k = farmaceutRepository.findOneByUsername(username);
+       if (k==null) k = adminApotekeRepository.findOneByUsername(username);
+       return k;
     }
 }

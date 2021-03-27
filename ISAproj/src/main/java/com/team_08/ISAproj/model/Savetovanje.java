@@ -16,7 +16,7 @@ public class Savetovanje {
 	@Column(name = "TRAJANJE")
 	private Duration trajanje;
 	@Column(name = "CENA")
-	private double cena;
+	private Double cena;
 	@Column(name = "KRAJ")
 	private Date kraj;
 	@Column(name = "DIJAGNOZA")

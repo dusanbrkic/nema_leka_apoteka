@@ -12,7 +12,7 @@ public class DermatologApoteka {
 	private Long id;
 
 	@Column(name = "CENA")
-	private double cena;
+	private Double cena;
 	@Column(name = "RADNO_VREME_POCETAK")
 	private Date radnoVremePocetak;
 	@Column(name = "RADNO_VREME_KRAJ")

@@ -47,7 +47,7 @@ Vue.component("Login", {
                 .get("korisnici/loginUser", user)
                 .then(response => {
                     this.cookie = response.data.cookie
-                    this.userRole = response.data.userRole
+                    this.userRole = response.data.rola
                 })
             localStorage.setItem("cookie", this.cookie)
 

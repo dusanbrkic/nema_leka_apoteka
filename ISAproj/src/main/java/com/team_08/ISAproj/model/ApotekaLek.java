@@ -11,13 +11,13 @@ public class ApotekaLek {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ApotekaLekSeqGen")
 	private Long id;
 	@Column(name = "KOLICINA")
-	private int kolicina;
+	private Integer kolicina;
 	@Column(name = "CENA")
-	private double cena;
+	private Double cena;
 	@Column(name = "ISTEK_VAZENJA_CENE")
 	private Date istekVazenjaCene;
 	@Column(name = "STARA_CENA")
-	private double staraCena;
+	private Double staraCena;
 	
 	// connections
 	@ManyToOne(fetch = FetchType.EAGER)

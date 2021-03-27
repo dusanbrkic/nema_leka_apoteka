@@ -6,7 +6,7 @@ import java.util.Set;
 @Entity(name = "FARMACEUT")
 public class Farmaceut extends Korisnik {
 	@Column(name = "PROSECNA_OCENA")
-	private double prosecnaOcena;
+	private Double prosecnaOcena;
 	
 	// connections
 	@OneToOne(mappedBy = "farmaceut", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
