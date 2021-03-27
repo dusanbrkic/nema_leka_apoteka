@@ -63,8 +63,8 @@ public abstract class Korisnik {
 		return cookieTokenValue;
 	}
 
-	public void setCookieToken(CookieToken cookieToken) {
-		this.cookieTokenValue = cookieToken.getValue();
+	public void setCookieToken(String cookieToken) {
+		this.cookieTokenValue = cookieToken;
 	}
 
 	public void setId(Long id) {

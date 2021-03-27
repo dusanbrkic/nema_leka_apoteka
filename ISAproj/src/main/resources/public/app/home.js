@@ -1,10 +1,12 @@
 Vue.component("Home", {
   data: function () {
-    return {};
+    return {
+      message: '',
+      apoteka: ''
+    };
   },
   mounted() {
-  	message: ''
-  	apoteka: ''
+  	
   },
   template: `
         <div>

@@ -12,7 +12,7 @@ Vue.component("Login", {
       <div id="login-div">
       <link rel="stylesheet" href="css/login.css" type="text/css">
       <h1 id="h1-login">Log in</h1>
-      <form>
+      <form @submit.prevent="login">
         <table id="login-table">
           <tr>
             <td>Username:</td>
@@ -24,9 +24,9 @@ Vue.component("Login", {
           </tr>
           <tr>
             <td id="cancel-button">
-              <input type="submit" v-on:click="cancel" value="Cancel"></td>
+              <input type="button" v-on:click="cancel" value="Cancel"></td>
             <td id="login-button">
-              <input type="submit" v-on:click="login" value="Log in"></td>
+              <input type="submit" v-on:submit="login" value="Log in"></td>
           </tr>
         </table>
       </form>

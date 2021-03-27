@@ -6,10 +6,11 @@ Vue.component("HomeDermatolog", {
         };
     },
     mounted() {
+        this.cookie = localStorage.getItem("cookie")
     },
     template: `
         <div>
-          <p>Home za dermatologa</p>
+          <p>Home za dermatologa, tvoj izgenerisani token je {{cookie}}</p>
         </div>
     `,
     methods: {

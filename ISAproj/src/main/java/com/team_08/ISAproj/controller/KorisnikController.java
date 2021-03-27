@@ -29,14 +29,14 @@ public class KorisnikController {
             return new ResponseEntity<CookieRoleDTO>(HttpStatus.NOT_FOUND);
         }
         if(k.getPassword().equals(password)){
-            CookieToken ck = new CookieToken(username, password);
+            String ck = CookieToken.createTokenValue(username, password);
             k.setCookieToken(ck);
             KorisnickaRola korisnickaRola = null;
             if(k instanceof Pacijent) korisnickaRola = KorisnickaRola.PACIJENT;
             else if(k instanceof Dermatolog) korisnickaRola = KorisnickaRola.DERMATOLOG;
             else if(k instanceof Farmaceut) korisnickaRola = KorisnickaRola.FARMACEUT;
             else if(k instanceof AdminApoteke) korisnickaRola = KorisnickaRola.ADMIN_APOTEKE;
-            CookieRoleDTO cookieRoleDTO = new CookieRoleDTO(ck.getValue(), korisnickaRola);
+            CookieRoleDTO cookieRoleDTO = new CookieRoleDTO(ck, korisnickaRola);
             return new ResponseEntity<CookieRoleDTO>(cookieRoleDTO, HttpStatus.OK);
         }
 
