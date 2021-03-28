@@ -1,4 +1,4 @@
-Vue.component("Login", {
+	Vue.component("Login", {
     data: function () {
         return {
             username: "",

@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.controller;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.team_08.ISAproj.service.ApotekaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,34 +17,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.team_08.ISAproj.model.Apoteka;
 
-
 @RestController
 @RequestMapping("/apoteke")
 public class ApotekaController {
 
 	@Autowired
 	private ApotekaService apotekaService;
-	
+
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<Apoteka>> getApoteke(){
-		Collection<Apoteka> apoteke = apotekaService.findAll();
-		return new ResponseEntity<Collection<Apoteka>>(apoteke,HttpStatus.OK);
+	public ResponseEntity<List<Apoteka>> getApoteke() {
+		List<Apoteka> apoteke = apotekaService.findAll();
+		return new ResponseEntity<List<Apoteka>>(apoteke, HttpStatus.OK);
 	}
-	@GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Apoteka> getApoteka(@PathVariable("id") Long id){
+
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Apoteka> getApoteka(@PathVariable("id") Long id) {
 		Apoteka apoteka = apotekaService.findOne(id);
-		
-		if(apoteka == null) {
+
+		if (apoteka == null) {
 			return new ResponseEntity<Apoteka>(HttpStatus.NOT_FOUND);
 		}
-		
-		return new ResponseEntity<Apoteka>(apoteka,HttpStatus.OK);
+
+		return new ResponseEntity<Apoteka>(apoteka, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Apoteka> createApoteka(@RequestBody Apoteka apoteka) throws Exception{
+	public ResponseEntity<Apoteka> createApoteka(@RequestBody Apoteka apoteka) throws Exception {
 		Apoteka tempApoteka = apotekaService.create(apoteka);
-		return new ResponseEntity<Apoteka>(tempApoteka,HttpStatus.CREATED);
+		return new ResponseEntity<Apoteka>(tempApoteka, HttpStatus.CREATED);
 	}
-	
+
 }

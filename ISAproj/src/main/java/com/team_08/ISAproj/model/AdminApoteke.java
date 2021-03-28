@@ -12,8 +12,6 @@ public class AdminApoteke extends Korisnik{
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Apoteka apoteka;
 	
-	
-	
 	public AdminApoteke(Apoteka apoteka) {
 		super();
 		this.apoteka = apoteka;

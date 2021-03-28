@@ -2,6 +2,10 @@ package com.team_08.ISAproj.model;
 
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "APOTEKA")
@@ -20,24 +24,33 @@ public class Apoteka {
 	private String opis;
 	
 	// connections
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<DermatologApoteka> dermatolozi;
+	private Set<DermatologApoteka> dermatolozi = new HashSet<DermatologApoteka>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<FarmaceutApoteka> farmaceuti;
+	private Set<FarmaceutApoteka> farmaceuti= new HashSet<FarmaceutApoteka>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Pregled> pregledi;
+	private Set<Pregled> pregledi = new HashSet<Pregled>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Savetovanje> savetovanja;
+	private Set<Savetovanje> savetovanja= new HashSet<Savetovanje>();
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Pacijent> pretplaceniKorisnici;
+	private Set<Pacijent> pretplaceniKorisnici= new HashSet<Pacijent>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ApotekaLek> lekovi;
+	private Set<ApotekaLek> lekovi= new HashSet<ApotekaLek>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Narudzbenica> narudzbenice;
+	private Set<Narudzbenica> narudzbenice= new HashSet<Narudzbenica>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Promocija> promocije;
+	private Set<Promocija> promocije= new HashSet<Promocija>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<AdminApoteke> admini;
+	private Set<AdminApoteke> admini= new HashSet<AdminApoteke>();
 
 	//getters and setters
 	
@@ -158,6 +171,7 @@ public class Apoteka {
 		this.adresa = adresa;
 		this.prosecnaOcena = prosecnaOcena;
 		this.opis = opis;
+		this.dermatolozi = new HashSet<DermatologApoteka>();
 	}
 
 	public Apoteka() {
