@@ -49,8 +49,10 @@ Vue.component("Home", {
         <div class="row">
           <div class="col-sm-4">
             <div class="panel panel-default">
-            <div class="panel-heading">Apoteke</div>
-            <div class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+              <div class="panel-heading">Apoteke</div>
+              <a href="#" v-on:click="redirectToApoteke">
+                <div class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+              </a>
           </div>
 
           </div>
