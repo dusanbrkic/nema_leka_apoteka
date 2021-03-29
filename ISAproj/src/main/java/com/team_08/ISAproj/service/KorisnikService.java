@@ -32,4 +32,5 @@ public class KorisnikService {
        if (k==null) k = adminApotekeRepository.findOneByUsername(username);
        return k;
     }
+    
 }

@@ -42,6 +42,7 @@ Vue.component("Login", {
 					"username": this.username, "password": this.password
 				}
 			}
+			this.loadUserInfo
 			await axios
 				.get("korisnici/loginUser", user)
 				.then(response => {
@@ -49,7 +50,6 @@ Vue.component("Login", {
 					this.userRole = response.data.rola
 				})
 			localStorage.setItem("cookie", this.cookie)
-
 			if (this.userRole === "PACIJENT") {
 				app.$router.push("/home-pacijent")
 			} else if (this.userRole === "DERMATOLOG") {
@@ -60,5 +60,6 @@ Vue.component("Login", {
 				app.$router.push("/home-admin_apoteke")
 			}
 		}
+		
 	}
 });

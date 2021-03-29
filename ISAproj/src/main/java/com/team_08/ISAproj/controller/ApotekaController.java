@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.team_08.ISAproj.service.ApotekaService;
+import com.team_08.ISAproj.service.KorisnikService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -12,12 +14,20 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.team_08.ISAproj.dto.ApotekaDTO;
+import com.team_08.ISAproj.dto.CookieRoleDTO;
+import com.team_08.ISAproj.model.AdminApoteke;
 import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.model.Dermatolog;
+import com.team_08.ISAproj.model.Farmaceut;
+import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Pacijent;
+import com.team_08.ISAproj.model.enums.KorisnickaRola;
 
 @RestController
 @RequestMapping("/apoteke")
@@ -26,6 +36,9 @@ public class ApotekaController {
 	@Autowired
 	private ApotekaService apotekaService;
 
+    @Autowired
+    private KorisnikService korisnikService;
+    
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ApotekaDTO>> getApoteke() {
 		List<Apoteka> apoteke = apotekaService.findAll();
@@ -53,5 +66,26 @@ public class ApotekaController {
 		apotekaService.create(apoteka);
 		return new ResponseEntity<Apoteka>(apoteka, HttpStatus.CREATED);
 	}
+	//Za admina apoteke pronalazimo apoteku
+	@GetMapping(value = "/getByAdmin", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApotekaDTO> getApoteka(@RequestParam("username") String username,
+            @RequestParam("password") String password)
+    {
+        Korisnik k = korisnikService.findUser(username);
 
+        if(k == null) {
+            return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
+        }
+        if(k.getPassword().equals(password)){
+            if(k instanceof AdminApoteke) {
+            	AdminApoteke aa = (AdminApoteke) k;
+            	System.out.println(aa.getApoteka().getNaziv());
+            	ApotekaDTO aDTO = new ApotekaDTO(aa.getApoteka());
+            	return new ResponseEntity<ApotekaDTO>(aDTO,HttpStatus.OK);
+            }
+            
+        	
+        }
+		return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
+    }
 }

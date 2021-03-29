@@ -85,8 +85,8 @@ Vue.component("Apoteke", {
     `
     ,
     methods: {
-        loadApoteka: function () {
-            axios.get("apoteke")
+        loadApoteka:async function () {
+            await axios.get("apoteke")
       		.then(response => (this.apoteke = response.data))
         },
         redirectToHome: function () {

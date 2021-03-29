@@ -1,6 +1,9 @@
 package com.team_08.ISAproj.model;
 
 import javax.persistence.*;
+
+import com.team_08.ISAproj.dto.KorisnikDTO;
+
 import java.util.Date;
 
 @Entity(name = "KORISNIK")
@@ -72,5 +75,14 @@ public abstract class Korisnik {
 	}
 	public Long getId() {
 		return id;
+	}
+	
+	public void updateUser(KorisnikDTO kDTO) {
+		this.username = kDTO.getUsername();
+		this.password = kDTO.getPassword();
+		this.ime = kDTO.getIme();
+		this.prezime = kDTO.getPrezime();
+		this.datumRodjenja = kDTO.getDatumRodjenja();
+		this.emailAdresa = kDTO.getEmailAdresa();
 	}
 }

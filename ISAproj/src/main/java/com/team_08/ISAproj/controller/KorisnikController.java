@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,4 +61,16 @@ public class KorisnikController {
         
         return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
     }
+    //update user Info
+    @PutMapping(value = "/updateUser", consumes = "application/json",produces = "application/json")
+    public ResponseEntity<KorisnikDTO> updateUser(@RequestBody KorisnikDTO korisnikDTO) throws Exception {
+    	Korisnik k = korisnikService.findUser(korisnikDTO.getUsername());
+        if(k == null) {
+        	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    	k.updateUser(korisnikDTO);
+        return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
+    }
+    
+
 }

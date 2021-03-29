@@ -17,6 +17,14 @@ public class AdminApoteke extends Korisnik{
 		this.apoteka = apoteka;
 	}
 
+	public Apoteka getApoteka() {
+		return apoteka;
+	}
+
+	public void setApoteka(Apoteka apoteka) {
+		this.apoteka = apoteka;
+	}
+
 	public AdminApoteke() {
 
 	}
