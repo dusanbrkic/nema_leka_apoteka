@@ -28,17 +28,18 @@ Vue.component("Home", {
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Početna strana</a></li>
-              <li><a href="#" v-on:click="redirectToApoteke">       Apoteke       </a></li>
-              <li><a href="#" v-on:click="redirectToHelloWorld">    Lekovi        </a></li>
-              <li><a href="#" v-on:click="redirectToLogin">         Uloguj se     </a></li>
-              <li><a href="#">Kontakt</a></li>
+
+            <ul class="nav navbar-nav">
+                <li class="active"><a><div>  Početna strana</div></a></li>
+                <li><a><div v-on:click="redirectToApoteke">       Apoteke       </div></a></li>
+                <li><a><div v-on:click="redirectToHelloWorld">    Lekovi        </div></a></li>
+                <li><a><div v-on:click="redirectToLogin">         Uloguj se     </div></a></li>
+                <li><a><div>                                      Kontakt        </div></a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#"><span class="glyphicon glyphicon-user"></span> Moj nalog</a></li>
-              <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> Korpa</a></li>
+              <li><a><div><span class="glyphicon glyphicon-user"></span> Moj nalog</div></a></li>
+              <li><a><div><span class="glyphicon glyphicon-shopping-cart"></span> Korpa</div></a></li>
             </ul>
 
           </div>
@@ -50,9 +51,7 @@ Vue.component("Home", {
           <div class="col-sm-4">
             <div class="panel panel-default">
               <div class="panel-heading">Apoteke</div>
-              <a href="#" v-on:click="redirectToApoteke">
-                <div class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
-              </a>
+                <div v-on:click="redirectToApoteke" class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
           </div>
 
           </div>

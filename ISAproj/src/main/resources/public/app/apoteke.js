@@ -37,45 +37,14 @@ Vue.component("Apoteke", {
 		-->
 
 
-
-		<div class="jumbotron">
-		  <div class="container text-center">
-			<h1>Apoteka</h1>      
-			<p>Lekovi, preparati i konsultacije sa doktorima</p>
-		  </div>
-		</div>
-
-
-		<nav class="navbar navbar-expand-lg navbar-inverse">
-		  <div class="container-fluid">
-			<a class="navbar-brand" href="#">Logo</a>
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-			  <span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="nav navbar-nav">
-				<li><a href="#" v-on:click="redirectToHome">Početna strana</a></li>
-				<li class="active"><a href="#">       Apoteke       </a></li>
-				<li><a href="#">    Lekovi        </a></li>
-				<li><a href="#">         Uloguj se     </a></li>
-				<li><a href="#">Kontakt</a></li>
-			  </ul>
-  
-			  <ul class="nav navbar-nav navbar-right">
-				<li><a href="#"><span class="glyphicon glyphicon-user"></span> Moj nalog</a></li>
-				<li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> Korpa</a></li>
-			  </ul>
-  
-			</div>
-		  </div>
-		</nav>
-		
 		<div class="container">    
 		  <div class="row">
 			<div class="col-sm-4" v-for="apoteka in apoteke" :key="apoteka.id">
 			  <div class="panel panel-default">
-				<div class="panel-heading">Apoteke</div>
-				  <div class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+				<div class="panel-heading">{{apoteka.naziv}}</div>
+				  Adresa: {{apoteka.adresa}} <br>
+				  Ocena: {{apoteka.prosecnaOcena}} <br>
+				  Opis: {{apoteka.opis}}
 			</div>
 		  </div>
 		</div><br><br>

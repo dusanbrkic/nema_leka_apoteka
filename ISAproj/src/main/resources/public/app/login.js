@@ -58,7 +58,7 @@ Vue.component("Login", {
 				app.$router.push("/home-farmaceut")
 			} else if (this.userRole === "ADMIN_APOTEKE") {
 				app.$router.push("/home-admin_apoteke")
-			}
+			} 
 		}
 		
 	}
