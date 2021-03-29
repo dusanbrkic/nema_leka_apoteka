@@ -1,14 +1,14 @@
-	Vue.component("Login", {
-    data: function () {
-        return {
-            username: "",
-            password: "",
-            cookie: "",
-            userRole : ""
-        }
-    },
+Vue.component("Login", {
+	data: function() {
+		return {
+			username: "",
+			password: "",
+			cookie: "",
+			userRole: ""
+		}
+	},
 
-    template: `
+	template: `
       <div id="login-div">
       <link rel="stylesheet" href="css/login.css" type="text/css">
       <h1 id="h1-login">Log in</h1>
@@ -30,36 +30,35 @@
           </tr>
         </table>
       </form>
-      </div>
     `
-    ,
-    methods: {
-        cancel: function () {
-            app.$router.push("/")
-        },
-        login: async function () {
-            let user = {
-                params: {
-                    "username": this.username, "password": this.password
-                }
-            }
-            await axios
-                .get("korisnici/loginUser", user)
-                .then(response => {
-                    this.cookie = response.data.cookie
-                    this.userRole = response.data.rola
-                })
-            localStorage.setItem("cookie", this.cookie)
+	,
+	methods: {
+		cancel: function() {
+			app.$router.push("/")
+		},
+		login: async function() {
+			let user = {
+				params: {
+					"username": this.username, "password": this.password
+				}
+			}
+			await axios
+				.get("korisnici/loginUser", user)
+				.then(response => {
+					this.cookie = response.data.cookie
+					this.userRole = response.data.rola
+				})
+			localStorage.setItem("cookie", this.cookie)
 
-            if (this.userRole === "PACIJENT"){
-                app.$router.push("/home-pacijent")
-            } else if (this.userRole === "DERMATOLOG"){
-                app.$router.push("/home-dermatolog")
-            } else if (this.userRole === "FARMACEUT"){
-                app.$router.push("/home-farmaceut")
-            } else if (this.userRole === "ADMIN_APOTEKE"){
-                app.$router.push("/home-admin_apoteke")
-            }
-        }
-    }
+			if (this.userRole === "PACIJENT") {
+				app.$router.push("/home-pacijent")
+			} else if (this.userRole === "DERMATOLOG") {
+				app.$router.push("/home-dermatolog")
+			} else if (this.userRole === "FARMACEUT") {
+				app.$router.push("/home-farmaceut")
+			} else if (this.userRole === "ADMIN_APOTEKE") {
+				app.$router.push("/home-admin_apoteke")
+			}
+		}
+	}
 });

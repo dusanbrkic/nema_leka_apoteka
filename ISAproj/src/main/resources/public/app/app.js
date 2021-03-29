@@ -4,7 +4,7 @@ const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
 const Login = {template: '<Login></Login>'}
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
-
+const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
 const router = new VueRouter({
 	mode : 'hash',
 	routes : [
@@ -13,7 +13,8 @@ const router = new VueRouter({
 		{path: '/apoteke', component: Apoteke},
 		{path: '/apoteka/:id', component: Apoteka},
 		{path: '/login', component: Login},
-		{path: '/home-dermatolog', component: HomeDermatolog}
+		{path: '/home-dermatolog', component: HomeDermatolog},
+		{path: '/home-admin_apoteke', component : HomeAdminApoteke}
 	]
 	
 });

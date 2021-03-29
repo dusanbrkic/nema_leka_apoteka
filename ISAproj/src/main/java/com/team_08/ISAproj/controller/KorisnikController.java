@@ -1,7 +1,7 @@
 package com.team_08.ISAproj.controller;
 
-
 import com.team_08.ISAproj.dto.CookieRoleDTO;
+import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.KorisnikService;
@@ -41,5 +41,21 @@ public class KorisnikController {
         }
 
         return new ResponseEntity<CookieRoleDTO>(HttpStatus.NOT_FOUND);
+    }
+    //Licne informacije o korisniku
+    @GetMapping(value = "/infoUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<KorisnikDTO> infoUser(@RequestParam("username") String username,
+            @RequestParam("password") String password){
+        Korisnik k = korisnikService.findUser(username);
+
+        if(k == null) {
+            return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
+        }
+        if(k.getPassword().equals(password)){
+        	KorisnikDTO korisnikDTO = new KorisnikDTO(k);
+        	return new ResponseEntity<KorisnikDTO>(korisnikDTO, HttpStatus.OK);
+        }
+        
+        return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
     }
 }

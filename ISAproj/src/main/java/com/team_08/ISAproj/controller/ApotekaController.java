@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.team_08.ISAproj.dto.ApotekaDTO;
 import com.team_08.ISAproj.model.Apoteka;
 
 @RestController
@@ -25,26 +27,31 @@ public class ApotekaController {
 	private ApotekaService apotekaService;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Apoteka>> getApoteke() {
+	public ResponseEntity<List<ApotekaDTO>> getApoteke() {
 		List<Apoteka> apoteke = apotekaService.findAll();
-		return new ResponseEntity<List<Apoteka>>(apoteke, HttpStatus.OK);
+		List<ApotekaDTO> apotekeDTO = new ArrayList<ApotekaDTO>();
+		for (Apoteka a : apoteke) {
+			apotekeDTO.add(new ApotekaDTO(a));
+		}
+		return new ResponseEntity<List<ApotekaDTO>>(apotekeDTO, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Apoteka> getApoteka(@PathVariable("id") Long id) {
+	public ResponseEntity<ApotekaDTO> getApoteka(@PathVariable("id") Long id) {
 		Apoteka apoteka = apotekaService.findOne(id);
-
+		
 		if (apoteka == null) {
-			return new ResponseEntity<Apoteka>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
 		}
-
-		return new ResponseEntity<Apoteka>(apoteka, HttpStatus.OK);
+		ApotekaDTO a = new ApotekaDTO(apoteka);
+		return new ResponseEntity<ApotekaDTO>(a, HttpStatus.OK);
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Apoteka> createApoteka(@RequestBody Apoteka apoteka) throws Exception {
-		Apoteka tempApoteka = apotekaService.create(apoteka);
-		return new ResponseEntity<Apoteka>(tempApoteka, HttpStatus.CREATED);
+	public ResponseEntity<Apoteka> createApoteka(@RequestBody ApotekaDTO apotekaDTO) throws Exception {
+		Apoteka apoteka = new Apoteka(apotekaDTO);
+		apotekaService.create(apoteka);
+		return new ResponseEntity<Apoteka>(apoteka, HttpStatus.CREATED);
 	}
 
 }
