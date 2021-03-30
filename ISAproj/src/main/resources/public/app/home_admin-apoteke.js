@@ -1,126 +1,100 @@
 Vue.component("HomeAdminApoteke", {
   data: function () {
     return {
-      cookie: "",
-      user: "",
-      korisnik: {
-        "username": "",
-        "password": "",
-        "ime": "",
-        "prezime": "",
-        "datumRodjenja": "",
-        "emailAdresa": "",
-      },
-      apoteka:{
-
-      }
+      message: '',
+      apoteka: ''
     };
   },
   mounted() {
-    this.cookie = localStorage.getItem("cookie");
-    this.loadUserInfo();
+  	
   },
   template: `
-        <div>
-	      <link rel="stylesheet" href="css/login.css" type="text/css">
-	      <h1 id="h1-login">Informacije</h1>
-	      <form @submit.prevent="saveUserInfo">
-	        <table id="login-table">
-	          <tr>
-	            <td>Username:</td>
-	            <td><input type="text" v-model="this.korisnik.username" readOnly></td>
-	          </tr>
-	          <tr>
-	            <td>Password:</td>
-	            <td><input type="password" v-model="this.korisnik.password" readOnly></td>
-	          </tr>
-            <tr>
-            <td>Ime:</td>
-            <td><input type="ime" v-model="this.korisnik.ime" readOnly></td>
-          </tr>
-          <tr>
-            <td>Prezime:</td>
-            <td><input type="prezime" v-model="this.korisnik.prezime" readOnly></td>
-          </tr>
-          <tr>
-            <td>Datum rodjenja:</td>
-            <td><input type="datumRodjenja" v-model="this.korisnik.datumRodjenja" readOnly></td>
-          </tr>
-          <tr>
-            <td>Email:</td>
-            <td><input type="emailAdresa" v-model="this.korisnik.emailAdresa" readOnly></td>
-          </tr>
-          <tr>
-            <td id="logout-button">
-              <input type="button" v-on:click="logout" value="Logout"></td>
-            <td id="save-button">
-              <input type="submit" v-on:submit="saveUserInfo" value="Save information"></td>
-          </tr>
-	        </table>
-	      </form>
-	      <input type="button" v-on:click="getApotekaInfo" value="Informacije o apoteci"></td>
-        
-        <table id="apoteka-table">
-          <tr>
-          <td>Naziv apoteke:</td>
-          <td><input type="text" v-model="this.apoteka.naziv" readOnly></td>
-          </tr>
-          <tr>
-	          <td>Adresa:</td>
-	          <td><input type="text" v-model="this.apoteka.adresa" readOnly></td>
-          </tr>
-          <tr>
-	          <td>Prosecna ocena:</td>
-	          <td><input type="text" v-model="this.apoteka.prosecnaOcena" readOnly></td>
-          </tr>
-          <tr>
-	          <td>Opis:</td>
-	          <td><input type="text" v-model="this.apoteka.opis" readOnly></td>
-          </tr>
-          <tr>
-	          <td>Farmaceuti:</td>
-	          <td><input type="text" v-model="this.apoteka.farmaceuti" readOnly></td>
-          </tr>
-        </table>
+    <div>
 
+
+      <div class="jumbotron">
+        <div class="container text-center">
+          <h1>Apoteka</h1>      
+          <p>Lekovi, preparati i konsultacije sa doktorima</p>
         </div>
+      </div>
+
+
+
+      <nav class="navbar navbar-expand-lg navbar-inverse">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Logo</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <ul class="nav navbar-nav">
+                <li class="active"><a><div>  Početna strana</div></a></li>
+                <li><a><div v-on:click="redirectToApoteke">       Apoteke       </div></a></li>
+                <li><a><div v-on:click="redirectToHelloWorld">    Lekovi        </div></a></li>
+                <li><a><div>                                      Kontakt        </div></a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+            
+              <li><a><div><span class="glyphicon glyphicon-shopping-cart"></span> Korpa</div></a></li>
+              
+              <li><a><div v-on:click="redirectToIzmenaPacijent"><span class="glyphicon glyphicon-user"></span> Moj nalog</div></a></li>
+
+			  <li><a><div v-on:click="redirectToHome"><span class="glyphicon glyphicon-user"></span> Odjavi se</div></a></li>
+            </ul>
+
+          </div>
+        </div>
+      </nav>
+      
+      <div class="container">    
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">Apoteke</div>
+                <div v-on:click="redirectToApoteke" class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+          </div>
+
+          </div>
+          <div class="col-sm-4"> 
+            <div class="panel panel-default">
+              <div class="panel-heading">Lekovi</div>
+              <div class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+            </div>
+          </div>
+          <div class="col-sm-4"> 
+            <div class="panel panel-default">
+              <div class="panel-heading">Pregledi</div>
+              <div class="panel-body"><img src="https://mediniz-images-2018-100.s3.ap-south-1.amazonaws.com/post-images/dermatologist_1556130488.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+            </div>
+          </div>
+        </div>
+      </div><br><br>
+      
+      <!--
+        <footer class="container-fluid text-center">
+          <p>Apoteka Copyright</p>  
+        </footer>
+      -->
+    </div>
     `,
   methods: {
-    loadUserInfo: async function () {
-      let user = {
-        params: {
-          username: this.cookie.split("-")[0],
-          password: this.cookie.split("-")[1],
-        },
-      };
-      await axios.get("korisnici/infoUser", user).then((response) => {
-        this.korisnik = response.data
-        console.log(response)
-      });
+    redirectToHelloWorld: function () {
+      app.$router.push("/helloWorld");
     },
-    logout: function() {
-      localStorage.clear();
-			app.$router.push("/")
-		},
-    saveUserInfo: async function(){
-      this.korisnik.ime = this.korisnik.ime + "1"
-      await axios.put("korisnici/updateUser",this.korisnik
-      ).then((response) => {
-        this.korisnik = response.data
-      });
+    redirectToApoteke: function () {
+      app.$router.push("/apoteke");
     },
-    getApotekaInfo: async function(){
-      let user = {
-        params: {
-          username: this.korisnik.username,
-          password: this.korisnik.password
-        },
-      };
-      
-      await axios.get("apoteke/getByAdmin",user)
-      .then((response => {
-        console.log(response.data)
-        this.apoteka = response.data}))
+    redirectToApoteka: function (id) {
+      app.$router.push("/apoteka/" + id);
+    },
+    redirectToHome: function () {
+      app.$router.push("/");
+    },
+    redirectToIzmenaPacijent : function () {
+      app.$router.push("/izmena-pacijent");
     }
   },
 });
