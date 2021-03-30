@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface PacijentRepository extends JpaRepository<Pacijent, Long> {
 
     Pacijent findOneByUsername(String username);
+
+    Korisnik findOneByCookieTokenValue(String cookie);
 }

@@ -34,6 +34,7 @@ public class KorisnikController {
         if(k.getPassword().equals(password)){
             String ck = CookieToken.createTokenValue(username, password);
             k.setCookieToken(ck);
+            korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
             if(k instanceof Pacijent) korisnickaRola = KorisnickaRola.PACIJENT;
             else if(k instanceof Dermatolog) korisnickaRola = KorisnickaRola.DERMATOLOG;
@@ -47,28 +48,28 @@ public class KorisnikController {
     }
     //Licne informacije o korisniku
     @GetMapping(value = "/infoUser", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<KorisnikDTO> infoUser(@RequestParam("username") String username,
-            @RequestParam("password") String password){
-        Korisnik k = korisnikService.findUser(username);
+    public ResponseEntity<KorisnikDTO> infoUser(@RequestParam("cookie") String cookie){
+        Korisnik k = korisnikService.findUserByToken(cookie);
 
         if(k == null) {
             return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
         }
-        if(k.getPassword().equals(password)){
-        	KorisnikDTO korisnikDTO = new KorisnikDTO(k);
-        	return new ResponseEntity<KorisnikDTO>(korisnikDTO, HttpStatus.OK);
-        }
-        
-        return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
+
+        KorisnikDTO korisnikDTO = new KorisnikDTO(k);
+        return new ResponseEntity<KorisnikDTO>(korisnikDTO, HttpStatus.OK);
+
     }
     //update user Info
     @PutMapping(value = "/updateUser", consumes = "application/json",produces = "application/json")
     public ResponseEntity<KorisnikDTO> updateUser(@RequestBody KorisnikDTO korisnikDTO) throws Exception {
-    	Korisnik k = korisnikService.findUser(korisnikDTO.getUsername());
+    	Korisnik k = korisnikService.findUserByToken(korisnikDTO.getCookie());
         if(k == null) {
         	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    	k.updateUser(korisnikDTO);
+    	k.setIme(korisnikDTO.getIme());
+        k.setPrezime(korisnikDTO.getPrezime());
+        k.setDatumRodjenja(korisnikDTO.getDatumRodjenja());
+        korisnikService.saveUser(k);
         return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
     }
     

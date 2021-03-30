@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
     Dermatolog findOneByUsername(String username);
+
+    Korisnik findOneByCookieTokenValue(String cookie);
 }

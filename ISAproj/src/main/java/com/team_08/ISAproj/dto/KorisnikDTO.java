@@ -14,6 +14,7 @@ public class KorisnikDTO {
 	private String prezime;
 	private Date datumRodjenja;
 	private String emailAdresa;
+	private String cookie;
 	public KorisnikDTO() {
 		
 	}
@@ -25,9 +26,10 @@ public class KorisnikDTO {
 		this.prezime = k.getPrezime();
 		this.datumRodjenja = k.getDatumRodjenja();
 		this.emailAdresa = k.getEmailAdresa();
+		this.cookie = k.getCookieToken();
 	}
 	public KorisnikDTO(String username, String password, String ime, String prezime, Date datumRodjenja,
-			String emailAdresa) {
+			String emailAdresa, String cookie) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -35,6 +37,7 @@ public class KorisnikDTO {
 		this.prezime = prezime;
 		this.datumRodjenja = datumRodjenja;
 		this.emailAdresa = emailAdresa;
+		this.cookie = cookie;
 	}
 	public String getUsername() {
 		return username;
@@ -72,7 +75,12 @@ public class KorisnikDTO {
 	public void setEmailAdresa(String emailAdresa) {
 		this.emailAdresa = emailAdresa;
 	}
-	
-	
-	
+
+	public String getCookie() {
+		return cookie;
+	}
+
+	public void setCookie(String cookie) {
+		this.cookie = cookie;
+	}
 }

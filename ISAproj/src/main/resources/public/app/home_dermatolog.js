@@ -94,7 +94,7 @@ Vue.component("HomeDermatolog", {
       app.$router.push("/");
     },
     redirectToIzmenaPacijent : function () {
-      app.$router.push("/izmena-pacijent");
+      app.$router.push("/izmena-podataka");
     }
   },
 });

@@ -1,7 +1,6 @@
 package com.team_08.ISAproj.service;
 
-import com.team_08.ISAproj.model.Korisnik;
-import com.team_08.ISAproj.model.Pacijent;
+import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.AdminApotekeRepository;
 import com.team_08.ISAproj.repository.DermatologRepository;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
@@ -32,5 +31,24 @@ public class KorisnikService {
        if (k==null) k = adminApotekeRepository.findOneByUsername(username);
        return k;
     }
-    
+
+    public Korisnik findUserByToken(String cookie) {
+        Korisnik k = pacijentRepository.findOneByCookieTokenValue(cookie);
+        if (k==null) k = dermatologRepository.findOneByCookieTokenValue(cookie);
+        if (k==null) k = farmaceutRepository.findOneByCookieTokenValue(cookie);
+        if (k==null) k = adminApotekeRepository.findOneByCookieTokenValue(cookie);
+        return k;
+    }
+
+    public void saveUser(Korisnik k) {
+        if (k instanceof Pacijent)
+            pacijentRepository.save((Pacijent)k);
+        else if (k instanceof Dermatolog)
+            dermatologRepository.save((Dermatolog)k);
+        else if (k instanceof Farmaceut)
+            farmaceutRepository.save((Farmaceut) k);
+        else if (k instanceof AdminApoteke)
+            adminApotekeRepository.save((AdminApoteke)k);
+
+    }
 }

@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
     Farmaceut findOneByUsername(String username);
+
+    Korisnik findOneByCookieTokenValue(String cookie);
 }
