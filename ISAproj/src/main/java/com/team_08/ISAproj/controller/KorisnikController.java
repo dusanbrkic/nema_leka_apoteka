@@ -43,7 +43,7 @@ public class KorisnikController {
             return new ResponseEntity<CookieRoleDTO>(cookieRoleDTO, HttpStatus.OK);
         }
 
-        return new ResponseEntity<CookieRoleDTO>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<CookieRoleDTO>(HttpStatus.UNAUTHORIZED);
     }
     //Licne informacije o korisniku
     @GetMapping(value = "/infoUser", produces = MediaType.APPLICATION_JSON_VALUE)
