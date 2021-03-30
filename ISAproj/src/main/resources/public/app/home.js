@@ -33,13 +33,15 @@ Vue.component("Home", {
                 <li class="active"><a><div>  Početna strana</div></a></li>
                 <li><a><div v-on:click="redirectToApoteke">       Apoteke       </div></a></li>
                 <li><a><div v-on:click="redirectToHelloWorld">    Lekovi        </div></a></li>
-                <li><a><div v-on:click="redirectToLogin">         Uloguj se     </div></a></li>
                 <li><a><div>                                      Kontakt        </div></a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-              <li><a><div><span class="glyphicon glyphicon-user"></span> Moj nalog</div></a></li>
+              <li><a><div v-on:click="redirectToLogin"><span class="glyphicon glyphicon-user"></span> Uloguj se</div></a></li>
+              <li><a><div><span class="glyphicon glyphicon-user"></span> Registracija</div></a></li>
+              <!--
               <li><a><div><span class="glyphicon glyphicon-shopping-cart"></span> Korpa</div></a></li>
+              -->
             </ul>
 
           </div>
