@@ -91,6 +91,7 @@ Vue.component("HomeDermatolog", {
       app.$router.push("/apoteka/" + id);
     },
     redirectToHome: function () {
+      localStorage.clear()
       app.$router.push("/");
     },
     redirectToIzmenaPacijent : function () {

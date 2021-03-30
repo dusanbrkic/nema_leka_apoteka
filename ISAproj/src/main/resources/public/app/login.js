@@ -58,6 +58,7 @@ Vue.component("Login", {
                     }
                 })
             localStorage.setItem("cookie", this.cookie)
+            localStorage.setItem("userRole", this.userRole)
             if (this.userRole === "PACIJENT") {
                 app.$router.push("/home-pacijent")
             } else if (this.userRole === "DERMATOLOG") {
