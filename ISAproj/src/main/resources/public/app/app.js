@@ -5,6 +5,7 @@ const Apoteka = {template: '<Apoteka></Apoteka>'}
 const Login = {template: '<Login></Login>'}
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
+const IzmenaPacijent = {template: '<IzmenaPacijent></IzmenaPacijent>'}
 const HomePacijent = {template: '<HomePacijent></HomePacijent>'}
 const router = new VueRouter({
 	mode : 'hash',
@@ -16,6 +17,7 @@ const router = new VueRouter({
 		{path: '/login', component: Login},
 		{path: '/home-dermatolog', component: HomeDermatolog},
 		{path: '/home-admin_apoteke', component : HomeAdminApoteke},
+		{path: '/izmena-pacijent', component : IzmenaPacijent},
 		{path: '/home-pacijent', component : HomePacijent}
 	]
 	
