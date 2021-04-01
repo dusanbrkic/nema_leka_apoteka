@@ -39,7 +39,12 @@ Vue.component("Apoteka", {
     methods: {
     	loadApoteka(id){
     		axios.get("apoteke/" + id)
-      		.then(response => (this.apoteke = response.data))
+      		.then(response => {
+      		(this.apoteke = response.data)
+      		console.log(this.apoteke);
+      		
+      		})
+      		
 		},
 		redirectToHome: function () {
             app.$router.push("/")

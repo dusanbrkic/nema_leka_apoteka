@@ -1,11 +1,5 @@
 package com.team_08.ISAproj.dto;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-
 import com.team_08.ISAproj.model.Apoteka;
 
 public class ApotekaDTO {

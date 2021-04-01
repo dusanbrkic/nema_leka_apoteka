@@ -25,7 +25,8 @@ public class ApotekaService {
 	public Apoteka findOne(Long id) {
 		return apotekaRepository.findById(id).orElseGet(null);
 	}
-
+	
+	
 	public Apoteka create(Apoteka apoteka) {
 		Long id = apoteka.getId();
 		

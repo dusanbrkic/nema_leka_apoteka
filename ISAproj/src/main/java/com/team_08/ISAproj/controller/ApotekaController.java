@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.KorisnikService;
 
@@ -39,6 +40,7 @@ public class ApotekaController {
     @Autowired
     private KorisnikService korisnikService;
     
+
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ApotekaDTO>> getApoteke() {
 		List<Apoteka> apoteke = apotekaService.findAll();
@@ -68,23 +70,18 @@ public class ApotekaController {
 	}
 	//Za admina apoteke pronalazimo apoteku
 	@GetMapping(value = "/getByAdmin", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApotekaDTO> getApoteka(@RequestParam("username") String username,
-            @RequestParam("password") String password)
+    public ResponseEntity<ApotekaDTO> getApoteka(@RequestParam("cookie") String cookie)
     {
-        Korisnik k = korisnikService.findUser(username);
+		Korisnik k = korisnikService.findUserByToken(cookie);
 
         if(k == null) {
             return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
         }
-        if(k.getPassword().equals(password)){
-            if(k instanceof AdminApoteke) {
-            	AdminApoteke aa = (AdminApoteke) k;
-            	System.out.println(aa.getApoteka().getNaziv());
-            	ApotekaDTO aDTO = new ApotekaDTO(aa.getApoteka());
-            	return new ResponseEntity<ApotekaDTO>(aDTO,HttpStatus.OK);
-            }
-            
-        	
+        if(k instanceof AdminApoteke) {
+        	AdminApoteke aa = (AdminApoteke) k;
+        	System.out.println(aa.getApoteka().getNaziv());
+        	ApotekaDTO aDTO = new ApotekaDTO(aa.getApoteka());
+        	return new ResponseEntity<ApotekaDTO>(aDTO,HttpStatus.OK);
         }
 		return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
     }

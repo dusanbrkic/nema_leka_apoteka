@@ -1,12 +1,13 @@
 Vue.component("HomeAdminApoteke", {
   data: function () {
     return {
-      message: '',
-      apoteka: ''
+      message: "",
+      apoteka: "",
     };
   },
   mounted() {
-  	
+    this.cookie = localStorage.getItem("cookie");
+    console.log(localStorage.getItem("cookie"));
   },
   template: `
     <div>
@@ -14,7 +15,7 @@ Vue.component("HomeAdminApoteke", {
 
       <div class="jumbotron">
         <div class="container text-center">
-          <h1>Apoteka</h1>      
+          <h2>Apoteka</h2>      
           <p>Lekovi, preparati i konsultacije sa doktorima</p>
         </div>
       </div>
@@ -37,9 +38,6 @@ Vue.component("HomeAdminApoteke", {
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-            
-              <li><a><div><span class="glyphicon glyphicon-shopping-cart"></span> Korpa</div></a></li>
-              
               <li><a><div v-on:click="redirectToIzmenaPacijent"><span class="glyphicon glyphicon-user"></span> Moj nalog</div></a></li>
 
 			  <li><a><div v-on:click="redirectToHome"><span class="glyphicon glyphicon-user"></span> Odjavi se</div></a></li>
@@ -53,15 +51,15 @@ Vue.component("HomeAdminApoteke", {
         <div class="row">
           <div class="col-sm-4">
             <div class="panel panel-default">
-              <div class="panel-heading">Apoteke</div>
-                <div v-on:click="redirectToApoteke" class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+              <div v-on:click="getApotekaInfo" class="panel-heading">Izmeni apoteku</div>
+                <div v-on:click="getApotekaInfo" class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
           </div>
 
           </div>
           <div class="col-sm-4"> 
             <div class="panel panel-default">
-              <div class="panel-heading">Lekovi</div>
-              <div class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+              <div class="panel-heading">Uredjuj lek</div>
+              <div  v-on:click="redirectToAALekovi"  class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
             </div>
           </div>
           <div class="col-sm-4"> 
@@ -87,15 +85,26 @@ Vue.component("HomeAdminApoteke", {
     redirectToApoteke: function () {
       app.$router.push("/apoteke");
     },
-    redirectToApoteka: function (id) {
-      app.$router.push("/apoteka/" + id);
+    getApotekaInfo: async function () {
+      let cookie = {
+        params: {
+          cookie: this.cookie,
+        },
+      };
+      axios.get("apoteke/getByAdmin", cookie).then((response) => {
+        console.log(response.data);
+        this.apoteka = response.data;
+      });
     },
     redirectToHome: function () {
-      localStorage.clear()
+      localStorage.clear();
       app.$router.push("/");
     },
-    redirectToIzmenaPacijent : function () {
+    redirectToIzmenaPacijent: function () {
       app.$router.push("/izmena-podataka");
-    }
+    },
+	redirectToAALekovi: function(){
+		app.$router.push("/admin-apoteke-lekovi");
+	}
   },
 });
