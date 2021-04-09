@@ -32,6 +32,19 @@ public class LekController {
 	// private LekService lekService;
 	@Autowired
 	private ApotekaLekService apotekaLekService;
+	
+    @RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<LekDTO>> getLekovi() {
+        List<ApotekaLek> apotekeLekovi = apotekaLekService.findAll();
+        if(apotekeLekovi == null) {
+        	return new ResponseEntity<List<LekDTO>>(HttpStatus.NOT_FOUND);
+        }
+        List<LekDTO> lekovi = new ArrayList<LekDTO>();
+        for(ApotekaLek a : apotekeLekovi) {
+        	lekovi.add(new LekDTO(a.getLek()));
+        }
+        return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
+    }
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LekDTO>> getLekApoteka(@PathVariable("id") Long id) {

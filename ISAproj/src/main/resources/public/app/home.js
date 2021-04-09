@@ -60,7 +60,7 @@ Vue.component("Home", {
           <div class="col-sm-4"> 
             <div class="panel panel-default">
               <div class="panel-heading">Lekovi</div>
-              <div class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
+              <div v-on:click="redirectToLekovi" class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
             </div>
           </div>
           <div class="col-sm-4"> 
@@ -85,6 +85,9 @@ Vue.component("Home", {
     },
     redirectToApoteke: function () {
       app.$router.push("/apoteke");
+    },
+    redirectToLekovi: function () {
+      app.$router.push("/lekovi");
     },
     redirectToApoteka: function (id) {
       app.$router.push("/apoteka/" + id);
