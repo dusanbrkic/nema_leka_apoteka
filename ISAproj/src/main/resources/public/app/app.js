@@ -1,5 +1,6 @@
 const Navbar  = { template: '<Navbar></Navbar>'}
 const MainMenu  = { template: '<MainMenu></MainMenu>'}
+
 const HelloWorld = {template : '<HelloWorld></HelloWorld>'}
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
@@ -12,26 +13,26 @@ const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
 
 const router = new VueRouter({
-	mode : 'history',
-	routes : [
-		{path: '/', component: MainMenu },
-		{path: '/helloWorld', component: HelloWorld },
-		{path: '/apoteke', component: Apoteke},
-		{path: '/apoteka/:id', component: Apoteka},
-		{path: '/login', component: Login},
-		{path: '/izmena-podataka', component: IzmenaPodataka},
-		{path: '/home-dermatolog', component: HomeDermatolog},
-		{path: '/home-admin_apoteke', component : HomeAdminApoteke},
-		{path: '/home-pacijent', component : HomePacijent},
-		{path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
-		{path: '/lekovi', component: Lekovi}
-	]
-	
+    mode : 'hash',
+    routes : [
+        {path: '/', component: MainMenu },
+        {path: '/helloWorld', component: HelloWorld },
+        {path: '/apoteke', component: Apoteke},
+        {path: '/apoteka/:id', component: Apoteka},
+        {path: '/login', component: Login},
+        {path: '/izmena-podataka', component: IzmenaPodataka},
+        {path: '/home-dermatolog', component: HomeDermatolog},
+        {path: '/home-admin_apoteke', component : HomeAdminApoteke},
+        {path: '/home-pacijent', component : HomePacijent},
+        {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
+        {path: '/lekovi', component: Lekovi}
+    ]
+
 });
 
 
 var app = new Vue({
-	render: h => h(Navbar), // mount the base component
-	router,
-	el: '#apoteka-app'
+    render: h => h(Navbar), // mount the base component
+    router,
+    el: '#apoteka-app'
 })
