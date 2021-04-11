@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.model;
 
+import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.model.enums.OblikLeka;
 import com.team_08.ISAproj.model.enums.TipLeka;
 
@@ -32,12 +33,12 @@ public class Lek {
 
 	
 	// constructors
-	public Lek(String sifra, String naziv, String upuctvo, TipLeka tip, OblikLeka oblikLeka, String sastav,
+	public Lek(String sifra, String naziv, String upustvo, TipLeka tip, OblikLeka oblikLeka, String sastav,
 			Set<String> sifreZamenskihLekova, String dodatneNapomene) {
 		super();
 		this.sifra = sifra;
 		this.naziv = naziv;
-		this.uputstvo = upuctvo;
+		this.uputstvo = upustvo;
 		this.tip = tip;
 		this.oblikLeka = oblikLeka;
 		this.sastav = sastav;
@@ -49,7 +50,15 @@ public class Lek {
 
 	}
 
-
+	public Lek(LekDTO lek) {
+		this.sifra = lek.getSifra();
+		this.naziv = lek.getNaziv();
+		this.uputstvo = lek.getUputstvo();
+		this.tip = lek.getTip();
+		this.oblikLeka = lek.getOblikLeka();
+		this.sastav = lek.getSastav();
+		this.dodatneNapomene = lek.getDodatneNapomene();
+	}
 	// getters and setters
 	public String getSifra() {
 		return sifra;
@@ -67,7 +76,7 @@ public class Lek {
 		this.naziv = naziv;
 	}
 
-	public String getUpuctvo() {
+	public String getUpustvo() {
 		return uputstvo;
 	}
 
