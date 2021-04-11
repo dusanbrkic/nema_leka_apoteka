@@ -1,6 +1,5 @@
 const Navbar  = { template: '<Navbar></Navbar>'}
 const MainMenu  = { template: '<MainMenu></MainMenu>'}
-
 const HelloWorld = {template : '<HelloWorld></HelloWorld>'}
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
