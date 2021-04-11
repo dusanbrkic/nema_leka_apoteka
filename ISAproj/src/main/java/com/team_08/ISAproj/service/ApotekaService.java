@@ -5,8 +5,12 @@ import java.util.List;
 
 import com.team_08.ISAproj.repository.ApotekaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.model.ApotekaLek;
+import com.team_08.ISAproj.model.Lek;
 
 import org.springframework.stereotype.Service;
 
@@ -32,6 +36,14 @@ public class ApotekaService {
 		
 		//Apoteka tempApoteka = apotekaRepository.create(apoteka);
 		return null;
+	}
+	
+	public Page<Apoteka> findAll(Pageable page) {
+		return apotekaRepository.findAll(page);
+	}
+	
+	public Page<Apoteka> findByLekContaining(String naziv, Pageable pageable) {
+		return apotekaRepository.findByNazivContaining(naziv, pageable);
 	}
 
 }

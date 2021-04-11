@@ -11,7 +11,7 @@ Vue.component("Lekovi", {
 	       count: 0,
 	       pageSize: 6,
 	
-	       pageSizes: [6, 9, 15, 30],
+	       pageSizes: [3, 6, 9, 15, 30],
         
         }
     },

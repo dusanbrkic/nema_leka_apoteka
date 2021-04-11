@@ -1,4 +1,4 @@
-Vue.component("Home", {
+Vue.component("Navbar", {
   data: function () {
     return {
       message: '',
@@ -10,7 +10,6 @@ Vue.component("Home", {
   },
   template: `
     <div>
-
 
       <div class="jumbotron">
         <div class="container text-center">
@@ -32,7 +31,7 @@ Vue.component("Home", {
             <ul class="nav navbar-nav">
                 <li class="active"><a><div>  Početna strana</div></a></li>
                 <li><a><div v-on:click="redirectToApoteke">       Apoteke       </div></a></li>
-                <li><a><div v-on:click="redirectToHelloWorld">    Lekovi        </div></a></li>
+                <li><a><div v-on:click="redirectToLekovi">    Lekovi        </div></a></li>
                 <li><a><div>                                      Kontakt        </div></a></li>
             </ul>
 
@@ -48,29 +47,12 @@ Vue.component("Home", {
         </div>
       </nav>
       
-      <div class="container">    
-        <div class="row">
-          <div class="col-sm-4">
-            <div class="panel panel-default">
-              <div class="panel-heading">Apoteke</div>
-                <div v-on:click="redirectToApoteke" class="panel-body"><img src="https://assets.siccode.com/i-s-b/sic-code-5912-drug-stores-proprietary-stores.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
-          </div>
+      
+      
+        <br/>
+        <router-view/>
+      
 
-          </div>
-          <div class="col-sm-4"> 
-            <div class="panel panel-default">
-              <div class="panel-heading">Lekovi</div>
-              <div v-on:click="redirectToLekovi" class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
-            </div>
-          </div>
-          <div class="col-sm-4"> 
-            <div class="panel panel-default">
-              <div class="panel-heading">Pregledi</div>
-              <div class="panel-body"><img src="https://mediniz-images-2018-100.s3.ap-south-1.amazonaws.com/post-images/dermatologist_1556130488.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
-            </div>
-          </div>
-        </div>
-      </div><br><br>
       
       <!--
         <footer class="container-fluid text-center">
