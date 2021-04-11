@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,16 +66,29 @@ public class ApotekaController {
 	public ResponseEntity<Map<String, Object>> getApoteke(
 			@RequestParam(required = false) String title,
 	        @RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "6") int size)
+	        @RequestParam(defaultValue = "6") int size,
+	        @RequestParam(defaultValue = "naziv") String sort,
+	        @RequestParam(defaultValue = "opadajuce") String smer)
     {
 		try {
-	    	Pageable paging = PageRequest.of(page, size);
+			List<Order> orders = new ArrayList<Order>();
+			
+			if(smer.equals("opadajuce")) {
+				Order order1 = new Order(Sort.Direction.DESC, sort);
+				orders.add(order1);
+			}
+			else {
+				Order order1 = new Order(Sort.Direction.ASC, sort);
+				orders.add(order1);
+			}
+			
+	    	Pageable paging = PageRequest.of(page, size, Sort.by(orders));
 	    	
 	    	Page<Apoteka> apoteke;
 	    	if (title == null)
 	    		apoteke = apotekaService.findAll(paging);
 	        else
-	        	apoteke = apotekaService.findByLekContaining(null, paging); //todo
+	        	apoteke = apotekaService.findByNazivContaining(title, paging); //todo
 	
 	    	List<ApotekaDTO> apotekeDTO = new ArrayList<ApotekaDTO>();
 			for (Apoteka a : apoteke) {

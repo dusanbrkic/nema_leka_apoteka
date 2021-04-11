@@ -42,7 +42,7 @@ public class ApotekaService {
 		return apotekaRepository.findAll(page);
 	}
 	
-	public Page<Apoteka> findByLekContaining(String naziv, Pageable pageable) {
+	public Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable) {
 		return apotekaRepository.findByNazivContaining(naziv, pageable);
 	}
 
