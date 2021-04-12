@@ -14,12 +14,14 @@ Vue.component("Apoteke", {
 	       pageSizes: [3, 6, 9, 15, 30],
 	       
 	       redosledi: ["opadajuce", "rastuce"],
-	       
 	       redosled: "opadajuce",
+	       polja: ["naziv", "prosecnaOcena", "adresa", "opis"], 
+	       sortirajPo: "naziv",
+        
+           fromGrade: 0,
+	       toGrade: 5,
 	       
-	       polja: ["naziv", "prosecnaOcena", "adresa", "opis"],
-	       
-	       sortirajPo: "naziv"
+	       gradeValues: [0,1,2,3,4,5],
         
         }
     },
@@ -43,9 +45,23 @@ Vue.component("Apoteke", {
           
           
      <!-- FILTRIRANJE PO OCENI-->     
+     Minimalna ocena:
+      <select v-model="fromGrade" @change="handleGradeMinChange($event)">
+          <option v-for="g in gradeValues">
+            {{ g }}
+          </option>
+      </select>
+     Maksimalna ocena:
+      <select v-model="toGrade" @change="handleGradeMaxChange($event)">
+          <option v-for="g2 in gradeValues">
+            {{ g2 }}
+          </option>
+      </select>     
           
           
           
+     <br>     
+     <br>     
           
           
      <!-- POLJE SORTIRANJA -->
@@ -111,34 +127,22 @@ Vue.component("Apoteke", {
             app.$router.push("/")
         },
         
-	    getRequestParams(searchTitle, page, pageSize, sortirajPo, redosled) {
+	    getRequestParams(searchTitle, page, pageSize, sortirajPo, redosled, fromGrade, toGrade) {
 	      let params = {};
 	
-	      if (searchTitle) {
-	        params["title"] = searchTitle;
-	      }
-	
-	      if (page) {
-	        params["page"] = page - 1;
-	      }
-	
-	      if (pageSize) {
-	        params["size"] = pageSize;
-	      }
-	      
-	      if(sortirajPo) {
-	      	params["sort"] = sortirajPo;
-	      }
-	
-		  if(sortirajPo) {
-	      	params["smer"] = redosled;
-	      }
-	
+	      if (searchTitle) { params["title"] = searchTitle; }
+	      if (page) { params["page"] = page - 1; }
+	      if (pageSize) { params["size"] = pageSize; }
+	      if(sortirajPo) {	params["sort"] = sortirajPo; }
+		  if(redosled) { params["smer"] = redosled; }
+		  if(fromGrade) { params["fromGrade"] = fromGrade; }
+	 	  if(toGrade) { params["toGrade"] = toGrade; }
+	 	  
 	      return params;
 	    },
     
 	    retrieveApoteke() {
-	      const params = this.getRequestParams(this.searchTitle,this.page,this.pageSize, this.sortirajPo, this.redosled);
+	      const params = this.getRequestParams(this.searchTitle,this.page,this.pageSize, this.sortirajPo, this.redosled, this.fromGrade, this.toGrade);
 	
 	
 		  axios.get("apoteke", {params})
@@ -161,6 +165,18 @@ Vue.component("Apoteke", {
 	    
 		handleSortOrderChange(value) {
 	      this.redosled = event.target.value;
+	      this.page = 1;
+	      this.retrieveApoteke();
+	    },
+	    
+	   	handleGradeMinChange(value) {
+	      this.fromGrade = event.target.value;
+	      this.page = 1;
+	      this.retrieveApoteke();
+	    },
+	    
+	    handleGradeMaxChange(value) {
+	      this.toGrade = event.target.value;
 	      this.page = 1;
 	      this.retrieveApoteke();
 	    },

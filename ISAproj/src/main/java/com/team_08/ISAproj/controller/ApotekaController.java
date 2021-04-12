@@ -48,18 +48,6 @@ public class ApotekaController {
 
     @Autowired
     private KorisnikService korisnikService;
-    
-/*
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ApotekaDTO>> getApoteke() {
-		List<Apoteka> apoteke = apotekaService.findAll();
-		List<ApotekaDTO> apotekeDTO = new ArrayList<ApotekaDTO>();
-		for (Apoteka a : apoteke) {
-			apotekeDTO.add(new ApotekaDTO(a));
-		}
-		return new ResponseEntity<List<ApotekaDTO>>(apotekeDTO, HttpStatus.OK);
-	}
-*/
 	
 	
 	@GetMapping("")
@@ -68,7 +56,9 @@ public class ApotekaController {
 	        @RequestParam(defaultValue = "0") int page,
 	        @RequestParam(defaultValue = "6") int size,
 	        @RequestParam(defaultValue = "naziv") String sort,
-	        @RequestParam(defaultValue = "opadajuce") String smer)
+	        @RequestParam(defaultValue = "opadajuce") String smer,
+	        @RequestParam(defaultValue = "0") int fromGrade,
+	        @RequestParam(defaultValue = "5") int toGrade)
     {
 		try {
 			List<Order> orders = new ArrayList<Order>();
@@ -91,8 +81,11 @@ public class ApotekaController {
 	        	apoteke = apotekaService.findByNazivContaining(title, paging); //todo
 	
 	    	List<ApotekaDTO> apotekeDTO = new ArrayList<ApotekaDTO>();
+	    	
 			for (Apoteka a : apoteke) {
-				apotekeDTO.add(new ApotekaDTO(a));
+				if(a.getProsecnaOcena() >= fromGrade && a.getProsecnaOcena() <= toGrade) {
+					apotekeDTO.add(new ApotekaDTO(a));
+				}
 			}
 			
 			Map<String, Object> response = new HashMap<>();
