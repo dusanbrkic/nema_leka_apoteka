@@ -17,6 +17,12 @@ Vue.component("DodajLekAdmin", {
 		        cookie: ""
         		},
         lekovi: [],
+          dodatLek: false,
+          postojiLek: false,
+		  cenaGreska: false,
+		  kolicinaGreska: false, 
+		  tipGreska: false,
+		  oblikGreska : false,
 		  currentTutorial: null,
 		  currentIndex: -1,
 	      searchTitle: "",
@@ -25,7 +31,7 @@ Vue.component("DodajLekAdmin", {
 	      pageSize: 6,
 		  apotekaID : "",
 	      pageSizes: [3, 6, 9, 15, 30],
-	       
+	      
 	      redosledi: ["opadajuce", "rastuce"],
 	       
 	      redosled: "opadajuce",
@@ -43,9 +49,16 @@ Vue.component("DodajLekAdmin", {
     template: `
      <div>
       <div class="container">
+		<b-alert style="text-align: center;" v-model="this.oblikGreska" variant="danger">Niste izabrali oblik leka!</b-alert>
+		<b-alert style="text-align: center;" v-model="this.tipGreska" variant="danger">Niste izabrali tip leka!</b-alert>
+	  	<b-alert style="text-align: center;" v-model="this.cenaGreska" variant="danger">Uneli ste pogresnu cenu!</b-alert>
+		<b-alert style="text-align: center;" v-model="this.kolicinaGreska" variant="danger">Uneli ste pogresnu kolicinu!</b-alert>
+      	<b-alert style="text-align: center;" v-model="this.postojiLek" variant="danger">Vec postoji lek sa tom sifrom!</b-alert>
+      	<b-alert style="text-align: center;" v-model="this.dodatLek" variant="success">Dodali ste lek sa sifrom {{this.lek.sifra}}!</b-alert>
         <h2>Dodavanje Leka</h2>
+        
         <form @submit.prevent="saveLek">
-
+		
           <div class="form-group">
             <label for="naziv">Naziv leka:</label>
             <input type="text" class="form-control" id="naziv" name="naziv" v-model="lek.naziv"/>
@@ -113,8 +126,38 @@ Vue.component("DodajLekAdmin", {
             app.$router.push("/home-admin_apoteke")
         },
         saveLek: function(){
-        	console.log(this.lek);
-        	axios.post('/lekovi',this.lek).then(response => console.log(response));
+        	this.postojiLek = false;
+        	this.dodatLek = false;
+			this.cenaGreska = false;
+			this.kolicinaGreska = false;
+			this.tipGreska = false;
+			this.oblikGreska = false;
+			if(this.lek.tip == ""){
+				this.tipGreska = true;
+				return;
+			}
+			if(this.lek.oblikLeka == ""){
+				this.oblikGreska = true;
+				return;
+			}
+        	if(this.lek.cena === "" || this.lek.cena < 1){
+				this.cenaGreska = true;
+				this.lek.cena = 0;
+				return;
+			}
+			if(this.lek.kolicina === "" || this.lek.kolicina < 1){
+				this.kolicinaGreska = true;
+				this.lek.kolicina = 0;
+				return;
+			}
+        	axios.post('/lekovi',this.lek).then(response => {this.dodatLek = true})
+        	.catch(error => {
+                if (error.request.status==404) {
+					this.postojiLek = true;
+                } else if (error.request.status==400) {
+                    this.postojiLek = true;
+                }
+            })
         },
 	    getRequestParams(searchTitle, page, pageSize) {
 	      let params = {};

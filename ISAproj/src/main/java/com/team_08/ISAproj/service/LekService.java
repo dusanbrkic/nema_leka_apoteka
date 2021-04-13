@@ -29,8 +29,13 @@ public class LekService {
 	@Autowired
 	private ApotekaRepository apotekaRepository;
 	
-    public void saveLekApoteka(LekDTO lekDTO,String ApotekaID) {
-    	Lek l = new Lek(lekDTO);
+    public Boolean saveLekApoteka(LekDTO lekDTO,String ApotekaID) {
+    	Lek l = lekRepository.findOneBySifra(lekDTO.getSifra());
+    	System.out.println("====================================================================");
+    	if(l != null) {
+    		return false;
+    	}
+    	l = new Lek(lekDTO);
     	Apoteka a = apotekaRepository.findOneById(Long.parseLong(ApotekaID));
     	ApotekaLek al = new ApotekaLek();
     	al.setLek(l);
@@ -39,12 +44,11 @@ public class LekService {
     	al.setKolicina(lekDTO.getKolicina());
     	al.setStaraCena(lekDTO.getCena());
     	al.setIstekVazenjaCene(null);
-    	//a.getLekovi().add(al);
-    	System.out.println("asdasdasd");
+
     	lekRepository.save(l);
 //    	apotekaRepository.save(a);
     	apotekaLekRepository.save(al);
-
+    	return true;
 
     }
 

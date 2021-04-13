@@ -11,15 +11,15 @@ Vue.component("Navbar", {
   template: `
     <div>
 
+
+<!--
       <div class="jumbotron">
         <div class="container text-center">
           <h2>Apoteka</h2>      
           <p>Lekovi, preparati i konsultacije sa doktorima</p>
         </div>
       </div>
-
-
-
+-->
       <nav class="navbar navbar-expand-lg navbar-inverse">
         <div class="container-fluid">
         <img src="https://i.imgur.com/yejUCIT.png" alt="Logo">

@@ -13,4 +13,6 @@ import com.team_08.ISAproj.model.Lek;
 public interface LekRepository extends JpaRepository<Lek, Long> {
 	
 	Page<Lek> findAll(Pageable pageable);
+	
+	Lek findOneBySifra(String sifra);
 }

@@ -166,7 +166,19 @@ public class LekController {
 		response.put("totalPages", apotekeLekovi.getTotalPages());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
+	@GetMapping(value="/basic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LekDTO>> getLekApoteka(@RequestParam String apotekaID) {
+    	
+    	List<ApotekaLek> apotekeLekovi = apotekaLekService.findOneByApoteka(Long.parseLong(apotekaID));
+		if(apotekeLekovi == null) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		List<LekDTO> lekovi = new ArrayList<LekDTO>();
+		for (ApotekaLek a : apotekeLekovi) {
+			lekovi.add(new LekDTO(a.getLek()));
+		}
+		return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
+	}
 	//dodavanje leka
 	@PostMapping(consumes = "application/json")
 	public ResponseEntity<LekDTO> saveLek(@RequestBody LekDTO lekDTO){
@@ -179,11 +191,14 @@ public class LekController {
     	
 			AdminApoteke aa = (AdminApoteke) k;
     	
-			lekService.saveLekApoteka(lekDTO,aa.getApoteka().getId().toString());
-			return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.CREATED);
+			Boolean check = lekService.saveLekApoteka(lekDTO,aa.getApoteka().getId().toString());
+			System.out.println(check);
+			if(check) {
+				return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.CREATED);
+			}
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
 		}
 		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
-
 
 	}
 }
