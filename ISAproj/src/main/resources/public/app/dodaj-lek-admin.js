@@ -3,22 +3,22 @@ Vue.component("DodajLekAdmin", {
         return {
 
 			lek: {
-        sifra: "",
+        		sifra: "",
 				naziv: "",
 				uputstvo: "",
 				tip : "",
 				oblikLeka: "",
 				dodatneNapomene: "",
-		    sastav: "",
-		    kolicina: "",
-		    cena: "",
-		    istekVazenjaCene: "",
+			    sastav: "",
+			    kolicina: "",
+			    cena: "",
+			    istekVazenjaCene: "",
 				staraCena: "",
-        cookie: ""
-        },
+		        cookie: ""
+        		},
         lekovi: [],
-		    currentTutorial: null,
-		    currentIndex: -1,
+		  currentTutorial: null,
+		  currentIndex: -1,
 	      searchTitle: "",
 	      page: 1,
 	      count: 0,

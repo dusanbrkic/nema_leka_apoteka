@@ -6,8 +6,8 @@ Vue.component("Login", {
             cookie: "",
             userRole: "",
             wrongUsername : false,
-            wrongPassword : false
-
+            wrongPassword : false,
+			firstLogin: ""
         }
     },
 
@@ -48,6 +48,7 @@ Vue.component("Login", {
                     console.log(response)
                     this.cookie = response.data.cookie
                     this.userRole = response.data.rola
+                    this.firstLogin = response.data.firstLogin
                 })
                 .catch(error => {
                     if (error.request.status==404) {
@@ -67,7 +68,13 @@ Vue.component("Login", {
             } else if (this.userRole === "FARMACEUT") {
                 app.$router.push("/home-farmaceut")
             } else if (this.userRole === "ADMIN_APOTEKE") {
-                app.$router.push("/home-admin_apoteke")
+           
+            	if(this.firstLogin){
+            		app.$router.push("/admin-apoteke-lozinka")
+            	}else{
+            		app.$router.push("/home-admin_apoteke")
+            	}
+                
             }
         }
 

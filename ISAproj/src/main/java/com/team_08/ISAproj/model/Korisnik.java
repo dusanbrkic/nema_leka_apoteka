@@ -80,7 +80,7 @@ public abstract class Korisnik {
 	public void setFirstLogin(Boolean firstLogin) {
 		this.firstLogin = firstLogin;
 	}
-	public void setCookieToken(String cookieToken) {
+	public void korisnikDTO(String cookieToken) {
 		this.cookieTokenValue = cookieToken;
 	}
 
@@ -99,5 +99,6 @@ public abstract class Korisnik {
 		this.datumRodjenja = kDTO.getDatumRodjenja();
 		this.emailAdresa = kDTO.getEmailAdresa();
 		this.firstLogin = kDTO.getFirstLogin();
+		this.cookieTokenValue = kDTO.getCookie();
 	}
 }

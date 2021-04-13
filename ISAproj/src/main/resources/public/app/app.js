@@ -12,6 +12,7 @@ const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
 const DodajLekAdmin = {template: '<DodajLekAdmin></DodajLekAdmin>'}
 const PretragaLekAdmin = {template: '<PretragaLekAdmin></PretragaLekAdmin>'}
+const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
 const router = new VueRouter({
     mode : 'hash',
     routes : [
@@ -27,7 +28,8 @@ const router = new VueRouter({
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
         {path: '/lekovi', component: Lekovi},
         {path: '/dodaj-lek-admin', component: DodajLekAdmin},
-        {path: '/pretraga-lek-admin', component: PretragaLekAdmin}
+        {path: '/pretraga-lek-admin', component: PretragaLekAdmin},
+        {path: '/admin-apoteke-lozinka', component: LozinkaAdmin}
     ]
 
 });

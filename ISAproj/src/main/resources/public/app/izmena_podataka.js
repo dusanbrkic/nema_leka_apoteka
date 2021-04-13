@@ -10,6 +10,7 @@ Vue.component("IzmenaPodataka", {
                 "datumRodjenja": "",
                 "emailAdresa": "",
                 "cookie": "",
+                "firstLogin": ""
             },
             userRole: ""
         };
