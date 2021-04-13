@@ -45,6 +45,7 @@ Vue.component("Login", {
             await axios
                 .get("korisnici/loginUser", user)
                 .then(response => {
+                    console.log(response)
                     this.cookie = response.data.cookie
                     this.userRole = response.data.rola
                 })

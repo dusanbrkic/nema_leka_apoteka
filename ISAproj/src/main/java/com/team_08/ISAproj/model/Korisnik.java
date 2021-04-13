@@ -29,7 +29,8 @@ public abstract class Korisnik {
 	private String emailAdresa;
 	@Column(name = "TOKEN")
 	private String cookieTokenValue;
-
+	@Column(name = "FIRST_LOGIN")
+	private Boolean firstLogin;
 
 
 	// constructors
@@ -45,6 +46,7 @@ public abstract class Korisnik {
 		this.prezime = prezime;
 		this.datumRodjenja = datumRodjenja;
 		this.emailAdresa = emailAdresa;
+		this.firstLogin = true;
 	}
 	
 	
@@ -66,6 +68,18 @@ public abstract class Korisnik {
 		return cookieTokenValue;
 	}
 
+	public String getCookieTokenValue() {
+		return cookieTokenValue;
+	}
+	public void setCookieTokenValue(String cookieTokenValue) {
+		this.cookieTokenValue = cookieTokenValue;
+	}
+	public Boolean getFirstLogin() {
+		return firstLogin;
+	}
+	public void setFirstLogin(Boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
 	public void setCookieToken(String cookieToken) {
 		this.cookieTokenValue = cookieToken;
 	}
@@ -84,5 +98,6 @@ public abstract class Korisnik {
 		this.prezime = kDTO.getPrezime();
 		this.datumRodjenja = kDTO.getDatumRodjenja();
 		this.emailAdresa = kDTO.getEmailAdresa();
+		this.firstLogin = kDTO.getFirstLogin();
 	}
 }
