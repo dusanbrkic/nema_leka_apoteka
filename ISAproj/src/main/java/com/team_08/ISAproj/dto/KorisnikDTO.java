@@ -41,6 +41,13 @@ public class KorisnikDTO {
 		this.emailAdresa = emailAdresa;
 		this.cookie = cookie;
 	}
+	
+	public Boolean getFirstLogin() {
+		return firstLogin;
+	}
+	public void setFirstLogin(Boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
 	public String getUsername() {
 		return username;
 	}
