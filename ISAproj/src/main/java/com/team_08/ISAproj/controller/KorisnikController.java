@@ -35,11 +35,11 @@ public class KorisnikController {
     		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     	}
     	String ck = CookieToken.createTokenValue(korisnikDTO.getUsername(), korisnikDTO.getPassword());
-    	k.setPassword(korisnikDTO.getPassword());
-    	k.setCookieTokenValue(ck);
+    	System.out.println(ck);
     	korisnikDTO.setCookie(ck);
     	korisnikDTO.setFirstLogin(false);
         k.setFirstLogin(false);
+        k.updateUser(korisnikDTO);
         korisnikService.saveUser(k);
         return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
     }

@@ -27,22 +27,29 @@ Vue.component("HomeAdminApoteke", {
             <div class="panel panel-default">
               <div class="panel-heading">Uredjuj lek</div>
               <div  v-on:click="redirectToAALekovi"  class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
-            </div>
-                      
+            </div>          
           </div>
+          
           <div class="col-sm-4"> 
             <div class="panel panel-default">
               <div class="panel-heading">Dodaj lek</div>
               <div  v-on:click="redirectToAADodaj"  class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
             </div>
           </div>
+          
           <div class="col-sm-4"> 
             <div class="panel panel-default">
               <div class="panel-heading">Pretrazi lekove</div>
               <div  v-on:click="redirectToAAPretraga"  class="panel-body"><img src="https://bbj.hu/uploads/banners/201405/pills_661126_20140520091109346.jpg" class="img-responsive" style="width:100%" alt="Image"></div>
             </div>
           </div>
-        </div>
+          <div class="col-sm-4">
+            <div class="panel panel-default">
+              <div v-on:click="redirectToLicniPodaci" class="panel-heading">Izmeni licne podatke</div>
+                <div v-on:click="redirectToLicniPodaci" class="panel-body"><img src="http://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png" class="img-responsive" style="width:100%" alt="Image"></div>
+          </div>
+
+          </div>
       </div><br><br>
       
       <!--
@@ -86,6 +93,9 @@ Vue.component("HomeAdminApoteke", {
 	},
 	redirectToAAPretraga: function(){
 		app.$router.push("/pretraga-lek-admin");
+	},
+	redirectToLicniPodaci: function(){
+		app.$router.push("/izmena-podataka");
 	}
   },
 });

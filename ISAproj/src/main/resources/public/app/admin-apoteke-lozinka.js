@@ -28,11 +28,11 @@ Vue.component("LozinkaAdmin",{
       <b-alert style="text-align: center;" v-model="samePassword" variant="danger" dismissible>Same Password!</b-alert>
       <div id="login-div" style="max-width: 40rem; text-align: center; margin: auto;" class="mt-5">
         <b-card title="Change Password">
-          <b-form @submit.prevent="changePass">
+          <b-form @submit.prevent="redirectUser">
             <b-form-input required type="password" v-model="korisnik.password" placeholder="Enter Old Password" readOnly/>
             <b-form-input required type="password" v-model="new_password" placeholder="Enter New Password"/>
             <div class="mt-2">
-              <b-button variant="primary" type="submit" v-on:submit="changePass">Change Password</b-button>
+              <b-button variant="primary" type="submit" v-on:submit="redirectUser">Change Password</b-button>
             </div>
           </b-form>
         </b-card>
@@ -41,19 +41,20 @@ Vue.component("LozinkaAdmin",{
 	`,
 	methods:{
 		changePass: function () {
-			if(this.new_password === this.korisnik.password){
-				this.samePassword = true;
-				return;
-			}
 			this.korisnik.firstLogin = false;
 			this.korisnik.password = this.new_password;
             axios
                 .put("korisnici/updatePass", this.korisnik)
                 .then((response) => (this.korisnik = response.data))
-			this.redirectUser();
         },
 		redirectUser: function(){
-			localStorage.setItem("cookie", this.korisnik.cookie)
+            if(this.new_password === this.korisnik.password){
+				this.samePassword = true;
+				return;
+			}
+            this.changePass();
+			let cookie = this.korisnik.username + "-" + this.korisnik.password;
+			localStorage.setItem("cookie", cookie)
             if (this.userRole === "PACIJENT") {
                 app.$router.push("/home-pacijent")
             } else if (this.userRole === "DERMATOLOG") {
@@ -65,8 +66,7 @@ Vue.component("LozinkaAdmin",{
             } else {
                 localStorage.clear()
                 app.$router.push("/")
-            }
-			
+            }	
 		},
 		loadUserInfo: function () {
             let cookie = {

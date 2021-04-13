@@ -172,21 +172,18 @@ public class LekController {
 	public ResponseEntity<LekDTO> saveLek(@RequestBody LekDTO lekDTO){
 //		System.out.print(lekDTO.getCookie());
 		Korisnik k = korisnikService.findUserByToken(lekDTO.getCookie());
-		System.out.println(k);
-		lekService.saveLekApoteka(lekDTO,"1");
-		return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.CREATED);
-		//if(k == null) {
-			//return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
-		//}
-//        if(k instanceof AdminApoteke) {
-//        	
-//        	AdminApoteke aa = (AdminApoteke) k;
-//        	
-//        	lekService.saveLekApoteka(lekDTO,aa.getApoteka().getId().toString());
-//        	return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.CREATED);
-//        }
-//		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
+		if(k == null) {
+			return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
+		}
+		if(k instanceof AdminApoteke) {
+    	
+			AdminApoteke aa = (AdminApoteke) k;
+    	
+			lekService.saveLekApoteka(lekDTO,aa.getApoteka().getId().toString());
+			return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.CREATED);
+		}
+		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
+
+
 	}
-
-
 }

@@ -43,32 +43,6 @@ Vue.component("PretragaLekAdmin", {
 	        />
           </div>
           
-          
-     <!-- FILTRIRANJE PO OCENI-->     
-          
-          
-          
-    
-          
-     <!-- POLJE SORTIRANJA -->
-    	Sortiraj po:
-      <select v-model="sortirajPo" @change="handleSortChange($event)">
-          <option v-for="p in polja">
-            {{ p }}
-          </option>
-      </select>
-          
-       <!-- REDOSLED SORTIRANJA -->
-    	Redosled:
-      <select v-model="redosled" @change="handleSortOrderChange($event)">
-          <option v-for="s in redosledi" :key="s" :value="s">
-            {{ s }}
-          </option>
-      </select>
-      
-
-
-	
 	      <!-- BIRANJE VELICINE STRANE -->
 	        Lekovi po strani:
 		    <select v-model="pageSize" @change="handlePageSizeChange($event)">
