@@ -1,4 +1,4 @@
-insert into dermatolog (id, username, password, ime, prezime, email_adresa) values (nextval('korisnik_seq'), 'dusan', 'dusan', 'Dusan', 'Brkic', 'dusanbrk@gmail.com')
+insert into dermatolog (id, username, password, ime, prezime, email_adresa, token) values (nextval('korisnik_seq'), 'dusan', 'dusan', 'Dusan', 'Brkic', 'dusanbrk@gmail.com', 'dusan-dusan')
 
 insert into lek (id,naziv,sastav,sifra,uputstvo) values (nextval('lek_seq'),'Brufen','bazinga 2mg','1','Piti jednom dnevno posle obroka')
 insert into lek (id,naziv,sastav,sifra,uputstvo) values (nextval('lek_seq'),'Strepsils','lozenga 1.2mg+o.6mg, blister 2X8kom','2','Max 3 puta dnevno')
@@ -41,3 +41,8 @@ insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (
 insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'540','23','500','5','12')
 
 --insert into dermatolog_apoteka(id,cena,radno_vreme_kraj,radno_vreme_pocetak,apoteka_id,dermatolog_id) values (1,100.0,'2008-01-01 00:00:01','2008-01-01 00:00:01',1,1)
+
+insert into pregled (id, cena, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, dermatolog_id, pacijent_id) values (nextval('pregled_seq'), '100', 'Bude ga noci sajgonske.', '2021-04-13 12:00:01', false, null, '2021-04-13 11:45:01', '1', '1', '2')
+
+insert into pregled_preporuceni_lekovi (pregled_id, preporuceni_lekovi_id) values ('1', '1')
+insert into pregled_preporuceni_lekovi (pregled_id, preporuceni_lekovi_id) values ('1', '2')
