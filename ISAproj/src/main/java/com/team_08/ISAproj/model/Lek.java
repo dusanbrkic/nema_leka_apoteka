@@ -5,6 +5,8 @@ import com.team_08.ISAproj.model.enums.OblikLeka;
 import com.team_08.ISAproj.model.enums.TipLeka;
 
 import javax.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "LEK")
@@ -44,10 +46,11 @@ public class Lek {
 		this.sastav = sastav;
 		this.sifreZamenskihLekova = sifreZamenskihLekova;
 		this.dodatneNapomene = dodatneNapomene;
+		this.sifreZamenskihLekova = new HashSet<String>();
 	}
 
 	public Lek() {
-
+		this.sifreZamenskihLekova = new HashSet<String>();
 	}
 
 	public Lek(LekDTO lek) {
@@ -58,6 +61,7 @@ public class Lek {
 		this.oblikLeka = lek.getOblikLeka();
 		this.sastav = lek.getSastav();
 		this.dodatneNapomene = lek.getDodatneNapomene();
+		this.sifreZamenskihLekova = new HashSet<String>();
 	}
 	// getters and setters
 	public String getSifra() {

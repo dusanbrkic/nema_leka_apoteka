@@ -11,16 +11,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 
-	Apoteka findOneById(String Id);
+	Apoteka findOneById(Long Id);
 	
 	List<Apoteka> findAll();
 	
 	Page<Apoteka> findAll(Pageable pageable);
 	
 	Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable);
+
+	
 }

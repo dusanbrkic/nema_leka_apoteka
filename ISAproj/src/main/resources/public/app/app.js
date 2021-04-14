@@ -1,6 +1,5 @@
 const Navbar  = { template: '<Navbar></Navbar>'}
 const MainMenu  = { template: '<MainMenu></MainMenu>'}
-
 const HelloWorld = {template : '<HelloWorld></HelloWorld>'}
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
@@ -13,11 +12,14 @@ const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
 const CalendarView = {template: '<CalendarView></CalendarView>'}
 
+const DodajLekAdmin = {template: '<DodajLekAdmin></DodajLekAdmin>'}
+const PretragaLekAdmin = {template: '<PretragaLekAdmin></PretragaLekAdmin>'}
+const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
 const router = new VueRouter({
     mode : 'hash',
     routes : [
         {path: '/', component: MainMenu },
-        {path: '/helloWorld', component: HelloWorld },
+        {path: '/helloWorld', component: HelloWorld},
         {path: '/apoteke', component: Apoteke},
         {path: '/apoteka/:id', component: Apoteka},
         {path: '/login', component: Login},
@@ -27,7 +29,10 @@ const router = new VueRouter({
         {path: '/home-pacijent', component : HomePacijent},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
         {path: '/lekovi', component: Lekovi},
-        {path: '/calendar-view', component : CalendarView}
+        {path: '/calendar-view', component : CalendarView},
+        {path: '/dodaj-lek-admin', component: DodajLekAdmin},
+        {path: '/pretraga-lek-admin', component: PretragaLekAdmin},
+        {path: '/admin-apoteke-lozinka', component: LozinkaAdmin}
     ]
 });
 

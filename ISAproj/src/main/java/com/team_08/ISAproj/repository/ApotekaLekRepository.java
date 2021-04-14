@@ -15,9 +15,9 @@ import com.team_08.ISAproj.model.Lek;
 public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
 	ApotekaLek findOneById(String Id);
 	
+	Page<ApotekaLek> findAllByApotekaId(Long ApotekaId, Pageable pageable);
+	
 	List<ApotekaLek> findAllByApotekaId(Long ApotekaId);
-	
-	
 	List<ApotekaLek> findAll();
 	
 	Page<ApotekaLek> findAll(Pageable pageable);

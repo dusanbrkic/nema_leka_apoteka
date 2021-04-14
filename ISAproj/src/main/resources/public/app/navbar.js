@@ -11,25 +11,25 @@ Vue.component("Navbar", {
   template: `
     <div>
 
+
+<!--
       <div class="jumbotron">
         <div class="container text-center">
-          <h1>Apoteka</h1>      
+          <h2>Apoteka</h2>      
           <p>Lekovi, preparati i konsultacije sa doktorima</p>
         </div>
       </div>
-
-
-
+-->
       <nav class="navbar navbar-expand-lg navbar-inverse">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Logo</a>
+        <img src="https://i.imgur.com/yejUCIT.png" alt="Logo">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
             <ul class="nav navbar-nav">
-                <li class="active"><a><div>  Početna strana</div></a></li>
+                <li class="active"><a><div>Početna strana</div></a></li>
                 <li><a><div v-on:click="redirectToApoteke">       Apoteke       </div></a></li>
                 <li><a><div v-on:click="redirectToLekovi">    Lekovi        </div></a></li>
                 <li><a><div>                                      Kontakt        </div></a></li>

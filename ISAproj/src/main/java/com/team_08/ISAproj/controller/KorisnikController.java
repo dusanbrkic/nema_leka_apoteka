@@ -23,6 +23,27 @@ public class KorisnikController {
     @Autowired
     private KorisnikService korisnikService;
 
+    
+    //change password
+    @PutMapping(value = "/updatePass", consumes = "application/json",produces = "application/json")
+    public ResponseEntity<KorisnikDTO> changePassUser(@RequestBody KorisnikDTO korisnikDTO) throws Exception {
+    	Korisnik k = korisnikService.findUserByToken(korisnikDTO.getCookie());
+        if(k == null) {
+        	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    	if(k.getPassword().equals(korisnikDTO.getPassword())) {
+    		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    	}
+    	String ck = CookieToken.createTokenValue(korisnikDTO.getUsername(), korisnikDTO.getPassword());
+    	System.out.println(ck);
+    	korisnikDTO.setCookie(ck);
+    	korisnikDTO.setFirstLogin(false);
+        k.setFirstLogin(false);
+        k.updateUser(korisnikDTO);
+        korisnikService.saveUser(k);
+        return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
+    }
+    
     @GetMapping(value = "/loginUser", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CookieRoleDTO> loginUser(@RequestParam("username") String username,
                                                    @RequestParam("password") String password){
@@ -33,14 +54,14 @@ public class KorisnikController {
         }
         if(k.getPassword().equals(password)){
             String ck = CookieToken.createTokenValue(username, password);
-            k.setCookieToken(ck);
+            k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
             if(k instanceof Pacijent) korisnickaRola = KorisnickaRola.PACIJENT;
             else if(k instanceof Dermatolog) korisnickaRola = KorisnickaRola.DERMATOLOG;
             else if(k instanceof Farmaceut) korisnickaRola = KorisnickaRola.FARMACEUT;
             else if(k instanceof AdminApoteke) korisnickaRola = KorisnickaRola.ADMIN_APOTEKE;
-            CookieRoleDTO cookieRoleDTO = new CookieRoleDTO(ck, korisnickaRola);
+            CookieRoleDTO cookieRoleDTO = new CookieRoleDTO(ck, korisnickaRola,k.getFirstLogin());
             return new ResponseEntity<CookieRoleDTO>(cookieRoleDTO, HttpStatus.OK);
         }
 
@@ -69,6 +90,7 @@ public class KorisnikController {
     	k.setIme(korisnikDTO.getIme());
         k.setPrezime(korisnikDTO.getPrezime());
         k.setDatumRodjenja(korisnikDTO.getDatumRodjenja());
+        k.updateUser(korisnikDTO);
         korisnikService.saveUser(k);
         return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
     }

@@ -21,7 +21,7 @@ insert into apoteka (id,adresa,naziv,opis,prosecna_ocena) values (nextval('apote
 
 insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni) values (nextval('korisnik_seq'),'token','10.3.1999','mojEmail@gmail.com','Dusan','dule','Hajduk','dule',0,10)
 
-insert into admin_apoteke (id,username,password,ime,prezime,email_adresa,apoteka_id) values (nextval('korisnik_seq'),'nikola','nikola','Nikola','Petrovic','nikola@gmail.com',1)
+insert into admin_apoteke (id,username,password,ime,prezime,email_adresa,first_login, apoteka_id) values (nextval('korisnik_seq'),'nikola','nikola','Nikola','Petrovic','nikola@gmail.com','true',1)
 
 insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'100','10','50','1','1')
 insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'500','33','450','1','2')

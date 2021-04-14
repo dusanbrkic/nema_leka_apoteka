@@ -13,7 +13,10 @@ import com.team_08.ISAproj.repository.ApotekaLekRepository;
 import com.team_08.ISAproj.repository.ApotekaRepository;
 import com.team_08.ISAproj.repository.LekRepository;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,20 +29,30 @@ public class LekService {
 	@Autowired
 	private ApotekaRepository apotekaRepository;
 	
-    public void saveLekApoteka(LekDTO lekDTO,String ApotekaID) {
-    	Lek l = new Lek(lekDTO);
-    	Apoteka a = apotekaRepository.findOneById(ApotekaID);
+    public Boolean saveLekApoteka(LekDTO lekDTO,String ApotekaID) {
+    	Lek l = lekRepository.findOneBySifra(lekDTO.getSifra());
+    	System.out.println("====================================================================");
+    	if(l != null) {
+    		return false;
+    	}
+    	l = new Lek(lekDTO);
+    	Apoteka a = apotekaRepository.findOneById(Long.parseLong(ApotekaID));
     	ApotekaLek al = new ApotekaLek();
     	al.setLek(l);
     	al.setApoteka(a);
     	al.setCena(lekDTO.getCena());
     	al.setKolicina(lekDTO.getKolicina());
-    	al.setStaraCena(lekDTO.getStaraCena());
-    	al.setIstekVazenjaCene(lekDTO.getIstekVazenjaCene());
-    	a.getLekovi().add(al);
+    	al.setStaraCena(lekDTO.getCena());
+    	al.setIstekVazenjaCene(null);
+
     	lekRepository.save(l);
+//    	apotekaRepository.save(a);
     	apotekaLekRepository.save(al);
-    	apotekaRepository.save(a);
+    	return true;
 
     }
+
+	public Page<Lek> findAll(Pageable paging) {
+		return lekRepository.findAll(paging);
+	}
 }

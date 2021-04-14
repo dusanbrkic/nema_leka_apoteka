@@ -1,53 +1,84 @@
 Vue.component("Apoteka", {
     data() {
     	
-        return { apoteke: 'Ne postoji apoteka sa ovim id'} 
+        return {
+         apoteka: {
+         	id: "",
+         	naziv: "",
+         	adresa: "",
+         	prosecnaOcena: "",
+         	opis: "",
+         	dermatolozi: "",
+         	farmaceuti: "",
+         	lekovi: ""
+         	
+         }
+         
+         
+         } 
 
     },
       mounted () {
       	this.loadApoteka(this.$route.params.id);
   	},
     template: `
-    	<div>
-    	<table>
-    		<tr>
-    			<th>id</th>
-    			<th>naziv</th> 
-    			<th>adresa</th>
-    			<th>prosecna ocena</th>
-    			<th>opis</th>
-    			<th>dermatolozi</th>
-    			<th>farmaceuti</th>
-    		</tr>
-    		<tr>
-    			<td>{{apoteke.id}}</td>
-    			<td>{{apoteke.naziv}}</td>
-    			<td>{{apoteke.adresa}}</td>
-    			<td>{{apoteke.prosecnaOcena}}</td>
-    			<td>{{apoteke.opis}}</td>
-    			<td>{{apoteke.dermatolozi}}</td>
-    			<td>{{apoteke.farmaceuti}}</td>
-    			
-    		</tr>
-    	</table>
-   	  	<div>
-        	<button v-on:click="redirectToHome">Home Page</button>
-      	</div>
+		<div>
+	      <div class="container">
+	        <h2>Izmena podataka apoteke</h2>
+	        <form @submit.prevent="saveApoteka">
+	
+	          <div class="form-group">
+	            <label for="username">Naziv:</label>
+	            <input type="text" class="form-control" id="naziv" v-model="apoteka.naziv">
+	          </div>
+	
+	          <div class="form-group">
+	            <label for="ime">Adresa:</label>
+	            <input type="text" class="form-control" id="adresa" v-model="apoteka.adresa">
+	          </div>
+	
+	          <div class="form-group">
+	            <label for="prezime">Prosecna ocena:</label>
+	            <input type="text" class="form-control" id="prosecnaOcena" v-model="apoteka.prosecnaOcena">
+	          </div>
+	
+	          <div class="form-group">
+	            <label for="datumRodjenja">Opis:</label>
+	            <input type="text" class="form-control" id="opis" v-model="apoteka.opis">
+	          </div>
+	          <input type="button" v-on:click="redirectToHome" value="Back To Home">
+	          <input type="submit" v-on:submit="saveApoteka" value="Save information">
+	        </form>
+      </div>
+
+
       </div>
     `
     ,
     methods: {
+    	loadLekoveApoteka: function(){
+    		let info = {
+                params: {
+                    "apotekaID": this.apoteka.id
+                }
+            }
+    		console.log(this.apoteka.id + "asda");
+    		axios.get("apoteke/basic/",info).then(response => this.apoteka.lekovi = response.data)
+    	},
+    	saveApoteka: function(){
+    	
+    	},
     	loadApoteka(id){
     		axios.get("apoteke/" + id)
       		.then(response => {
-      		(this.apoteke = response.data)
-      		console.log(this.apoteke);
-      		
+      		(this.apoteka = response.data)
+      		console.log(this.apoteka.id);
+      		this.loadLekoveApoteka();
       		})
       		
 		},
 		redirectToHome: function () {
-            app.$router.push("/")
+            app.$router.push("/home-admin_apoteke")
         }
 	}
 });

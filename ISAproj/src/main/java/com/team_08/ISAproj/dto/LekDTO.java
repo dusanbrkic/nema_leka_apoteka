@@ -20,6 +20,7 @@ public class LekDTO {
 	private Double cena;
 	private Date istekVazenjaCene;
 	private Double staraCena;
+	private String cookie;
 	public LekDTO() {
 		
 	}
@@ -34,6 +35,12 @@ public class LekDTO {
 	}
 	
 	
+	public String getCookie() {
+		return cookie;
+	}
+	public void setCookie(String cookie) {
+		this.cookie = cookie;
+	}
 	public Integer getKolicina() {
 		return kolicina;
 	}

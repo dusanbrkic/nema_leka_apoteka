@@ -15,6 +15,7 @@ public class KorisnikDTO {
 	private Date datumRodjenja;
 	private String emailAdresa;
 	private String cookie;
+	private Boolean firstLogin;
 	public KorisnikDTO() {
 		
 	}
@@ -27,6 +28,7 @@ public class KorisnikDTO {
 		this.datumRodjenja = k.getDatumRodjenja();
 		this.emailAdresa = k.getEmailAdresa();
 		this.cookie = k.getCookieToken();
+		this.firstLogin = k.getFirstLogin();
 	}
 	public KorisnikDTO(String username, String password, String ime, String prezime, Date datumRodjenja,
 			String emailAdresa, String cookie) {
@@ -38,6 +40,13 @@ public class KorisnikDTO {
 		this.datumRodjenja = datumRodjenja;
 		this.emailAdresa = emailAdresa;
 		this.cookie = cookie;
+	}
+	
+	public Boolean getFirstLogin() {
+		return firstLogin;
+	}
+	public void setFirstLogin(Boolean firstLogin) {
+		this.firstLogin = firstLogin;
 	}
 	public String getUsername() {
 		return username;
@@ -79,8 +88,8 @@ public class KorisnikDTO {
 	public String getCookie() {
 		return cookie;
 	}
-
 	public void setCookie(String cookie) {
 		this.cookie = cookie;
 	}
+
 }

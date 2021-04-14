@@ -27,14 +27,13 @@ public class ApotekaLekService {
 	public ApotekaLek findOne(Long id) {
 		return apotekaLekRepository.findById(id).orElseGet(null);
 	}
-	
+	public Page<ApotekaLek> findOneByApoteka(Long id,Pageable pageable) {
+		return apotekaLekRepository.findAllByApotekaId(id, pageable);
+	}
 	public List<ApotekaLek> findOneByApoteka(Long id) {
 		return apotekaLekRepository.findAllByApotekaId(id);
 	}
 	public Apoteka create(ApotekaLekRepository apotekaLek) {
-		//Long id = apotekaLek.getId();
-		
-		//Apoteka tempApoteka = apotekaRepository.create(apoteka);
 		return null;
 	}
 	

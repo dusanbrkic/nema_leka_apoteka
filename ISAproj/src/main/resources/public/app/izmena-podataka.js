@@ -10,14 +10,16 @@ Vue.component("IzmenaPodataka", {
                 "datumRodjenja": "",
                 "emailAdresa": "",
                 "cookie": "",
+                "firstLogin": ""
             },
             userRole: ""
         };
     },
     mounted() {
-        this.cookie = localStorage.getItem("cookie");
-        this.userRole = localStorage.getItem("userRole");
-        this.loadUserInfo()
+    	this.userRole = localStorage.getItem("userRole");
+    	this.cookie = localStorage.getItem("cookie");
+        this.loadUserInfo();
+        
     },
     template: `
       <div>
@@ -50,10 +52,9 @@ Vue.component("IzmenaPodataka", {
             <label for="emailAdresa">Email:</label>
             <input type="text" class="form-control" id="email" v-model="korisnik.emailAdresa" readonly>
           </div>
-
           <input type="button" v-on:click="redirectToHome" value="Back To Home">
+          <input type="button" v-on:click="redirectToChangePass" value="Change Password">
           <input type="submit" v-on:submit="saveUserInfo" value="Save information">
-
         </form>
       </div>
 
@@ -67,6 +68,7 @@ Vue.component("IzmenaPodataka", {
                     "cookie": this.cookie
                 }
             }
+            
             axios
                 .get("korisnici/infoUser", cookie)
                 .then((response) => {
@@ -87,7 +89,9 @@ Vue.component("IzmenaPodataka", {
                 app.$router.push("/")
             }
         },
-
+		redirectToChangePass: function(){
+			app.$router.push("/admin-apoteke-lozinka")
+		},
         saveUserInfo: function () {
             axios
                 .put("korisnici/updateUser", this.korisnik)

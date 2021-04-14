@@ -30,6 +30,8 @@ import com.team_08.ISAproj.service.LekService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,6 +67,37 @@ public class LekController {
 //        }
 //        return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
 //    }
+	
+	
+	@GetMapping(value="/sviLek" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> getSviLekovi(
+			@RequestParam(required = false) String title,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "6") int size)
+    {
+		try {
+	    	Pageable paging = PageRequest.of(page, size);
+	    	
+	    	Page<Lek> lekovi;
+	    	lekovi = lekService.findAll(paging);
+	
+			List<LekDTO> lekoviDTO = new ArrayList<LekDTO>();
+			for (Lek a : lekovi) {
+				lekoviDTO.add(new LekDTO(a));
+			}
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("lekovi", lekovi);
+			response.put("currentPage", lekovi.getNumber());
+			response.put("totalItems", lekovi.getTotalElements());
+			response.put("totalPages", lekovi.getTotalPages());
+			
+			
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	@GetMapping("")
 	public ResponseEntity<Map<String, Object>> getLekovi(
 			@RequestParam(required = false) String title,
@@ -97,32 +130,75 @@ public class LekController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LekDTO>> getLekApoteka(@PathVariable("id") Long id) {
-		List<ApotekaLek> apotekaLekovi = apotekaLekService.findOneByApoteka(id);
-		if(apotekaLekovi == null) {
-			return new ResponseEntity<List<LekDTO>>(HttpStatus.NOT_FOUND);
+	@GetMapping(value="/aa" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> getLekApoteka(@RequestParam(required = false) String title,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "6") int size, 
+			@RequestParam String apotekaID,
+	        @RequestParam(defaultValue = "naziv") String sort,
+	        @RequestParam(defaultValue = "opadajuce") String smer) {
+		
+		List<Order> orders = new ArrayList<Order>();
+		
+    	Pageable paging = PageRequest.of(page, size);
+    	
+    	Page<ApotekaLek> apotekeLekovi;
+    	apotekeLekovi = apotekaLekService.findOneByApoteka(Long.parseLong(apotekaID),paging);
+		if(apotekeLekovi == null) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		List<LekDTO> lekovi = new ArrayList<LekDTO>();
+		for (ApotekaLek a : apotekeLekovi) {
+			if(title.equals("")) {
+				lekovi.add(new LekDTO(a.getLek()));
+			}else{
+				if(a.getLek().getNaziv().contains(title)) {
+					lekovi.add(new LekDTO(a.getLek()));
+				}
+			}
+
+		}
+		Map<String, Object> response = new HashMap<>();
+		response.put("lekovi", lekovi);
+		response.put("currentPage", apotekeLekovi.getNumber());
+		response.put("totalItems", apotekeLekovi.getTotalElements());
+		response.put("totalPages", apotekeLekovi.getTotalPages());
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	@GetMapping(value="/basic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LekDTO>> getLekApoteka(@RequestParam String apotekaID) {
+    	
+    	List<ApotekaLek> apotekeLekovi = apotekaLekService.findOneByApoteka(Long.parseLong(apotekaID));
+		if(apotekeLekovi == null) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		List<LekDTO> lekovi = new ArrayList<LekDTO>();
-		for (ApotekaLek al : apotekaLekovi) {
-			//lekovi.add(al.getLek());
-			lekovi.add(new LekDTO(al.getLek()));
+		for (ApotekaLek a : apotekeLekovi) {
+			lekovi.add(new LekDTO(a.getLek()));
 		}
 		return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
 	}
+	//dodavanje leka
 	@PostMapping(consumes = "application/json")
-	public ResponseEntity<LekDTO> saveLek(@RequestBody LekDTO lekDTO, @RequestParam("cookie") String cookie){
-		Korisnik k = korisnikService.findUserByToken(cookie);
+	public ResponseEntity<LekDTO> saveLek(@RequestBody LekDTO lekDTO){
+//		System.out.print(lekDTO.getCookie());
+		Korisnik k = korisnikService.findUserByToken(lekDTO.getCookie());
 		if(k == null) {
 			return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
 		}
-        if(k instanceof AdminApoteke) {
-        	AdminApoteke aa = (AdminApoteke) k;
-        	lekService.saveLekApoteka(lekDTO,aa.getApoteka().getId().toString());
-        	
-        	return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.OK);
-        }
+		if(k instanceof AdminApoteke) {
+    	
+			AdminApoteke aa = (AdminApoteke) k;
+    	
+			Boolean check = lekService.saveLekApoteka(lekDTO,aa.getApoteka().getId().toString());
+			System.out.println(check);
+			if(check) {
+				return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.CREATED);
+			}
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+		}
 		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
-	
+
 	}
 }
