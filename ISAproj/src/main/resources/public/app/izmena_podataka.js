@@ -42,7 +42,7 @@ Vue.component("IzmenaPodataka", {
 
           <div class="form-group">
             <label for="datumRodjenja">Datum rođenja:</label>
-            <label for="datumRodjenja">{{ moment(String(korisnik.datumRodjenja)).format('MM/DD/YYYY') }}</label>
+            <label for="datumRodjenja">{{ moment(String(korisnik.datumRodjenja)).format('DD/MM/YYYY') }}</label>
             <input type="date" class="form-control" id="datumRodjenja" v-model="korisnik.datumRodjenja">
           </div>
 

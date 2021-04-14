@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.service;
 
+import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.repository.DermatologRepository;
@@ -16,10 +17,9 @@ public class PregledService {
     @Autowired
     private DermatologRepository dermatologRepository;
 
-    public List<Pregled> findAllByDermatolog(String cookie) {
+    public List<Pregled> findAllByDermatolog(String cookie) throws CookieNotValidException {
         Dermatolog d = (Dermatolog) dermatologRepository.findOneByCookieTokenValue(cookie);
-        System.out.println("NADJO " + d.getUsername());
-        if (d==null) return null;
+        if (d==null) throw new CookieNotValidException();
         List<Pregled> retVal = pregledRepository.findAllByDermatolog_id(d.getId());
         return retVal;
     }

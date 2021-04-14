@@ -19,7 +19,7 @@ insert into apoteka (id,adresa,naziv,opis,prosecna_ocena) values (nextval('apote
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena) values (nextval('apoteka_seq'),'Zmaj Jovina 45, Sid','Apoteka Zmaj','opis apoteke',4.8)
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena) values (nextval('apoteka_seq'),'Matije Grupca 35, Novi Sad','Apoteka Antic','opis apoteke',3.2)
 
-insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni) values (nextval('korisnik_seq'),'token','10.3.1999','mojEmail@gmail.com','dule','dule','dudulic','dule',0,10)
+insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni) values (nextval('korisnik_seq'),'token','10.3.1999','mojEmail@gmail.com','Dusan','dule','Hajduk','dule',0,10)
 
 insert into admin_apoteke (id,username,password,ime,prezime,email_adresa,apoteka_id) values (nextval('korisnik_seq'),'nikola','nikola','Nikola','Petrovic','nikola@gmail.com',1)
 
@@ -42,7 +42,14 @@ insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (
 
 --insert into dermatolog_apoteka(id,cena,radno_vreme_kraj,radno_vreme_pocetak,apoteka_id,dermatolog_id) values (1,100.0,'2008-01-01 00:00:01','2008-01-01 00:00:01',1,1)
 
-insert into pregled (id, cena, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, dermatolog_id, pacijent_id) values (nextval('pregled_seq'), '100', 'Bude ga noci sajgonske.', '2021-04-13 12:00:01', false, null, '2021-04-13 11:45:01', '1', '1', '2')
-
+insert into pregled (id, cena, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, dermatolog_id, pacijent_id) values (nextval('pregled_seq'), '2500', 'Bude ga noci sajgonske.', '2021-04-13T12:00:01.0', true, 600000, '2021-04-13T11:45:01.0', '1', '1', '2')
 insert into pregled_preporuceni_lekovi (pregled_id, preporuceni_lekovi_id) values ('1', '1')
 insert into pregled_preporuceni_lekovi (pregled_id, preporuceni_lekovi_id) values ('1', '2')
+
+insert into pregled (id, cena, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, dermatolog_id, pacijent_id) values (nextval('pregled_seq'), '3500', 'Pacijent ima vijetnamski sindrom.', '2021-04-13T13:00:01.0', true, 660000, '2021-04-13T12:45:01.0', '3', '1', '2')
+insert into pregled_preporuceni_lekovi (pregled_id, preporuceni_lekovi_id) values ('2', '3')
+insert into pregled_preporuceni_lekovi (pregled_id, preporuceni_lekovi_id) values ('2', '4')
+
+insert into pregled (id, cena, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, dermatolog_id, pacijent_id) values (nextval('pregled_seq'), '1200', '', '2021-04-12T13:00:01.0', false, 0, '2021-04-12T12:45:01.0', '4', '1', '2')
+insert into pregled (id, cena, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, dermatolog_id, pacijent_id) values (nextval('pregled_seq'), '7000', '', '2021-04-15T13:15:01.0', false, 0, '2021-04-15T12:45:01.0', '4', '1', '2')
+insert into pregled (id, cena, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, dermatolog_id, pacijent_id) values (nextval('pregled_seq'), '1999', '', '2021-04-16T13:00:01.0', false, 0, '2021-04-16T11:45:01.0', '1', '1', '2')

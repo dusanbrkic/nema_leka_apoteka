@@ -4,16 +4,19 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.team_08.ISAproj.model.*;
 
 import java.sql.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 public class PregledDTO {
     private Long id;
-    private Date start;
+    private LocalDateTime start;
     private Double cena;
-    private Date end;
+    private LocalDateTime end;
     private String dijagnoza;
     private boolean pregledObavljen;
+    private Long trajanje;
 
     // connections
     private KorisnikDTO pacijent;
@@ -29,6 +32,7 @@ public class PregledDTO {
         this.pregledObavljen = pregled.isPregledObavljen();
         this.pacijent = new KorisnikDTO(pregled.getPacijent());
         this.apoteka = new ApotekaDTO(pregled.getApoteka());
+        this.trajanje = pregled.getTrajanje();
         this.preporuceniLekovi = new HashSet<LekDTO>();
         for (Lek l : pregled.getPreporuceniLekovi())
             this.preporuceniLekovi.add(new LekDTO(l));
@@ -42,11 +46,11 @@ public class PregledDTO {
         this.id = id;
     }
 
-    public Date getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(LocalDateTime start) {
         this.start = start;
     }
 
@@ -58,11 +62,11 @@ public class PregledDTO {
         this.cena = cena;
     }
 
-    public Date getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(LocalDateTime end) {
         this.end = end;
     }
 
@@ -104,5 +108,13 @@ public class PregledDTO {
 
     public void setPreporuceniLekovi(Set<LekDTO> preporuceniLekovi) {
         this.preporuceniLekovi = preporuceniLekovi;
+    }
+
+    public long getTrajanje() {
+        return trajanje;
+    }
+
+    public void setTrajanje(Long trajanje) {
+        this.trajanje = trajanje;
     }
 }
