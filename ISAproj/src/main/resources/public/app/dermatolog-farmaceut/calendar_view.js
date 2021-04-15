@@ -1,8 +1,8 @@
 Vue.component("CalendarView", {
     data: function () {
         return {
-            cookie: "dusan-dusan",
-            rola: "DERMATOLOG",
+            cookie: "",
+            rola: "",
             invalidCookie: false,
             calendar: null,
             selectedEvent: {
@@ -22,8 +22,8 @@ Vue.component("CalendarView", {
     },
 
     mounted() {
-        // this.cookie = localStorage.getItem("cookie")
-        // this.rola = localStorage.getItem("userRole")
+        this.cookie = localStorage.getItem("cookie")
+        this.rola = localStorage.getItem("userRole")
         let calendarEl = document.getElementById('calendar');
         let that = this
         let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -66,7 +66,7 @@ Vue.component("CalendarView", {
     template:
         `
           <div>
-          <link rel="stylesheet" href="css/calendar_view.css" type="text/css">
+          <link rel="stylesheet" href="css/dermatolog-farmaceut/calendar_view.css" type="text/css">
           <b-alert style="text-align: center;" v-model="invalidCookie" variant="danger">Nisi ulogovan kao
             dermatolog/farmaceut!
           </b-alert>

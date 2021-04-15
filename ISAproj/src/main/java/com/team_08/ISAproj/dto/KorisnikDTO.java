@@ -2,8 +2,6 @@ package com.team_08.ISAproj.dto;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-
 import com.team_08.ISAproj.model.Korisnik;
 
 public class KorisnikDTO {

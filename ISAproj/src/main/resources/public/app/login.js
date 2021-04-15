@@ -16,8 +16,7 @@ Vue.component("Login", {
       <link rel="stylesheet" href="css/login.css" type="text/css">
       <b-alert style="text-align: center;" v-model="wrongUsername" variant="danger">Wrong Username!</b-alert>
       <b-alert style="text-align: center;" v-model="wrongPassword" variant="danger">Wrong Password!</b-alert>
-      <div id="login-div" style="max-width: 40rem; text-align: center; margin: auto;" class="mt-5">
-        <b-card title="Log in">
+        <b-card title="Log in" id="login_screen">
           <b-form @submit.prevent="login">
             <b-form-input required type="text" v-model="username" placeholder="Enter Username"/>
             <b-form-input required type="password" v-model="password" placeholder="Enter Password"/>
@@ -27,7 +26,6 @@ Vue.component("Login", {
             </div>
           </b-form>
         </b-card>
-      </div>
       </div>
     `
     ,
@@ -68,13 +66,13 @@ Vue.component("Login", {
             } else if (this.userRole === "FARMACEUT") {
                 app.$router.push("/home-farmaceut")
             } else if (this.userRole === "ADMIN_APOTEKE") {
-           
+
             	if(this.firstLogin){
             		app.$router.push("/admin-apoteke-lozinka")
             	}else{
             		app.$router.push("/home-admin_apoteke")
             	}
-                
+
             }
         }
 

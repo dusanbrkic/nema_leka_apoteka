@@ -1,4 +1,4 @@
-insert into dermatolog (id, username, password, ime, prezime, email_adresa, token) values (nextval('korisnik_seq'), 'dusan', 'dusan', 'Dusan', 'Brkic', 'dusanbrk@gmail.com', 'dusan-dusan')
+insert into dermatolog (id, username, password, ime, prezime, email_adresa, token, first_login) values (nextval('korisnik_seq'), 'dusan', 'dusan', 'Dusan', 'Brkic', 'dusanbrk@gmail.com', 'dusan-dusan', false)
 
 insert into lek (id,naziv,sastav,sifra,uputstvo) values (nextval('lek_seq'),'Brufen','bazinga 2mg','1','Piti jednom dnevno posle obroka')
 insert into lek (id,naziv,sastav,sifra,uputstvo) values (nextval('lek_seq'),'Strepsils','lozenga 1.2mg+o.6mg, blister 2X8kom','2','Max 3 puta dnevno')
