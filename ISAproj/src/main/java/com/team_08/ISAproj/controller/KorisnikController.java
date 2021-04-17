@@ -82,7 +82,7 @@ public class KorisnikController {
     }
     //update user Info
     @PutMapping(value = "/updateUser", consumes = "application/json",produces = "application/json")
-    public ResponseEntity<KorisnikDTO> updateUser(@RequestBody KorisnikDTO korisnikDTO) throws Exception {
+    public ResponseEntity<String> updateUser(@RequestBody KorisnikDTO korisnikDTO) throws Exception {
     	Korisnik k = korisnikService.findUserByToken(korisnikDTO.getCookie());
         if(k == null) {
         	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -92,7 +92,7 @@ public class KorisnikController {
         k.setDatumRodjenja(korisnikDTO.getDatumRodjenja());
         k.updateUser(korisnikDTO);
         korisnikService.saveUser(k);
-        return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
+        return new ResponseEntity<>("User successfully updated",HttpStatus.OK);
     }
     
 

@@ -10,55 +10,111 @@ Vue.component("IzmenaPodataka", {
                 "datumRodjenja": "",
                 "emailAdresa": "",
                 "cookie": "",
-                "firstLogin": ""
+                "firstLogin": "",
+                "adresa": "",
+                "grad": "",
+                "drzava": "",
+                "brojTelefona": "",
+            },
+            forma: {
+                "username": "",
+                "password": "",
+                "ime": "",
+                "prezime": "",
+                "datumRodjenja": "",
+                "emailAdresa": "",
+                "cookie": "",
+                "firstLogin": "",
+                "adresa": "",
+                "grad": "",
+                "drzava": "",
+                "brojTelefona": "",
             },
             userRole: ""
         };
     },
     mounted() {
-    	this.userRole = localStorage.getItem("userRole");
-    	this.cookie = localStorage.getItem("cookie");
+        this.userRole = localStorage.getItem("userRole");
+        this.cookie = localStorage.getItem("cookie");
         this.loadUserInfo();
-        
+
     },
     template: `
       <div>
-      <div class="container">
-        <h2>Moj Nalog</h2>
-        <form @submit.prevent="saveUserInfo">
-
-          <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" class="form-control" id="username" v-model="korisnik.username" readonly>
-          </div>
-
-          <div class="form-group">
-            <label for="ime">Ime:</label>
-            <input type="text" class="form-control" id="ime" v-model="korisnik.ime">
-          </div>
-
-          <div class="form-group">
-            <label for="prezime">Prezime:</label>
-            <input type="text" class="form-control" id="prezime" v-model="korisnik.prezime">
-          </div>
-
-          <div class="form-group">
-            <label for="datumRodjenja">Datum rođenja:</label>
-            <label for="datumRodjenja">{{ moment(String(korisnik.datumRodjenja)).format('DD/MM/YYYY') }}</label>
-            <input type="date" class="form-control" id="datumRodjenja" v-model="korisnik.datumRodjenja">
-          </div>
-
-          <div class="form-group">
-            <label for="emailAdresa">Email:</label>
-            <input type="text" class="form-control" id="email" v-model="korisnik.emailAdresa" readonly>
-          </div>
-          <input type="button" v-on:click="redirectToHome" value="Back To Home">
-          <input type="button" v-on:click="redirectToChangePass" value="Change Password">
-          <input type="submit" v-on:submit="saveUserInfo" value="Save information">
-        </form>
-      </div>
-
-
+      <b-card style="max-width: 500px; margin: 30px auto;" title="Moj Nalog">
+        <b-form @submit.prevent="onSubmit" @reset="onReset">
+          <b-form-group
+              id="input-group-1"
+              label="Email address:"
+              label-for="input-1"
+              description="Nije dozvoljeno menjanje E-mail-a">
+            <b-form-input
+                id="input-1"
+                v-model="forma.emailAdresa"
+                type="email"
+                readonly
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group
+              id="input-group-2"
+              label="Korisnicko ime:"
+              label-for="input-2"
+              description="Nije dozvoljeno menjanje korisnickog imena">
+            <b-form-input
+                id="input-2"
+                v-model="forma.username"
+                readonly
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-3" label="Ime:" label-for="input-3">
+            <b-form-input
+                id="input-3"
+                v-model="forma.ime"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-4" label="Prezime:" label-for="input-4">
+            <b-form-input
+                id="input-4"
+                v-model="forma.prezime"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-5" label="Datum rodjenja:" label-for="input-5">
+            <b-form-input
+                id="input-5"
+                type="date"
+                v-model="forma.datumRodjenja"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-6" label="Adresa:" label-for="input-6">
+            <b-form-input
+                id="input-6"
+                v-model="forma.adresa"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-7" label="Grad:" label-for="input-7">
+            <b-form-input
+                id="input-7"
+                v-model="forma.grad"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-8" label="Drzava:" label-for="input-8">
+            <b-form-input
+                id="input-8"
+                v-model="forma.drzava"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-9" label="Broj telefona:" label-for="input-9">
+            <b-form-input
+                id="input-9"
+                v-model="forma.brojTelefona"
+            ></b-form-input>
+          </b-form-group>
+          <b-button v-on:click="returnToHome">Nazad</b-button>
+          <b-button type="submit" variant="primary">Sacuvaj</b-button>
+          <b-button type="reset" variant="danger">Resetuj</b-button>
+          <b-button style="float: right" variant="danger" v-on:click="onChangePass">Promeni sifru</b-button>
+        </b-form>
+      </b-card>
       </div>
     `,
     methods: {
@@ -68,14 +124,20 @@ Vue.component("IzmenaPodataka", {
                     "cookie": this.cookie
                 }
             }
-            
+
             axios
                 .get("korisnici/infoUser", cookie)
                 .then((response) => {
                     this.korisnik = response.data
+                    this.korisnik.datumRodjenja = this.fixDate(this.korisnik.datumRodjenja)
+                    this.forma = JSON.parse(JSON.stringify(this.korisnik))
                 })
         },
-        redirectToHome: function () {
+        onReset: function (event) {
+            event.preventDefault()
+            this.forma = JSON.parse(JSON.stringify(this.korisnik))
+        },
+        returnToHome: function () {
             if (this.userRole === "PACIJENT") {
                 app.$router.push("/home-pacijent")
             } else if (this.userRole === "DERMATOLOG") {
@@ -89,13 +151,19 @@ Vue.component("IzmenaPodataka", {
                 app.$router.push("/")
             }
         },
-		redirectToChangePass: function(){
-			app.$router.push("/admin-apoteke-lozinka")
-		},
-        saveUserInfo: function () {
+        onChangePass: function (event) {
+            event.preventDefault()
+            app.$router.push("/admin-apoteke-lozinka")
+        },
+        onSubmit: function (event) {
+            event.preventDefault()
+            this.forma.datumRodjenja = this.fixDate(this.forma.datumRodjenja)
+            this.korisnik = JSON.parse(JSON.stringify(this.forma))
             axios
                 .put("korisnici/updateUser", this.korisnik)
-                .then((response) => (this.korisnik = response.data))
+        },
+        fixDate: function (date){
+            return moment(date).format('YYYY-MM-DD')
         }
     },
 });

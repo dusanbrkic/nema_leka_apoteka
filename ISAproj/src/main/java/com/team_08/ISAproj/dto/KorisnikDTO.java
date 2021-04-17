@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.team_08.ISAproj.model.Korisnik;
 
+
 public class KorisnikDTO {
 
 	private String username;
@@ -14,6 +15,11 @@ public class KorisnikDTO {
 	private String emailAdresa;
 	private String cookie;
 	private Boolean firstLogin;
+	private String adresa;
+	private String grad;
+	private String drzava;
+	private String brojTelefona;
+
 	public KorisnikDTO() {
 		
 	}
@@ -27,6 +33,10 @@ public class KorisnikDTO {
 		this.emailAdresa = k.getEmailAdresa();
 		this.cookie = k.getCookieToken();
 		this.firstLogin = k.getFirstLogin();
+		this.adresa = k.getAdresa();
+		this.grad = k.getGrad();
+		this.drzava = k.getDrzava();
+		this.brojTelefona = k.getBrojTelefona();
 	}
 	public KorisnikDTO(String username, String password, String ime, String prezime, Date datumRodjenja,
 			String emailAdresa, String cookie) {
@@ -39,7 +49,39 @@ public class KorisnikDTO {
 		this.emailAdresa = emailAdresa;
 		this.cookie = cookie;
 	}
-	
+
+	public String getAdresa() {
+		return adresa;
+	}
+
+	public void setAdresa(String adresa) {
+		this.adresa = adresa;
+	}
+
+	public String getGrad() {
+		return grad;
+	}
+
+	public void setGrad(String grad) {
+		this.grad = grad;
+	}
+
+	public String getDrzava() {
+		return drzava;
+	}
+
+	public void setDrzava(String drzava) {
+		this.drzava = drzava;
+	}
+
+	public String getBrojTelefona() {
+		return brojTelefona;
+	}
+
+	public void setBrojTelefona(String brojTelefona) {
+		this.brojTelefona = brojTelefona;
+	}
+
 	public Boolean getFirstLogin() {
 		return firstLogin;
 	}

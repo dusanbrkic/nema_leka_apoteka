@@ -38,10 +38,6 @@ public class Pacijent extends Korisnik{
 		this.alergije = alergije;
 		this.savetovanja = savetovanja;
 	}
-	public Pacijent(String username, String password, String ime, String prezime, Date datumRodjenja,
-			String emailAdresa) {
-		super(username, password, ime, prezime, datumRodjenja, emailAdresa);
-	}
 
 	
 	// methods

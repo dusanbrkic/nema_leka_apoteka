@@ -18,12 +18,6 @@ public class Dermatolog extends Korisnik {
     @OneToMany(mappedBy = "dermatolog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Pregled> pregledi;
 
-
-    public Dermatolog(String username, String password, String ime, String prezime, Date datumRodjenja, String emailAdresa, double prosecnaOcena) {
-        super(username, password, ime, prezime, datumRodjenja, emailAdresa);
-        this.prosecnaOcena = prosecnaOcena;
-    }
-
     public Dermatolog() {
 
     }
