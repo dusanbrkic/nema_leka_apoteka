@@ -12,10 +12,10 @@ import java.util.Set;
 public class PregledDTO {
     private Long id;
     private LocalDateTime start;
-    private Double cena;
     private LocalDateTime end;
     private String dijagnoza;
     private boolean pregledObavljen;
+    private boolean pregledZakazan;
     private Long trajanje;
 
     // connections
@@ -26,7 +26,7 @@ public class PregledDTO {
     public PregledDTO(Pregled pregled) {
         this.id = pregled.getId();
         this.start = pregled.getVreme();
-        this.cena = pregled.getCena();
+        this.pregledZakazan = pregled.isPregledZakazan();
         this.end = pregled.getKraj();
         this.dijagnoza = pregled.getDijagnoza();
         this.pregledObavljen = pregled.isPregledObavljen();
@@ -52,14 +52,6 @@ public class PregledDTO {
 
     public void setStart(LocalDateTime start) {
         this.start = start;
-    }
-
-    public Double getCena() {
-        return cena;
-    }
-
-    public void setCena(Double cena) {
-        this.cena = cena;
     }
 
     public LocalDateTime getEnd() {
@@ -116,5 +108,13 @@ public class PregledDTO {
 
     public void setTrajanje(Long trajanje) {
         this.trajanje = trajanje;
+    }
+
+    public boolean isPregledZakazan() {
+        return pregledZakazan;
+    }
+
+    public void setPregledZakazan(boolean pregledZakazan) {
+        this.pregledZakazan = pregledZakazan;
     }
 }

@@ -1,5 +1,7 @@
 package com.team_08.ISAproj.model;
 
+import org.hibernate.annotations.Formula;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.Duration;
@@ -16,14 +18,14 @@ public class Pregled {
 	private LocalDateTime vreme;
 	@Column(name = "TRAJANJE")
 	private Long trajanje;
-	@Column(name = "CENA")
-	private Double cena;
 	@Column(name = "KRAJ")
 	private LocalDateTime kraj;
 	@Column(name = "DIJAGNOZA")
 	private String dijagnoza;
 	@Column(name = "PREGLED_OBAVLJEN")
 	private boolean pregledObavljen;
+	@Column(name = "PREGLED_ZAKAZAN")
+	private boolean pregledZakazan;
 	
 	// connections
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -36,12 +38,11 @@ public class Pregled {
 	private Set<Lek> preporuceniLekovi;
 	
 	// constructors
-	public Pregled(LocalDateTime vreme, Long trajanje, double cena, LocalDateTime kraj, String dijagnoza, boolean pregledObavljen,
-			Dermatolog dermatolog, Pacijent pacijent, Apoteka apoteka, Set<Lek> preporuceniLekovi) {
+	public Pregled(LocalDateTime vreme, Long trajanje, LocalDateTime kraj, String dijagnoza, boolean pregledObavljen,
+			boolean pregledZakazan, Dermatolog dermatolog, Pacijent pacijent, Apoteka apoteka, Set<Lek> preporuceniLekovi) {
 		super();
 		this.vreme = vreme;
 		this.trajanje = trajanje;
-		this.cena = cena;
 		this.kraj = kraj;
 		this.dijagnoza = dijagnoza;
 		this.pregledObavljen = pregledObavljen;
@@ -49,6 +50,7 @@ public class Pregled {
 		this.pacijent = pacijent;
 		this.apoteka = apoteka;
 		this.preporuceniLekovi = preporuceniLekovi;
+		this.pregledZakazan = pregledZakazan;
 	}
 
 	public Pregled() {
@@ -57,6 +59,14 @@ public class Pregled {
 
 
 	// getters and setters
+
+	public boolean isPregledZakazan() {
+		return pregledZakazan;
+	}
+
+	public void setPregledZakazan(boolean pregledZakazan) {
+		this.pregledZakazan = pregledZakazan;
+	}
 
 	public Long getId() {
 		return id;
@@ -70,8 +80,6 @@ public class Pregled {
 	public void setVreme(LocalDateTime vreme) {this.vreme = vreme;}
 	public Long getTrajanje() {return trajanje;}
 	public void setTrajanje(Long trajanje) {this.trajanje = trajanje;}
-	public double getCena() {return cena;}
-	public void setCena(double cena) {this.cena = cena;}
 	public LocalDateTime getKraj() {return kraj;}
 	public void setKraj(LocalDateTime kraj) {this.kraj = kraj;}
 	public String getDijagnoza() {return dijagnoza;}

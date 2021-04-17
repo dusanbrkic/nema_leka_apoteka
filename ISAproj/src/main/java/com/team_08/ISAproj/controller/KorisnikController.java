@@ -35,9 +35,6 @@ public class KorisnikController {
     		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     	}
     	String ck = CookieToken.createTokenValue(korisnikDTO.getUsername(), korisnikDTO.getPassword());
-    	System.out.println(ck);
-    	korisnikDTO.setCookie(ck);
-    	korisnikDTO.setFirstLogin(false);
         k.setFirstLogin(false);
         k.updateUser(korisnikDTO);
         korisnikService.saveUser(k);
@@ -87,9 +84,6 @@ public class KorisnikController {
         if(k == null) {
         	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    	k.setIme(korisnikDTO.getIme());
-        k.setPrezime(korisnikDTO.getPrezime());
-        k.setDatumRodjenja(korisnikDTO.getDatumRodjenja());
         k.updateUser(korisnikDTO);
         korisnikService.saveUser(k);
         return new ResponseEntity<>("User successfully updated",HttpStatus.OK);

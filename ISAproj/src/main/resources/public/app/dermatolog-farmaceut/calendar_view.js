@@ -14,7 +14,7 @@ Vue.component("CalendarView", {
                 pacijent: {ime: null, prezime: null},
                 preporuceniLekovi: [],
                 dijagnoza: null,
-                cena: null,
+                pregledZakazan: null,
                 pregledObavljen: null,
                 trajanje: null
             }
@@ -84,11 +84,11 @@ Vue.component("CalendarView", {
                 <b-col>Trajanje:</b-col>
                 <b-col>{{ moment(String(new Date(selectedEvent.trajanje))).format("mm") }} min</b-col>
               </b-row>
-              <b-row>
+              <b-row v-if="selectedEvent.pregledZakazan">
                 <b-col>Ime pacijenta:</b-col>
                 <b-col>{{ selectedEvent.pacijent.ime }}</b-col>
               </b-row>
-              <b-row>
+              <b-row v-if="selectedEvent.pregledZakazan">
                 <b-col>Prezime pacijenta:</b-col>
                 <b-col>{{ selectedEvent.pacijent.prezime }}</b-col>
               </b-row>
@@ -105,23 +105,22 @@ Vue.component("CalendarView", {
                 <b-col>{{ selectedEvent.dijagnoza }}</b-col>
               </b-row>
               <b-row v-if="selectedEvent.pregledObavljen">
-                <b-col>Cena:</b-col>
-                <b-col>{{ selectedEvent.cena }}</b-col>
-              </b-row>
-              <b-row v-if="selectedEvent.pregledObavljen">
                 <b-col>Preporuceni lekovi:</b-col>
                 <b-col>
                   <b-row v-for="lek in selectedEvent.preporuceniLekovi">- {{ lek.naziv }}</b-row>
                 </b-col>
               </b-row>
-
+              <b-row v-if="!selectedEvent.pregledZakazan">
+                <br>
+                <p>Ovo je dodeljen termin od strane apoteke. Mozete zakazati pregled u ovom terminu.</p>
+              </b-row>
             </b-container>
             <template #modal-footer="{ ok, cancel}">
-              <b-button v-if="!selectedEvent.pregledObavljen" variant="danger" @click="cancel()">Otkazi pregled
+              <b-button v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen" variant="danger" @click="cancel()">Otkazi pregled
               </b-button>
               <b-button variant="success" @click="ok()">
-                <template v-if="selectedEvent.pregledObavljen">OK</template>
-                <template v-if="!selectedEvent.pregledObavljen">Zapocni pregled</template>
+                <template v-if="selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan">OK</template>
+                <template v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">Zapocni pregled</template>
               </b-button>
             </template>
           </b-modal>
@@ -143,7 +142,6 @@ Vue.component("CalendarView", {
                 .then(response => {
                     let events = response.data
                     for (let event of events) {
-                        console.log(event)
                         this.calendar.addEvent({
                             id: event.id,
                             title: "Pregled: " + event.pacijent.ime + " " + event.pacijent.prezime,
@@ -156,6 +154,9 @@ Vue.component("CalendarView", {
                                         return "gray"
                                     else
                                         return "red"
+                                } else {
+                                    if (!event.pregledZakazan)
+                                        return "green"
                                 }
                             })()
                         })
@@ -180,7 +181,7 @@ Vue.component("CalendarView", {
             this.selectedEvent.pacijent = event.pacijent
             this.selectedEvent.preporuceniLekovi = event.preporuceniLekovi
             this.selectedEvent.dijagnoza = event.dijagnoza
-            this.selectedEvent.cena = event.cena
+            this.selectedEvent.pregledZakazan = event.pregledZakazan
             this.selectedEvent.pregledObavljen = event.pregledObavljen
             this.selectedEvent.trajanje = event.trajanje
             this.$bvModal.show('eventModal')
