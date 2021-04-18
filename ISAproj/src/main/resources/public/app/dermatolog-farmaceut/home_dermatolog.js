@@ -19,7 +19,7 @@ Vue.component("HomeDermatolog", {
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
             <b-nav-item href="#/home-dermatolog">Home</b-nav-item>
-            <b-nav-item href="#/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
+            <b-nav-item href="#/home-dermatolog/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
             <b-nav-item href="#/zakazivanje">Zakazi Pregled</b-nav-item>
             <b-nav-item href="#/godisnji-odmor">Godisnji odmor</b-nav-item>
             <b-nav-item href="#/pregled-forma">Zapocni pregled</b-nav-item>

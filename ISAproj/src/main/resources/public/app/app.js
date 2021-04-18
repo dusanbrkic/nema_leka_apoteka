@@ -17,6 +17,7 @@ const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
 const CalendarView = {template: '<CalendarView></CalendarView>'}
 const DermatologMain = {template: '<DermatologMain></DermatologMain>'}
 const FarmaceutMain = {template: '<FarmaceutMain></FarmaceutMain>'}
+const PregledaniPacijenti = {template: '<PregledaniPacijenti></PregledaniPacijenti>'}
 
 const router = new VueRouter({
     mode : 'hash',
@@ -34,6 +35,10 @@ const router = new VueRouter({
                 {
                     path: 'calendar-view',
                     component: CalendarView
+                },
+                {
+                    path: 'pregledani-pacijenti',
+                    component: PregledaniPacijenti
                 }
             ]},
         {path: '/home-farmaceut', component: HomeFarmaceut,  children: [
@@ -44,6 +49,10 @@ const router = new VueRouter({
                 {
                     path: 'calendar-view',
                     component: CalendarView
+                },
+                {
+                    path: 'pregledani-pacijenti',
+                    component: PregledaniPacijenti
                 }
             ]},
         {path: '/home-admin_apoteke', component : HomeAdminApoteke},

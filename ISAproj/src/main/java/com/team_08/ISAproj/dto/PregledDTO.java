@@ -18,7 +18,7 @@ public class PregledDTO {
     private Long trajanje;
 
     // connections
-    private KorisnikDTO pacijent;
+    private PregledanKorisnikDTO pacijent;
     private ApotekaDTO apoteka;
     private Set<LekDTO> preporuceniLekovi;
 
@@ -28,7 +28,7 @@ public class PregledDTO {
         this.end = pregled.getKraj();
         this.dijagnoza = pregled.getDijagnoza();
         this.pregledObavljen = pregled.isPregledObavljen();
-        this.pacijent = new KorisnikDTO(pregled.getPacijent());
+        this.pacijent = new PregledanKorisnikDTO(pregled.getPacijent());
         this.apoteka = new ApotekaDTO(pregled.getApoteka());
         this.trajanje = pregled.getTrajanje();
         this.preporuceniLekovi = new HashSet<LekDTO>();
@@ -68,11 +68,11 @@ public class PregledDTO {
         this.pregledObavljen = pregledObavljen;
     }
 
-    public KorisnikDTO getPacijent() {
+    public PregledanKorisnikDTO getPacijent() {
         return pacijent;
     }
 
-    public void setPacijent(KorisnikDTO pacijent) {
+    public void setPacijent(PregledanKorisnikDTO pacijent) {
         this.pacijent = pacijent;
     }
 

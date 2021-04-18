@@ -23,7 +23,7 @@ Vue.component("DermatologMain", {
                 Prikazi listu svih pregledanih pacijenata
               </b-card-text>
 
-              <b-button href="#/pregledani-pacijenti" variant="primary">Otvori</b-button>
+              <b-button href="#/home-dermatolog/pregledani-pacijenti" variant="primary">Otvori</b-button>
             </b-card>
           </b-col>
           <b-col>

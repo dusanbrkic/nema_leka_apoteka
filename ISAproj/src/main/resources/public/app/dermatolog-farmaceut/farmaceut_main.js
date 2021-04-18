@@ -23,7 +23,7 @@ Vue.component("FarmaceutMain", {
                 Prikazi listu svih pregledanih pacijenata
               </b-card-text>
 
-              <b-button href="#/pregledani-pacijenti" variant="primary">Otvori</b-button>
+              <b-button href="#/home-farmaceut/pregledani-pacijenti" variant="primary">Otvori</b-button>
             </b-card>
           </b-col>
           <b-col>

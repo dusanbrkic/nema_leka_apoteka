@@ -19,7 +19,7 @@ Vue.component("HomeFarmaceut", {
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
             <b-nav-item href="#/home-farmaceut">Home</b-nav-item>
-            <b-nav-item href="#/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
+            <b-nav-item href="#/home-farmaceut/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
             <b-nav-item href="#/zakazivanje">Zakazi savetovanje</b-nav-item>
             <b-nav-item href="#/godisnji-odmor">Godisnji odmor</b-nav-item>
             <b-nav-item href="#/pregled-forma">Zapocni savetovanje</b-nav-item>
