@@ -1,20 +1,17 @@
 package com.team_08.ISAproj.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.team_08.ISAproj.model.*;
+import com.team_08.ISAproj.model.Lek;
+import com.team_08.ISAproj.model.Savetovanje;
 
-import java.sql.Date;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PregledDTO {
+public class SavetovanjeDTO {
     private LocalDateTime start;
     private LocalDateTime end;
     private String dijagnoza;
-    private boolean pregledObavljen;
-    private boolean pregledZakazan;
+    private boolean savetovanjeObavljeno;
     private Long trajanje;
 
     // connections
@@ -22,17 +19,16 @@ public class PregledDTO {
     private ApotekaDTO apoteka;
     private Set<LekDTO> preporuceniLekovi;
 
-    public PregledDTO(Pregled pregled) {
-        this.start = pregled.getVreme();
-        this.pregledZakazan = pregled.isPregledZakazan();
-        this.end = pregled.getKraj();
-        this.dijagnoza = pregled.getDijagnoza();
-        this.pregledObavljen = pregled.isPregledObavljen();
-        this.pacijent = new KorisnikDTO(pregled.getPacijent());
-        this.apoteka = new ApotekaDTO(pregled.getApoteka());
-        this.trajanje = pregled.getTrajanje();
+    public SavetovanjeDTO(Savetovanje savetovanje) {
+        this.start = savetovanje.getVreme();
+        this.end = savetovanje.getKraj();
+        this.dijagnoza = savetovanje.getDijagnoza();
+        this.savetovanjeObavljeno = savetovanje.isSavetovanjeObavljeno();
+        this.pacijent = new KorisnikDTO(savetovanje.getPacijent());
+        this.apoteka = new ApotekaDTO(savetovanje.getApoteka());
+        this.trajanje = savetovanje.getTrajanje();
         this.preporuceniLekovi = new HashSet<LekDTO>();
-        for (Lek l : pregled.getPreporuceniLekovi())
+        for (Lek l : savetovanje.getPreporuceniLekovi())
             this.preporuceniLekovi.add(new LekDTO(l));
     }
 
@@ -60,12 +56,20 @@ public class PregledDTO {
         this.dijagnoza = dijagnoza;
     }
 
-    public boolean isPregledObavljen() {
-        return pregledObavljen;
+    public boolean isSavetovanjeObavljeno() {
+        return savetovanjeObavljeno;
     }
 
-    public void setPregledObavljen(boolean pregledObavljen) {
-        this.pregledObavljen = pregledObavljen;
+    public void setSavetovanjeObavljeno(boolean savetovanjeObavljeno) {
+        this.savetovanjeObavljeno = savetovanjeObavljeno;
+    }
+
+    public Long getTrajanje() {
+        return trajanje;
+    }
+
+    public void setTrajanje(Long trajanje) {
+        this.trajanje = trajanje;
     }
 
     public KorisnikDTO getPacijent() {
@@ -90,21 +94,5 @@ public class PregledDTO {
 
     public void setPreporuceniLekovi(Set<LekDTO> preporuceniLekovi) {
         this.preporuceniLekovi = preporuceniLekovi;
-    }
-
-    public long getTrajanje() {
-        return trajanje;
-    }
-
-    public void setTrajanje(Long trajanje) {
-        this.trajanje = trajanje;
-    }
-
-    public boolean isPregledZakazan() {
-        return pregledZakazan;
-    }
-
-    public void setPregledZakazan(boolean pregledZakazan) {
-        this.pregledZakazan = pregledZakazan;
     }
 }

@@ -3,6 +3,7 @@ package com.team_08.ISAproj.model;
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity(name = "SAVETOVANJE")
@@ -12,13 +13,11 @@ public class Savetovanje {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SavetovanjeSeqGen")
 	private Long id;
 	@Column(name = "VREME")
-	private Date vreme;
+	private LocalDateTime vreme;
 	@Column(name = "TRAJANJE")
-	private Duration trajanje;
-	@Column(name = "CENA")
-	private Double cena;
+	private Long trajanje;
 	@Column(name = "KRAJ")
-	private Date kraj;
+	private LocalDateTime kraj;
 	@Column(name = "DIJAGNOZA")
 	private String dijagnoza;
 	@Column(name = "SAVETOVANJE_OBAVLJENO")
@@ -36,13 +35,12 @@ public class Savetovanje {
 
 
 	// constructors
-	public Savetovanje(Date vreme, Duration trajanje, double cena, Date kraj, String dijagnoza,
+	public Savetovanje(LocalDateTime vreme, Long trajanje, LocalDateTime kraj, String dijagnoza,
 			boolean savetovanjeObavljeno, Apoteka apoteka, Farmaceut farmaceut, Pacijent pacijent,
 			Set<Lek> preporuceniLekovi) {
 		super();
 		this.vreme = vreme;
 		this.trajanje = trajanje;
-		this.cena = cena;
 		this.kraj = kraj;
 		this.dijagnoza = dijagnoza;
 		this.savetovanjeObavljeno = savetovanjeObavljeno;
@@ -58,14 +56,12 @@ public class Savetovanje {
 
 
 	// getters and setters
-	public Date getVreme() {return vreme;}
-	public void setVreme(Date vreme) {this.vreme = vreme;}
-	public Duration getTrajanje() {return trajanje;}
-	public void setTrajanje(Duration trajanje) {this.trajanje = trajanje;}
-	public double getCena() {return cena;}
-	public void setCena(double cena) {this.cena = cena;}
-	public Date getKraj() {return kraj;}
-	public void setKraj(Date kraj) {this.kraj = kraj;}
+	public LocalDateTime getVreme() {return vreme;}
+	public void setVreme(LocalDateTime vreme) {this.vreme = vreme;}
+	public Long getTrajanje() {return trajanje;}
+	public void setTrajanje(Long trajanje) {this.trajanje = trajanje;}
+	public LocalDateTime getKraj() {return kraj;}
+	public void setKraj(LocalDateTime kraj) {this.kraj = kraj;}
 	public String getDijagnoza() {return dijagnoza;}
 	public void setDijagnoza(String dijagnoza) {this.dijagnoza = dijagnoza;}
 	public boolean isSavetovanjeObavljeno() {return savetovanjeObavljeno;}

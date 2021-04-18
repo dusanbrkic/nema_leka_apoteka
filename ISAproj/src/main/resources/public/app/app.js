@@ -13,8 +13,10 @@ const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
 
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
+const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
 const CalendarView = {template: '<CalendarView></CalendarView>'}
 const DermatologMain = {template: '<DermatologMain></DermatologMain>'}
+const FarmaceutMain = {template: '<FarmaceutMain></FarmaceutMain>'}
 
 const router = new VueRouter({
     mode : 'hash',
@@ -28,6 +30,16 @@ const router = new VueRouter({
                 {
                     path: '',
                     component: DermatologMain
+                },
+                {
+                    path: 'calendar-view',
+                    component: CalendarView
+                }
+            ]},
+        {path: '/home-farmaceut', component: HomeFarmaceut,  children: [
+                {
+                    path: '',
+                    component: FarmaceutMain
                 },
                 {
                     path: 'calendar-view',
