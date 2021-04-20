@@ -48,6 +48,29 @@ Vue.component("DodajLekAdmin", {
     },
     template: `
      <div>
+           <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
+      <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
+        <img src="../../res/pics/logo.png" alt="Logo">
+        <b-navbar-brand href="#">Sistem Apoteka</b-navbar-brand>
+
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav>
+            <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
+            <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
+            <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
+            <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+          </b-navbar-nav>
+
+          <!-- Right aligned nav items -->
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item href="#/izmena-podataka" right>Profil</b-nav-item>
+            <b-nav-item v-on:click="logout" right>Odjavi se</b-nav-item>
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
+      <router-view/>
       <div class="container">
 		<b-alert style="text-align: center;" v-model="this.oblikGreska" variant="danger">Niste izabrali oblik leka!</b-alert>
 		<b-alert style="text-align: center;" v-model="this.tipGreska" variant="danger">Niste izabrali tip leka!</b-alert>
@@ -122,6 +145,13 @@ Vue.component("DodajLekAdmin", {
     `
     ,
     methods: {
+    	redirectToApotekaIzmeni: function(){
+    	
+    	},
+    	logout: function () {
+    		localStorage.clear()
+    		app.$router.push("/");
+        },
         redirectToHome: function () {
             app.$router.push("/home-admin_apoteke")
         },

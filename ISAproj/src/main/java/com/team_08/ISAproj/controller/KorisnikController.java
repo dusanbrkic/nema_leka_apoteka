@@ -4,7 +4,11 @@ import com.team_08.ISAproj.dto.CookieRoleDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
+import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class KorisnikController {
     @Autowired
     private KorisnikService korisnikService;
-
+	@Autowired
+	private EmailService sendEmailService;
     
     //change password
     @PutMapping(value = "/updatePass", consumes = "application/json",produces = "application/json")
@@ -88,6 +93,68 @@ public class KorisnikController {
         korisnikService.saveUser(k);
         return new ResponseEntity<>("User successfully updated",HttpStatus.OK);
     }
-    
+    //register user
+    @PostMapping(value = "/registerUser")
+    public ResponseEntity<KorisnikDTO> registerUser(@RequestBody KorisnikDTO korisnik){
+    	
+    	Korisnik k = korisnikService.findUserByEmail(korisnik.getEmailAdresa());
+    	if(k != null) {
+    		return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
+    	}
+    	if(korisnikService.findUser(korisnik.getUsername()) != null) {
+    		return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
+    	}
+    	Random rand = new Random();
+        String verificationCode = "";
+        for(int i = 0 ; i < 7 ; i++)
+        {
+            verificationCode += String.valueOf(rand.nextInt(10));
+        }
+        Pacijent pacijent = new Pacijent();
+        pacijent.UpdatePacijent(korisnik);
+        pacijent.setCookieTokenValue(verificationCode);
+        korisnikService.saveUser(pacijent);
+	
+		String body = "Poštovani, " + pacijent.getIme() + " vas verifikacioni kod je : " + verificationCode;
+		
+		String title = "Verifikacija Apoteka";
+	
+		try
+		{
+			Thread t = new Thread() {
+				public void run()
+				{
+					sendEmailService.sendEmail(pacijent.getEmailAdresa(), body, title);
+				}
+			};
+			t.start();
+		}
+		catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+        
+        
+    	KorisnikDTO kDTO = new KorisnikDTO((Korisnik) pacijent);
+		return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
+    }
+    //verify code
+    @PostMapping(value = "/verifyCode")
+    public ResponseEntity<KorisnikDTO> verifyCode(@RequestBody String verification){
+    	System.out.println("_------------------------------------------------------------------------------");
+    	verification = verification.substring(0, verification.length() - 1);
+    	Korisnik k = korisnikService.findUserByToken(verification);
+    	System.out.println("_-----------------------------asdadasdadasdadadadadadadad-------------------------------------------------");
+    	System.out.println(k);
+    	System.out.println(verification);
+    	if(k == null) {
+    		return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
+    	}
+    	System.out.println("_-----------------------------asdadaASDADADADASsdadasdadadadadadadad-------------------------------------------------");
+    	String ck = CookieToken.createTokenValue(k.getUsername(), k.getPassword());
+    	k.setCookieTokenValue(ck);
+    	korisnikService.saveUser(k);
+    	KorisnikDTO kDTO = new KorisnikDTO(k);
+    	return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
+    }
 
 }

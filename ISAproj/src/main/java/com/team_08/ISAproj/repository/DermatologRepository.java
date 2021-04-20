@@ -11,4 +11,5 @@ public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
     Dermatolog findOneByUsername(String username);
 
     Korisnik findOneByCookieTokenValue(String cookie);
+    Korisnik findOneByEmailAdresa(String email_adresa);
 }

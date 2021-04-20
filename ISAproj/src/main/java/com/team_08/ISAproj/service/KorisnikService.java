@@ -39,7 +39,14 @@ public class KorisnikService {
         if (k==null) k = adminApotekeRepository.findOneByCookieTokenValue(cookie);
         return k;
     }
-
+    public Korisnik findUserByEmail(String email) {
+        Korisnik k = pacijentRepository.findOneByEmailAdresa(email);
+        if (k==null) k = dermatologRepository.findOneByEmailAdresa(email);
+        if (k==null) k = farmaceutRepository.findOneByEmailAdresa(email);
+        if (k==null) k = adminApotekeRepository.findOneByEmailAdresa(email);
+        return k;	
+    	
+    }
     public void saveUser(Korisnik k) {
         if (k instanceof Pacijent)
             pacijentRepository.save((Pacijent)k);

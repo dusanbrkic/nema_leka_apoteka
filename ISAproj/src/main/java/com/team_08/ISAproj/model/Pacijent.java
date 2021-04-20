@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.model;
 
+import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
 
 import javax.persistence.*;
@@ -38,8 +39,22 @@ public class Pacijent extends Korisnik{
 		this.alergije = alergije;
 		this.savetovanja = savetovanja;
 	}
-
-	
+	public Pacijent(KorisnikDTO kDTO) {
+		super();
+		
+	}
+	public void UpdatePacijent(KorisnikDTO korisnik) {
+        this.setEmailAdresa(korisnik.getEmailAdresa());
+        this.setUsername(korisnik.getUsername());
+        this.setPassword(korisnik.getPassword());
+        this.setIme(korisnik.getIme());
+        this.setPrezime(korisnik.getEmailAdresa());
+        this.setAdresa(korisnik.getAdresa());
+        this.setDatumRodjenja(korisnik.getDatumRodjenja());
+        this.setGrad(korisnik.getGrad());
+        this.setDrzava(korisnik.getDrzava());
+        this.setBrojTelefona(korisnik.getBrojTelefona());;
+	}
 	// methods
 	public void pretplatiSe(Apoteka a) {
 		// to do

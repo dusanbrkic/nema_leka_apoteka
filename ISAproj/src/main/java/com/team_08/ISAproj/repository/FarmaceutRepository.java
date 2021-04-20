@@ -11,4 +11,6 @@ public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
     Farmaceut findOneByUsername(String username);
 
     Korisnik findOneByCookieTokenValue(String cookie);
+    
+    Korisnik findOneByEmailAdresa(String email_adresa);
 }

@@ -12,4 +12,6 @@ public interface PacijentRepository extends JpaRepository<Pacijent, Long> {
     Pacijent findOneByUsername(String username);
 
     Korisnik findOneByCookieTokenValue(String cookie);
+    
+    Korisnik findOneByEmailAdresa(String email_adresa);
 }

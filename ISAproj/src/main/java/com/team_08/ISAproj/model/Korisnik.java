@@ -63,7 +63,21 @@ public abstract class Korisnik {
         this.drzava = drzava;
         this.brojTelefona = brojTelefona;
     }
-
+    public Korisnik(KorisnikDTO kDTO) {
+        this.username = kDTO.getUsername();
+        this.password = kDTO.getPassword();
+        this.ime = kDTO.getIme();
+        this.prezime = kDTO.getPrezime();
+        this.datumRodjenja = kDTO.getDatumRodjenja();
+        this.emailAdresa = kDTO.getAdresa();
+        this.cookieTokenValue = kDTO.getCookie();
+        this.firstLogin = false;
+        this.adresa = kDTO.getAdresa();
+        this.grad = kDTO.getGrad();
+        this.drzava = kDTO.getDrzava();
+        this.brojTelefona = kDTO.getBrojTelefona();
+    	
+    }
     // getters and setters
     public String getUsername() {
         return username;

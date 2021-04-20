@@ -23,8 +23,7 @@ Vue.component("HomeAdminApoteke", {
           <b-navbar-nav>
             <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
-            <b-nav-item href="#/pretraga-lek-admin">Pretrazi lekove</b-nav-item>
-            <b-nav-item href="#/godisnji-odmor">Uredjuj lek</b-nav-item>
+            <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
             <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
           </b-navbar-nav>
 
@@ -59,7 +58,7 @@ Vue.component("HomeAdminApoteke", {
           </b-col>
           <b-col>
             <b-card
-                title="Pretrazi lekove"
+                title="Pretrazi, obrisi i uredi lekove"
                 img-src="https://picsum.photos/600/300/?image=25"
                 img-alt="Image"
                 img-top
@@ -68,7 +67,7 @@ Vue.component("HomeAdminApoteke", {
                 class="mb-2"
             >
               <b-card-text>
-                Pretrazite lekove u apoteci
+                Pretrazi, obrisi i uredi lekove
               </b-card-text>
 
               <b-button href="#/pretraga-lek-admin" variant="primary">Otvori</b-button>
