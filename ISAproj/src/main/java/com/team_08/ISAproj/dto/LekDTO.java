@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import javax.persistence.Column;
 
+import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.model.enums.OblikLeka;
 import com.team_08.ISAproj.model.enums.TipLeka;
@@ -33,7 +34,20 @@ public class LekDTO {
 		this.sastav = lek.getSastav();
 		this.dodatneNapomene = lek.getDodatneNapomene();
 	}
-	
+	public LekDTO(ApotekaLek al) {
+		Lek lek = al.getLek();
+		this.sifra = lek.getSifra();
+		this.naziv = lek.getNaziv();
+		this.uputstvo = lek.getUpustvo();
+		this.tip = lek.getTip();
+		this.oblikLeka = lek.getOblikLeka();
+		this.sastav = lek.getSastav();
+		this.dodatneNapomene = lek.getDodatneNapomene();
+		this.cena = al.getCena();
+		this.kolicina = al.getKolicina();
+		this.staraCena = al.getStaraCena();
+		this.istekVazenjaCene = al.getIstekVazenjaCene();
+	}
 	
 	public String getCookie() {
 		return cookie;
