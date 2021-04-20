@@ -13,8 +13,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -29,9 +31,9 @@ public class SavetovanjeService {
         Farmaceut f = (Farmaceut) farmaceutRepository.findOneByCookieTokenValue(cookie);
         if (f==null) throw new CookieNotValidException();
         Page<Savetovanje> retVal = null;
-        if(page==null && !obavljena)
+        if(page==null && obavljena==null)
             retVal = savetovanjeRepository.fetchAllWithPreporuceniLekovi(f.getId(), Pageable.unpaged());
-        else if (obavljena && page!=null) {
+        else if (obavljena!=null && page!=null) {
             if (pretragaIme==null) pretragaIme = "";
             if (pretragaPrezime==null) pretragaPrezime = "";
             pretragaIme = "%" + pretragaIme + "%";
@@ -45,5 +47,9 @@ public class SavetovanjeService {
             }
         }
         return retVal;
+    }
+
+    public List<Savetovanje> findAllInDateRange(LocalDateTime start, LocalDateTime end, String cookie) {
+        return savetovanjeRepository.findAllInDateRange(start, end, cookie);
     }
 }

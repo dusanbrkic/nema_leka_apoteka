@@ -158,6 +158,25 @@ Vue.component("CalendarView", {
         loadData: function () {
             if (this.rola == "FARMACEUT") this.loadSavetovanja()
             else if (this.rola == "DERMATOLOG") this.loadPregledi()
+            axios
+                .get("korisnici/fetchOdsustva", {params: {"cookie": this.cookie}})
+                .then(response => {
+                    let events = response.data
+                    for (let event of events) {
+                        event.eventType = "ODMOR"
+                        this.calendar.addEvent({
+                            title: "Odmor",
+                            start: new Date(event.pocetak),
+                            end: new Date(event.kraj),
+                            event: event,
+                            color: (() => {
+                                if (new Date() > new Date(event.end)) {
+                                    return "gray"
+                                }
+                            })()
+                        })
+                    }
+                })
         },
         loadPregledi: function () {
             axios
@@ -238,8 +257,8 @@ Vue.component("CalendarView", {
                     this.selectedEvent.savetovanjeObavljeno = event.savetovanjeObavljeno
                 }
                 this.selectedEvent.trajanje = event.trajanje
+                this.$bvModal.show('eventModal')
             }
-            this.$bvModal.show('eventModal')
         }
     }
 });

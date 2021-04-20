@@ -21,7 +21,7 @@ Vue.component("HomeDermatolog", {
             <b-nav-item href="#/home-dermatolog">Home</b-nav-item>
             <b-nav-item href="#/home-dermatolog/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
             <b-nav-item href="#/zakazivanje">Zakazi Pregled</b-nav-item>
-            <b-nav-item href="#/godisnji-odmor">Godisnji odmor</b-nav-item>
+            <b-nav-item href="#/odsustvo-forma">Godisnji odmor</b-nav-item>
             <b-nav-item href="#/pregled-forma">Zapocni pregled</b-nav-item>
             <b-nav-item href="#/home-dermatolog/calendar-view">Radni kalendar</b-nav-item>
           </b-navbar-nav>

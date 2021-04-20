@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import javax.swing.*;
 import javax.transaction.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -31,9 +33,9 @@ public class PregledService {
         Dermatolog d = (Dermatolog) dermatologRepository.findOneByCookieTokenValue(cookie);
         if (d==null) throw new CookieNotValidException();
         Page<Pregled> retVal = null;
-        if(page==null && !obavljen)
+        if(page==null && obavljen==null)
             retVal = pregledRepository.fetchAllWithPreporuceniLekovi(d.getId(), Pageable.unpaged());
-        else if (obavljen && page!=null) {
+        else if (obavljen!=null && page!=null) {
             if (pretragaIme==null) pretragaIme = "";
             if (pretragaPrezime==null) pretragaPrezime = "";
             pretragaIme = "%" + pretragaIme + "%";
@@ -47,5 +49,9 @@ public class PregledService {
             }
         }
         return retVal;
+    }
+
+    public List<Pregled> findAllInDateRange(LocalDateTime start, LocalDateTime end, String cookie) {
+        return pregledRepository.findAllInDateRange(start, end, cookie);
     }
 }

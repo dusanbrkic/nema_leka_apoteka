@@ -11,6 +11,8 @@ public class Dermatolog extends Korisnik {
     private Double prosecnaOcena;
 
     // connections
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Odsustvo> odsustva;
     @OneToMany(mappedBy = "dermatolog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DermatologApoteka> apoteke;
     @OneToMany(mappedBy = "dermatolog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -42,5 +44,17 @@ public class Dermatolog extends Korisnik {
 
     public void setPregledi(Set<Pregled> pregledi) {
         this.pregledi = pregledi;
+    }
+
+    public void setProsecnaOcena(Double prosecnaOcena) {
+        this.prosecnaOcena = prosecnaOcena;
+    }
+
+    public Set<Odsustvo> getOdsustvo() {
+        return odsustva;
+    }
+
+    public void setOdsustvo(Set<Odsustvo> odsustvo) {
+        this.odsustva = odsustvo;
     }
 }

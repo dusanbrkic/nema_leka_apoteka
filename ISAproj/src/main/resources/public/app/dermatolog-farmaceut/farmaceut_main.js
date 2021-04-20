@@ -56,7 +56,7 @@ Vue.component("FarmaceutMain", {
               <b-card-text>
                 Idi na stranicu za kreiranje zahteva za godisnji odmor
               </b-card-text>
-              <b-button href="#/godisnji-odmor" variant="primary">Otvori</b-button>
+              <b-button href="#/odsustvo-forma" variant="primary">Otvori</b-button>
             </b-card>
           </b-col>
           <b-col>

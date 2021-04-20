@@ -21,7 +21,7 @@ Vue.component("HomeFarmaceut", {
             <b-nav-item href="#/home-farmaceut">Home</b-nav-item>
             <b-nav-item href="#/home-farmaceut/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
             <b-nav-item href="#/zakazivanje">Zakazi savetovanje</b-nav-item>
-            <b-nav-item href="#/godisnji-odmor">Godisnji odmor</b-nav-item>
+            <b-nav-item href="#/odsustvo-forma">Godisnji odmor</b-nav-item>
             <b-nav-item href="#/pregled-forma">Zapocni savetovanje</b-nav-item>
             <b-nav-item href="#/home-farmaceut/calendar-view">Radni kalendar</b-nav-item>
             <b-nav-item href="#/home-farmaceut/izdaj-lek">Izdaj lek</b-nav-item>
