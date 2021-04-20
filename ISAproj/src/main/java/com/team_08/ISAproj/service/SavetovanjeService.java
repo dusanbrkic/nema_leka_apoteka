@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,14 +24,26 @@ public class SavetovanjeService {
     @Autowired
     private FarmaceutRepository farmaceutRepository;
 
-    public Page<Savetovanje> findAllByFarmaceut(String cookie, Integer page, Integer size) throws CookieNotValidException {
+    public Page<Savetovanje> findAllByFarmaceut(String cookie, Integer page, Integer size, String sortBy, Boolean sortDesc, Boolean obavljena,String pretragaIme, String pretragaPrezime)
+            throws CookieNotValidException {
         Farmaceut f = (Farmaceut) farmaceutRepository.findOneByCookieTokenValue(cookie);
         if (f==null) throw new CookieNotValidException();
         Page<Savetovanje> retVal = null;
-        if(page==null)
-            retVal = savetovanjeRepository.fetchSavetovanjeWithPreporuceniLekovi(f.getId(), Pageable.unpaged());
-        else
-            retVal = savetovanjeRepository.fetchSavetovanjeWithPreporuceniLekovi(f.getId(), PageRequest.of(page, size));
+        if(page==null && !obavljena)
+            retVal = savetovanjeRepository.fetchAllWithPreporuceniLekovi(f.getId(), Pageable.unpaged());
+        else if (obavljena && page!=null) {
+            if (pretragaIme==null) pretragaIme = "";
+            if (pretragaPrezime==null) pretragaPrezime = "";
+            pretragaIme = "%" + pretragaIme + "%";
+            pretragaPrezime = "%" + pretragaPrezime + "%";
+            if (!sortBy.equals("vreme")) sortBy = "p." + sortBy;
+            if (sortDesc) {
+                retVal = savetovanjeRepository.getObavljenaSavetovanja(f.getId(), PageRequest.of(page, size, Sort.by(sortBy).descending()), pretragaIme, pretragaPrezime);
+            }
+            else {
+                retVal = savetovanjeRepository.getObavljenaSavetovanja(f.getId(), PageRequest.of(page, size, Sort.by(sortBy).ascending()), pretragaIme, pretragaPrezime);
+            }
+        }
         return retVal;
     }
 }

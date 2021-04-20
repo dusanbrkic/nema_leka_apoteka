@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.controller;
 
 import com.team_08.ISAproj.dto.PregledDTO;
+import com.team_08.ISAproj.dto.SavetovanjeDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.service.PregledService;
@@ -28,10 +29,15 @@ public class PregledController {
     public ResponseEntity<Page<PregledDTO>> getPreglediByDermatolog(
             @RequestParam("cookie") String cookie,
             @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) Boolean sortDesc,
+            @RequestParam(required = false) Boolean obavljeni,
+            @RequestParam(required = false) String pretragaIme,
+            @RequestParam(required = false) String pretragaPrezime) {
         Page<Pregled> pregledi = null;
         try {
-            pregledi = pregledService.findAllByDermatolog(cookie, page, size);
+            pregledi = pregledService.findAllByDermatolog(cookie, page, size, sortBy, sortDesc, obavljeni, pretragaIme, pretragaPrezime);
         } catch (CookieNotValidException e) {
             return new ResponseEntity<Page<PregledDTO>>(HttpStatus.NOT_FOUND);
         }
@@ -40,8 +46,10 @@ public class PregledController {
 
         Page<PregledDTO> preglediDTO = pregledi.map(new Function<Pregled, PregledDTO>() {
             @Override
-            public PregledDTO apply(Pregled s) {
-                return new PregledDTO(s);
+            public PregledDTO apply(Pregled p) {
+                PregledDTO pregledDTO = new PregledDTO(p);
+                if (sortBy == null) pregledDTO.loadLekovi(p);
+                return pregledDTO;
             }
         });
         return new ResponseEntity<Page<PregledDTO>>(preglediDTO, HttpStatus.OK);

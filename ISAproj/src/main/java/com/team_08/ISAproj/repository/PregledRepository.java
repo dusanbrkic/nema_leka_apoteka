@@ -15,6 +15,9 @@ import java.util.List;
 public interface PregledRepository extends JpaRepository<Pregled, Long> {
 
     @Query(value = "SELECT DISTINCT p FROM PREGLED p LEFT OUTER JOIN FETCH p.preporuceniLekovi l where p.dermatolog.id = :id",
-    countQuery = "SELECT count(DISTINCT p) FROM PREGLED p LEFT OUTER JOIN p.preporuceniLekovi l where p.dermatolog.id = :id")
-    Page<Pregled> fetchPregledWithPreporuceniLekovi(@Param("id") Long id, Pageable pageable);
+            countQuery = "SELECT count(DISTINCT p) FROM PREGLED p LEFT OUTER JOIN p.preporuceniLekovi l where p.dermatolog.id = :id")
+    Page<Pregled> fetchAllWithPreporuceniLekovi(@Param("id") Long id, Pageable pageable);
+
+    @Query(value = "SELECT p FROM PREGLED p JOIN PACIJENT pac ON p.pacijent.id=pac.id where p.dermatolog.id = :id and UPPER(p.pacijent.prezime) LIKE UPPER(:pretragaPrezime) and UPPER(p.pacijent.ime) LIKE UPPER(:pretragaIme)")
+    Page<Pregled> getAllObavljeni(@Param("id") Long id, Pageable pageable, @Param("pretragaIme") String pretragaIme, @Param("pretragaPrezime") String pretragaPrezime);
 }

@@ -3,14 +3,14 @@ Vue.component("PregledaniPacijenti", {
         return {
             cookie: '',
             rola: '',
-            pageSizes:[2, 10, 20, 50],
+            pageSizes: [2, 10, 20, 50],
             fields: [
                 {
-                    key: 'ime',
+                    key: 'prezime',
                     sortable: true
                 },
                 {
-                    key: 'prezime',
+                    key: 'ime',
                     sortable: true
                 },
                 {
@@ -41,7 +41,7 @@ Vue.component("PregledaniPacijenti", {
                     sortable: false
                 },
                 {
-                    key: 'datum_pregleda',
+                    key: 'vreme',
                     sortable: true,
                     formatter: (value, key, item) => {
                         return moment(value).format("DD/MM/YYYY");
@@ -51,7 +51,13 @@ Vue.component("PregledaniPacijenti", {
             items_per_page: 2,
             page: 1,
             totalItems: '',
-            table_is_busy: false
+
+            table_is_busy: false,
+            sortBy: 'vreme',
+            sortDesc: false,
+
+            pretragaIme: '',
+            pretragaPrezime: ''
         }
 
     },
@@ -62,17 +68,41 @@ Vue.component("PregledaniPacijenti", {
     template: `
       <div>
       <b-card style="margin: 40px auto; max-width: 1200px">
-        <b-table hover :items="itemProvider" :fields="fields" :per-page="items_per_page" :current-page="page"
-                 :busy.sync="table_is_busy"></b-table>
         <b-container>
           <b-row>
             <b-col>
-            <b-pagination
-                v-model="page"
-                :total-rows="totalItems"
+              <b-form-input v-model="pretragaPrezime" placeholder="Pretrazite prezime"></b-form-input>
+            </b-col>
+            <b-col>
+              <b-form-input v-model="pretragaIme" placeholder="Pretrazite ime"></b-form-input>
+            </b-col>
+            <b-col>
+              <b-button v-on:click="pretraga" style="float: right">Pretrazi</b-button>
+              <b-button v-on:click="obrisiPretragu" style="float: right" variant="danger">Resetuj</b-button>
+            </b-col>
+          </b-row>
+          <br>
+          <b-row>
+            <b-table
+                id="pacijenti-tabela"
+                hover
+                :items="itemProvider"
+                :fields="fields"
                 :per-page="items_per_page"
-                @change="handlePageChange"
-            ></b-pagination>
+                :current-page="page"
+                :busy.sync="table_is_busy"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+            ></b-table>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-pagination
+                  v-model="page"
+                  :total-rows="totalItems"
+                  :per-page="items_per_page"
+                  @change="handlePageChange"
+              ></b-pagination>
             </b-col>
             <b-col>
               <select v-model="items_per_page" @change="handlePageSizeChange($event)" style="float: right">
@@ -87,7 +117,7 @@ Vue.component("PregledaniPacijenti", {
       </div>
     `,
     methods: {
-        loadPregledi: async function (currentPage, perPage) {
+        loadPregledi: async function (currentPage, perPage, sortBy, sortDesc, pretragaIme, pretragaPrezime) {
             this.table_is_busy = true
             let items = []
             await axios
@@ -96,7 +126,12 @@ Vue.component("PregledaniPacijenti", {
                         {
                             'cookie': this.cookie,
                             'page': currentPage - 1,
-                            'size': perPage
+                            'size': perPage,
+                            'sortBy': sortBy,
+                            'sortDesc': sortDesc,
+                            'obavljeni': true,
+                            'pretragaIme': pretragaIme,
+                            'pretragaPrezime': pretragaPrezime
                         }
                 })
                 .then(response => {
@@ -112,14 +147,14 @@ Vue.component("PregledaniPacijenti", {
                             grad: p.pacijent.grad,
                             drzava: p.pacijent.drzava,
                             broj_telefona: p.pacijent.brojTelefona,
-                            datum_pregleda: p.start
+                            vreme: p.start
                         })
                     }
                 })
             this.table_is_busy = false
             return items
         },
-        loadSavetovanja: async function (currentPage, perPage) {
+        loadSavetovanja: async function (currentPage, perPage, sortBy, sortDesc, pretragaIme, pretragaPrezime) {
             this.table_is_busy = true
             let items = []
             await axios
@@ -128,12 +163,17 @@ Vue.component("PregledaniPacijenti", {
                         {
                             'cookie': this.cookie,
                             'page': currentPage - 1,
-                            'size': perPage
+                            'size': perPage,
+                            'sortBy': sortBy,
+                            'sortDesc': sortDesc,
+                            'obavljena': true,
+                            'pretragaIme': pretragaIme,
+                            'pretragaPrezime': pretragaPrezime
                         }
                 })
                 .then(response => {
                     let savetovanja = response.data['content']
-                    this.totalItems =  response.data['totalElements']
+                    this.totalItems = response.data['totalElements']
                     for (const s of savetovanja) {
                         items.push({
                             ime: s.pacijent.ime,
@@ -144,7 +184,7 @@ Vue.component("PregledaniPacijenti", {
                             grad: s.pacijent.grad,
                             drzava: s.pacijent.drzava,
                             broj_telefona: s.pacijent.brojTelefona,
-                            datum_pregleda: s.start
+                            vreme: s.start
                         })
                     }
                 })
@@ -152,8 +192,8 @@ Vue.component("PregledaniPacijenti", {
             return items
         },
         itemProvider: function (ctx) {
-            if (this.rola == "FARMACEUT") return this.loadSavetovanja(ctx.currentPage, ctx.perPage)
-            else if (this.rola == "DERMATOLOG") return this.loadPregledi(ctx.currentPage, ctx.perPage)
+            if (this.rola == "FARMACEUT") return this.loadSavetovanja(ctx.currentPage, ctx.perPage, ctx.sortBy, ctx.sortDesc, this.pretragaIme, this.pretragaPrezime)
+            else if (this.rola == "DERMATOLOG") return this.loadPregledi(ctx.currentPage, ctx.perPage, ctx.sortBy, ctx.sortDesc, this.pretragaIme, this.pretragaPrezime)
         },
         handlePageChange(value) {
             this.page = value;
@@ -162,5 +202,15 @@ Vue.component("PregledaniPacijenti", {
             this.page = 1;
             this.items_per_page = event.target.value;
         },
+        pretraga: function () {
+            this.page = 0
+            this.$root.$emit('bv::refresh::table', 'pacijenti-tabela')
+        },
+        obrisiPretragu: function () {
+            this.pretragaPrezime = ""
+            this.pretragaIme = ""
+            this.page = 0
+            this.$root.$emit('bv::refresh::table', 'pacijenti-tabela')
+        }
     },
 });

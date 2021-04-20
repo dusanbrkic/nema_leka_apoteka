@@ -14,6 +14,9 @@ import java.util.List;
 public interface SavetovanjeRepository extends JpaRepository<Savetovanje, Long> {
     @Query(value = "SELECT DISTINCT s FROM SAVETOVANJE s LEFT OUTER JOIN FETCH s.preporuceniLekovi l where s.farmaceut.id = :id",
     countQuery = "SELECT count(DISTINCT s) FROM SAVETOVANJE s LEFT OUTER JOIN s.preporuceniLekovi l where s.farmaceut.id = :id")
-    Page<Savetovanje> fetchSavetovanjeWithPreporuceniLekovi(@Param("id") Long id, Pageable pageable);
+    Page<Savetovanje> fetchAllWithPreporuceniLekovi(@Param("id") Long id, Pageable pageable);
+
+    @Query(value = "SELECT s FROM SAVETOVANJE s JOIN PACIJENT p ON s.pacijent.id=p.id where s.farmaceut.id = :id and  UPPER(s.pacijent.prezime) LIKE UPPER(:pretragaPrezime) and UPPER(s.pacijent.ime) LIKE UPPER(:pretragaIme)")
+    Page<Savetovanje> getObavljenaSavetovanja(@Param("id") Long id, Pageable pageable, @Param("pretragaIme") String pretragaIme, @Param("pretragaPrezime") String pretragaPrezime);
 }
 

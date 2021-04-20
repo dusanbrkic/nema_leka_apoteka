@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.team_08.ISAproj.dto.SavetovanjeDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.Savetovanje;
@@ -28,10 +29,15 @@ public class SavetovanjeController {
     public ResponseEntity<Page<SavetovanjeDTO>> getSavetovanjaByFarmaceut(
             @RequestParam("cookie") String cookie,
             @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) Boolean sortDesc,
+            @RequestParam(required = false) Boolean obavljena,
+            @RequestParam(required = false) String pretragaIme,
+            @RequestParam(required = false) String pretragaPrezime) {
         Page<Savetovanje> savetovanja = null;
         try {
-            savetovanja = savetovanjeService.findAllByFarmaceut(cookie, page, size);
+            savetovanja = savetovanjeService.findAllByFarmaceut(cookie, page, size, sortBy, sortDesc, obavljena, pretragaIme, pretragaPrezime);
         } catch (CookieNotValidException e) {
             return new ResponseEntity<Page<SavetovanjeDTO>>(HttpStatus.NOT_FOUND);
         }
@@ -41,7 +47,9 @@ public class SavetovanjeController {
         Page<SavetovanjeDTO> savetovanjaDTO = savetovanja.map(new Function<Savetovanje, SavetovanjeDTO>() {
             @Override
             public SavetovanjeDTO apply(Savetovanje s) {
-                return new SavetovanjeDTO(s);
+                SavetovanjeDTO savetovanjeDTO = new SavetovanjeDTO(s);
+                if (sortBy == null) savetovanjeDTO.loadLekovi(s);
+                return savetovanjeDTO;
             }
         });
         return new ResponseEntity<Page<SavetovanjeDTO>>(savetovanjaDTO, HttpStatus.OK);

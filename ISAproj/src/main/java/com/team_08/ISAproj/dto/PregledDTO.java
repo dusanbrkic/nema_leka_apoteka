@@ -32,8 +32,11 @@ public class PregledDTO {
         this.apoteka = new ApotekaDTO(pregled.getApoteka());
         this.trajanje = pregled.getTrajanje();
         this.preporuceniLekovi = new HashSet<LekDTO>();
-        for (Lek l : pregled.getPreporuceniLekovi())
-            this.preporuceniLekovi.add(new LekDTO(l));
+    }
+
+    public void loadLekovi(Pregled pregled){
+        for (Lek p : pregled.getPreporuceniLekovi())
+            this.preporuceniLekovi.add(new LekDTO(p));
     }
 
     public LocalDateTime getStart() {

@@ -28,6 +28,9 @@ public class SavetovanjeDTO {
         this.apoteka = new ApotekaDTO(savetovanje.getApoteka());
         this.trajanje = savetovanje.getTrajanje();
         this.preporuceniLekovi = new HashSet<LekDTO>();
+    }
+
+    public void loadLekovi(Savetovanje savetovanje){
         for (Lek l : savetovanje.getPreporuceniLekovi())
             this.preporuceniLekovi.add(new LekDTO(l));
     }
