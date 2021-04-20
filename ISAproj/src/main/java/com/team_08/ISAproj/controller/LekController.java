@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +32,8 @@ import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 import com.team_08.ISAproj.service.LekService;
+
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -100,7 +104,6 @@ public class LekController {
 			response.put("currentPage", lekovi.getNumber());
 			response.put("totalItems", lekovi.getTotalElements());
 			response.put("totalPages", lekovi.getTotalPages());
-			
 			
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
@@ -201,14 +204,55 @@ public class LekController {
 			AdminApoteke aa = (AdminApoteke) k;
     	
 			Boolean check = lekService.saveLekApoteka(lekDTO,aa.getApoteka().getId().toString());
-			System.out.println(check);
 			if(check) {
 				return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.CREATED);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
 		}
 		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
-
+	}
+	
+	//uredjivanje leka
+	@PutMapping(consumes = "application/json",produces = "application/json")
+	public ResponseEntity<LekDTO> updateLek(@RequestBody LekDTO lekDTO){
+		System.out.println(lekDTO.getCookie());
+		Korisnik k = korisnikService.findUserByToken(lekDTO.getCookie());
+		
+		if (k == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
+		}
+		
+		if(k instanceof AdminApoteke) {
+			System.out.println(lekDTO.getCookie());
+			AdminApoteke aa = (AdminApoteke) k;
+			Lek l = lekService.findOneBySifra(lekDTO.getSifra());
+			Apoteka a = apotekaService.findOne(aa.getApoteka().getId());
+			ApotekaLek al = apotekaLekService.findOneBySifra(l,aa.getApoteka().getId());
+			al.update(lekDTO);
+			apotekaLekService.saveAL(al);
+			return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.OK);
+		}
+		return new ResponseEntity<LekDTO>(lekDTO,HttpStatus.NOT_FOUND);
+	}
+	//brisanje leka
+	@DeleteMapping(value = "/deleteLek")
+	public ResponseEntity<Void> deleteLek(@RequestParam String sifraLeka,@RequestParam String cookie){
+		Korisnik k = korisnikService.findUserByToken(cookie);
+		if (k == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
+		}
+		if(k instanceof AdminApoteke) {
+			AdminApoteke aa = (AdminApoteke) k;
+			Lek l = lekService.findOneBySifra(sifraLeka);
+			if(l == null) {
+				
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			apotekaLekService.removeBySifra(l,aa.getApoteka().getId());
+			//System.out.println("---------------------------------------------------------------------------------------------------------------------------------------");
+			return new ResponseEntity<>(HttpStatus.OK);	
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
 	}
 	
 	

@@ -54,7 +54,7 @@ Vue.component("DodajLekAdmin", {
 	  	<b-alert style="text-align: center;" v-model="this.cenaGreska" variant="danger">Uneli ste pogresnu cenu!</b-alert>
 		<b-alert style="text-align: center;" v-model="this.kolicinaGreska" variant="danger">Uneli ste pogresnu kolicinu!</b-alert>
       	<b-alert style="text-align: center;" v-model="this.postojiLek" variant="danger">Vec postoji lek sa tom sifrom!</b-alert>
-      	<b-alert style="text-align: center;" v-model="this.dodatLek" variant="success">Dodali ste lek sa sifrom {{this.lek.sifra}}!</b-alert>
+      	<b-alert style="text-align: center;" v-model="this.dodatLek" variant="success">Dodali ste lek sa sifrom {{lek.sifra}}!</b-alert>
         <h2>Dodavanje Leka</h2>
         
         <form @submit.prevent="saveLek">

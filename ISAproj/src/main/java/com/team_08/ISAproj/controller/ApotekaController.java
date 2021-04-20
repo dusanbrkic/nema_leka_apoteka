@@ -102,10 +102,6 @@ public class ApotekaController {
 	}
 	
 	
-	
-	
-	
-	
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApotekaDTO> getApoteka(@PathVariable("id") Long id) {
 		Apoteka apoteka = apotekaService.findOne(id);

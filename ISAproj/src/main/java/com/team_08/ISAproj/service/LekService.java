@@ -13,6 +13,8 @@ import com.team_08.ISAproj.repository.ApotekaLekRepository;
 import com.team_08.ISAproj.repository.ApotekaRepository;
 import com.team_08.ISAproj.repository.LekRepository;
 
+import java.util.List;
+
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,7 +53,10 @@ public class LekService {
     	return true;
 
     }
-
+    public Lek findOneBySifra(String sifra) {
+    	
+    	return lekRepository.findOneBySifra(sifra);
+    }
 	public Page<Lek> findAll(Pageable paging) {
 		return lekRepository.findAll(paging);
 	}

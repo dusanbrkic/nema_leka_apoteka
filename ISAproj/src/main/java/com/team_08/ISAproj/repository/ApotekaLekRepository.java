@@ -25,5 +25,6 @@ public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
 	List<ApotekaLek> findAllByCena(double cena);
 	
 	Page<ApotekaLek> findByLekContaining(Lek lek, Pageable pageable);
-
+	
+	void deleteByLekId(Long LekId);
 }

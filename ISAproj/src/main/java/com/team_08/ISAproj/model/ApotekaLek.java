@@ -1,6 +1,9 @@
 package com.team_08.ISAproj.model;
 
 import javax.persistence.*;
+
+import com.team_08.ISAproj.dto.LekDTO;
+
 import java.sql.Date;
 
 @Entity(name = "APOTEKA_LEK")
@@ -40,7 +43,14 @@ public class ApotekaLek {
 	public ApotekaLek() {
 
 	}
-
+	public ApotekaLek(LekDTO lekDTO,Apoteka apoteka,Lek lek) {
+		this.kolicina = lekDTO.getKolicina();
+		this.cena = lekDTO.getCena();
+		this.istekVazenjaCene = lekDTO.getIstekVazenjaCene();
+		this.staraCena = lekDTO.getStaraCena();
+		this.apoteka = apoteka;
+		this.lek = lek;
+	}
 
 	// getters and setters
 	public int getKolicina() {return kolicina;}
@@ -62,5 +72,12 @@ public class ApotekaLek {
 
 	public Long getId() {
 		return id;
+	}
+
+	public void update(LekDTO lekDTO) {
+		this.kolicina = lekDTO.getKolicina();
+		this.cena = lekDTO.getCena();
+		this.istekVazenjaCene = lekDTO.getIstekVazenjaCene();
+		this.staraCena = lekDTO.getStaraCena();	
 	}
 }
