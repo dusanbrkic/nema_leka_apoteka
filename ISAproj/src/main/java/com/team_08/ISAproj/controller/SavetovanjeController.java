@@ -5,6 +5,7 @@ import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.Savetovanje;
 import com.team_08.ISAproj.service.SavetovanjeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 @RestController
 @RequestMapping("/savetovanja")
@@ -23,19 +25,25 @@ public class SavetovanjeController {
     SavetovanjeService savetovanjeService;
 
     @GetMapping(value = "/getSavetovanjaByFarmaceut", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SavetovanjeDTO>> getSavetovanjaByFarmaceut(@RequestParam("cookie") String cookie) {
-        List<SavetovanjeDTO> savetovanjaDTO = new ArrayList<>();
-        List<Savetovanje> savetovanja = null;
+    public ResponseEntity<Page<SavetovanjeDTO>> getSavetovanjaByFarmaceut(
+            @RequestParam("cookie") String cookie,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+        Page<Savetovanje> savetovanja = null;
         try {
-            savetovanja = savetovanjeService.findAllByFarmaceut(cookie);
+            savetovanja = savetovanjeService.findAllByFarmaceut(cookie, page, size);
         } catch (CookieNotValidException e) {
-            return new ResponseEntity<List<SavetovanjeDTO>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Page<SavetovanjeDTO>>(HttpStatus.NOT_FOUND);
         }
         if (savetovanja==null)
-            return new ResponseEntity<List<SavetovanjeDTO>>(new ArrayList<SavetovanjeDTO>(), HttpStatus.OK);
+            return new ResponseEntity<Page<SavetovanjeDTO>>(Page.empty(), HttpStatus.OK);
 
-        for (Savetovanje s : savetovanja)
-            savetovanjaDTO.add(new SavetovanjeDTO(s));
-        return new ResponseEntity<List<SavetovanjeDTO>>(savetovanjaDTO, HttpStatus.OK);
+        Page<SavetovanjeDTO> savetovanjaDTO = savetovanja.map(new Function<Savetovanje, SavetovanjeDTO>() {
+            @Override
+            public SavetovanjeDTO apply(Savetovanje s) {
+                return new SavetovanjeDTO(s);
+            }
+        });
+        return new ResponseEntity<Page<SavetovanjeDTO>>(savetovanjaDTO, HttpStatus.OK);
     }
 }

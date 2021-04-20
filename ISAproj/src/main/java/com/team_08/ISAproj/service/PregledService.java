@@ -6,9 +6,13 @@ import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.repository.DermatologRepository;
 import com.team_08.ISAproj.repository.PregledRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,10 +23,14 @@ public class PregledService {
     @Autowired
     private DermatologRepository dermatologRepository;
 
-    public List<Pregled> findAllByDermatolog(String cookie) throws CookieNotValidException {
+    public Page<Pregled> findAllByDermatolog(String cookie, Integer page, Integer size) throws CookieNotValidException {
         Dermatolog d = (Dermatolog) dermatologRepository.findOneByCookieTokenValue(cookie);
         if (d==null) throw new CookieNotValidException();
-        List<Pregled> retVal = pregledRepository.fetchPregledWithPreporuceniLekovi(d.getId());
+        Page<Pregled> retVal = null;
+        if(page==null)
+            retVal = pregledRepository.fetchPregledWithPreporuceniLekovi(d.getId(), Pageable.unpaged());
+        else
+            retVal = pregledRepository.fetchPregledWithPreporuceniLekovi(d.getId(), PageRequest.of(page, size));
         return retVal;
     }
 }

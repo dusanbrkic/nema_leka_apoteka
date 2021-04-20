@@ -163,7 +163,7 @@ Vue.component("CalendarView", {
             axios
                 .get("pregledi/getPreglediByDermatolog", {params: {"cookie": this.cookie}})
                 .then(response => {
-                    let events = response.data
+                    let events = response.data['content']
                     for (let event of events) {
                         event.eventType = "PREGLED"
                         this.calendar.addEvent({
@@ -195,7 +195,7 @@ Vue.component("CalendarView", {
             axios
                 .get("savetovanja/getSavetovanjaByFarmaceut", {params: {"cookie": this.cookie}})
                 .then(response => {
-                    let events = response.data
+                    let events = response.data['content']
                     for (let event of events) {
                         event.eventType = "SAVETOVANJE"
                         this.calendar.addEvent({
@@ -234,10 +234,10 @@ Vue.component("CalendarView", {
                 if (event.eventType == "PREGLED") {
                     this.selectedEvent.pregledZakazan = event.pregledZakazan
                     this.selectedEvent.pregledObavljen = event.pregledObavljen
-                } else if (event.eventType == "SAVETOVANJE"){
-                    this.savetovanjeObavljeno = event.savetovanjeObavljeno
+                } else if (event.eventType == "SAVETOVANJE") {
+                    this.selectedEvent.savetovanjeObavljeno = event.savetovanjeObavljeno
                 }
-                    this.selectedEvent.trajanje = event.trajanje
+                this.selectedEvent.trajanje = event.trajanje
             }
             this.$bvModal.show('eventModal')
         }

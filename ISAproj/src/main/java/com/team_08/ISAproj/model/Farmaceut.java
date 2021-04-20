@@ -11,8 +11,6 @@ public class Farmaceut extends Korisnik {
 	// connections
 	@OneToOne(mappedBy = "farmaceut", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private FarmaceutApoteka apoteka;
-	@ManyToMany(fetch = FetchType.LAZY)
-	private Set<Pacijent> pregledaniPacijenti;
 	@OneToMany(mappedBy = "farmaceut", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Savetovanje> savetovanja;
 	
@@ -38,14 +36,6 @@ public class Farmaceut extends Korisnik {
 
 	public void setApoteka(FarmaceutApoteka apoteka) {
 		this.apoteka = apoteka;
-	}
-
-	public Set<Pacijent> getPregledaniPacijenti() {
-		return pregledaniPacijenti;
-	}
-
-	public void setPregledaniPacijenti(Set<Pacijent> pregledaniPacijenti) {
-		this.pregledaniPacijenti = pregledaniPacijenti;
 	}
 
 	public Set<Savetovanje> getSavetovanja() {
