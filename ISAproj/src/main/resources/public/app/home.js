@@ -9,6 +9,9 @@ Vue.component("Home", {
     },
     template: `
       <div>
+      
+      <!-- NAVBAR -->
+      
       <b-navbar toggleable="lg" type="dark" variant="dark">
         <img src="../res/pics/logo.png" alt="Logo">
         <b-navbar-brand href="#">Sistem Apoteka</b-navbar-brand>
@@ -17,7 +20,8 @@ Vue.component("Home", {
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-nav-item href="#">Home</b-nav-item>
+            <b-nav-item href="#/">Home</b-nav-item>
+            <b-nav-item href="#/apoteke">Apoteke</b-nav-item>
             <b-nav-item href="#/lekovi">Lekovi</b-nav-item>
           </b-navbar-nav>
 
@@ -27,7 +31,11 @@ Vue.component("Home", {
             <b-nav-item href="#/login" right>Prijavi se</b-nav-item>
           </b-navbar-nav>
         </b-collapse>
-      </b-navbar>
+      </b-navbar> 
+
+     <router-view/>
+      
+ 
       </div>
       
     `

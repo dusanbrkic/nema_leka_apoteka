@@ -1,10 +1,20 @@
+
+// neregistrovani korisnik
 const Home  = { template: '<Home></Home>'}
+const HomeMain  = { template: '<HomeMain></HomeMain>'}
+
+// pacijent
+const HomePacijent = {template: '<HomePacijent></HomePacijent>'}
+const PacijentMain = {template: '<PacijentMain></PacijentMain>'}
+const PacijentLekovi = {template: '<PacijentLekovi></PacijentLekovi>'}
+
+// dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
 const Login = {template: '<Login></Login>'}
 const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
 const AdminApotekeLekovi = {template: '<AdminApotekeLekovi></AdminApotekeLekovi>'}
-const HomePacijent = {template: '<HomePacijent></HomePacijent>'}
+
 const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
 const DodajLekAdmin = {template: '<DodajLekAdmin></DodajLekAdmin>'}
@@ -19,7 +29,20 @@ const DermatologMain = {template: '<DermatologMain></DermatologMain>'}
 const router = new VueRouter({
     mode : 'hash',
     routes : [
-        {path: '/', component: Home},
+        {path: '/', component: Home,  children: [
+            {
+                path: '',
+                component: HomeMain
+            },
+            {
+                path: '/apoteke',
+                component: Apoteke
+            },
+            {
+                path: '/lekovi',
+                component: Lekovi
+            },
+        ]},
         {path: '/apoteke', component: Apoteke},
         {path: '/apoteka/:id', component: Apoteka},
         {path: '/login', component: Login},
@@ -35,7 +58,22 @@ const router = new VueRouter({
                 }
             ]},
         {path: '/home-admin_apoteke', component : HomeAdminApoteke},
-        {path: '/home-pacijent', component : HomePacijent},
+	    {path: '/home-pacijent', component: HomePacijent,  children: [
+	        {
+	            path: '',
+	            component: PacijentMain
+	        },
+			{
+                path: 'apoteke',
+                component: Apoteke
+            },
+            {
+                path: 'lekovi',
+                component: PacijentLekovi
+            }
+            
+            // todo, dodati preglede
+	    ]},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
         {path: '/lekovi', component: Lekovi},
         {path: '/dodaj-lek-admin', component: DodajLekAdmin},

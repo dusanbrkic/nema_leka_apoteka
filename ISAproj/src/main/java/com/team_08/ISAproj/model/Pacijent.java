@@ -17,7 +17,7 @@ public class Pacijent extends Korisnik{
 	@OneToMany(mappedBy = "pacijent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Pregled> pregledi;
 	@ManyToMany(fetch = FetchType.LAZY)
-	private Set<Lek> rezervisaniLekovi;
+	private Set<Narudzbenica> narudzbenice;
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<Apoteka> pretplaceneApoteke;
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -27,13 +27,13 @@ public class Pacijent extends Korisnik{
 
 	// constructors
 	public Pacijent() {super();}
-	public Pacijent(int poeni, int brPenala, Set<Pregled> pregledi, Set<Lek> rezervisaniLekovi,
+	public Pacijent(int poeni, int brPenala, Set<Pregled> pregledi, Set<Narudzbenica> narudzbenice,
 					Set<Apoteka> pretplaceneApoteke, Set<Lek> alergije, Set<Savetovanje> savetovanja) {
 		super();
 		this.poeni = poeni;
 		this.brPenala = brPenala;
 		this.pregledi = pregledi;
-		this.rezervisaniLekovi = rezervisaniLekovi;
+		this.narudzbenice = narudzbenice;
 		this.pretplaceneApoteke = pretplaceneApoteke;
 		this.alergije = alergije;
 		this.savetovanja = savetovanja;
@@ -78,14 +78,12 @@ public class Pacijent extends Korisnik{
 		this.pregledi = pregledi;
 	}
 
-	public Set<Lek> getRezervisaniLekovi() {
-		return rezervisaniLekovi;
+	public Set<Narudzbenica> getNarudzbenice() {
+		return narudzbenice;
 	}
-
-	public void setRezervisaniLekovi(Set<Lek> rezervisaniLekovi) {
-		this.rezervisaniLekovi = rezervisaniLekovi;
+	public void setNarudzbenice(Set<Narudzbenica> narudzbenice) {
+		this.narudzbenice = narudzbenice;
 	}
-
 	public Set<Apoteka> getPretplaceneApoteke() {
 		return pretplaceneApoteke;
 	}

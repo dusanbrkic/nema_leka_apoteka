@@ -80,40 +80,52 @@ Vue.component("Apoteke", {
           </option>
       </select>
       
-
-		
-		 <!-- NAVIGACIJA PO STRANAMA -->
-	      <b-pagination
-	        v-model="page"
-	        :total-rows="count"
-	        :per-page="pageSize"
-	        size="lg"
-	        @change="handlePageChange"
-	      ></b-pagination>
+	<br>
 	
-			<br>
 	
-	      <!-- BIRANJE VELICINE STRANE -->
+		      <!-- BIRANJE VELICINE STRANE -->
 	        Apoteka po strani:
 		    <select v-model="pageSize" @change="handlePageSizeChange($event)">
 		      <option v-for="size in pageSizes" :key="size" :value="size">
 		        {{ size }}
 		      </option>
 			</select>
+		
+		 <!-- NAVIGACIJA PO STRANAMA -->
+	      <b-pagination
+	        v-model="page"
+	        :total-rows="count"
+	        :per-page="pageSize"
+	        @change="handlePageChange"
+	      ></b-pagination>
 	
-		<br>
-		<br>
+
 
 		<!-- PRIKAZ APOTEKA -->
-		  <div class="row">
-			<div class="col-sm-4" v-for="apoteka in apoteke" :key="apoteka.id">
-			  <div class="panel panel-default">
-				<div class="panel-heading">{{apoteka.naziv}}</div>
-				  Adresa: {{apoteka.adresa}} <br>
-				  Ocena: {{apoteka.prosecnaOcena}} <br>
-				  Opis: {{apoteka.opis}}
-			</div>
-		  </div>
+		
+		
+	<b-container id="page_content">
+        <b-row>
+        <b-card-group deck v-for="apoteka in apoteke" :key="apoteka.id">
+          <b-col>
+            <b-card 
+                class="mb-2"
+            >
+              <b-card-text>
+              <h5> {{apoteka.naziv}} </h5> <br>
+                 Adresa: {{apoteka.adresa}} <br>
+				 Ocena: {{apoteka.prosecnaOcena}} <br>
+				 Opis: {{apoteka.opis}}
+              </b-card-text>
+              
+              <!-- <a href="#/apoteke" class="stretched-link"></a> -->
+
+            </b-card>
+          </b-col>
+
+        </b-row>
+      </b-container>
+		
 		  
 <br><br>
 

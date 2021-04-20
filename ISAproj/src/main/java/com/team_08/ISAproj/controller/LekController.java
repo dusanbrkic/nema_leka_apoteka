@@ -23,8 +23,11 @@ import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.Lek;
+import com.team_08.ISAproj.model.Narudzbenica;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
+import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 import com.team_08.ISAproj.service.LekService;
 import org.springframework.data.domain.Page;
@@ -33,7 +36,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,6 +60,8 @@ public class LekController {
 	private LekService lekService;
 	@Autowired
 	private ApotekaService apotekaService;
+	@Autowired
+	private EmailService sendEmailService;
 	
 	
 //    @RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -115,7 +124,7 @@ public class LekController {
 	
 			List<LekDTO> lekovi = new ArrayList<LekDTO>();
 			for (ApotekaLek a : apotekeLekovi) {
-				lekovi.add(new LekDTO(a.getLek()));
+				lekovi.add(new LekDTO(a));
 			}
 			
 			Map<String, Object> response = new HashMap<>();
@@ -151,10 +160,10 @@ public class LekController {
 		List<LekDTO> lekovi = new ArrayList<LekDTO>();
 		for (ApotekaLek a : apotekeLekovi) {
 			if(title.equals("")) {
-				lekovi.add(new LekDTO(a.getLek()));
+				lekovi.add(new LekDTO(a));
 			}else{
 				if(a.getLek().getNaziv().contains(title)) {
-					lekovi.add(new LekDTO(a.getLek()));
+					lekovi.add(new LekDTO(a));
 				}
 			}
 
@@ -201,4 +210,69 @@ public class LekController {
 		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
 
 	}
+	
+	
+	// Rezervacija leka
+	
+	@GetMapping(value="/rezervacija-leka")
+	public ResponseEntity<Void> receiveData(
+			@RequestParam("sifra") String sifra,
+			@RequestParam("kolicina") int kolicina,
+			@RequestParam("istekRezervacije") String datum,
+			@RequestParam("cookie") String cookie
+			) throws ParseException
+		{
+		
+			Lek lek = null;
+			
+			Pacijent k = (Pacijent) korisnikService.findUserByToken(cookie);
+			
+			ApotekaLek al = null;
+		
+			for (ApotekaLek a : apotekaLekService.findAll()) {
+				if(sifra.equals(a.getLek().getSifra())) {
+					lek = a.getLek();
+					al = a;
+					al.setKolicina(al.getKolicina()-kolicina);
+					
+					Narudzbenica n = new Narudzbenica((Date) new SimpleDateFormat("yyyy-MM-dd").parse(datum), lek, kolicina);
+					
+					
+					
+					k.setNarudzbenice(new HashSet<Narudzbenica>(Arrays.asList(n)));
+					
+					//k.getNarudzbenice().add(n);
+				}
+			}
+		
+			if(lek == null) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		
+			String body = "Poštovani, " + k.getIme() + "\n"
+					+ "Rezervisali ste lek " + lek.getNaziv() + " x " + kolicina + "kom" +"\n"
+					+ "Ukupna cena je: " + al.getCena()*kolicina + " dinara \n"
+					+ "Rezervisani lek možete pokupiti do isteka rezervacije " + datum + "\n\n"
+					+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
+					+ "Srdačan pozdrav.";
+			
+			String title = "Potvrda Rezervacije Leka";
+		
+			try
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmailService.sendEmail(k.getEmailAdresa(), body, title);
+					}
+				};
+				t.start();
+			}
+			catch(Exception e) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		}
+	
 }
