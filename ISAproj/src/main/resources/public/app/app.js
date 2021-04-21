@@ -24,8 +24,12 @@ const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
 
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
+const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
 const CalendarView = {template: '<CalendarView></CalendarView>'}
 const DermatologMain = {template: '<DermatologMain></DermatologMain>'}
+const FarmaceutMain = {template: '<FarmaceutMain></FarmaceutMain>'}
+const PregledaniPacijenti = {template: '<PregledaniPacijenti></PregledaniPacijenti>'}
+const OdsustvoForma = {template: '<OdsustvoForma></OdsustvoForma>'}
 
 const router = new VueRouter({
     mode : 'hash',
@@ -56,8 +60,27 @@ const router = new VueRouter({
                 {
                     path: 'calendar-view',
                     component: CalendarView
+                },
+                {
+                    path: 'pregledani-pacijenti',
+                    component: PregledaniPacijenti
                 }
             ]},
+        {path: '/home-farmaceut', component: HomeFarmaceut,  children: [
+                {
+                    path: '',
+                    component: FarmaceutMain
+                },
+                {
+                    path: 'calendar-view',
+                    component: CalendarView
+                },
+                {
+                    path: 'pregledani-pacijenti',
+                    component: PregledaniPacijenti
+                }
+            ]},
+        {path: '/odsustvo-forma', component: OdsustvoForma},
         {path: '/home-admin_apoteke', component : HomeAdminApoteke},
 	    {path: '/home-pacijent', component: HomePacijent,  children: [
 	        {

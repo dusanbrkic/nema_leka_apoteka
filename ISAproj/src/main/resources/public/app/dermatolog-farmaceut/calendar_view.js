@@ -6,7 +6,6 @@ Vue.component("CalendarView", {
             invalidCookie: false,
             calendar: null,
             selectedEvent: {
-                id: null,
                 title: null,
                 start: new Date(),
                 end: new Date(),
@@ -16,7 +15,9 @@ Vue.component("CalendarView", {
                 dijagnoza: null,
                 pregledZakazan: null,
                 pregledObavljen: null,
-                trajanje: null
+                savetovanjeObavljeno: null,
+                trajanje: null,
+                eventType: null
             }
         }
     },
@@ -33,11 +34,19 @@ Vue.component("CalendarView", {
                 homeButton: {
                     text: 'home',
                     click: function () {
-                        alert('Lesli se vraca kuci!');
+                        if (that.rola == "FARMACEUT") app.$router.push("/home-farmaceut")
+                        else if (that.rola == "DERMATOLOG") app.$router.push("/home-dermatolog")
+                        else {
+                            localStorage.clear()
+                            app.$router.push("home")
+                        }
                     }
                 },
                 zakazivanjeButton: {
-                    text: 'zakazi pregled',
+                    text: (() => {
+                        if (that.rola == "FARMACEUT") return 'zakazi savetovanje'
+                        else if (that.rola == "DERMATOLOG") return 'zakazi pregled'
+                    })(),
                     click: function () {
                         alert('Zakazivanje!');
                     }
@@ -80,15 +89,18 @@ Vue.component("CalendarView", {
                 <b-col>Kraj:</b-col>
                 <b-col>{{ moment(String(selectedEvent.end)).format("DD/MM/YYYY HH:mm") }}</b-col>
               </b-row>
-              <b-row v-if="selectedEvent.pregledObavljen">
+              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledObavljen) ||
+                 (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
                 <b-col>Trajanje:</b-col>
                 <b-col>{{ moment(String(new Date(selectedEvent.trajanje))).format("mm") }} min</b-col>
               </b-row>
-              <b-row v-if="selectedEvent.pregledZakazan">
+              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledZakazan) ||
+                 (selectedEvent.eventType=='SAVETOVANJE')">
                 <b-col>Ime pacijenta:</b-col>
                 <b-col>{{ selectedEvent.pacijent.ime }}</b-col>
               </b-row>
-              <b-row v-if="selectedEvent.pregledZakazan">
+              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledZakazan) ||
+                 (selectedEvent.eventType=='SAVETOVANJE')">
                 <b-col>Prezime pacijenta:</b-col>
                 <b-col>{{ selectedEvent.pacijent.prezime }}</b-col>
               </b-row>
@@ -100,27 +112,38 @@ Vue.component("CalendarView", {
                 <b-col>Adresa apoteke:</b-col>
                 <b-col>{{ selectedEvent.apoteka.adresa }}</b-col>
               </b-row>
-              <b-row v-if="selectedEvent.pregledObavljen">
+              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledObavljen) ||
+                 (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
                 <b-col>Dijagnoza:</b-col>
                 <b-col>{{ selectedEvent.dijagnoza }}</b-col>
               </b-row>
-              <b-row v-if="selectedEvent.pregledObavljen">
+              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledObavljen) ||
+                 (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
                 <b-col>Preporuceni lekovi:</b-col>
                 <b-col>
                   <b-row v-for="lek in selectedEvent.preporuceniLekovi">- {{ lek.naziv }}</b-row>
                 </b-col>
               </b-row>
-              <b-row v-if="!selectedEvent.pregledZakazan">
+              <b-row v-if="selectedEvent.eventType=='PREGLED' && !selectedEvent.pregledZakazan">
                 <br>
                 <p>Ovo je dodeljen termin od strane apoteke. Mozete zakazati pregled u ovom terminu.</p>
               </b-row>
             </b-container>
-            <template #modal-footer="{ ok, cancel}">
-              <b-button v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen" variant="danger" @click="cancel()">Otkazi pregled
-              </b-button>
+            <template #modal-footer="{ ok }">
               <b-button variant="success" @click="ok()">
-                <template v-if="selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan">OK</template>
-                <template v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">Zapocni pregled</template>
+                <template 
+                    v-if="(selectedEvent.eventType=='PREGLED' && (selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan)) 
+                          || (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
+                  OK
+                </template>
+                <template 
+                    v-if="selectedEvent.eventType=='PREGLED' && selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">
+                  Zapocni pregled
+                </template>
+                <template
+                    v-if="selectedEvent.eventType=='SAVETOVANJE' && !selectedEvent.savetovanjeObavljeno">
+                  Zapocni savetovanje
+                </template>
               </b-button>
             </template>
           </b-modal>
@@ -135,15 +158,34 @@ Vue.component("CalendarView", {
         loadData: function () {
             if (this.rola == "FARMACEUT") this.loadSavetovanja()
             else if (this.rola == "DERMATOLOG") this.loadPregledi()
-        },
-        loadPregledi: function (thisArg, ...argArray) {
             axios
-                .get("pregledi/getPreglediByDermatolog", {params: {"cookie": this.cookie}})
+                .get("korisnici/fetchOdsustva", {params: {"cookie": this.cookie}})
                 .then(response => {
                     let events = response.data
                     for (let event of events) {
+                        event.eventType = "ODMOR"
                         this.calendar.addEvent({
-                            id: event.id,
+                            title: "Odmor",
+                            start: new Date(event.pocetak),
+                            end: new Date(event.kraj),
+                            event: event,
+                            color: (() => {
+                                if (new Date() > new Date(event.end)) {
+                                    return "gray"
+                                }
+                            })()
+                        })
+                    }
+                })
+        },
+        loadPregledi: function () {
+            axios
+                .get("pregledi/getPreglediByDermatolog", {params: {"cookie": this.cookie}})
+                .then(response => {
+                    let events = response.data['content']
+                    for (let event of events) {
+                        event.eventType = "PREGLED"
+                        this.calendar.addEvent({
                             title: "Pregled: " + event.pacijent.ime + " " + event.pacijent.prezime,
                             start: new Date(event.start),
                             end: new Date(event.end),
@@ -169,22 +211,54 @@ Vue.component("CalendarView", {
                 })
         },
         loadSavetovanja: function () {
-
+            axios
+                .get("savetovanja/getSavetovanjaByFarmaceut", {params: {"cookie": this.cookie}})
+                .then(response => {
+                    let events = response.data['content']
+                    for (let event of events) {
+                        event.eventType = "SAVETOVANJE"
+                        this.calendar.addEvent({
+                            title: "Savetovanje: " + event.pacijent.ime + " " + event.pacijent.prezime,
+                            start: new Date(event.start),
+                            end: new Date(event.end),
+                            event: event,
+                            color: (() => {
+                                if (new Date() > new Date(event.end)) {
+                                    if (event.savetovanjeObavljeno)
+                                        return "gray"
+                                    else
+                                        return "red"
+                                }
+                            })()
+                        })
+                    }
+                })
+                .catch(error => {
+                    if (error.request.status == 404) {
+                        this.invalidCookie = true
+                    }
+                })
         },
         eventSelected: function (info) {
             let event = info.event.extendedProps.event
-            this.selectedEvent.id = event.id
-            this.selectedEvent.title = event.pacijent.ime + " " + event.pacijent.prezime
-            this.selectedEvent.start = event.start
-            this.selectedEvent.end = event.end
-            this.selectedEvent.apoteka = event.apoteka
-            this.selectedEvent.pacijent = event.pacijent
-            this.selectedEvent.preporuceniLekovi = event.preporuceniLekovi
-            this.selectedEvent.dijagnoza = event.dijagnoza
-            this.selectedEvent.pregledZakazan = event.pregledZakazan
-            this.selectedEvent.pregledObavljen = event.pregledObavljen
-            this.selectedEvent.trajanje = event.trajanje
-            this.$bvModal.show('eventModal')
+            this.selectedEvent.eventType = event.eventType
+            if (event.eventType == "SAVETOVANJE" || event.eventType == "PREGLED") {
+                this.selectedEvent.title = event.pacijent.ime + " " + event.pacijent.prezime
+                this.selectedEvent.start = event.start
+                this.selectedEvent.end = event.end
+                this.selectedEvent.apoteka = event.apoteka
+                this.selectedEvent.pacijent = event.pacijent
+                this.selectedEvent.preporuceniLekovi = event.preporuceniLekovi
+                this.selectedEvent.dijagnoza = event.dijagnoza
+                if (event.eventType == "PREGLED") {
+                    this.selectedEvent.pregledZakazan = event.pregledZakazan
+                    this.selectedEvent.pregledObavljen = event.pregledObavljen
+                } else if (event.eventType == "SAVETOVANJE") {
+                    this.selectedEvent.savetovanjeObavljeno = event.savetovanjeObavljeno
+                }
+                this.selectedEvent.trajanje = event.trajanje
+                this.$bvModal.show('eventModal')
+            }
         }
     }
 });

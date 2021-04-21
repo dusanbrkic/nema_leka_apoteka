@@ -1,4 +1,4 @@
-Vue.component("DermatologMain", {
+Vue.component("FarmaceutMain", {
     data: function () {
         return {}
     },
@@ -6,7 +6,7 @@ Vue.component("DermatologMain", {
     },
     template: `
       <div>
-      <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
+      <link rel="stylesheet" href="css/dermatolog-farmaceut/farmaceut_main.css" type="text/css">
       <b-container id="page_content">
         <b-row>
           <b-col>
@@ -23,12 +23,12 @@ Vue.component("DermatologMain", {
                 Prikazi listu svih pregledanih pacijenata
               </b-card-text>
 
-              <b-button href="#/home-dermatolog/pregledani-pacijenti" variant="primary">Otvori</b-button>
+              <b-button href="#/home-farmaceut/pregledani-pacijenti" variant="primary">Otvori</b-button>
             </b-card>
           </b-col>
           <b-col>
             <b-card
-                title="Zakazi pregled"
+                title="Zakazi savetovanje"
                 img-src="https://picsum.photos/600/300/?image=25"
                 img-alt="Image"
                 img-top
@@ -37,7 +37,7 @@ Vue.component("DermatologMain", {
                 class="mb-2"
             >
               <b-card-text>
-                Idi na stranicu za zakazivanje pregleda
+                Idi na stranicu za zakazivanje savetovanja
               </b-card-text>
 
               <b-button href="#/zakazivanje" variant="primary">Otvori</b-button>
@@ -61,7 +61,7 @@ Vue.component("DermatologMain", {
           </b-col>
           <b-col>
             <b-card
-                title="Zapocni pregled"
+                title="Zapocni savetovanje"
                 img-src="https://picsum.photos/600/300/?image=25"
                 img-alt="Image"
                 img-top
@@ -70,9 +70,9 @@ Vue.component("DermatologMain", {
                 class="mb-2"
             >
               <b-card-text>
-                Zapocni pregled koji upravo treba da se odigra
+                Zapocni savetovanje koje upravo treba da se odigra
               </b-card-text>
-              <b-button href="#/pregled-forma" variant="primary">Otvori</b-button>
+              <b-button href="#/savetovanje-forma" variant="primary">Otvori</b-button>
             </b-card>
           </b-col>
           <b-col>
@@ -88,7 +88,23 @@ Vue.component("DermatologMain", {
               <b-card-text>
                 Prikazi radni kalendar
               </b-card-text>
-              <b-button href="#/home-dermatolog/calendar-view" variant="primary">Otvori</b-button>
+              <b-button href="#/home-farmaceut/calendar-view" variant="primary">Otvori</b-button>
+            </b-card>
+          </b-col>
+          <b-col>
+            <b-card
+                title="Izdaj lek"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem;"
+                class="mb-2"
+            >
+              <b-card-text>
+                Idi na stranicu za izdavanje leka
+              </b-card-text>
+              <b-button href="#/home-farmaceut/izdaj-lek" variant="primary">Otvori</b-button>
             </b-card>
           </b-col>
         </b-row>

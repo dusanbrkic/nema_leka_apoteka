@@ -11,10 +11,10 @@ public class Dermatolog extends Korisnik {
     private Double prosecnaOcena;
 
     // connections
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Odsustvo> odsustva;
     @OneToMany(mappedBy = "dermatolog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DermatologApoteka> apoteke;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Pacijent> pregledaniPacijenti;
     @OneToMany(mappedBy = "dermatolog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Pregled> pregledi;
 
@@ -38,19 +38,23 @@ public class Dermatolog extends Korisnik {
         this.apoteke = apoteke;
     }
 
-    public Set<Pacijent> getPregledaniPacijenti() {
-        return pregledaniPacijenti;
-    }
-
-    public void setPregledaniPacijenti(Set<Pacijent> pregledaniPacijenti) {
-        this.pregledaniPacijenti = pregledaniPacijenti;
-    }
-
     public Set<Pregled> getPregledi() {
         return pregledi;
     }
 
     public void setPregledi(Set<Pregled> pregledi) {
         this.pregledi = pregledi;
+    }
+
+    public void setProsecnaOcena(Double prosecnaOcena) {
+        this.prosecnaOcena = prosecnaOcena;
+    }
+
+    public Set<Odsustvo> getOdsustvo() {
+        return odsustva;
+    }
+
+    public void setOdsustvo(Set<Odsustvo> odsustvo) {
+        this.odsustva = odsustvo;
     }
 }

@@ -34,7 +34,7 @@ public class Pregled {
 	private Pacijent pacijent;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Apoteka apoteka;
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<Lek> preporuceniLekovi;
 	
 	// constructors
