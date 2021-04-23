@@ -153,22 +153,23 @@ public class KorisnikController {
     }
     //verify code
     @PostMapping(value = "/verifyCode")
-    public ResponseEntity<KorisnikDTO> verifyCode(@RequestBody String verification){
-    	System.out.println("_------------------------------------------------------------------------------");
-    	verification = verification.substring(0, verification.length() - 1);
-    	Korisnik k = korisnikService.findUserByToken(verification);
-    	System.out.println("_-----------------------------asdadasdadasdadadadadadadad-------------------------------------------------");
-    	System.out.println(k);
-    	System.out.println(verification);
-    	if(k == null) {
-    		return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
-    	}
-    	System.out.println("_-----------------------------asdadaASDADADADASsdadasdadadadadadadad-------------------------------------------------");
-    	String ck = CookieToken.createTokenValue(k.getUsername(), k.getPassword());
-    	k.setCookieTokenValue(ck);
-    	korisnikService.saveUser(k);
-    	KorisnikDTO kDTO = new KorisnikDTO(k);
-    	return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
+    public ResponseEntity<KorisnikDTO> verifyCode(@RequestBody String verification) {
+        System.out.println("_------------------------------------------------------------------------------");
+        verification = verification.substring(0, verification.length() - 1);
+        Korisnik k = korisnikService.findUserByToken(verification);
+        System.out.println("_-----------------------------asdadasdadasdadadadadadadad-------------------------------------------------");
+        System.out.println(k);
+        System.out.println(verification);
+        if (k == null) {
+            return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
+        }
+        System.out.println("_-----------------------------asdadaASDADADADASsdadasdadadadadadadad-------------------------------------------------");
+        String ck = CookieToken.createTokenValue(k.getUsername(), k.getPassword());
+        k.setCookieTokenValue(ck);
+        korisnikService.saveUser(k);
+        KorisnikDTO kDTO = new KorisnikDTO(k);
+        return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
+    }
     @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
                                              @RequestParam("end") String endDate,
