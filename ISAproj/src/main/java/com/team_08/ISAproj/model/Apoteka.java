@@ -32,7 +32,7 @@ public class Apoteka {
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Pregled> pregledi = new HashSet<Pregled>();
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Savetovanje> savetovanja= new HashSet<Savetovanje>();
+	private Set<Pregled> savetovanja= new HashSet<Pregled>();
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Pacijent> pretplaceniKorisnici= new HashSet<Pacijent>();
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -109,11 +109,11 @@ public class Apoteka {
 		this.pregledi = pregledi;
 	}
 
-	public Set<Savetovanje> getSavetovanja() {
+	public Set<Pregled> getSavetovanja() {
 		return savetovanja;
 	}
 
-	public void setSavetovanja(Set<Savetovanje> savetovanja) {
+	public void setSavetovanja(Set<Pregled> savetovanja) {
 		this.savetovanja = savetovanja;
 	}
 

@@ -58,11 +58,4 @@ public class KorisnikService {
             adminApotekeRepository.save((AdminApoteke)k);
 
     }
-
-    public Korisnik fetchDermatologWithOdsustvo(String cookie) {
-        return dermatologRepository.fetchDermatologWithOdsustvo(cookie);
-    }
-    public Korisnik fetchFarmaceutWithOdsustvo(String cookie) {
-        return farmaceutRepository.fetchFarmaceutWithOdsustvo(cookie);
-    }
 }

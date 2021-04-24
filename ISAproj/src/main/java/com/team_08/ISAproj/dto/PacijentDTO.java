@@ -1,10 +1,12 @@
 package com.team_08.ISAproj.dto;
 
 import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Pacijent;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
-public class PregledanKorisnikDTO {
+public class PacijentDTO {
     private String ime;
     private String prezime;
     private Date datumRodjenja;
@@ -14,7 +16,7 @@ public class PregledanKorisnikDTO {
     private String drzava;
     private String brojTelefona;
 
-    public PregledanKorisnikDTO(Korisnik k) {
+    public PacijentDTO(Korisnik k) {
         this.ime = k.getIme();
         this.prezime = k.getPrezime();
         this.datumRodjenja = k.getDatumRodjenja();

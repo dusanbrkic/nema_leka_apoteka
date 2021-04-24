@@ -10,7 +10,6 @@ import com.team_08.ISAproj.service.KorisnikService;
 import java.util.Random;
 
 import com.team_08.ISAproj.service.PregledService;
-import com.team_08.ISAproj.service.SavetovanjeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,8 +38,6 @@ public class KorisnikController {
   	private EmailService sendEmailService;
     @Autowired
     private PregledService pregledService;
-    @Autowired
-    private SavetovanjeService savetovanjeService;
 
 
     //change password
@@ -70,6 +67,13 @@ public class KorisnikController {
         }
         if(k.getPassword().equals(password)){
             String ck = CookieToken.createTokenValue(username, password);
+            if(k.getCookieToken() == null || k.getCookieToken().equals("token")) {
+            	k.setCookieTokenValue(ck);
+            }else {
+                if(!k.getCookieToken().equals(ck)) {
+                	return new ResponseEntity<CookieRoleDTO>(HttpStatus.BAD_REQUEST);
+                	}
+            }
             k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
@@ -153,64 +157,18 @@ public class KorisnikController {
     }
     //verify code
     @PostMapping(value = "/verifyCode")
-    public ResponseEntity<KorisnikDTO> verifyCode(@RequestBody String verification){
-    	System.out.println("_------------------------------------------------------------------------------");
-    	verification = verification.substring(0, verification.length() - 1);
-    	Korisnik k = korisnikService.findUserByToken(verification);
-    	System.out.println("_-----------------------------asdadasdadasdadadadadadadad-------------------------------------------------");
-    	System.out.println(k);
-    	System.out.println(verification);
-    	if(k == null) {
-    		return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
-    	}
-    	System.out.println("_-----------------------------asdadaASDADADADASsdadasdadadadadadadad-------------------------------------------------");
-    	String ck = CookieToken.createTokenValue(k.getUsername(), k.getPassword());
-    	k.setCookieTokenValue(ck);
-    	korisnikService.saveUser(k);
-    	KorisnikDTO kDTO = new KorisnikDTO(k);
-    	return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
-    @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
-                                             @RequestParam("end") String endDate,
-                                             @RequestParam("cookie") String cookie) {
-        LocalDateTime start = LocalDateTime.parse(startDate + " 00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        LocalDateTime end = LocalDateTime.parse(endDate + " 23:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        if (end.isBefore(start)){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<KorisnikDTO> verifyCode(@RequestBody String verification) {
+        verification = verification.substring(0, verification.length() - 1);
+        Korisnik k = korisnikService.findUserByToken(verification);
+        System.out.println(k);
+        System.out.println(verification);
+        if (k == null) {
+            return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
         }
-        Korisnik k = korisnikService.fetchDermatologWithOdsustvo(cookie);
-        if(k != null) {
-            if (!pregledService.findAllInDateRange(start, end, cookie).isEmpty()){
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            ((Dermatolog) k).getOdsustvo().add(new Odsustvo(start, end));
-        } else {
-            k = korisnikService.fetchFarmaceutWithOdsustvo(cookie);
-            if(k != null) {
-                if (!savetovanjeService.findAllInDateRange(start, end, cookie).isEmpty()){
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                ((Farmaceut) k).getOdsustvo().add(new Odsustvo(start, end));
-            }
-            else{
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
+        String ck = CookieToken.createTokenValue(k.getUsername(), k.getPassword());
+        k.setCookieTokenValue(ck);
         korisnikService.saveUser(k);
-        return new ResponseEntity<>("User successfully updated",HttpStatus.OK);
+        KorisnikDTO kDTO = new KorisnikDTO(k);
+        return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
     }
-    @GetMapping(value = "/fetchOdsustva", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Odsustvo>> fetchOdsustva(@RequestParam("cookie") String cookie) {
-        Korisnik k = korisnikService.fetchDermatologWithOdsustvo(cookie);
-        if(k != null) {
-            return new ResponseEntity<>(((Dermatolog)k).getOdsustvo(), HttpStatus.OK);
-        } else {
-            k = korisnikService.fetchFarmaceutWithOdsustvo(cookie);
-            if(k != null) {
-                return new ResponseEntity<>(((Farmaceut) k).getOdsustvo(), HttpStatus.OK);
-            }
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
 }

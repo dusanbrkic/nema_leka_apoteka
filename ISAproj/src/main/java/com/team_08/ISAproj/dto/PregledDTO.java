@@ -1,10 +1,7 @@
 package com.team_08.ISAproj.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.team_08.ISAproj.model.*;
 
-import java.sql.Date;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +15,7 @@ public class PregledDTO {
     private Long trajanje;
 
     // connections
-    private PregledanKorisnikDTO pacijent;
+    private PacijentDTO pacijent;
     private ApotekaDTO apoteka;
     private Set<LekDTO> preporuceniLekovi;
 
@@ -28,7 +25,7 @@ public class PregledDTO {
         this.end = pregled.getKraj();
         this.dijagnoza = pregled.getDijagnoza();
         this.pregledObavljen = pregled.isPregledObavljen();
-        this.pacijent = new PregledanKorisnikDTO(pregled.getPacijent());
+        this.pacijent = new PacijentDTO(pregled.getPacijent());
         this.apoteka = new ApotekaDTO(pregled.getApoteka());
         this.trajanje = pregled.getTrajanje();
         this.preporuceniLekovi = new HashSet<LekDTO>();
@@ -71,11 +68,11 @@ public class PregledDTO {
         this.pregledObavljen = pregledObavljen;
     }
 
-    public PregledanKorisnikDTO getPacijent() {
+    public PacijentDTO getPacijent() {
         return pacijent;
     }
 
-    public void setPacijent(PregledanKorisnikDTO pacijent) {
+    public void setPacijent(PacijentDTO pacijent) {
         this.pacijent = pacijent;
     }
 
