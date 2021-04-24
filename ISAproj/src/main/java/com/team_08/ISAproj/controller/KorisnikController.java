@@ -67,7 +67,7 @@ public class KorisnikController {
         }
         if(k.getPassword().equals(password)){
             String ck = CookieToken.createTokenValue(username, password);
-            if(k.getCookieToken() == null) {
+            if(k.getCookieToken() == null || k.getCookieToken().equals("token")) {
             	k.setCookieTokenValue(ck);
             }else {
                 if(!k.getCookieToken().equals(ck)) {
