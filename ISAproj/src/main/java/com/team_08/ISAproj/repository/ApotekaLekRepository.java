@@ -26,5 +26,8 @@ public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
 	
 	Page<ApotekaLek> findByLekContaining(Lek lek, Pageable pageable);
 	
+	
+	//List<ApotekaLek> fetch(Long apotekaid,String sifra);
+	
 	void deleteByLekId(Long LekId);
 }

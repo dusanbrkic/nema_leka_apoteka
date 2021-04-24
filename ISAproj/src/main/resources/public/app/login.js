@@ -7,13 +7,15 @@ Vue.component("Login", {
             userRole: "",
             wrongUsername : false,
             wrongPassword : false,
-			firstLogin: ""
+			firstLogin: "",
+			ver: false,
         }
     },
 
     template: `
       <div>
       <link rel="stylesheet" href="css/login.css" type="text/css">
+      <b-alert style="text-align: center;" v-model="ver" variant="danger">Niste izvrsili verifikaciju!</b-alert>
       <b-alert style="text-align: center;" v-model="wrongUsername" variant="danger">Wrong Username!</b-alert>
       <b-alert style="text-align: center;" v-model="wrongPassword" variant="danger">Wrong Password!</b-alert>
         <b-card title="Log in" id="login_screen">
@@ -34,6 +36,7 @@ Vue.component("Login", {
             app.$router.push("/")
         },
         login: async function () {
+        	this.ver = false;
             let user = {
                 params: {
                     "username": this.username, "password": this.password
@@ -56,6 +59,9 @@ Vue.component("Login", {
                         this.wrongUsername = false
                         this.wrongPassword = true
                     }
+                    else if(error.request.status==400){
+                    		this.ver = true;
+                    	}
                 })
             localStorage.setItem("cookie", this.cookie)
             localStorage.setItem("userRole", this.userRole)

@@ -67,6 +67,13 @@ public class KorisnikController {
         }
         if(k.getPassword().equals(password)){
             String ck = CookieToken.createTokenValue(username, password);
+            if(k.getCookieToken() == null) {
+            	k.setCookieTokenValue(ck);
+            }else {
+                if(!k.getCookieToken().equals(ck)) {
+                	return new ResponseEntity<CookieRoleDTO>(HttpStatus.BAD_REQUEST);
+                	}
+            }
             k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
@@ -151,16 +158,13 @@ public class KorisnikController {
     //verify code
     @PostMapping(value = "/verifyCode")
     public ResponseEntity<KorisnikDTO> verifyCode(@RequestBody String verification) {
-        System.out.println("_------------------------------------------------------------------------------");
         verification = verification.substring(0, verification.length() - 1);
         Korisnik k = korisnikService.findUserByToken(verification);
-        System.out.println("_-----------------------------asdadasdadasdadadadadadadad-------------------------------------------------");
         System.out.println(k);
         System.out.println(verification);
         if (k == null) {
             return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
         }
-        System.out.println("_-----------------------------asdadaASDADADADASsdadasdadadadadadadad-------------------------------------------------");
         String ck = CookieToken.createTokenValue(k.getUsername(), k.getPassword());
         k.setCookieTokenValue(ck);
         korisnikService.saveUser(k);
