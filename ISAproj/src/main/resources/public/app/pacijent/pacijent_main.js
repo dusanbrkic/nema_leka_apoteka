@@ -104,7 +104,7 @@ Vue.component("PacijentMain", {
                 Moji rezervisani lekovi
               </b-card-text>
              
-             
+             <a href="#/home-pacijent/narudzbenice" class="stretched-link"></a>
 
             </b-card>
           <b-col>

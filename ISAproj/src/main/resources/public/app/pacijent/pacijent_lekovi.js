@@ -79,7 +79,8 @@ Vue.component("PacijentLekovi", {
               <h5> {{lek.naziv}} </h5>
               <p class="card-text">
                  Sastav: {{lek.sastav}} <br>
-				 Cena: {{lek.cena}} 
+				 Cena: {{lek.cena}}		<br>
+				 Kolicina: {{lek.kolicina}}
 			  </p>
               </b-card-text>
               
@@ -101,14 +102,13 @@ Vue.component("PacijentLekovi", {
         Cena po komadu: {{this.izabranLek.cena}} <br>
        <b-form-group id="input-group-3" label="Kolicina:" label-for="input-3">
        
-       
-       
-        <select name="" id="input" class="form-control" @input="kolicinaChange();" v-model="izabranLek.kolicina">
-
-		    <option v-for="n in izabranLek.kolicina" :value="n" :selected="n == 1 ? true : false" >{{n}}</option>
-		</select>
-            
-       		</b-form-input>
+        <b-form-input
+                id="input-3"
+                type="date"
+                type="number"
+                @input="kolicinaChange();"
+                v-model="izabranLek.kolicina"
+        ></b-form-input>
             
         <b-form-group id="input-group-2" label="Preuzeti do:" label-for="input-2">
             <b-form-input
@@ -176,9 +176,8 @@ Vue.component("PacijentLekovi", {
 			      			cookie: this.cookie
 			       },
 			    }).then((response) => {
-
         			this.$refs['my-modal'].hide();
-        			
+        			this.retrieveLekovi();
 	          		this.uspeh = true;
 		        })
 		        .catch((e) => {
@@ -188,6 +187,7 @@ Vue.component("PacijentLekovi", {
 		        	this.losUnos = true;
 		        });
 		        
+		   this.retrieveLekovi();
 
 	    },
 

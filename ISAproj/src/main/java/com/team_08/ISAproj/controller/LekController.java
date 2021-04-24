@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team_08.ISAproj.dto.LekDTO;
+import com.team_08.ISAproj.dto.NarudzbenicaDTO;
 import com.team_08.ISAproj.dto.ApotekaDTO;
 import com.team_08.ISAproj.dto.CookieRoleDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
@@ -26,13 +27,14 @@ import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.model.Narudzbenica;
+import com.team_08.ISAproj.model.NarudzbenicaLek;
 import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 import com.team_08.ISAproj.service.LekService;
-
+import com.team_08.ISAproj.service.NarudzbenicaService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +42,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +69,8 @@ public class LekController {
 	private ApotekaService apotekaService;
 	@Autowired
 	private EmailService sendEmailService;
+	@Autowired
+	private NarudzbenicaService narudzbenicaService;
 	
 	
 //    @RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -272,20 +277,32 @@ public class LekController {
 			Pacijent k = (Pacijent) korisnikService.findUserByToken(cookie);
 			
 			ApotekaLek al = null;
-		
+			
+			Long porudzbinaId = (long) 0;
+			
 			for (ApotekaLek a : apotekaLekService.findAll()) {
 				if(sifra.equals(a.getLek().getSifra())) {
 					lek = a.getLek();
 					al = a;
+					if(kolicina>al.getKolicina()) {
+						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+					}
 					al.setKolicina(al.getKolicina()-kolicina);
+		
+					apotekaLekService.saveAL(al);
 					
-					Narudzbenica n = new Narudzbenica((Date) new SimpleDateFormat("yyyy-MM-dd").parse(datum), lek, kolicina);
 					
+					Narudzbenica n = new Narudzbenica((Date) new SimpleDateFormat("yyyy-MM-dd").parse(datum));
+					NarudzbenicaLek nl = new NarudzbenicaLek(kolicina, n,lek);
 					
+					n.addNarudzbenicaLek(nl);
+					n.setApoteka(a.getApoteka());
+					n.setPacijent(k);
 					
-					k.setNarudzbenice(new HashSet<Narudzbenica>(Arrays.asList(n)));
+					narudzbenicaService.saveNarudzbenica(n);
+					narudzbenicaService.saveNarudzbenicaLek(nl);
 					
-					//k.getNarudzbenice().add(n);
+					porudzbinaId = n.getId();
 				}
 			}
 		
@@ -300,7 +317,7 @@ public class LekController {
 					+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
 					+ "Srdačan pozdrav.";
 			
-			String title = "Potvrda Rezervacije Leka";
+			String title = "Potvrda Rezervacije Leka (ID:" + porudzbinaId + ")";
 		
 			try
 			{
@@ -319,4 +336,33 @@ public class LekController {
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		}
 	
+	// dobavljanje narudzbenica
+	@GetMapping(value="/moje_porudzbine" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<NarudzbenicaDTO>> getNarudzbenice() {
+    	
+    	List<Narudzbenica> n = narudzbenicaService.findAllNarudzbenice();
+
+    	List<NarudzbenicaDTO> narudzbenice = new ArrayList<NarudzbenicaDTO>();
+    	
+    	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
+    	
+    	for(Narudzbenica tmp : n) {
+    		String lekovi = "";
+        	boolean first = true;
+    		for(NarudzbenicaLek nl : tmp.getLekovi()) {
+    			
+    			if(!first) { lekovi += ", "; } else { first = false; }
+    			
+    			lekovi += nl.getLek().getNaziv() + " x " + nl.getKolicina() + " kom";
+    		}
+    		 
+    		narudzbenice.add(new NarudzbenicaDTO(
+    				tmp.getId(),
+    				tmp.getApoteka().getNaziv(),
+    				dateFormat.format(tmp.getRokPonude()),
+    				lekovi));
+    	}
+    	
+		return new ResponseEntity<List<NarudzbenicaDTO>>(narudzbenice, HttpStatus.OK);
+	}
 }

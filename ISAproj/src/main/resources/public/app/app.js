@@ -7,6 +7,7 @@ const HomeMain  = { template: '<HomeMain></HomeMain>'}
 const HomePacijent = {template: '<HomePacijent></HomePacijent>'}
 const PacijentMain = {template: '<PacijentMain></PacijentMain>'}
 const PacijentLekovi = {template: '<PacijentLekovi></PacijentLekovi>'}
+const PacijentNarudzbenice = {template: '<PacijentNarudzbenice></PacijentNarudzbenice>'}
 
 // dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
@@ -94,9 +95,11 @@ const router = new VueRouter({
             {
                 path: 'lekovi',
                 component: PacijentLekovi
+            },
+            {
+                path: 'narudzbenice',
+                component: PacijentNarudzbenice
             }
-            
-            // todo, dodati preglede
 	    ]},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
         {path: '/lekovi', component: Lekovi},

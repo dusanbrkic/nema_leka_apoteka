@@ -12,18 +12,18 @@ public class NarudzbenicaLek {
 	private Integer kolicina;
 	
 	//connections
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Narudzbenica narudzbenica;
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Lek lek;
 
-
-
-	public NarudzbenicaLek(int kolicina, Narudzbenica narudzbenica, Lek lek) {
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Narudzbenica narudzbenica;
+	
+	public NarudzbenicaLek(int kolicina, Narudzbenica n, Lek lek) {
 		super();
 		this.kolicina = kolicina;
-		this.narudzbenica = narudzbenica;
 		this.lek = lek;
+		this.narudzbenica = n;
 	}
 
 	public NarudzbenicaLek() {
@@ -36,12 +36,7 @@ public class NarudzbenicaLek {
 	public void setKolicina(int kolicina) {
 		this.kolicina = kolicina;
 	}
-	public Narudzbenica getNarudzbenica() {
-		return narudzbenica;
-	}
-	public void setNarudzbenica(Narudzbenica narudzbenica) {
-		this.narudzbenica = narudzbenica;
-	}
+
 	public Lek getLek() {
 		return lek;
 	}
