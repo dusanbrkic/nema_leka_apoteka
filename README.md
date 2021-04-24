@@ -7,6 +7,6 @@
 Чланови тима:
     <li>Душан Бркић         SW42/2018   https://github.com/dusanbrkic</li>
     <li>Душан Хајдук        SW40/2018   https://github.com/HajdukDusan</li>
-    <li>Никола Петровић     SW34/2018   https://github.com/nikolapetrovicSIIT</li>
+    <li>Никола Петровић     SW34/2018   https://github.com/nikolapetrovic1</li>
 
 </ul>
