@@ -38,11 +38,12 @@ Vue.component("PregledaniPacijenti", {
                 },
                 {
                     key: 'brojTelefona',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'vreme',
                     sortable: true,
+                    label: "Datum pregleda",
                     formatter: (value, key, item) => {
                         return moment(value).format("DD/MM/YYYY");
                     },

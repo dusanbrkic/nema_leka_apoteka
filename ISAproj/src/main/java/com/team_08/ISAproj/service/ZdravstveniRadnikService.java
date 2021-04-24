@@ -6,6 +6,8 @@ import com.team_08.ISAproj.repository.FarmaceutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class ZdravstveniRadnikService {
 
@@ -18,6 +20,14 @@ public class ZdravstveniRadnikService {
         ZdravstveniRadnik z = dermatologRepository.fetchDermatologWithOdsustva(cookie);
         if (z==null) {
             z = farmaceutRepository.fetchFarmaceutWithOdsustva(cookie);
+        }
+        return z;
+    }
+
+    public ZdravstveniRadnik fetchZdravstveniRadnikWithOdsustvaInDateRange(String cookie, LocalDateTime start, LocalDateTime end) {
+        ZdravstveniRadnik z = dermatologRepository.fetchDermatologWithOdsustvaInDateRange(cookie, start, end);
+        if (z==null) {
+            z = farmaceutRepository.fetchFarmaceutWithOdsustvaInDateRange(cookie, start, end);
         }
         return z;
     }
