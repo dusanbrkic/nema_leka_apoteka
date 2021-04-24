@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -57,9 +58,10 @@ public class PregledController {
     @GetMapping(value = "/getPreglediByZdravstveniRadnik", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PregledDTO>> getPreglediByZdravstveniRadnik(
             @RequestParam("cookie") String cookie,
-            @RequestParam("start") LocalDateTime start,
-            @RequestParam("end") LocalDateTime end) {
-
+            @RequestParam("start") String startDate,
+            @RequestParam("end") String endDate) {
+        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         List<Pregled> pregledi = null;
         try {
             pregledi = pregledService.fetchAllWithPreporuceniLekoviInDateRangeByZdravstveniRadnik(cookie, start, end);

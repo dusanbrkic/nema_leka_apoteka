@@ -58,7 +58,7 @@ Vue.component("CalendarView", {
                 right: 'dayGridMonth,timeGridWeek,timeGridDay zakazivanjeButton'
             },
             themeSystem: 'bootstrap4',
-            events: [],
+            events: that.loadData,
             nowIndicator: true,
             expandRows: true,
             slotMinTime: '08:00',
@@ -69,8 +69,6 @@ Vue.component("CalendarView", {
         });
         calendar.render();
         this.calendar = calendar
-        this.loadData()
-
     },
     template:
         `
@@ -149,13 +147,14 @@ Vue.component("CalendarView", {
         `
     ,
     methods: {
-        loadData: function () {
-            axios
+        loadData: async function (fetchInfo, successCallback, failureCallback) {
+            let retVal = []
+            await axios
                 .get("pregledi/getPreglediByZdravstveniRadnik", {
                     params: {
                         "cookie": this.cookie,
-                        "start": this.calendar.view.start._d,
-                        "end": this.calendar.view.end._d
+                        "start": fetchInfo.start,
+                        "end": fetchInfo.end
                     }
                 })
                 .then(response => {
@@ -163,7 +162,7 @@ Vue.component("CalendarView", {
                     let rola = this.rola
                     for (let event of events) {
                         event.eventType = "PREGLED"
-                        this.calendar.addEvent({
+                        retVal.push({
                             title: (() => {
                                 if (event.pregledZakazan) {
                                     if (rola == "FARMACEUT")
@@ -197,13 +196,19 @@ Vue.component("CalendarView", {
                         this.invalidCookie = true
                     }
                 })
-            axios
-                .get("zdravstveniradnik/fetchOdsustva", {params: {"cookie": this.cookie}})
+            await axios
+                .get("zdravstveniradnik/fetchOdsustvaInDateRange", {
+                    params: {
+                        "cookie": this.cookie,
+                        "start": fetchInfo.start,
+                        "end": fetchInfo.end
+                    }
+                })
                 .then(response => {
                     let events = response.data
                     for (let event of events) {
                         event.eventType = "ODMOR"
-                        this.calendar.addEvent({
+                        retVal.push({
                             title: "odmor",
                             start: new Date(event.pocetak),
                             end: new Date(event.kraj),
@@ -216,6 +221,7 @@ Vue.component("CalendarView", {
                         })
                     }
                 })
+            return retVal
         },
         eventSelected: function (info) {
             let event = info.event.extendedProps.event

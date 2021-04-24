@@ -25,7 +25,8 @@ public class PregledService {
             String pretragaIme, String pretragaPrezime) throws CookieNotValidException {
         pretragaIme = "%" + pretragaIme + "%";
         pretragaPrezime = "%" + pretragaPrezime + "%";
-        sortBy = "pac." + sortBy;
+        if (!sortBy.equals("vreme"))
+            sortBy = "pac." + sortBy;
         Sort sort;
         if (sortDesc)
             sort = Sort.by(sortBy).descending();

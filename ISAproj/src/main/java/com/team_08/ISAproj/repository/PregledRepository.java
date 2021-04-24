@@ -20,7 +20,7 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     List<Pregled> fetchAllWithPreporuceniLekoviInDateRangeByZdravstveniRadnik(@Param("cookie") String cookie, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     // za listu pregledanih pacijenata
-    @Query(value = "SELECT p FROM PREGLED p JOIN PACIJENT pac ON p.pacijent.id=pac.id where p.zdravstveniRadnik.cookieTokenValue = :cookie and UPPER(p.pacijent.prezime) LIKE UPPER(:pretragaPrezime) and UPPER(p.pacijent.ime) LIKE UPPER(:pretragaIme)")
+    @Query(value = "SELECT p FROM PREGLED p JOIN PACIJENT pac ON p.pacijent.id=pac.id where p.zdravstveniRadnik.cookieTokenValue = :cookie and p.pregledObavljen = true and UPPER(p.pacijent.prezime) LIKE UPPER(:pretragaPrezime) and UPPER(p.pacijent.ime) LIKE UPPER(:pretragaIme)")
     Page<Pregled> findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(@Param("cookie") String cookie, Pageable pageable, @Param("pretragaIme") String pretragaIme, @Param("pretragaPrezime") String pretragaPrezime);
 
     // za proveru validnosti zahteva za odsustvo

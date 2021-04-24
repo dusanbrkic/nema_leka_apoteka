@@ -7,7 +7,8 @@ import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 
-import java.util.Random;
+import java.time.ZoneId;
+import java.util.*;
 
 import com.team_08.ISAproj.service.PregledService;
 import com.team_08.ISAproj.service.ZdravstveniRadnikService;
@@ -26,9 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/zdravstveniradnik")
@@ -41,9 +39,13 @@ public class ZdravstveniRadnikController {
     private PregledService pregledService;
 
     @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> putOdsustvo(@RequestParam("start") LocalDateTime start,
-                                              @RequestParam("end") LocalDateTime end,
+    public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
+                                              @RequestParam("end") String endDate,
                                               @RequestParam("cookie") String cookie) {
+        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        System.out.println(start);
+        System.out.println(end);
         if (end.isBefore(start)){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -60,13 +62,17 @@ public class ZdravstveniRadnikController {
         return new ResponseEntity<>("User successfully updated",HttpStatus.OK);
     }
 
-    @GetMapping(value = "/fetchOdsustva", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Odsustvo>> fetchOdsustva(@RequestParam("cookie") String cookie) {
-        ZdravstveniRadnik z = zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustva(cookie);
+    @GetMapping(value = "/fetchOdsustvaInDateRange", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<Odsustvo>> fetchOdsustvaInDateRange(@RequestParam("cookie") String cookie,
+                                                                  @RequestParam("start") String startDate,
+                                                                  @RequestParam("end") String endDate) {
+        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        ZdravstveniRadnik z = zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(cookie, start, end);
         if(z != null) {
             return new ResponseEntity<>(z.getOdsustva(), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new HashSet<>(), HttpStatus.OK);
     }
 
 }
