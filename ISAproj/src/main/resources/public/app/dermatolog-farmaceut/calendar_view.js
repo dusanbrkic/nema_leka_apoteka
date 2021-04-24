@@ -89,18 +89,15 @@ Vue.component("CalendarView", {
                 <b-col>Kraj:</b-col>
                 <b-col>{{ moment(String(selectedEvent.end)).format("DD/MM/YYYY HH:mm") }}</b-col>
               </b-row>
-              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledObavljen) ||
-                 (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
+              <b-row v-if=" selectedEvent.pregledObavljen">
                 <b-col>Trajanje:</b-col>
                 <b-col>{{ moment(String(new Date(selectedEvent.trajanje))).format("mm") }} min</b-col>
               </b-row>
-              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledZakazan) ||
-                 (selectedEvent.eventType=='SAVETOVANJE')">
+              <b-row v-if="(selectedEvent.pregledZakazan)">
                 <b-col>Ime pacijenta:</b-col>
                 <b-col>{{ selectedEvent.pacijent.ime }}</b-col>
               </b-row>
-              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledZakazan) ||
-                 (selectedEvent.eventType=='SAVETOVANJE')">
+              <b-row v-if="selectedEvent.pregledZakazan">
                 <b-col>Prezime pacijenta:</b-col>
                 <b-col>{{ selectedEvent.pacijent.prezime }}</b-col>
               </b-row>
@@ -112,36 +109,33 @@ Vue.component("CalendarView", {
                 <b-col>Adresa apoteke:</b-col>
                 <b-col>{{ selectedEvent.apoteka.adresa }}</b-col>
               </b-row>
-              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledObavljen) ||
-                 (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
+              <b-row v-if="selectedEvent.pregledObavljen">
                 <b-col>Dijagnoza:</b-col>
                 <b-col>{{ selectedEvent.dijagnoza }}</b-col>
               </b-row>
-              <b-row v-if="(selectedEvent.eventType=='PREGLED' && selectedEvent.pregledObavljen) ||
-                 (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
+              <b-row v-if="selectedEvent.pregledObavljen">
                 <b-col>Preporuceni lekovi:</b-col>
                 <b-col>
                   <b-row v-for="lek in selectedEvent.preporuceniLekovi">- {{ lek.naziv }}</b-row>
                 </b-col>
               </b-row>
-              <b-row v-if="selectedEvent.eventType=='PREGLED' && !selectedEvent.pregledZakazan">
+              <b-row v-if="!selectedEvent.pregledZakazan">
                 <br>
                 <p>Ovo je dodeljen termin od strane apoteke. Mozete zakazati pregled u ovom terminu.</p>
               </b-row>
             </b-container>
             <template #modal-footer="{ ok }">
               <b-button variant="success" @click="ok()">
-                <template 
-                    v-if="(selectedEvent.eventType=='PREGLED' && (selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan)) 
-                          || (selectedEvent.eventType=='SAVETOVANJE' && selectedEvent.savetovanjeObavljeno)">
+                <template
+                    v-if="(selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan)">
                   OK
                 </template>
-                <template 
-                    v-if="selectedEvent.eventType=='PREGLED' && selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">
+                <template
+                    v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">
                   Zapocni pregled
                 </template>
                 <template
-                    v-if="selectedEvent.eventType=='SAVETOVANJE' && !selectedEvent.savetovanjeObavljeno">
+                    v-if="rola=='FARMACEUT' && !selectedEvent.pregledObavljen">
                   Zapocni savetovanje
                 </template>
               </b-button>
@@ -156,37 +150,31 @@ Vue.component("CalendarView", {
     ,
     methods: {
         loadData: function () {
-            if (this.rola == "FARMACEUT") this.loadSavetovanja()
-            else if (this.rola == "DERMATOLOG") this.loadPregledi()
             axios
-                .get("korisnici/fetchOdsustva", {params: {"cookie": this.cookie}})
-                .then(response => {
-                    let events = response.data
-                    for (let event of events) {
-                        event.eventType = "ODMOR"
-                        this.calendar.addEvent({
-                            title: "Odmor",
-                            start: new Date(event.pocetak),
-                            end: new Date(event.kraj),
-                            event: event,
-                            color: (() => {
-                                if (new Date() > new Date(event.end)) {
-                                    return "gray"
-                                }
-                            })()
-                        })
+                .get("pregledi/getPreglediByZdravstveniRadnik", {
+                    params: {
+                        "cookie": this.cookie,
+                        "start": this.calendar.view.start._d,
+                        "end": this.calendar.view.end._d
                     }
                 })
-        },
-        loadPregledi: function () {
-            axios
-                .get("pregledi/getPreglediByDermatolog", {params: {"cookie": this.cookie}})
                 .then(response => {
-                    let events = response.data['content']
+                    let events = response.data
+                    let rola = this.rola
                     for (let event of events) {
                         event.eventType = "PREGLED"
                         this.calendar.addEvent({
-                            title: "Pregled: " + event.pacijent.ime + " " + event.pacijent.prezime,
+                            title: (() => {
+                                if (event.pregledZakazan) {
+                                    if (rola == "FARMACEUT")
+                                        return "savetovanje"
+                                    if (rola == "DERMATOLOG") {
+                                        return "pregled"
+                                    }
+                                } else {
+                                    return "dodeljeni termin"
+                                }
+                            })(),
                             start: new Date(event.start),
                             end: new Date(event.end),
                             event: event,
@@ -209,40 +197,30 @@ Vue.component("CalendarView", {
                         this.invalidCookie = true
                     }
                 })
-        },
-        loadSavetovanja: function () {
             axios
-                .get("savetovanja/getSavetovanjaByFarmaceut", {params: {"cookie": this.cookie}})
+                .get("zdravstveniradnik/fetchOdsustva", {params: {"cookie": this.cookie}})
                 .then(response => {
-                    let events = response.data['content']
+                    let events = response.data
                     for (let event of events) {
-                        event.eventType = "SAVETOVANJE"
+                        event.eventType = "ODMOR"
                         this.calendar.addEvent({
-                            title: "Savetovanje: " + event.pacijent.ime + " " + event.pacijent.prezime,
-                            start: new Date(event.start),
-                            end: new Date(event.end),
+                            title: "odmor",
+                            start: new Date(event.pocetak),
+                            end: new Date(event.kraj),
                             event: event,
                             color: (() => {
                                 if (new Date() > new Date(event.end)) {
-                                    if (event.savetovanjeObavljeno)
-                                        return "gray"
-                                    else
-                                        return "red"
+                                    return "gray"
                                 }
                             })()
                         })
-                    }
-                })
-                .catch(error => {
-                    if (error.request.status == 404) {
-                        this.invalidCookie = true
                     }
                 })
         },
         eventSelected: function (info) {
             let event = info.event.extendedProps.event
             this.selectedEvent.eventType = event.eventType
-            if (event.eventType == "SAVETOVANJE" || event.eventType == "PREGLED") {
+            if (event.eventType == "PREGLED") {
                 this.selectedEvent.title = event.pacijent.ime + " " + event.pacijent.prezime
                 this.selectedEvent.start = event.start
                 this.selectedEvent.end = event.end
@@ -250,12 +228,8 @@ Vue.component("CalendarView", {
                 this.selectedEvent.pacijent = event.pacijent
                 this.selectedEvent.preporuceniLekovi = event.preporuceniLekovi
                 this.selectedEvent.dijagnoza = event.dijagnoza
-                if (event.eventType == "PREGLED") {
-                    this.selectedEvent.pregledZakazan = event.pregledZakazan
-                    this.selectedEvent.pregledObavljen = event.pregledObavljen
-                } else if (event.eventType == "SAVETOVANJE") {
-                    this.selectedEvent.savetovanjeObavljeno = event.savetovanjeObavljeno
-                }
+                this.selectedEvent.pregledZakazan = event.pregledZakazan
+                this.selectedEvent.pregledObavljen = event.pregledObavljen
                 this.selectedEvent.trajanje = event.trajanje
                 this.$bvModal.show('eventModal')
             }

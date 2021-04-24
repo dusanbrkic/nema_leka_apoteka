@@ -17,5 +17,5 @@ public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
     Korisnik findOneByEmailAdresa(String email_adresa);
 
     @Query(value = "SELECT f FROM FARMACEUT f LEFT OUTER JOIN FETCH f.odsustva o where f.cookieTokenValue = :cookie")
-    Korisnik fetchFarmaceutWithOdsustvo(@Param("cookie") String cookie);
+    Farmaceut fetchFarmaceutWithOdsustva(@Param("cookie") String cookie);
 }

@@ -16,5 +16,5 @@ public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
     Korisnik findOneByEmailAdresa(String email_adresa);
 
     @Query(value = "SELECT d FROM DERMATOLOG d LEFT OUTER JOIN FETCH d.odsustva o where d.cookieTokenValue = :cookie")
-    Korisnik fetchDermatologWithOdsustvo(@Param("cookie") String cookie);
+    Dermatolog fetchDermatologWithOdsustva(@Param("cookie") String cookie);
 }

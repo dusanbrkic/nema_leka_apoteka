@@ -69,7 +69,7 @@ Vue.component("OdsustvoForma", {
         onSubmit: function (event) {
             event.preventDefault()
             axios
-                .get("korisnici/putOdsustvo", {
+                .get("zdravstveniradnik/putOdsustvo", {
                         params:
                             {
                                 'start': this.forma.startDate,

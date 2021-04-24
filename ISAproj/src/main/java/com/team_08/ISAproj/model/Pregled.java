@@ -29,7 +29,7 @@ public class Pregled {
 	
 	// connections
 	@ManyToOne(fetch = FetchType.EAGER)
-	private Dermatolog dermatolog;
+	private ZdravstveniRadnik zdravstveniRadnik;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Pacijent pacijent;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -39,14 +39,14 @@ public class Pregled {
 	
 	// constructors
 	public Pregled(LocalDateTime vreme, Long trajanje, LocalDateTime kraj, String dijagnoza, boolean pregledObavljen,
-			boolean pregledZakazan, Dermatolog dermatolog, Pacijent pacijent, Apoteka apoteka, Set<Lek> preporuceniLekovi) {
+			boolean pregledZakazan, ZdravstveniRadnik zdravstveniRadnik, Pacijent pacijent, Apoteka apoteka, Set<Lek> preporuceniLekovi) {
 		super();
 		this.vreme = vreme;
 		this.trajanje = trajanje;
 		this.kraj = kraj;
 		this.dijagnoza = dijagnoza;
 		this.pregledObavljen = pregledObavljen;
-		this.dermatolog = dermatolog;
+		this.zdravstveniRadnik = zdravstveniRadnik;
 		this.pacijent = pacijent;
 		this.apoteka = apoteka;
 		this.preporuceniLekovi = preporuceniLekovi;
@@ -86,8 +86,8 @@ public class Pregled {
 	public void setDijagnoza(String dijagnoza) {this.dijagnoza = dijagnoza;}
 	public boolean isPregledObavljen() {return pregledObavljen;}
 	public void setPregledObavljen(boolean pregledObavljen) {this.pregledObavljen = pregledObavljen;}
-	public Dermatolog getDermatolog() {return dermatolog;}
-	public void setDermatolog(Dermatolog dermatolog) {this.dermatolog = dermatolog;}
+	public ZdravstveniRadnik getDermatolog() {return zdravstveniRadnik;}
+	public void setDermatolog(ZdravstveniRadnik zdravstveniRadnik) {this.zdravstveniRadnik = zdravstveniRadnik;}
 	public Pacijent getPacijent() {return pacijent;}
 	public void setPacijent(Pacijent pacijent) {this.pacijent = pacijent;}
 	public Apoteka getApoteka() {return apoteka;}

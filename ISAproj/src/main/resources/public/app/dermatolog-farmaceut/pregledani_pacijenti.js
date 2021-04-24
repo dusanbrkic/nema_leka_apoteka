@@ -14,14 +14,14 @@ Vue.component("PregledaniPacijenti", {
                     sortable: true
                 },
                 {
-                    key: 'datum_rodjenja',
+                    key: 'datumRodjenja',
                     sortable: true,
                     formatter: (value, key, item) => {
                         return moment(value).format("DD/MM/YYYY");
                     },
                 },
                 {
-                    key: 'email_adresa',
+                    key: 'emailAdresa',
                     sortable: true
                 },
                 {
@@ -37,7 +37,7 @@ Vue.component("PregledaniPacijenti", {
                     sortable: true
                 },
                 {
-                    key: 'broj_telefona',
+                    key: 'brojTelefona',
                     sortable: false
                 },
                 {
@@ -121,7 +121,7 @@ Vue.component("PregledaniPacijenti", {
             this.table_is_busy = true
             let items = []
             await axios
-                .get("pregledi/getPreglediByDermatolog", {
+                .get("pregledi/getPregledaniKorisniciByZdravstveniRadnik", {
                     params:
                         {
                             'cookie': this.cookie,
@@ -141,12 +141,12 @@ Vue.component("PregledaniPacijenti", {
                         items.push({
                             ime: p.pacijent.ime,
                             prezime: p.pacijent.prezime,
-                            datum_rodjenja: p.pacijent.datumRodjenja,
-                            email_adresa: p.pacijent.emailAdresa,
+                            datumRodjenja: p.pacijent.datumRodjenja,
+                            emailAdresa: p.pacijent.emailAdresa,
                             adresa: p.pacijent.adresa,
                             grad: p.pacijent.grad,
                             drzava: p.pacijent.drzava,
-                            broj_telefona: p.pacijent.brojTelefona,
+                            brojTelefona: p.pacijent.brojTelefona,
                             vreme: p.start
                         })
                     }
@@ -154,46 +154,8 @@ Vue.component("PregledaniPacijenti", {
             this.table_is_busy = false
             return items
         },
-        loadSavetovanja: async function (currentPage, perPage, sortBy, sortDesc, pretragaIme, pretragaPrezime) {
-            this.table_is_busy = true
-            let items = []
-            await axios
-                .get("savetovanja/getSavetovanjaByFarmaceut", {
-                    params:
-                        {
-                            'cookie': this.cookie,
-                            'page': currentPage - 1,
-                            'size': perPage,
-                            'sortBy': sortBy,
-                            'sortDesc': sortDesc,
-                            'obavljena': true,
-                            'pretragaIme': pretragaIme,
-                            'pretragaPrezime': pretragaPrezime
-                        }
-                })
-                .then(response => {
-                    let savetovanja = response.data['content']
-                    this.totalItems = response.data['totalElements']
-                    for (const s of savetovanja) {
-                        items.push({
-                            ime: s.pacijent.ime,
-                            prezime: s.pacijent.prezime,
-                            datum_rodjenja: s.pacijent.datumRodjenja,
-                            email_adresa: s.pacijent.emailAdresa,
-                            adresa: s.pacijent.adresa,
-                            grad: s.pacijent.grad,
-                            drzava: s.pacijent.drzava,
-                            broj_telefona: s.pacijent.brojTelefona,
-                            vreme: s.start
-                        })
-                    }
-                })
-            this.table_is_busy = false
-            return items
-        },
         itemProvider: function (ctx) {
-            if (this.rola == "FARMACEUT") return this.loadSavetovanja(ctx.currentPage, ctx.perPage, ctx.sortBy, ctx.sortDesc, this.pretragaIme, this.pretragaPrezime)
-            else if (this.rola == "DERMATOLOG") return this.loadPregledi(ctx.currentPage, ctx.perPage, ctx.sortBy, ctx.sortDesc, this.pretragaIme, this.pretragaPrezime)
+            return this.loadPregledi(ctx.currentPage, ctx.perPage, ctx.sortBy, ctx.sortDesc, this.pretragaIme, this.pretragaPrezime)
         },
         handlePageChange(value) {
             this.page = value;
