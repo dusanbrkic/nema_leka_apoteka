@@ -33,7 +33,6 @@ public class LekService {
 	
     public Boolean saveLekApoteka(LekDTO lekDTO,String ApotekaID) {
     	Lek l = lekRepository.findOneBySifra(lekDTO.getSifra());
-    	System.out.println("====================================================================");
     	if(l != null) {
     		return false;
     	}
@@ -59,5 +58,9 @@ public class LekService {
     }
 	public Page<Lek> findAll(Pageable paging) {
 		return lekRepository.findAll(paging);
+	}
+	public Page<Lek> findAllApoteka(Pageable paging,Long ApotekaID,String lekPretraga){
+		
+		return lekRepository.findAllLekoviByApotedaIdPage(ApotekaID, lekPretraga, paging);
 	}
 }

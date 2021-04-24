@@ -158,22 +158,15 @@ public class LekController {
 		List<Order> orders = new ArrayList<Order>();
 		
     	Pageable paging = PageRequest.of(page, size);
-    	
     	Page<ApotekaLek> apotekeLekovi;
-    	apotekeLekovi = apotekaLekService.findOneByApoteka(Long.parseLong(apotekaID),paging);
+    	apotekeLekovi = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaID), title, paging);
 		if(apotekeLekovi == null) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+		System.out.println("==========");
 		List<LekDTO> lekovi = new ArrayList<LekDTO>();
 		for (ApotekaLek a : apotekeLekovi) {
-			if(title.equals("")) {
-				lekovi.add(new LekDTO(a));
-			}else{
-				if(a.getLek().getNaziv().contains(title)) {
-					lekovi.add(new LekDTO(a));
-				}
-			}
+			lekovi.add(new LekDTO(a));
 
 		}
 		Map<String, Object> response = new HashMap<>();
@@ -259,6 +252,7 @@ public class LekController {
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
 	}
+	
 	
 	
 	// Rezervacija leka

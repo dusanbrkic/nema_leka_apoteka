@@ -74,8 +74,6 @@ Vue.component("DodajLekAdmin", {
       <div class="container">
 		<b-alert style="text-align: center;" v-model="this.oblikGreska" variant="danger">Niste izabrali oblik leka!</b-alert>
 		<b-alert style="text-align: center;" v-model="this.tipGreska" variant="danger">Niste izabrali tip leka!</b-alert>
-	  	<b-alert style="text-align: center;" v-model="this.cenaGreska" variant="danger">Uneli ste pogresnu cenu!</b-alert>
-		<b-alert style="text-align: center;" v-model="this.kolicinaGreska" variant="danger">Uneli ste pogresnu kolicinu!</b-alert>
       	<b-alert style="text-align: center;" v-model="this.postojiLek" variant="danger">Vec postoji lek sa tom sifrom!</b-alert>
       	<b-alert style="text-align: center;" v-model="this.dodatLek" variant="success">Dodali ste lek sa sifrom {{lek.sifra}}!</b-alert>
         <h2>Dodavanje Leka</h2>
@@ -120,11 +118,11 @@ Vue.component("DodajLekAdmin", {
           </div>
           <div class="form-group">
           <label for="cena">Cena:</label>
-          <input v-model="lek.cena" id="cena" name="cena" type="number" placeholder="Cena" />
+          <input v-model="lek.cena" id="cena" min="0" name="cena" type="number" placeholder="Cena" />
           </div>
           <div class="form-group">
           <label for="kolicina">Kolicina:</label>
-          <input v-model="lek.kolicina" id="kolicina" name="kolicina" type="number" placeholder="Kolicina" />
+          <input v-model="lek.kolicina" id="kolicina" min="0" name="kolicina" type="number" placeholder="Kolicina" />
           </div>
           <div class="form-group">
             <label for="dodatneNapomene">Dodatne napomene:</label>
@@ -168,16 +166,6 @@ Vue.component("DodajLekAdmin", {
 			}
 			if(this.lek.oblikLeka == ""){
 				this.oblikGreska = true;
-				return;
-			}
-        	if(this.lek.cena === "" || this.lek.cena < 1){
-				this.cenaGreska = true;
-				this.lek.cena = 0;
-				return;
-			}
-			if(this.lek.kolicina === "" || this.lek.kolicina < 1){
-				this.kolicinaGreska = true;
-				this.lek.kolicina = 0;
 				return;
 			}
         	axios.post('/lekovi',this.lek).then(response => {this.dodatLek = true})
