@@ -41,21 +41,12 @@ Vue.component("CalendarView", {
                             app.$router.push("home")
                         }
                     }
-                },
-                zakazivanjeButton: {
-                    text: (() => {
-                        if (that.rola == "FARMACEUT") return 'zakazi savetovanje'
-                        else if (that.rola == "DERMATOLOG") return 'zakazi pregled'
-                    })(),
-                    click: function () {
-                        alert('Zakazivanje!');
-                    }
                 }
             },
             headerToolbar: {
                 left: 'homeButton prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay zakazivanjeButton'
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
             themeSystem: 'bootstrap4',
             events: that.loadData,
@@ -65,7 +56,26 @@ Vue.component("CalendarView", {
             slotMaxTime: '20:00',
             navLinks: true,
             dayMaxEvents: true,
-            eventClick: that.eventSelected
+            eventClick: that.eventSelected,
+            locale: 'sr-latn',
+            buttonText: {
+                today:    'danas',
+                month:    'mesec',
+                week:     'nedelja',
+                day:      'dan',
+                list:     'lista'
+            },
+            weekText: 'sed',
+            allDayText: 'ceo dan',
+            moreLinkText: function(n) {
+                return '+ još ' + n
+            },
+            noEventsText: 'nеma događaja za prikaz',
+            firstDay: 1,
+            week: {
+                dow: 1, // Monday is the first day of the week.
+                doy: 7, // The week that contains Jan 1st is the first week of the year.
+            },
         });
         calendar.render();
         this.calendar = calendar

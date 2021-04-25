@@ -75,6 +75,7 @@ public class PregledController {
             @Override
             public PregledDTO apply(Pregled p) {
                 PregledDTO pregledDTO = new PregledDTO(p);
+                pregledDTO.loadLekovi(p);
                 return pregledDTO;
             }
         }).collect(Collectors.toList());

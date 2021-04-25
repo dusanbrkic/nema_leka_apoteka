@@ -26,7 +26,7 @@ Vue.component("Registracija", {
       <div>
       <b-card style="max-width: 500px; margin: 30px auto;" title="Registracija">
         <b-form @submit.prevent="onSubmit" >
-          <b-form-group id="input-group-1" label="Email adresa:" label-for="input-1"">
+          <b-form-group id="input-group-1" label="Email adresa:" label-for="input-1">
             <b-form-input
                 id="input-1"
                 v-model="forma.emailAdresa"
