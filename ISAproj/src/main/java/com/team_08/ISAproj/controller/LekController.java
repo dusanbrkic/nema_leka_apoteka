@@ -163,7 +163,6 @@ public class LekController {
 		if(apotekeLekovi == null) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		System.out.println("==========");
 		List<LekDTO> lekovi = new ArrayList<LekDTO>();
 		for (ApotekaLek a : apotekeLekovi) {
 			lekovi.add(new LekDTO(a));
@@ -247,7 +246,6 @@ public class LekController {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			apotekaLekService.removeBySifra(l,aa.getApoteka().getId());
-			//System.out.println("---------------------------------------------------------------------------------------------------------------------------------------");
 			return new ResponseEntity<>(HttpStatus.OK);	
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
@@ -359,4 +357,48 @@ public class LekController {
     	
 		return new ResponseEntity<List<NarudzbenicaDTO>>(narudzbenice, HttpStatus.OK);
 	}
+	
+	//narucivanje lekova
+	@GetMapping(value="/narucivanje_lek" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> getLekoveNaruci(@RequestParam("cookie") String cookie, 
+			@RequestParam("apotekaID") String apotekaId, 
+			@RequestParam(defaultValue = "6") int size,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(required = false) String title,
+	        @RequestParam(defaultValue = "naziv") String sort,
+	        @RequestParam(defaultValue = "opadajuce") String smer){
+
+		
+		Pageable paging = PageRequest.of(page, size);
+		Page<Lek> lekovi;
+		Page<ApotekaLek> apotekeLekovi;
+		// lekovi koji su u apoteci
+    	apotekeLekovi = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaId), title, paging);
+		if(apotekeLekovi == null) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		// dodajemo lekove koji nisu u apoteci
+		lekovi = lekService.findAllLekoviNotInApoteka(Long.parseLong(apotekaId), paging);
+		if(lekovi == null) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		List<LekDTO> lekoviDTO = new ArrayList<LekDTO>();
+		for (Lek a : lekovi) {
+			lekoviDTO.add(new LekDTO(a));
+		}
+		for (ApotekaLek a : apotekeLekovi) {
+			lekoviDTO.add(new LekDTO(a));
+		}
+		
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("lekovi", lekoviDTO);
+		response.put("currentPage", (lekovi.getNumber()));
+		response.put("totalItems", (lekovi.getTotalElements()));
+		response.put("totalPages", (lekovi.getTotalPages()));
+		System.out.println(response);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+		
+	}
+	
 }

@@ -87,6 +87,18 @@ public class KorisnikController {
 
         return new ResponseEntity<CookieRoleDTO>(HttpStatus.UNAUTHORIZED);
     }
+    //Verify korisnika
+    @GetMapping(value = "/verifyCookie", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> verifyCookieUser(@RequestParam("cookie") String cookie){
+        Korisnik k = korisnikService.findUserByToken(cookie);
+
+        if(k == null) {
+            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
+
+    }
     //Licne informacije o korisniku
     @GetMapping(value = "/infoUser", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<KorisnikDTO> infoUser(@RequestParam("cookie") String cookie){

@@ -41,7 +41,7 @@ public class ApotekaLek {
 	}
 
 	public ApotekaLek() {
-
+		
 	}
 	public ApotekaLek(LekDTO lekDTO,Apoteka apoteka,Lek lek) {
 		this.kolicina = lekDTO.getKolicina();
@@ -51,7 +51,7 @@ public class ApotekaLek {
 		this.apoteka = apoteka;
 		this.lek = lek;
 	}
-
+	
 	// getters and setters
 	public int getKolicina() {return kolicina;}
 	public void setKolicina(int kolicina) {this.kolicina = kolicina;}

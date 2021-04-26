@@ -63,4 +63,13 @@ public class LekService {
 		
 		return lekRepository.findAllLekoviByApotedaIdPage(ApotekaID, lekPretraga, paging);
 	}
+	
+	public Page<Lek> findAllLekoviApoteka(Long ApotekaID, Pageable paging){
+		return lekRepository.findAllLekoviByApoteka(ApotekaID, paging);
+	}
+	
+	public Page<Lek> findAllLekoviNotInApoteka(Long ApotekaID,Pageable paging){
+		
+		return lekRepository.findAllLekoviNotInApoteka(ApotekaID, paging);
+	}
 }

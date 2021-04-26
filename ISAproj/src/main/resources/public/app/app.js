@@ -14,15 +14,17 @@ const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
 const Login = {template: '<Login></Login>'}
 const Registracija = {template: '<Registracija></Registracija>'}
-const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
-const AdminApotekeLekovi = {template: '<AdminApotekeLekovi></AdminApotekeLekovi>'}
 const MailVer = {template: '<MailVer></MailVer>'} 
 const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
+
+// admin apoteke
+const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
+const AdminApotekeLekovi = {template: '<AdminApotekeLekovi></AdminApotekeLekovi>'}
 const DodajLekAdmin = {template: '<DodajLekAdmin></DodajLekAdmin>'}
 const PretragaLekAdmin = {template: '<PretragaLekAdmin></PretragaLekAdmin>'}
 const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
-
+const NaruciAdmin = {template: '<NaruciAdmin></NaruciAdmin>'}
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -107,7 +109,8 @@ const router = new VueRouter({
         {path: '/pretraga-lek-admin', component: PretragaLekAdmin},
         {path: '/admin-apoteke-lozinka', component: LozinkaAdmin},
         {path: '/registracija', component: Registracija},
-        {path: '/mail-verification', component: MailVer}
+        {path: '/mail-verification', component: MailVer},
+        {path: '/admin-apoteke-narudzbina',component: NaruciAdmin}
         
     ]
 });

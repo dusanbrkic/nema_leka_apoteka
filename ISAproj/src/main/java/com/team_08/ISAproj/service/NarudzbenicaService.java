@@ -22,8 +22,8 @@ public class NarudzbenicaService {
 	@Autowired 
 	private NarudzbenicaLekRepository narudzbenicaLekRepository;
 	
-	public void saveNarudzbenica(Narudzbenica n) {
-		narudzbenicaRepository.save(n);
+	public Narudzbenica saveNarudzbenica(Narudzbenica n) {
+		return narudzbenicaRepository.save(n);
     }
 	
 	public void saveNarudzbenicaLek(NarudzbenicaLek nl)
@@ -39,5 +39,9 @@ public class NarudzbenicaService {
     public List<NarudzbenicaLek> findAllNarudzbeniceLek() {
     	
     	return narudzbenicaLekRepository.findAll();
+    }
+    public Narudzbenica findNarudzbenica(Long id) {
+    	
+    	return narudzbenicaRepository.findById(id).orElseGet(null);
     }
 }

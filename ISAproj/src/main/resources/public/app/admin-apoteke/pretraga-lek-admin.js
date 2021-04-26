@@ -155,12 +155,14 @@ Vue.component("PretragaLekAdmin", {
                 id="input-1"
                 type="number"
                 v-model="izabranLek.cena"
+                min = "0"
             ></b-form-input>
        <b-form-group id="input-group-3" label="Kolicina:" label-for="input-3">
             <b-form-input
                 id="input-3"
                 type="number"
                 v-model="izabranLek.kolicina"
+                min = "0"
             ></b-form-input>
         <b-form-group id="input-group-2" label="Datum isteka vazenja cene:" label-for="input-2">
             <b-form-input
@@ -174,6 +176,7 @@ Vue.component("PretragaLekAdmin", {
                 id="input-3"
                 type="number"
                 v-model="this.izabranLek.staraCena"
+                min = "0"
             ></b-form-input>
           <b-button type="submit" variant="primary">Sacuvaj</b-button>
            </b-form>

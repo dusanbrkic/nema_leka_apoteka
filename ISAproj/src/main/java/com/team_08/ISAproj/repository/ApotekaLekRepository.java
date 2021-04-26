@@ -33,7 +33,8 @@ public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
 	
 	@Query(value = "select al from APOTEKA_LEK al inner join LEK l on l.id = al.lek.id where al.apoteka.id = :ap_id and UPPER(l.naziv) LIKE UPPER(:pretragaLek)")
 	Page<ApotekaLek> findAllApotekaLekoviByApotedaIdPage(@Param("ap_id") Long ApotekaID,@Param("pretragaLek") String pretragaLek, Pageable pageable);
-	//Page<ApotekaLek> fetchSearchQuery(@Param("ap_id") Long apotekaID)
+
+	
 	
 	void deleteByLekId(Long LekId);
 }

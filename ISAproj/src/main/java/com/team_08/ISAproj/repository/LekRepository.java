@@ -29,5 +29,10 @@ public interface LekRepository extends JpaRepository<Lek, Long> {
 	
 	@Query(value = "select l from LEK l inner join APOTEKA_LEK al on l.id = al.lek.id where al.apoteka.id = :ap_id and UPPER(l.naziv) LIKE UPPER(:pretragaLek)")
 	Page<Lek> findAllLekoviByApotedaIdPage(@Param("ap_id") Long ApotekaID,@Param("pretragaLek") String pretragaLek, Pageable pageable);
+	
+	@Query(value = "select l from LEK l inner join APOTEKA_LEK al on l.id = al.lek.id where al.apoteka.id != :ap_id")
+	Page<Lek> findAllLekoviByApoteka(@Param("ap_id") Long ApotekaID, Pageable pageable);
+	@Query(value = "select l from LEK l inner join APOTEKA_LEK al on l.id = al.lek.id where al.apoteka.id != :ap_id")
+	Page<Lek> findAllLekoviNotInApoteka(@Param("ap_id") Long ApotekaID, Pageable pageable);
 	Lek findOneBySifra(String sifra);
 }

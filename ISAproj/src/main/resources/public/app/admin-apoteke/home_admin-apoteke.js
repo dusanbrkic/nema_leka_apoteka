@@ -25,6 +25,7 @@ Vue.component("HomeAdminApoteke", {
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
             <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
