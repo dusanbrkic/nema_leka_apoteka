@@ -48,7 +48,7 @@ Vue.component("DodajLekAdmin", {
     },
     template: `
      <div>
-           <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
+      <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
         <img src="../../res/pics/logo.png" alt="Logo">
         <b-navbar-brand href="#">Sistem Apoteka</b-navbar-brand>
@@ -61,6 +61,7 @@ Vue.component("DodajLekAdmin", {
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
             <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -71,12 +72,14 @@ Vue.component("DodajLekAdmin", {
         </b-collapse>
       </b-navbar>
       <router-view/>
-      <div class="container">
+    <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
+      <b-container id="page_content">
+      	<b-card style="max-width: 500px; margin: 30px auto;" >
 		<b-alert style="text-align: center;" v-model="this.oblikGreska" variant="danger">Niste izabrali oblik leka!</b-alert>
 		<b-alert style="text-align: center;" v-model="this.tipGreska" variant="danger">Niste izabrali tip leka!</b-alert>
       	<b-alert style="text-align: center;" v-model="this.postojiLek" variant="danger">Vec postoji lek sa tom sifrom!</b-alert>
       	<b-alert style="text-align: center;" v-model="this.dodatLek" variant="success">Dodali ste lek sa sifrom {{lek.sifra}}!</b-alert>
-        <h2>Dodavanje Leka</h2>
+        <h2>Dodavanje novog Leka</h2>
         
         <form @submit.prevent="saveLek">
 		
@@ -134,9 +137,11 @@ Vue.component("DodajLekAdmin", {
          	<b-button variant="primary" type="button" v-on:click="saveLek" class="ml-2">Dodaj lek</b-button>
          </div>
         </form>
-      </div>
+      </b-card>
+<b-card style="max-width: 500px; margin: 30px auto;" >
 
-		
+</b-card>
+		</b-container>
       </div>
       
       

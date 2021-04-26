@@ -42,8 +42,7 @@ Vue.component("NaruciAdmin", {
 	},
 		template: `
     <div>
-    <!-- nav bar -->
-	<link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
+      <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
         <img src="../../res/pics/logo.png" alt="Logo">
         <b-navbar-brand href="#">Sistem Apoteka</b-navbar-brand>
@@ -56,6 +55,7 @@ Vue.component("NaruciAdmin", {
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
             <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -106,7 +106,7 @@ Vue.component("NaruciAdmin", {
 	<!-- prikazi lekove -->
     <b-row>
      <b-card style="min-width: 450px; max-margin: 5px auto;" title="Lekovi">
-     		<b-list-group flush>
+      	<b-list-group flush>
 	    <b-list-group-item v-for="lek in lekovi"
         :variant="chooseColor(lek)"
         style="max-width: 400px;"
@@ -114,12 +114,24 @@ Vue.component("NaruciAdmin", {
         <b-row align-v="centar" >
             <b-col md="auto">
 				<b>{{lek.naziv}}</b>
+				<div v-if="lek.kolicina == null">
+				<p class="text-sm mb-0"> Nije dodat  </p>
+				<small></small> 
+				</div>
+				<div v-else>
 				<p class="text-sm mb-0"> Trenutno na stanju: {{lek.kolicina}}  </p>
-                <small></small>   
+				<small></small> 
+				</div>
+                  
 		            </b-col>
 		    </b-col>
 		    <b-col md="auto" class="float-right">
-                <b-button type="button" size="sm" v-on:click="naruciLek(lek)" variant="primary">Dodaj u narudzbenicu</b-button>
+		    	<div v-if="lek.kolicina == null">
+		    		<b-button type="button" size="sm" v-on:click="dodajLek(lek)" variant="primary">Dodaj u ponudu</b-button>
+		    	</div>
+		    	<div v-else>
+		    		<b-button type="button" size="sm" v-on:click="naruciLek(lek)" variant="primary">Dodaj u narudzbenicu</b-button>
+		    	</div>  
             </b-col>
         </b-row>
     </b-list-group-item>
@@ -128,15 +140,17 @@ Vue.component("NaruciAdmin", {
   
      <b-card style="max-width: 500px; margin: 30px auto;" title="Narudzbenica">
      		<b-list-group v-for="lek in listaNarudzbina" title="Narudzbenica">	
-	 <b-list-group-item style="max-width: 400px; "><div>{{lek.naziv}} Kolicina: {{lek.kolicina}}
+	 <b-card style="min-width: 450px; max-margin: 5px auto;">{{lek.naziv}} Kolicina: {{lek.kolicina}}
 
-		<b-button v-on:click="obrisiLek(lek)" variant="primary">Obrisi</b-button></div>
+		<b-button v-on:click="obrisiLek(lek)" variant="primary">Obrisi</b-button>
         	
 
 	</b-list-group>
 	<b-col md="auto" class="float-right">
-
+		<div v-if="listaNarudzbina.length != 0">
 		<b-button v-on:click="potvrdiNarudzbenicu()" :disabled="listaNarudzbina.length == 0" variant="primary">Potvrdi Narudzbinu</b-button>
+		</div>
+		
 		</b-col>
      </b-card> 
   </b-row>
@@ -181,6 +195,14 @@ Vue.component("NaruciAdmin", {
       </div>
 	`,
 	methods:{
+		dodajLek(lek){
+			axios.get("/narudzbine/lekNarudzbina",{params:
+                            {
+                                'sifra': lek.sifra,
+                                'cookie': this.cookie
+                            }}).then(response => this.retrieveLekove());
+           this.retrieveLekove();
+		},
 		potvrdiNarudzbenicu(){
 			this.$refs['my-modal1'].show();
 		},

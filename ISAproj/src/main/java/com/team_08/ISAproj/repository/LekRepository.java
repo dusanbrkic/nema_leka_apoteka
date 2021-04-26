@@ -18,7 +18,7 @@ public interface LekRepository extends JpaRepository<Lek, Long> {
 	
 	Page<Lek> findAll(Pageable pageable);
 	
-	
+	List<Lek> findAll();
 	//@Query(value= "select l from lek inner join apotekalek al on l.id = apotekalek.lek.id where al.apoteka.id = apotekaid and l.sifra = sifra")
 	//@Query(value = "select l from LEK l inner join apotekalek al on l.id = al.lek.id")
 	//Lek fetch(Long apotekaid);
@@ -32,7 +32,12 @@ public interface LekRepository extends JpaRepository<Lek, Long> {
 	
 	@Query(value = "select l from LEK l inner join APOTEKA_LEK al on l.id = al.lek.id where al.apoteka.id != :ap_id")
 	Page<Lek> findAllLekoviByApoteka(@Param("ap_id") Long ApotekaID, Pageable pageable);
-	@Query(value = "select l from LEK l inner join APOTEKA_LEK al on l.id = al.lek.id where al.apoteka.id != :ap_id")
+	@Query(value = "select l from LEK l join APOTEKA_LEK al on l.id = al.lek.id where al.apoteka.id != :ap_id")
 	Page<Lek> findAllLekoviNotInApoteka(@Param("ap_id") Long ApotekaID, Pageable pageable);
+	
 	Lek findOneBySifra(String sifra);
+	
+	Page<Lek> findByNazivContaining(String title,Pageable page);
+	
+	
 }

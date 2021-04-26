@@ -159,7 +159,7 @@ public class LekController {
 		
     	Pageable paging = PageRequest.of(page, size);
     	Page<ApotekaLek> apotekeLekovi;
-    	apotekeLekovi = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaID), title, paging);
+    	apotekeLekovi = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaID), paging);
 		if(apotekeLekovi == null) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -191,7 +191,6 @@ public class LekController {
 	//dodavanje leka
 	@PostMapping(consumes = "application/json")
 	public ResponseEntity<LekDTO> saveLek(@RequestBody LekDTO lekDTO){
-//		System.out.print(lekDTO.getCookie());
 		Korisnik k = korisnikService.findUserByToken(lekDTO.getCookie());
 		if(k == null) {
 			return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
@@ -208,7 +207,7 @@ public class LekController {
 		}
 		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
 	}
-	
+
 	//uredjivanje leka
 	@PutMapping(consumes = "application/json",produces = "application/json")
 	public ResponseEntity<LekDTO> updateLek(@RequestBody LekDTO lekDTO){
@@ -235,6 +234,7 @@ public class LekController {
 	@DeleteMapping(value = "/deleteLek")
 	public ResponseEntity<Void> deleteLek(@RequestParam String sifraLeka,@RequestParam String cookie){
 		Korisnik k = korisnikService.findUserByToken(cookie);
+		System.out.println(k);
 		if (k == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
 		}
@@ -245,7 +245,7 @@ public class LekController {
 				
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-			apotekaLekService.removeBySifra(l,aa.getApoteka().getId());
+			apotekaLekService.removeBySifra(l.getId(),aa.getApoteka().getId());
 			return new ResponseEntity<>(HttpStatus.OK);	
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
@@ -371,33 +371,29 @@ public class LekController {
 		
 		Pageable paging = PageRequest.of(page, size);
 		Page<Lek> lekovi;
-		Page<ApotekaLek> apotekeLekovi;
-		// lekovi koji su u apoteci
-    	apotekeLekovi = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaId), title, paging);
-		if(apotekeLekovi == null) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		// dodajemo lekove koji nisu u apoteci
-		lekovi = lekService.findAllLekoviNotInApoteka(Long.parseLong(apotekaId), paging);
-		if(lekovi == null) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		// svi lekovi u bazi
+		//lekovi = lekService.findAllSearch(paging,title);
+		lekovi = lekService.findAll(paging);
+		ApotekaLek al;
+		LekDTO lekDTO;
 		List<LekDTO> lekoviDTO = new ArrayList<LekDTO>();
-		for (Lek a : lekovi) {
-			lekoviDTO.add(new LekDTO(a));
-		}
-		for (ApotekaLek a : apotekeLekovi) {
-			lekoviDTO.add(new LekDTO(a));
-		}
-		
-
+		for(Lek l: lekovi) {
+			//proveravamo da li postoji u apoteci
+			al = apotekaLekService.findInApotekaLek(l.getId(),Long.parseLong(apotekaId));
+			if(al == null) {
+				lekDTO = new LekDTO(l);	
+			}
+			else {
+				lekDTO = new LekDTO(al);
+			}
+			lekoviDTO.add(lekDTO);
+		}	
 		Map<String, Object> response = new HashMap<>();
 		response.put("lekovi", lekoviDTO);
-		response.put("currentPage", (lekovi.getNumber()));
-		response.put("totalItems", (lekovi.getTotalElements()));
-		response.put("totalPages", (lekovi.getTotalPages()));
-		System.out.println(response);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		response.put("currentPage", lekovi.getNumber());
+		response.put("totalItems", lekovi.getTotalElements());
+		response.put("totalPages", lekovi.getTotalPages());
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		
 	}
 	
