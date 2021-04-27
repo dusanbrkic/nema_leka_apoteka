@@ -52,9 +52,9 @@ public class PregledService {
 
     public void savePregled(Pregled pregled) {
         pregledRepository.save(pregled);
+    }
 
     public void saveSlobodanTermin(Pregled pregled) {
-
     	pregledRepository.save(pregled);
     }
 }

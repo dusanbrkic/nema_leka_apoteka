@@ -52,6 +52,8 @@ public class PregledDTO {
     }
 
     public LocalDateTime getStart() {
+        return start;
+    }
     public String getApotekaId() {
 		return apotekaId;
 	}
@@ -64,13 +66,6 @@ public class PregledDTO {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public void loadLekovi(Pregled pregled){
-        for (Lek p : pregled.getPreporuceniLekovi())
-            this.preporuceniLekovi.add(new LekDTO(p));
-    }
-	public LocalDateTime getStart() {
-        return start;
-    }
 
     public void setStart(LocalDateTime start) {
         this.start = start;
