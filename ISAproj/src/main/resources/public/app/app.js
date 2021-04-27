@@ -28,6 +28,9 @@ const PretragaLekAdmin = {template: '<PretragaLekAdmin></PretragaLekAdmin>'}
 const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
 const NaruciAdmin = {template: '<NaruciAdmin></NaruciAdmin>'}
 const AdminApoteka = {template: '<AdminApoteka></AdminApoteka>'}
+const AdminSlobodniTermini = {template: '<AdminSlobodniTermini></AdminSlobodniTermini>'}
+
+
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -118,7 +121,8 @@ const router = new VueRouter({
         {path: '/registracija', component: Registracija},
         {path: '/mail-verification', component: MailVer},
         {path: '/admin-apoteke-narudzbina',component: NaruciAdmin},
-        {path: '/admin-apoteke-apoteka',component: AdminApoteka}
+        {path: '/admin-apoteke-apoteka',component: AdminApoteka},
+        {path: '/admin-apoteke-slobodan-termin', component: AdminSlobodniTermini}
         
     ]
 });

@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.service;
 
+import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.repository.PregledRepository;
@@ -43,5 +44,10 @@ public class PregledService {
 
     public List<Pregled> findAllInDateRangeByZdravstveniRadnik(LocalDateTime start, LocalDateTime end, String cookie) {
         return pregledRepository.findAllInDateRangeByZdravstveniRadnik(start, end, cookie);
+    }
+    
+    public void saveSlobodanTermin(Pregled pregled) {
+    	
+    	pregledRepository.save(pregled);
     }
 }

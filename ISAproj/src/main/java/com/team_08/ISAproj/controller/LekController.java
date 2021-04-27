@@ -159,7 +159,8 @@ public class LekController {
 		
     	Pageable paging = PageRequest.of(page, size);
     	Page<ApotekaLek> apotekeLekovi;
-    	apotekeLekovi = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaID), paging);
+    	apotekeLekovi = apotekaLekService.findLekoviByApotekaIDSearch(Long.parseLong(apotekaID),"%" + title + "%", paging);
+    	//apotekeLekovi = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaID), paging);
 		if(apotekeLekovi == null) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

@@ -2,6 +2,8 @@ package com.team_08.ISAproj.model;
 
 import org.hibernate.annotations.Formula;
 
+import com.team_08.ISAproj.dto.PregledDTO;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.Duration;
@@ -54,10 +56,14 @@ public class Pregled {
 	}
 
 	public Pregled() {
-
 	}
 
-
+	public Pregled(PregledDTO pDTO) {
+		this.vreme = pDTO.getStart();
+		this.kraj = pDTO.getEnd();
+		this.pregledObavljen = false;
+		this.pregledZakazan = false;
+	}
 	// getters and setters
 
 	public boolean isPregledZakazan() {

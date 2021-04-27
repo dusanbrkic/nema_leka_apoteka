@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.controller;
 
 import com.team_08.ISAproj.dto.CookieRoleDTO;
+import com.team_08.ISAproj.dto.DermatologDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
@@ -13,6 +14,9 @@ import java.util.*;
 import com.team_08.ISAproj.service.PregledService;
 import com.team_08.ISAproj.service.ZdravstveniRadnikService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -74,5 +78,35 @@ public class ZdravstveniRadnikController {
         }
         return new ResponseEntity<>(new HashSet<>(), HttpStatus.OK);
     }
+    
+    @GetMapping(value = "/getAllDermatologApoteka", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> getAllDermatologApotekaByAdmin(@RequestParam(required = false) String title,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "6") int size,
+	        @RequestParam String cookie){
+    	
+		Korisnik k = korisnikService.findUserByToken(cookie);
+		System.out.println(k);
+		if (k == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
+		}
+		if(k instanceof AdminApoteke) {
+			AdminApoteke aa = (AdminApoteke) k;
+	    	Pageable paging = PageRequest.of(page, size);
+			Page<DermatologApoteka> dermatoloziApoteke = zdravstveniRadnikService.fetchDermatologsByApotekaId(aa.getApoteka().getId(), paging);
+			List<DermatologDTO> listDermatologDTO = new ArrayList<DermatologDTO>();
+	    	for(DermatologApoteka da: dermatoloziApoteke) {
+	    		listDermatologDTO.add(new DermatologDTO(da));
+	    	}
+			Map<String, Object> response = new HashMap<>();
+			response.put("dermatolozi", listDermatologDTO);
+			response.put("currentPage", dermatoloziApoteke.getNumber());
+			response.put("totalItems", dermatoloziApoteke.getTotalElements());
+			response.put("totalPages", dermatoloziApoteke.getTotalPages());
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	
+    }
 }

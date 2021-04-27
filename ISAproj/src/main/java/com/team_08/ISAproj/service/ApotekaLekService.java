@@ -76,4 +76,7 @@ public class ApotekaLekService {
 		return apotekaLekRepository.findApotekaLekById(id,apotekaId);
 		
 	}
+	public Page<ApotekaLek> findLekoviByApotekaIDSearch(Long apotekaId, String title, Pageable paging){
+		return apotekaLekRepository.findAllApotekaLekoviByApotedaIdPageSearch(apotekaId, title, paging);
+	}
 }

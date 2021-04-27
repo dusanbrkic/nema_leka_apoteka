@@ -54,21 +54,13 @@ Vue.component("AdminApoteka", {
 	          </div>
 	          <div class="form-group">
 	            <label for="datumRodjenja">Lekovi:</label>
-	            <input type="text" class="form-control" id="opis" v-model="apoteka.opis">
-	          </div>
-				<b-button type="button" size="sm" v-on:click="redirectToHome()" variant="primary">Povratak na glavnu stranu</b-button>
-				<b-button type="button" size="sm" v-on:click="saveApoteka()" variant="primary">Sacuvaj podatke</b-button>
-            <div>
-            <b-list-group flush>
+	          	            <b-list-group flush>
             <b-list-group-item v-for="lek in lekovi"
             style="max-width: 400px;"
             class="list-group-item px-0">
             <b-row align-v="centar" >
                 <b-col md="auto">
                     <b>{{lek.naziv}}</b>
-                    <div v-if="lek.kolicina == null">
-                    <p class="text-sm mb-0"> Nije dodat  </p>
-                    <small></small> 
                     </div>
                     <div v-else>
                     <p class="text-sm mb-0"> Trenutno na stanju: {{lek.kolicina}}  </p>
@@ -77,17 +69,16 @@ Vue.component("AdminApoteka", {
                       
                         </b-col>
                 </b-col>
-                <b-col md="auto" class="float-right">
-                <!--   <div v-if="lek.kolicina == null">
-                        <b-button type="button" size="sm" v-on:click="dodajLek(lek)" variant="primary">Dodaj u ponudu</b-button>
-                    </div>
-                    <div v-else>
-                      <b-button type="button" size="sm" v-on:click="naruciLek(lek)" variant="primary">Dodaj u narudzbenicu</b-button>  -->
-                    </div>  
+                <b-col md="auto" class="float-right"> 
                 </b-col>
             </b-row>
         </b-list-group-item>
         </b-list-group>
+	          </div>
+				<b-button type="button" size="sm" v-on:click="redirectToHome()" variant="primary">Povratak na glavnu stranu</b-button>
+				<b-button type="button" size="sm" v-on:click="saveApoteka()" variant="primary">Sacuvaj podatke</b-button>
+            <div>
+
             </div>
 
 	        </form>

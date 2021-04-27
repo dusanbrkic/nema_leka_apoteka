@@ -2,14 +2,27 @@ package com.team_08.ISAproj.controller;
 
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
+import com.team_08.ISAproj.model.AdminApoteke;
+import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.model.Dermatolog;
+import com.team_08.ISAproj.model.DermatologApoteka;
+import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.Pregled;
+import com.team_08.ISAproj.service.ApotekaService;
+import com.team_08.ISAproj.service.KorisnikService;
 import com.team_08.ISAproj.service.PregledService;
+import com.team_08.ISAproj.service.ZdravstveniRadnikService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +39,12 @@ import java.util.stream.Collectors;
 public class PregledController {
     @Autowired
     PregledService pregledService;
-
+    @Autowired
+    ZdravstveniRadnikService zdravstveniRadnikService;
+    @Autowired
+    private KorisnikService korisnikService;
+    @Autowired
+    private ApotekaService apotekaService;
     @GetMapping(value = "/getPregledaniKorisniciByZdravstveniRadnik", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<PregledDTO>> getPregledaniKorisniciByZdravstveniRadnik(
             @RequestParam("cookie") String cookie,
@@ -80,4 +98,35 @@ public class PregledController {
         }).collect(Collectors.toList());
         return new ResponseEntity<List<PregledDTO>>(preglediDTO, HttpStatus.OK);
     }
+    
+    @PostMapping(value = "addSlobodanTermin")
+    public ResponseEntity<PregledDTO> addSlobodanTermin(@RequestBody PregledDTO pregledDTO){
+    	
+    	String apotekaId = pregledDTO.getApotekaId();
+    	Apoteka a = apotekaService.findOne(Long.parseLong(apotekaId));
+    	Dermatolog d = zdravstveniRadnikService.findOneByUsername(pregledDTO.getUsername());
+    	Pregled p = new Pregled(pregledDTO);
+    	p.setApoteka(a);
+    	p.setDermatolog(d);
+    	
+    	
+    	pregledService.saveSlobodanTermin(p);
+    	
+    	//Korisnik k = korisnikService.findUserByToken(cookie);
+//    	if(k == null) {
+//    		return new ResponseEntity<PregledDTO>(HttpStatus.NOT_FOUND);
+//    	}
+//    	if(k instanceof AdminApoteke) {
+//    		AdminApoteke aa = (AdminApoteke) k;
+//    		Long ApotekaId = zdravstveniRadnikService.
+//        	Page<DermatologApoteka> dermatoloziApoteke = null;
+//        	
+//        	dermatoloziApoteke = zdravstveniRadnikService.fetchDermatologsByApotekaId(Long.parseLong(aa.getApoteka().getId()), page);
+//    	}
+
+    	
+    	return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
+	}
+    	
+    	
 }
