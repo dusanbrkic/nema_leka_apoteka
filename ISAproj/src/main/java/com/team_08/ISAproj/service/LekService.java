@@ -52,6 +52,23 @@ public class LekService {
     	return true;
 
     }
+    public ApotekaLek addApotekaLek(String sifra,Long apotekaId) {
+    	Lek l = lekRepository.findOneBySifra(sifra);
+    	if(l == null) {
+    		return null;
+    	}
+    	Apoteka a = apotekaRepository.findOneById(apotekaId);
+    	ApotekaLek al = new ApotekaLek();
+    	al.setLek(l);
+    	al.setApoteka(a);
+    	al.setKolicina(0);
+    	al.setCena(0);
+    	al.setStaraCena(0);
+    	al.setIstekVazenjaCene(null);
+    	apotekaLekRepository.save(al);
+    	//a.getLekovi().add(al);
+    	return al;
+    }
     public Lek findOneBySifra(String sifra) {
     	
     	return lekRepository.findOneBySifra(sifra);
@@ -63,4 +80,23 @@ public class LekService {
 		
 		return lekRepository.findAllLekoviByApotedaIdPage(ApotekaID, lekPretraga, paging);
 	}
+	
+	public Page<Lek> findAllLekoviApoteka(Long ApotekaID, Pageable paging){
+		return lekRepository.findAllLekoviByApoteka(ApotekaID, paging);
+	}
+	
+	public Page<Lek> findAllLekoviNotInApoteka(Long ApotekaID,Pageable paging){
+		
+		return lekRepository.findAllLekoviNotInApoteka(ApotekaID, paging);
+	}
+	public Page<Lek> findAllSearch(Pageable page, String title){
+		
+		
+		return lekRepository.findByNazivContaining(title,page);
+		
+	}
+	public Page<Lek> test(Pageable page, Long id){
+		return lekRepository.findAllNotInApoteka(id, page);
+	}
+	
 }

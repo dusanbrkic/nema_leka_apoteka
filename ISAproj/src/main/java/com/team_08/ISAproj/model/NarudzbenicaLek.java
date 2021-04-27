@@ -16,7 +16,7 @@ public class NarudzbenicaLek {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Lek lek;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.MERGE)
 	private Narudzbenica narudzbenica;
 	
 	public NarudzbenicaLek(int kolicina, Narudzbenica n, Lek lek) {
@@ -25,7 +25,10 @@ public class NarudzbenicaLek {
 		this.lek = lek;
 		this.narudzbenica = n;
 	}
-
+	public NarudzbenicaLek(int kolicina, Lek lek) {
+		this.kolicina = kolicina;
+		this.lek = lek;
+	}
 	public NarudzbenicaLek() {
 
 	}

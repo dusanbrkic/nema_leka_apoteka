@@ -31,9 +31,11 @@ public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
 	@Query(value="select al from APOTEKA_LEK al inner join LEK l on l.id = al.lek.id where l.sifra = :sifra and al.apoteka.id = :ap_id")
 	ApotekaLek fetchBySifra(@Param("ap_id") Long apotekaID,@Param("sifra") String sifra);
 	
+	@Query(value = "select al from APOTEKA_LEK al inner join LEK l on l.id = al.lek.id where al.apoteka.id = :ap_id")
+	Page<ApotekaLek> findAllApotekaLekoviByApotedaIdPage(@Param("ap_id") Long ApotekaID, Pageable pageable);
 	@Query(value = "select al from APOTEKA_LEK al inner join LEK l on l.id = al.lek.id where al.apoteka.id = :ap_id and UPPER(l.naziv) LIKE UPPER(:pretragaLek)")
-	Page<ApotekaLek> findAllApotekaLekoviByApotedaIdPage(@Param("ap_id") Long ApotekaID,@Param("pretragaLek") String pretragaLek, Pageable pageable);
-	//Page<ApotekaLek> fetchSearchQuery(@Param("ap_id") Long apotekaID)
-	
-	void deleteByLekId(Long LekId);
+	Page<ApotekaLek> findAllApotekaLekoviByApotedaIdPageSearch(@Param("ap_id") Long ApotekaID,@Param("pretragaLek") String pretragaLek, Pageable pageable);
+
+	@Query(value = "select al from APOTEKA_LEK al where al.lek.id = :l_id and al.apoteka.id = :ap_id")
+	ApotekaLek findApotekaLekById(@Param("l_id") Long id,@Param("ap_id") Long apotekaId);
 }

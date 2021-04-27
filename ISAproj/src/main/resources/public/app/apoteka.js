@@ -62,7 +62,6 @@ Vue.component("Apoteka", {
                     "apotekaID": this.apoteka.id
                 }
             }
-    		console.log(this.apoteka.id + "asda");
     		axios.get("apoteke/basic/",info).then(response => this.apoteka.lekovi = response.data)
     	},
     	saveApoteka: function(){

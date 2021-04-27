@@ -46,7 +46,7 @@ Vue.component("PretragaLekAdmin", {
     template: `
     <div>
     <!-- nav bar -->
-	<link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
+      <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
         <img src="../../res/pics/logo.png" alt="Logo">
         <b-navbar-brand href="#">Sistem Apoteka</b-navbar-brand>
@@ -59,6 +59,7 @@ Vue.component("PretragaLekAdmin", {
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
             <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -72,6 +73,8 @@ Vue.component("PretragaLekAdmin", {
       
     	
     <!-- PRETRAGA -->
+       <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
+      <b-container id="page_content">
     	 <div class="form-group">
             <input
 	          type="text"
@@ -155,12 +158,14 @@ Vue.component("PretragaLekAdmin", {
                 id="input-1"
                 type="number"
                 v-model="izabranLek.cena"
+                min = "0"
             ></b-form-input>
        <b-form-group id="input-group-3" label="Kolicina:" label-for="input-3">
             <b-form-input
                 id="input-3"
                 type="number"
                 v-model="izabranLek.kolicina"
+                min = "0"
             ></b-form-input>
         <b-form-group id="input-group-2" label="Datum isteka vazenja cene:" label-for="input-2">
             <b-form-input
@@ -174,6 +179,7 @@ Vue.component("PretragaLekAdmin", {
                 id="input-3"
                 type="number"
                 v-model="this.izabranLek.staraCena"
+                min = "0"
             ></b-form-input>
           <b-button type="submit" variant="primary">Sacuvaj</b-button>
            </b-form>
@@ -185,7 +191,7 @@ Vue.component("PretragaLekAdmin", {
 			<div class="mt-2">
         	<b-button variant="primary" type="button" v-on:click="redirectToHome" class="ml-2">Return to home</b-button>
         </div>
-
+	</b-container>
       </div>
     `
     ,
@@ -253,7 +259,8 @@ Vue.component("PretragaLekAdmin", {
                     "cookie": this.cookie
                 }
             }
-            axios.delete("/lekovi/deleteLek",info).then(response => this.retrieveLekove())
+            console.log(info);
+            axios.delete("/lekovi/deleteLek",info).then(response => console.log(response.data))
         	this.retrieveLekove()
         },
 	    retrieveLekove() {

@@ -19,7 +19,6 @@ public class Narudzbenica {
 	@OneToMany(mappedBy = "narudzbenica", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<NarudzbenicaLek> lekovi = new HashSet<NarudzbenicaLek>();
 	
-	
 	public void addNarudzbenicaLek(NarudzbenicaLek nl) {
 		this.lekovi.add(nl);
 	}

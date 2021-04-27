@@ -6,23 +6,28 @@ const HomeMain  = { template: '<HomeMain></HomeMain>'}
 // pacijent
 const HomePacijent = {template: '<HomePacijent></HomePacijent>'}
 const PacijentMain = {template: '<PacijentMain></PacijentMain>'}
+const PacijentApoteke = {template: '<PacijentApoteke></PacijentApoteke>'}
 const PacijentLekovi = {template: '<PacijentLekovi></PacijentLekovi>'}
 const PacijentNarudzbenice = {template: '<PacijentNarudzbenice></PacijentNarudzbenice>'}
+const NaruciPacijent = {template: '<NaruciPacijent></NaruciPacijent>'}
 
 // dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
 const Login = {template: '<Login></Login>'}
 const Registracija = {template: '<Registracija></Registracija>'}
-const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
-const AdminApotekeLekovi = {template: '<AdminApotekeLekovi></AdminApotekeLekovi>'}
 const MailVer = {template: '<MailVer></MailVer>'} 
 const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
+
+// admin apoteke
+const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
+const AdminApotekeLekovi = {template: '<AdminApotekeLekovi></AdminApotekeLekovi>'}
 const DodajLekAdmin = {template: '<DodajLekAdmin></DodajLekAdmin>'}
 const PretragaLekAdmin = {template: '<PretragaLekAdmin></PretragaLekAdmin>'}
 const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
-
+const NaruciAdmin = {template: '<NaruciAdmin></NaruciAdmin>'}
+const AdminApoteka = {template: '<AdminApoteka></AdminApoteka>'}
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -90,7 +95,7 @@ const router = new VueRouter({
 	        },
 			{
                 path: 'apoteke',
-                component: Apoteke
+                component: PacijentApoteke
             },
             {
                 path: 'lekovi',
@@ -99,6 +104,10 @@ const router = new VueRouter({
             {
                 path: 'narudzbenice',
                 component: PacijentNarudzbenice
+            },
+            {
+                path: 'rezervacija',
+                component: NaruciPacijent
             }
 	    ]},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
@@ -107,7 +116,9 @@ const router = new VueRouter({
         {path: '/pretraga-lek-admin', component: PretragaLekAdmin},
         {path: '/admin-apoteke-lozinka', component: LozinkaAdmin},
         {path: '/registracija', component: Registracija},
-        {path: '/mail-verification', component: MailVer}
+        {path: '/mail-verification', component: MailVer},
+        {path: '/admin-apoteke-narudzbina',component: NaruciAdmin},
+        {path: '/admin-apoteke-apoteka',component: AdminApoteka}
         
     ]
 });

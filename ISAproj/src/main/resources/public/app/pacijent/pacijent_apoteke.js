@@ -203,7 +203,8 @@ Vue.component("PacijentApoteke", {
 	      this.retrieveApoteke();
 	    },
 	    prikaziLekove(apoteka){
-	    	
+	    	localStorage.setItem('apotekaID', apoteka.id);
+	    	app.$router.push("/home-pacijent/rezervacija");
 	    }
     }
 });

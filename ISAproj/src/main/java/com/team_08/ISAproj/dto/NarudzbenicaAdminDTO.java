@@ -2,7 +2,7 @@ package com.team_08.ISAproj.dto;
 
 import java.util.Date;
 
-public class NarudzbenicaDTO {
+public class NarudzbenicaAdminDTO {
 	
 	
 	private String naziv;
@@ -10,14 +10,13 @@ public class NarudzbenicaDTO {
 	private int kolicina;
 	private Date datumNarudzbine;
 	private String apotekaId;
-	private String pacijent;
 	
-	public NarudzbenicaDTO() {
+	public NarudzbenicaAdminDTO() {
 		
 		
 	}
 
-	public NarudzbenicaDTO(String naziv, String sifra, int kolicina, Date datumNarudzbine, String aID) {
+	public NarudzbenicaAdminDTO(String naziv, String sifra, int kolicina, Date datumNarudzbine, String aID) {
 		super();
 		this.naziv = naziv;
 		this.sifra = sifra;
@@ -64,13 +63,5 @@ public class NarudzbenicaDTO {
 
 	public void setDatumNarudzbine(Date datumNarudzbine) {
 		this.datumNarudzbine = datumNarudzbine;
-	}
-
-	public String getPacijent() {
-		return pacijent;
-	}
-
-	public void setPacijent(String korisnik) {
-		this.pacijent = korisnik;
 	}
 }

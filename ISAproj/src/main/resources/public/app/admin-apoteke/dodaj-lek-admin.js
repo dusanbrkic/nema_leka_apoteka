@@ -42,13 +42,13 @@ Vue.component("DodajLekAdmin", {
         }
     },
     mounted() {
-      this.lek.cookie = localStorage.getItem("cookie");
+      this.cookie = localStorage.getItem("cookie");
       this.apotekaID = localStorage.getItem("apotekaID");
       this.retrieveLekove();
     },
     template: `
      <div>
-           <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
+      <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
         <img src="../../res/pics/logo.png" alt="Logo">
         <b-navbar-brand href="#">Sistem Apoteka</b-navbar-brand>
@@ -60,7 +60,8 @@ Vue.component("DodajLekAdmin", {
             <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
-            <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-apoteka"">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -71,78 +72,82 @@ Vue.component("DodajLekAdmin", {
         </b-collapse>
       </b-navbar>
       <router-view/>
-      <div class="container">
-		<b-alert style="text-align: center;" v-model="this.oblikGreska" variant="danger">Niste izabrali oblik leka!</b-alert>
-		<b-alert style="text-align: center;" v-model="this.tipGreska" variant="danger">Niste izabrali tip leka!</b-alert>
-      	<b-alert style="text-align: center;" v-model="this.postojiLek" variant="danger">Vec postoji lek sa tom sifrom!</b-alert>
-      	<b-alert style="text-align: center;" v-model="this.dodatLek" variant="success">Dodali ste lek sa sifrom {{lek.sifra}}!</b-alert>
-        <h2>Dodavanje Leka</h2>
-        
-        <form @submit.prevent="saveLek">
-		
-          <div class="form-group">
-            <label for="naziv">Naziv leka:</label>
-            <input type="text" class="form-control" id="naziv" name="naziv" v-model="lek.naziv"/>
-          </div>
-          <div class="form-group">
-            <label for="sifra">Sifra leka:</label>
-            <input type="text" class="form-control" id="sifra" name="sifra" v-model="lek.sifra"/>
-          </div>
-          <div class="form-group">
-            <label for="uputstvo">Uputstvo leka:</label>
-            <input type="text" class="form-control" id="uputstvo" name="uputstvo" v-model="lek.uputstvo"/>
-          </div>
-		  <div class="form-group">
-            <label for="tip">Tip leka:</label>
-			<select id = "tip" v-model="lek.tip">
-			  <option disabled value="">Tip leka</option>
-			  <option>ANTIBIOTIK</option>
-			  <option>ANALGETIK</option>
-			  <option>HISTAMINIK</option>
-			</select>
-          </div>
-          <div class="form-group">
-            <label for="oblikLeka">Oblik leka:</label>
-           	<select id = "oblikLeka" v-model="lek.oblikLeka">
-			  <option disabled value="">Oblik leka</option>
-			  <option>PRASAK</option>
-			  <option>KAPSULA</option>
-			  <option>TABLETA</option><option>MAST</option><option>PASTA</option><option>GEL</option>
-			  <option>SIRUP</option>
-			  <option>RASTVOR</option>
-			</select>
-      </div>
-          <div class="form-group">
-            <label for="sastavLeka">Sastav leka:</label>
-            <input type="text" class="form-control" id="sastavLeka" name="sastavLeka" v-model="lek.sastav"/>
-          </div>
-          <div class="form-group">
-          <label for="cena">Cena:</label>
-          <input v-model="lek.cena" id="cena" min="0" name="cena" type="number" placeholder="Cena" />
-          </div>
-          <div class="form-group">
-          <label for="kolicina">Kolicina:</label>
-          <input v-model="lek.kolicina" id="kolicina" min="0" name="kolicina" type="number" placeholder="Kolicina" />
-          </div>
-          <div class="form-group">
-            <label for="dodatneNapomene">Dodatne napomene:</label>
-            <textarea v-model="lek.dodatneNapomene" id="dodatneNapomene" name="dodatneNapomene" placeholder="Dodatne napomene"/>
+      
+          <!-- PRETRAGA -->
+   <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
+      <b-container id="page_content">
+    	 <div class="form-group">
+            <input
+	          type="text"
+	          class="form-control"
+	          placeholder="Pretraga lekova"
+	          v-model="searchTitle"
+	          @input="page = 1; retrieveLekove();"
+	        />
           </div>
           
-         <div class="mt-2">
-         	<b-button variant="primary" type="button" v-on:click="redirectToHome" class="ml-2">Return to home</b-button>
-         	<b-button variant="primary" type="button" v-on:click="saveLek" class="ml-2">Dodaj lek</b-button>
-         </div>
-        </form>
-      </div>
+	      <!-- BIRANJE VELICINE STRANE -->
+	        Lekovi po strani:
+		    <select v-model="pageSize" @change="handlePageSizeChange($event)">
+		      <option v-for="size in pageSizes" :key="size" :value="size">
+		        {{ size }}
+		      </option>
+			</select>
+	
+		<br>
+		<br>
 
-		
+	   <!-- NAVIGACIJA PO STRANICAMA -->
+	   <div class="mt-3">
+	    <b-pagination
+	      v-model="page"
+	      :total-rows="count"
+	      :per-page="pageSize"
+	      aria-controls="my-table"
+	      @change="handlePageChange"
+	    	></b-pagination>
+
+	 	 </div> 
+    <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
+      <b-container id="page_content">
+      
+      
+           <b-card style="max-width: 450px; max-margin: 5px auto;" title="Lekovi">
+      	<b-list-group flush>
+	    <b-list-group-item v-for="lek in lekovi"
+        style="max-width: 400px;"
+        class="list-group-item px-0">
+        <b-row align-v="centar" >
+            <b-col md="auto">
+				<b>{{lek.naziv}}</b>
+				<div>
+				</div>
+                  
+		            </b-col>
+		    </b-col>
+		    <b-col md="auto" class="float-right">
+		    	<div>
+		    		<b-button type="button" size="sm" v-on:click="dodajLek(lek)" variant="primary">Dodaj u ponudu</b-button>
+		    	</div>
+            </b-col>
+    </b-list-group-item>
+	</b-list-group>
+     </b-card>
+		</b-container>
       </div>
       
       
     `
     ,
     methods: {
+		dodajLek(lek){
+			axios.get("/narudzbine/lekNarudzbina",{params:
+                            {
+                                'sifra': lek.sifra,
+                                'cookie': this.cookie
+                            }}).then(response => this.retrieveLekove());
+           this.retrieveLekove();
+		},
     	redirectToApotekaIzmeni: function(){
     	
     	},
@@ -177,12 +182,15 @@ Vue.component("DodajLekAdmin", {
                 }
             })
         },
-	    getRequestParams(searchTitle, page, pageSize) {
+	    getRequestParams(searchTitle, page, pageSize, sortirajPo, redosled, apotekaID,cookie) {
 	      let params = {};
 	
 	      if (searchTitle) {
 	        params["title"] = searchTitle;
 	      }
+		  else{
+			params["title"] = "";
+		  }
 	
 	      if (page) {
 	        params["page"] = page - 1;
@@ -191,14 +199,30 @@ Vue.component("DodajLekAdmin", {
 	      if (pageSize) {
 	        params["size"] = pageSize;
 	      }
+	      
+	      if(sortirajPo) {
+	      	params["sort"] = sortirajPo;
+	      }
 	
+		  if(sortirajPo) {
+	      	params["smer"] = redosled;
+	      }
+		  params["apotekaID"] = apotekaID;
+		  params["cookie"] = cookie;
 	      return params;
 	    },
+    	logout: function () {
+    		localStorage.clear()
+    		app.$router.push("/");
+        },
+        	redirectToApotekaIzmeni: function(){
+				app.$router.push("/apoteka/" + this.apoteka.id);
+		},
 	    retrieveLekove() {
-	      const params = this.getRequestParams(this.searchTitle,this.page,this.pageSize);
+			const params = this.getRequestParams(this.searchTitle,this.page,this.pageSize, this.sortirajPo, this.redosled, this.apotekaID,this.cookie);
 	
 	
-		  axios.get("lekovi", {params})
+		  axios.get("lekovi/ostali", {params})
 	        .then((response) => {
 	          const { lekovi, totalItems } = response.data;
 	          this.lekovi = lekovi;

@@ -24,7 +24,8 @@ Vue.component("HomeAdminApoteke", {
             <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
-            <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-apoteka">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -99,11 +100,29 @@ Vue.component("HomeAdminApoteke", {
                 style="max-width: 20rem;"
                 class="mb-2"
             >
-              <b-card-text>
+                        <b-card-text>
                 Izmena podataka o apoteci
+                
               </b-card-text>
-              <b-button v-on:click="redirectToApotekaIzmeni" variant="primary">Otvori</b-button>
+              <b-button href="#/admin-apoteke-apoteka" variant="primary">Otvori</b-button>
+          </b-col>
+          <b-col>
+
             </b-card>
+            <b-card
+                title="Naruci lekove"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem;"
+                class="mb-2"
+            >
+              <b-card-text>
+                Narucivanje lekova za apoteku
+              </b-card-text>
+
+              <b-button href="#/dodaj-lek-admin" variant="primary">Otvori</b-button>
           </b-col>
         </b-row>
       </b-container>
