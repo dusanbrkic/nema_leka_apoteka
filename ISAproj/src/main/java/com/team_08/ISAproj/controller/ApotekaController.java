@@ -124,7 +124,7 @@ public class ApotekaController {
     public ResponseEntity<ApotekaDTO> getApoteka(@RequestParam("cookie") String cookie)
     {
 		Korisnik k = korisnikService.findUserByToken(cookie);
-
+		
         if(k == null) {
             return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
         }

@@ -4,6 +4,8 @@ import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.DermatologRepository;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,5 +32,15 @@ public class ZdravstveniRadnikService {
             z = farmaceutRepository.fetchFarmaceutWithOdsustvaInDateRange(cookie, start, end);
         }
         return z;
+    }
+    
+    public Page<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId,Pageable page){
+		
+    	
+    	return dermatologRepository.fetchDermatologApotekaByApotekaId(ApotekaId, page);
+    }
+    public Dermatolog findOneByUsername(String username) {
+    	
+    	return dermatologRepository.findOneByUsername(username);
     }
 }

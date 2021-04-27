@@ -15,17 +15,22 @@ Vue.component("Registracija", {
                 "grad": "",
                 "drzava": "",
                 "brojTelefona": "",
+                minDate: "",
+                postojiMail: false,
+                postojiKorisnicko: false,
             },
             userRole: ""
         };
     },
     mounted() {
-
     },
     template: `
       <div>
+
       <b-card style="max-width: 500px; margin: 30px auto;" title="Registracija">
-        <b-form @submit.prevent="onSubmit" >
+            <b-alert style="text-align: center;" v-model="this.postojiMail" variant="danger">Vec postoji nalog sa ovom email adresom!</b-alert>
+      <b-alert style="text-align: center;" v-model="this.postojiKorisnicko" variant="danger">Vec postoji nalog sa ovim korisnickim imenom!</b-alert>
+        <b-form @submit.prevent="onSubmit">
           <b-form-group id="input-group-1" label="Email adresa:" label-for="input-1">
             <b-form-input
                 id="input-1"
@@ -38,10 +43,11 @@ Vue.component("Registracija", {
                 v-model="forma.username"
             ></b-form-input>
           </b-form-group>
-		  <b-form-group id="input-group-2" label="Lozinka:" label-for="input-2">
+		  <b-form-group id="input-group-10" label="Lozinka:" label-for="input-2">
             <b-form-input
-                id="input-2"
+                id="input-10"
                 v-model="forma.password"
+                type="password"
             ></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-3" label="Ime:" label-for="input-3">
@@ -113,11 +119,16 @@ Vue.component("Registracija", {
             app.$router.push("/admin-apoteke-lozinka")
         },
         onSubmit: function () {
-			console.log(this.forma)
-            axios
-                .post("korisnici/registerUser", this.forma).then(response => app.$router.push("/mail-verification"))
-            
-            
+        	this.postojiMail = false;
+        	this.postojiKorisnicko = false;
+            axios.post("korisnici/registerUser", this.forma).then(response => app.$router.push("/mail-verification"))
+                .catch(error => {
+                if (error.request.status==400) {
+					this.postojiMail = true;
+                } else if (error.request.status==404) {
+                    this.postojiKorisnicko = true;
+                }
+            });
         },
         fixDate: function (date){
             return moment(date).format('YYYY-MM-DD')

@@ -15,7 +15,8 @@ public class PregledDTO {
     private boolean pregledObavljen;
     private boolean pregledZakazan;
     private Long trajanje;
-
+    private String apotekaId;
+    private String username;
     // connections
     private PacijentDTO pacijent;
     private ApotekaDTO apoteka;
@@ -51,6 +52,23 @@ public class PregledDTO {
     }
 
     public LocalDateTime getStart() {
+    public String getApotekaId() {
+		return apotekaId;
+	}
+	public void setApotekaId(String apotekaId) {
+		this.apotekaId = apotekaId;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public void loadLekovi(Pregled pregled){
+        for (Lek p : pregled.getPreporuceniLekovi())
+            this.preporuceniLekovi.add(new LekDTO(p));
+    }
+	public LocalDateTime getStart() {
         return start;
     }
 
@@ -106,7 +124,7 @@ public class PregledDTO {
         this.preporuceniLekovi = preporuceniLekovi;
     }
 
-    public long getTrajanje() {
+    public Long getTrajanje() {
         return trajanje;
     }
 

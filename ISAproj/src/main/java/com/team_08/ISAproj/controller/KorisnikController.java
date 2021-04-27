@@ -129,7 +129,7 @@ public class KorisnikController {
 
     	Korisnik k = korisnikService.findUserByEmail(korisnik.getEmailAdresa());
     	if(k != null) {
-    		return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
+    		return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
     	}
     	if(korisnikService.findUser(korisnik.getUsername()) != null) {
     		return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
