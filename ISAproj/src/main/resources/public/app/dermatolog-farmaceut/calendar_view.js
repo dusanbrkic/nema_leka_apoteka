@@ -235,6 +235,7 @@ Vue.component("CalendarView", {
                     for (let event of events) {
                         event.eventType = "ODMOR"
                         retVal.push({
+                            allDay: true,
                             title: "odmor",
                             start: new Date(event.pocetak),
                             end: new Date(event.kraj),
