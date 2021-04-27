@@ -1,46 +1,46 @@
 Vue.component("NaruciAdmin", {
-		data: function (){
-		return{
-            cookie: "",
-		   izabranLek : {
-				sifra: "",
-				naziv: "",
-				uputstvo: "",
-				tip : "",
-				oblikLeka: "",
-				dodatneNapomene: "",
-				sastav: "",
-				kolicina: "",
-				cena: "",
-				istekVazenjaCene: "",
-				staraCena: "",
-				cookie: "",
-				datumNarudzbine: ""
-		   },
-		kolicina: 0,
-		datumNarudzbine: "",
-			page: 1,
-	       	count: 0,
-	      	pageSize: 6,
-			searchTitle: "",
-	       	pageSizes: [3, 6, 9, 15, 30],
-	       	redosledi: ["opadajuce", "rastuce"],
-	       	redosled: "opadajuce",
-	       	polja: ["naziv"],
-	       	sortirajPo: "naziv",
-			lekovi : [],
-			cookie : "",
-			color: "primary",
-			apotekaID: "",
-			listaNarudzbina: []
-		}
-	},
-		mounted(){
-      	this.cookie = localStorage.getItem("cookie");
-        this.apotekaID = localStorage.getItem("apotekaID");
-      	this.retrieveLekove()
-	},
-		template: `
+  data: function () {
+    return {
+      cookie: "",
+      izabranLek: {
+        sifra: "",
+        naziv: "",
+        uputstvo: "",
+        tip: "",
+        oblikLeka: "",
+        dodatneNapomene: "",
+        sastav: "",
+        kolicina: "",
+        cena: "",
+        istekVazenjaCene: "",
+        staraCena: "",
+        cookie: "",
+        datumNarudzbine: "",
+      },
+      kolicina: 0,
+      datumNarudzbine: "",
+      page: 1,
+      count: 0,
+      pageSize: 6,
+      searchTitle: "",
+      pageSizes: [3, 6, 9, 15, 30],
+      redosledi: ["opadajuce", "rastuce"],
+      redosled: "opadajuce",
+      polja: ["naziv"],
+      sortirajPo: "naziv",
+      lekovi: [],
+      cookie: "",
+      color: "primary",
+      apotekaID: "",
+      listaNarudzbina: [],
+    };
+  },
+  mounted() {
+    this.cookie = localStorage.getItem("cookie");
+    this.apotekaID = localStorage.getItem("apotekaID");
+    this.retrieveLekove();
+  },
+  template: `
     <div>
       <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
@@ -54,7 +54,7 @@ Vue.component("NaruciAdmin", {
             <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
-            <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-apoteka">Izmeni podatke o apoteci</b-nav-item>
             <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
           </b-navbar-nav>
 
@@ -194,164 +194,185 @@ Vue.component("NaruciAdmin", {
   	 </b-container id="page_content">
       </div>
 	`,
-	methods:{
-		dodajLek(lek){
-			axios.get("/narudzbine/lekNarudzbina",{params:
-                            {
-                                'sifra': lek.sifra,
-                                'cookie': this.cookie
-                            }}).then(response => this.retrieveLekove());
-           this.retrieveLekove();
-		},
-		potvrdiNarudzbenicu(){
-			this.$refs['my-modal1'].show();
-		},
-		posaljiNarudzbinu(){
-			for(i = 0; i < this.listaNarudzbina.length; i++) {
-				this.listaNarudzbina[i].datumNarudzbine = this.datumNarudzbine;
-			}
-			console.log(JSON.parse(JSON.stringify(this.listaNarudzbina)));
-			axios.post("/narudzbine/admin",JSON.parse(JSON.stringify(this.listaNarudzbina))).then(response=>console.log(response.data));
-			this.listaNarudzbina = [];
-			this.$refs['my-modal1'].hide();
-			
-		},
-		obrisiLek(lek){
-			for(i = 0; i < this.listaNarudzbina.length; i++) {
-				if(this.listaNarudzbina[i].sifra === lek.sifra){
-					this.listaNarudzbina.splice(i, 1);
-				}
-			}
-		},
-		naruciLek(lek){
-			
-			this.izabranLek = lek;
-			
-			this.$refs['my-modal'].show()
-		},
-		onNaruciLek(){
-			tempLek = {
-				naziv: this.izabranLek.naziv,
-				sifra: this.izabranLek.sifra,
-				datumNarudzbine: this.datumNarudzbine,
-				kolicina: this.kolicina,
-				apotekaId: this.apotekaID
-				};
-			this.listaNarudzbina.push(tempLek);
-			this.datumNarudzbine ="";
-			this.kolicina ="";
-			this.$refs['my-modal'].hide()
-		},
-		redirectUser: function(){
-            if(this.new_password === this.korisnik.password){
-				this.samePassword = true;
-				return;
-			}
-            this.changePass();
-			let cookie = this.korisnik.username + "-" + this.korisnik.password;
-			localStorage.setItem("cookie", cookie)
-            if (this.userRole === "PACIJENT") {
-                app.$router.push("/home-pacijent")
-            } else if (this.userRole === "DERMATOLOG") {
-                app.$router.push("/home-dermatolog")
-            } else if (this.userRole === "FARMACEUT") {
-                app.$router.push("/home-farmaceut")
-            } else if (this.userRole === "ADMIN_APOTEKE") {
-                app.$router.push("/home-admin_apoteke")
-            } else {
-                localStorage.clear()
-                app.$router.push("/")
-            }	
-		},
-    	redirectToApotekaIzmeni: function(){
-    		return "primary";
-    	},
-    	logout: function () {
-    		localStorage.clear()
-    		app.$router.push("/");
-        },
-	    getRequestParams(searchTitle, page, pageSize, sortirajPo, redosled, apotekaID,cookie) {
-	      let params = {};
-	
-	      if (searchTitle) {
-	        params["title"] = searchTitle;
-	      }
-		  else{
-			params["title"] = "";
-		  }
-	
-	      if (page) {
-	        params["page"] = page - 1;
-	      }
-	
-	      if (pageSize) {
-	        params["size"] = pageSize;
-	      }
-	      
-	      if(sortirajPo) {
-	      	params["sort"] = sortirajPo;
-	      }
-	
-		  if(sortirajPo) {
-	      	params["smer"] = redosled;
-	      }
-		  params["apotekaID"] = apotekaID;
-		  params["cookie"] = cookie;
-	      return params;
-	    },
-    	logout: function () {
-    		localStorage.clear()
-    		app.$router.push("/");
-        },
-        	redirectToApotekaIzmeni: function(){
-				app.$router.push("/apoteka/" + this.apoteka.id);
-		},
-		retrieveLekove() {
-			const params = this.getRequestParams(this.searchTitle,this.page,this.pageSize, this.sortirajPo, this.redosled, this.apotekaID,this.cookie);
-	
-	
-		  axios.get("lekovi/narucivanje_lek/", {params})
-	        .then((response) => {
-	          const { lekovi, totalItems } = response.data;
-	          this.lekovi = lekovi;
-	          this.count = totalItems;
-	
-	          console.log(response.data);
-	        })
-	        .catch((e) => {
-	          console.log(e);
-	        });
-	    },
-	    handleSortChange(value) {
-	      this.sortirajPo = event.target.value;
-	      this.page = 1;
-	      this.retrieveLekove();
-	    },
-	    
-		handleSortOrderChange(value) {
-	      this.redosled = event.target.value;
-	      this.page = 1;
-	      this.retrieveLekove();
-	    },
+  methods: {
+    dodajLek(lek) {
+      axios
+        .get("/narudzbine/lekNarudzbina", {
+          params: {
+            sifra: lek.sifra,
+            cookie: this.cookie,
+          },
+        })
+        .then((response) => this.retrieveLekove());
+      this.retrieveLekove();
+    },
+    potvrdiNarudzbenicu() {
+      this.$refs["my-modal1"].show();
+    },
+    posaljiNarudzbinu() {
+      for (i = 0; i < this.listaNarudzbina.length; i++) {
+        this.listaNarudzbina[i].datumNarudzbine = this.datumNarudzbine;
+      }
+      console.log(JSON.parse(JSON.stringify(this.listaNarudzbina)));
+      axios
+        .post(
+          "/narudzbine/admin",
+          JSON.parse(JSON.stringify(this.listaNarudzbina))
+        )
+        .then((response) => console.log(response.data));
+      this.listaNarudzbina = [];
+      this.$refs["my-modal1"].hide();
+    },
+    obrisiLek(lek) {
+      for (i = 0; i < this.listaNarudzbina.length; i++) {
+        if (this.listaNarudzbina[i].sifra === lek.sifra) {
+          this.listaNarudzbina.splice(i, 1);
+        }
+      }
+    },
+    naruciLek(lek) {
+      this.izabranLek = lek;
 
-	    handlePageChange(value) {
-	      this.page = value;
-	      this.retrieveLekove();
-	    },
-	
-	    handlePageSizeChange(event) {
-	      this.pageSize = event.target.value;
-	      this.page = 1;
-	      this.retrieveLekove();
-	    },
-		chooseColor(lek){
-			if(lek.kolicina === null){
-				return "info";
-			}
-			if(lek.kolicina === 0){
-				return "danger";
-			}
-			return "success";
-		}
-	},
+      this.$refs["my-modal"].show();
+    },
+    onNaruciLek() {
+      tempLek = {
+        naziv: this.izabranLek.naziv,
+        sifra: this.izabranLek.sifra,
+        datumNarudzbine: this.datumNarudzbine,
+        kolicina: this.kolicina,
+        apotekaId: this.apotekaID,
+      };
+      this.listaNarudzbina.push(tempLek);
+      this.datumNarudzbine = "";
+      this.kolicina = "";
+      this.$refs["my-modal"].hide();
+    },
+    redirectUser: function () {
+      if (this.new_password === this.korisnik.password) {
+        this.samePassword = true;
+        return;
+      }
+      this.changePass();
+      let cookie = this.korisnik.username + "-" + this.korisnik.password;
+      localStorage.setItem("cookie", cookie);
+      if (this.userRole === "PACIJENT") {
+        app.$router.push("/home-pacijent");
+      } else if (this.userRole === "DERMATOLOG") {
+        app.$router.push("/home-dermatolog");
+      } else if (this.userRole === "FARMACEUT") {
+        app.$router.push("/home-farmaceut");
+      } else if (this.userRole === "ADMIN_APOTEKE") {
+        app.$router.push("/home-admin_apoteke");
+      } else {
+        localStorage.clear();
+        app.$router.push("/");
+      }
+    },
+    redirectToApotekaIzmeni: function () {
+      return "primary";
+    },
+    logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
+    getRequestParams(
+      searchTitle,
+      page,
+      pageSize,
+      sortirajPo,
+      redosled,
+      apotekaID,
+      cookie
+    ) {
+      let params = {};
+
+      if (searchTitle) {
+        params["title"] = searchTitle;
+      } else {
+        params["title"] = "";
+      }
+
+      if (page) {
+        params["page"] = page - 1;
+      }
+
+      if (pageSize) {
+        params["size"] = pageSize;
+      }
+
+      if (sortirajPo) {
+        params["sort"] = sortirajPo;
+      }
+
+      if (sortirajPo) {
+        params["smer"] = redosled;
+      }
+      params["apotekaID"] = apotekaID;
+      params["cookie"] = cookie;
+      return params;
+    },
+    logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
+    redirectToApotekaIzmeni: function () {
+      app.$router.push("/apoteka/" + this.apoteka.id);
+    },
+    retrieveLekove() {
+      const params = this.getRequestParams(
+        this.searchTitle,
+        this.page,
+        this.pageSize,
+        this.sortirajPo,
+        this.redosled,
+        this.apotekaID,
+        this.cookie
+      );
+
+      axios
+        .get("lekovi/narucivanje_lek/", { params })
+        .then((response) => {
+          const { lekovi, totalItems } = response.data;
+          this.lekovi = lekovi;
+          this.count = totalItems;
+
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    handleSortChange(value) {
+      this.sortirajPo = event.target.value;
+      this.page = 1;
+      this.retrieveLekove();
+    },
+
+    handleSortOrderChange(value) {
+      this.redosled = event.target.value;
+      this.page = 1;
+      this.retrieveLekove();
+    },
+
+    handlePageChange(value) {
+      this.page = value;
+      this.retrieveLekove();
+    },
+
+    handlePageSizeChange(event) {
+      this.pageSize = event.target.value;
+      this.page = 1;
+      this.retrieveLekove();
+    },
+    chooseColor(lek) {
+      if (lek.kolicina === null) {
+        return "info";
+      }
+      if (lek.kolicina === 0) {
+        return "danger";
+      }
+      return "success";
+    },
+  },
 });

@@ -176,9 +176,16 @@ public class LekController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	@GetMapping(value="/basic" , produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LekDTO>> getLekApoteka(@RequestParam String apotekaID) {
+	public ResponseEntity<List<LekDTO>> getLekApoteka(@RequestParam String cookie) {
     	
-    	List<ApotekaLek> apotekeLekovi = apotekaLekService.findOneByApoteka(Long.parseLong(apotekaID));
+		Korisnik k = korisnikService.findUserByToken(cookie);
+
+        if(k == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if(k instanceof AdminApoteke) {
+        	AdminApoteke aa = (AdminApoteke) k;
+    	List<ApotekaLek> apotekeLekovi = apotekaLekService.findOneByApoteka(aa.getApoteka().getId());
 		if(apotekeLekovi == null) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -187,6 +194,8 @@ public class LekController {
 			lekovi.add(new LekDTO(a.getLek()));
 		}
 		return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	//dodavanje leka
 	@PostMapping(consumes = "application/json")
@@ -388,6 +397,37 @@ public class LekController {
 			}
 			lekoviDTO.add(lekDTO);
 		}	
+		Map<String, Object> response = new HashMap<>();
+		response.put("lekovi", lekoviDTO);
+		response.put("currentPage", lekovi.getNumber());
+		response.put("totalItems", lekovi.getTotalElements());
+		response.put("totalPages", lekovi.getTotalPages());
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		
+	}
+	//dodavanje lekova iz baze
+	@GetMapping(value = "/ostali")
+	public ResponseEntity<Map<String, Object>> getOstaliLekovi(@RequestParam("cookie") String cookie, 
+			@RequestParam("apotekaID") String apotekaId,
+			@RequestParam(defaultValue = "6") int size,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(required = false) String title,
+	        @RequestParam(defaultValue = "naziv") String sort,
+	        @RequestParam(defaultValue = "opadajuce") String smer){
+
+		
+		Pageable paging = PageRequest.of(page, size);
+		Page<Lek> lekovi;
+		// svi lekovi u bazi
+		//lekovi = lekService.findAllSearch(paging,title);
+		lekovi = lekService.test(paging,Long.parseLong(apotekaId));
+		ApotekaLek al;
+		LekDTO lekDTO;
+		List<LekDTO> lekoviDTO = new ArrayList<LekDTO>();
+		for(Lek l: lekovi) {
+			al = apotekaLekService.findInApotekaLek(l.getId(),Long.parseLong(apotekaId));
+			lekoviDTO.add(new LekDTO(l));
+		}
 		Map<String, Object> response = new HashMap<>();
 		response.put("lekovi", lekoviDTO);
 		response.put("currentPage", lekovi.getNumber());

@@ -95,5 +95,8 @@ public class LekService {
 		return lekRepository.findByNazivContaining(title,page);
 		
 	}
+	public Page<Lek> test(Pageable page, Long id){
+		return lekRepository.findAllNotInApoteka(id, page);
+	}
 	
 }

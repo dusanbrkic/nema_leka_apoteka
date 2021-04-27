@@ -52,7 +52,6 @@ public class NarudzbinaController {
 		n.setPacijent(null);
 		narudzbenicaService.saveNarudzbenica(n);
 		for(NarudzbenicaAdminDTO nDTO: narudzbenice) {
-			System.out.println("_________" + nDTO.getSifra());
 			Lek l = lekService.findOneBySifra(nDTO.getSifra());
 			NarudzbenicaLek nl = new NarudzbenicaLek(nDTO.getKolicina(), n, l);
 			narudzbenicaService.saveNarudzbenicaLek(nl);
@@ -70,7 +69,6 @@ public class NarudzbinaController {
 		if(k instanceof AdminApoteke) {
     	
 			AdminApoteke aa = (AdminApoteke) k;
-			System.out.println(sifra + "____________");
 			ApotekaLek al = lekService.addApotekaLek(sifra,aa.getApoteka().getId());
 			System.out.println(al);
 			if(al == null) {

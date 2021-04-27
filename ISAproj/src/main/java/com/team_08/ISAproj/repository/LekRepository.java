@@ -39,5 +39,6 @@ public interface LekRepository extends JpaRepository<Lek, Long> {
 	
 	Page<Lek> findByNazivContaining(String title,Pageable page);
 	
-	
+	@Query(value = "select l from LEK l where l.id NOT IN (select l1.id from LEK l1 inner join APOTEKA_LEK al on l1.id = al.lek.id where al.apoteka.id = :ap_id)")
+	Page<Lek> findAllNotInApoteka(@Param("ap_id") Long alId, Pageable pageable);
 }
