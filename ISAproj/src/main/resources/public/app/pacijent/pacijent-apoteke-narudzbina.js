@@ -1,4 +1,4 @@
-Vue.component("NaruciAdmin", {
+Vue.component("NaruciPacijent", {
   data: function () {
     return {
       cookie: "",
@@ -21,7 +21,7 @@ Vue.component("NaruciAdmin", {
       datumNarudzbine: "",
       page: 1,
       count: 0,
-      pageSize: 6,
+      pageSize: 15,
       searchTitle: "",
       pageSizes: [3, 6, 9, 15, 30],
       redosledi: ["opadajuce", "rastuce"],
@@ -33,6 +33,9 @@ Vue.component("NaruciAdmin", {
       color: "primary",
       apotekaID: "",
       listaNarudzbina: [],
+      uspeh: false,
+      losUnos: false,
+      ukupnaCena: 0,
     };
   },
   mounted() {
@@ -42,30 +45,9 @@ Vue.component("NaruciAdmin", {
   },
   template: `
     <div>
-      <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
-      <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
-        <img src="../../res/pics/logo.png" alt="Logo">
-        <b-navbar-brand href="#">Sistem Apoteka</b-navbar-brand>
 
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
-        <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav>
-            <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
-            <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
-            <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
-            <b-nav-item href="#/admin-apoteke-apoteka">Izmeni podatke o apoteci</b-nav-item>
-            <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
-          </b-navbar-nav>
-
-          <!-- Right aligned nav items -->
-          <b-navbar-nav class="ml-auto">
-            <b-nav-item href="#/izmena-podataka" right>Profil</b-nav-item>
-            <b-nav-item v-on:click="logout" right>Odjavi se</b-nav-item>
-          </b-navbar-nav>
-        </b-collapse>
-      </b-navbar>
-      <router-view/>
+		<b-alert style="text-align: center;" v-model="this.losUnos" variant="danger"> Los unos podataka! </b-alert>
+      	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesna rezervacija, pogledajte svoj email.</b-alert>
       
 
     <!-- PRETRAGA -->
@@ -109,38 +91,35 @@ Vue.component("NaruciAdmin", {
       	<b-list-group flush>
 	    <b-list-group-item v-for="lek in lekovi"
         :variant="chooseColor(lek)"
+        v-if="!(lek.kolicina == null)"
         style="max-width: 400px;"
         class="list-group-item px-0">
         <b-row align-v="centar" >
             <b-col md="auto">
 				<b>{{lek.naziv}}</b>
-				<div v-if="lek.kolicina == null">
-				<p class="text-sm mb-0"> Nije dodat  </p>
-				<small></small> 
-				</div>
-				<div v-else>
+
 				<p class="text-sm mb-0"> Trenutno na stanju: {{lek.kolicina}}  </p>
-				<small></small> 
-				</div>
+				<p class="text-sm mb-0"> Cena: {{lek.cena}}  </p>
                   
 		            </b-col>
 		    </b-col>
 		    <b-col md="auto" class="float-right">
-		    	<div v-if="lek.kolicina == null">
-		    		<b-button type="button" size="sm" v-on:click="dodajLek(lek)" variant="primary">Dodaj u ponudu</b-button>
+		    	<div >
+		    		<b-button type="button" size="sm" v-on:click="naruciLek(lek)" variant="primary">Rezervisi Lek</b-button>
 		    	</div>
-		    	<div v-else>
-		    		<b-button type="button" size="sm" v-on:click="naruciLek(lek)" variant="primary">Dodaj u narudzbenicu</b-button>
-		    	</div>  
+
             </b-col>
         </b-row>
     </b-list-group-item>
 	</b-list-group>
      </b-card>
   
-     <b-card style="max-width: 500px; margin: 30px auto;" title="Narudzbenica">
+     <b-card style="max-width: 500px; margin: 30px auto;" title="Rezervisacija Leka">
      		<b-list-group v-for="lek in listaNarudzbina" title="Narudzbenica">	
-	 <b-card style="min-width: 450px; max-margin: 5px auto;">{{lek.naziv}} Kolicina: {{lek.kolicina}}
+	 <b-card style="min-width: 450px; max-margin: 5px auto;">
+	 <b>{{lek.naziv}}</b>
+	 Cena: {{lek.cenaJedno}} x {{lek.kolicina}} kom. 
+	 <p>- Ukupno: {{lek.cenaUkupno}}</p>
 
 		<b-button v-on:click="obrisiLek(lek)" variant="primary">Obrisi</b-button>
         	
@@ -148,7 +127,10 @@ Vue.component("NaruciAdmin", {
 	</b-list-group>
 	<b-col md="auto" class="float-right">
 		<div v-if="listaNarudzbina.length != 0">
-		<b-button v-on:click="potvrdiNarudzbenicu()" :disabled="listaNarudzbina.length == 0" variant="primary">Potvrdi Narudzbinu</b-button>
+		
+			<div v-html="ukupnaCena"> </div>
+			
+			<b-button v-on:click="potvrdiNarudzbenicu()" :disabled="listaNarudzbina.length == 0" variant="primary">Potvrdi Rezervaciju</b-button>
 		</div>
 		
 		</b-col>
@@ -157,7 +139,7 @@ Vue.component("NaruciAdmin", {
 
 
 	<!-- forma za narucivanje leka -->
-	<b-modal ref="my-modal" hide-footer title="Narucivanje leka">
+	<b-modal ref="my-modal" hide-footer title="Rezervacija Leka">
       <b-card style="max-width: 500px; margin: 30px auto;" >
         <b-form @submit.prevent="onNaruciLek">
         <h3>{{this.izabranLek.naziv}}</h3>
@@ -174,10 +156,10 @@ Vue.component("NaruciAdmin", {
       	</b-card>
     	</b-modal>	
     <!-- forma za narudzbenicu -->
-    		<b-modal ref="my-modal1" hide-footer title="Potvrdi Narudzbinu">
+    		<b-modal ref="my-modal1" hide-footer title="Potvrdi Rezervaciju">
       <b-card style="max-width: 500px; margin: 30px auto;" >
         <b-form @submit.prevent="posaljiNarudzbinu">
-        <h3>Narudzbenica</h3>
+        <h3>Potvrdi Rezervaciju</h3>
        <b-form-group id="input-group-3" label="Rok ponude:" label-for="input-3">
             <b-form-input
                 id="input-3"
@@ -186,7 +168,7 @@ Vue.component("NaruciAdmin", {
 				v-model="datumNarudzbine"
             ></b-form-input>
 		<br>
-          <b-button type="submit" variant="primary">Naruci</b-button>
+          <b-button type="submit" variant="primary">Rezervisi</b-button>
            </b-form>
       	</b-card>
     	</b-modal>	
@@ -194,7 +176,25 @@ Vue.component("NaruciAdmin", {
   	 </b-container id="page_content">
       </div>
 	`,
+	
+	
+	
+	
   methods: {
+  
+  
+  		kolicinaChange() {
+  			
+  			 price = 0;
+  			
+  			 for (i = 0; i < this.listaNarudzbina.length; i++) {
+  			 	price += this.listaNarudzbina[i].cenaUkupno;
+		     }
+  			
+	      	 this.ukupnaCena = "Ukupna cena: " + price;
+	    },
+
+  
     dodajLek(lek) {
       axios
         .get("/narudzbine/lekNarudzbina", {
@@ -205,6 +205,7 @@ Vue.component("NaruciAdmin", {
         })
         .then((response) => this.retrieveLekove());
       this.retrieveLekove();
+      this.kolicinaChange();
     },
     potvrdiNarudzbenicu() {
       this.$refs["my-modal1"].show();
@@ -212,14 +213,28 @@ Vue.component("NaruciAdmin", {
     posaljiNarudzbinu() {
       for (i = 0; i < this.listaNarudzbina.length; i++) {
         this.listaNarudzbina[i].datumNarudzbine = this.datumNarudzbine;
+        this.listaNarudzbina[i].pacijent = this.cookie;
       }
-      console.log(JSON.parse(JSON.stringify(this.listaNarudzbina)));
+      
+      this.uspeh = false;
+      this.losUnos = false;
+      
       axios
         .post(
-          "/narudzbine/admin",
+          "/narudzbine/pacijent",
           JSON.parse(JSON.stringify(this.listaNarudzbina))
         )
-        .then((response) => console.log(response.data));
+        .then((response) => { 
+         	this.retrieveLekove();
+        	console.log(response.data);
+        	this.uspeh = true; 
+        })
+       	.catch((e) => {
+        	this.losUnos = true;
+        });
+        
+      this.retrieveLekove();
+      this.kolicinaChange();
       this.listaNarudzbina = [];
       this.$refs["my-modal1"].hide();
     },
@@ -242,10 +257,13 @@ Vue.component("NaruciAdmin", {
         datumNarudzbine: this.datumNarudzbine,
         kolicina: this.kolicina,
         apotekaId: this.apotekaID,
+        cenaUkupno: this.izabranLek.cena*this.kolicina,
+        cenaJedno: this.izabranLek.cena,
       };
       this.listaNarudzbina.push(tempLek);
       this.datumNarudzbine = "";
       this.kolicina = "";
+      this.kolicinaChange();
       this.$refs["my-modal"].hide();
     },
     redirectUser: function () {

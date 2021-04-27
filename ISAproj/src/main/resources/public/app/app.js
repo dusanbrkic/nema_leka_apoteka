@@ -6,8 +6,10 @@ const HomeMain  = { template: '<HomeMain></HomeMain>'}
 // pacijent
 const HomePacijent = {template: '<HomePacijent></HomePacijent>'}
 const PacijentMain = {template: '<PacijentMain></PacijentMain>'}
+const PacijentApoteke = {template: '<PacijentApoteke></PacijentApoteke>'}
 const PacijentLekovi = {template: '<PacijentLekovi></PacijentLekovi>'}
 const PacijentNarudzbenice = {template: '<PacijentNarudzbenice></PacijentNarudzbenice>'}
+const NaruciPacijent = {template: '<NaruciPacijent></NaruciPacijent>'}
 
 // dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
@@ -93,7 +95,7 @@ const router = new VueRouter({
 	        },
 			{
                 path: 'apoteke',
-                component: Apoteke
+                component: PacijentApoteke
             },
             {
                 path: 'lekovi',
@@ -102,6 +104,10 @@ const router = new VueRouter({
             {
                 path: 'narudzbenice',
                 component: PacijentNarudzbenice
+            },
+            {
+                path: 'rezervacija',
+                component: NaruciPacijent
             }
 	    ]},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},

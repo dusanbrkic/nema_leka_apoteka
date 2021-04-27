@@ -197,6 +197,19 @@ public class LekController {
         }
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	@GetMapping(value="/basic2" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LekDTO>> getLekByApotekaID(@RequestParam String apotekaID) {
+    	
+    	List<ApotekaLek> apotekeLekovi = apotekaLekService.findOneByApoteka(Long.parseLong(apotekaID));
+		if(apotekeLekovi == null) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		List<LekDTO> lekovi = new ArrayList<LekDTO>();
+		for (ApotekaLek a : apotekeLekovi) {
+			lekovi.add(new LekDTO(a.getLek()));
+		}
+		return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
+	}
 	//dodavanje leka
 	@PostMapping(consumes = "application/json")
 	public ResponseEntity<LekDTO> saveLek(@RequestBody LekDTO lekDTO){
@@ -262,116 +275,13 @@ public class LekController {
 	
 	
 	
-	// Rezervacija leka
 	
-	@GetMapping(value="/rezervacija-leka")
-	public ResponseEntity<Void> receiveData(
-			@RequestParam("sifra") String sifra,
-			@RequestParam("kolicina") int kolicina,
-			@RequestParam("istekRezervacije") String datum,
-			@RequestParam("cookie") String cookie
-			) throws ParseException
-		{
-		
-			Lek lek = null;
-			
-			Pacijent k = (Pacijent) korisnikService.findUserByToken(cookie);
-			
-			ApotekaLek al = null;
-			
-			Long porudzbinaId = (long) 0;
-			
-			for (ApotekaLek a : apotekaLekService.findAll()) {
-				if(sifra.equals(a.getLek().getSifra())) {
-					lek = a.getLek();
-					al = a;
-					if(kolicina>al.getKolicina()) {
-						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-					}
-					al.setKolicina(al.getKolicina()-kolicina);
-		
-					apotekaLekService.saveAL(al);
-					
-					
-					Narudzbenica n = new Narudzbenica((Date) new SimpleDateFormat("yyyy-MM-dd").parse(datum));
-					NarudzbenicaLek nl = new NarudzbenicaLek(kolicina, n,lek);
-					
-					n.addNarudzbenicaLek(nl);
-					n.setApoteka(a.getApoteka());
-					n.setPacijent(k);
-					
-					narudzbenicaService.saveNarudzbenica(n);
-					narudzbenicaService.saveNarudzbenicaLek(nl);
-					
-					porudzbinaId = n.getId();
-				}
-			}
-		
-			if(lek == null) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-		
-			String body = "Poštovani, " + k.getIme() + "\n"
-					+ "Rezervisali ste lek " + lek.getNaziv() + " x " + kolicina + "kom" +"\n"
-					+ "Ukupna cena je: " + al.getCena()*kolicina + " dinara \n"
-					+ "Rezervisani lek možete pokupiti do isteka rezervacije " + datum + "\n\n"
-					+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
-					+ "Srdačan pozdrav.";
-			
-			String title = "Potvrda Rezervacije Leka (ID:" + porudzbinaId + ")";
-		
-			try
-			{
-				Thread t = new Thread() {
-					public void run()
-					{
-						sendEmailService.sendEmail(k.getEmailAdresa(), body, title);
-					}
-				};
-				t.start();
-			}
-			catch(Exception e) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-		
-			return new ResponseEntity<Void>(HttpStatus.OK);
-		}
-	
-	// dobavljanje narudzbenica
-	@GetMapping(value="/moje_porudzbine" , produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<NarudzbenicaDTO>> getNarudzbenice() {
-    	
-    	List<Narudzbenica> n = narudzbenicaService.findAllNarudzbenice();
-
-    	List<NarudzbenicaDTO> narudzbenice = new ArrayList<NarudzbenicaDTO>();
-    	
-    	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
-    	
-    	for(Narudzbenica tmp : n) {
-    		String lekovi = "";
-        	boolean first = true;
-    		for(NarudzbenicaLek nl : tmp.getLekovi()) {
-    			
-    			if(!first) { lekovi += ", "; } else { first = false; }
-    			
-    			lekovi += nl.getLek().getNaziv() + " x " + nl.getKolicina() + " kom";
-    		}
-    		 
-    		narudzbenice.add(new NarudzbenicaDTO(
-    				tmp.getId(),
-    				tmp.getApoteka().getNaziv(),
-    				dateFormat.format(tmp.getRokPonude()),
-    				lekovi));
-    	}
-    	
-		return new ResponseEntity<List<NarudzbenicaDTO>>(narudzbenice, HttpStatus.OK);
-	}
 	
 	//narucivanje lekova
 	@GetMapping(value="/narucivanje_lek" , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Object>> getLekoveNaruci(@RequestParam("cookie") String cookie, 
 			@RequestParam("apotekaID") String apotekaId, 
-			@RequestParam(defaultValue = "6") int size,
+			@RequestParam(defaultValue = "15") int size,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(required = false) String title,
 	        @RequestParam(defaultValue = "naziv") String sort,

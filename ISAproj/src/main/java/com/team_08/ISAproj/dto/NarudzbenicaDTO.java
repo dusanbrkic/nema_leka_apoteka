@@ -1,43 +1,76 @@
 package com.team_08.ISAproj.dto;
 
-public class NarudzbenicaDTO {
+import java.util.Date;
 
-	private Long   id;
-	private String ApotekaNaziv;
-	private String DatumPreuzimanja;
-	private String Lekovi;
-	public NarudzbenicaDTO(Long id, String apotekaNaziv, String datumPreuzimanja, String lekovi) {
+public class NarudzbenicaDTO {
+	
+	
+	private String naziv;
+	private String sifra;
+	private int kolicina;
+	private Date datumNarudzbine;
+	private String apotekaId;
+	private String pacijent;
+	
+	public NarudzbenicaDTO() {
+		
+		
+	}
+
+	public NarudzbenicaDTO(String naziv, String sifra, int kolicina, Date datumNarudzbine, String aID) {
 		super();
-		this.id = id;
-		ApotekaNaziv = apotekaNaziv;
-		DatumPreuzimanja = datumPreuzimanja;
-		Lekovi = lekovi;
+		this.naziv = naziv;
+		this.sifra = sifra;
+		this.kolicina = kolicina;
+		this.datumNarudzbine = datumNarudzbine;
+		this.apotekaId = aID;
 	}
-	public Long getId() {
-		return id;
+
+	public String getApotekaId() {
+		return apotekaId;
 	}
-	public void setId(Long id) {
-		this.id = id;
+
+	public void setApotekaId(String apotekaId) {
+		this.apotekaId = apotekaId;
 	}
-	public String getApotekaNaziv() {
-		return ApotekaNaziv;
+
+	public String getNaziv() {
+		return naziv;
 	}
-	public void setApotekaNaziv(String apotekaNaziv) {
-		ApotekaNaziv = apotekaNaziv;
+
+	public void setNaziv(String naziv) {
+		this.naziv = naziv;
 	}
-	public String getDatumPreuzimanja() {
-		return DatumPreuzimanja;
+
+	public String getSifra() {
+		return sifra;
 	}
-	public void setDatumPreuzimanja(String datumPreuzimanja) {
-		DatumPreuzimanja = datumPreuzimanja;
+
+	public void setSifra(String sifra) {
+		this.sifra = sifra;
 	}
-	public String getLekovi() {
-		return Lekovi;
+
+	public int getKolicina() {
+		return kolicina;
 	}
-	public void setLekovi(String lekovi) {
-		Lekovi = lekovi;
+
+	public void setKolicina(int kolicina) {
+		this.kolicina = kolicina;
 	}
-	
-	
-	
+
+	public Date getDatumNarudzbine() {
+		return datumNarudzbine;
+	}
+
+	public void setDatumNarudzbine(Date datumNarudzbine) {
+		this.datumNarudzbine = datumNarudzbine;
+	}
+
+	public String getPacijent() {
+		return pacijent;
+	}
+
+	public void setPacijent(String korisnik) {
+		this.pacijent = korisnik;
+	}
 }
