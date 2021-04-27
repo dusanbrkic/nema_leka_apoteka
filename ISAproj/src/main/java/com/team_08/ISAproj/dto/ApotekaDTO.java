@@ -9,9 +9,10 @@ public class ApotekaDTO {
 	private String adresa;
 	private Double prosecnaOcena;
 	private String opis;
+
+
 	
 	public ApotekaDTO() {
-	
 		
 	}
 	

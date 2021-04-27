@@ -44,4 +44,12 @@ public class PregledService {
     public List<Pregled> findAllInDateRangeByZdravstveniRadnik(LocalDateTime start, LocalDateTime end, String cookie) {
         return pregledRepository.findAllInDateRangeByZdravstveniRadnik(start, end, cookie);
     }
+
+    public Pregled findOneById(Long id) {
+        return pregledRepository.findOneById(id);
+    }
+
+    public void savePregled(Pregled pregled) {
+        pregledRepository.save(pregled);
+    }
 }

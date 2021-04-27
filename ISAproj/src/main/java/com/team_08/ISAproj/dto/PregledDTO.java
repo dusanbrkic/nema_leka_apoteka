@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PregledDTO {
+    private Long id;
+
     private LocalDateTime start;
     private LocalDateTime end;
     private String dijagnoza;
@@ -19,8 +21,12 @@ public class PregledDTO {
     private ApotekaDTO apoteka;
     private Set<LekDTO> preporuceniLekovi;
 
+    public PregledDTO() {
+    }
+
     public PregledDTO(Pregled pregled) {
         this.start = pregled.getVreme();
+        this.id = pregled.getId();
         this.pregledZakazan = pregled.isPregledZakazan();
         this.end = pregled.getKraj();
         this.dijagnoza = pregled.getDijagnoza();
@@ -31,9 +37,17 @@ public class PregledDTO {
         this.preporuceniLekovi = new HashSet<LekDTO>();
     }
 
-    public void loadLekovi(Pregled pregled){
+    public void loadLekovi(Pregled pregled) {
         for (Lek p : pregled.getPreporuceniLekovi())
             this.preporuceniLekovi.add(new LekDTO(p));
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getStart() {

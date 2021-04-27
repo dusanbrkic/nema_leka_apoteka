@@ -16,7 +16,7 @@ const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
 const Login = {template: '<Login></Login>'}
 const Registracija = {template: '<Registracija></Registracija>'}
-const MailVer = {template: '<MailVer></MailVer>'} 
+const MailVer = {template: '<MailVer></MailVer>'}
 const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
 
@@ -36,6 +36,7 @@ const DermatologMain = {template: '<DermatologMain></DermatologMain>'}
 const FarmaceutMain = {template: '<FarmaceutMain></FarmaceutMain>'}
 const PregledaniPacijenti = {template: '<PregledaniPacijenti></PregledaniPacijenti>'}
 const OdsustvoForma = {template: '<OdsustvoForma></OdsustvoForma>'}
+const PregledForma = {template: '<PregledForma></PregledForma>'}
 
 const router = new VueRouter({
     mode : 'hash',
@@ -70,7 +71,7 @@ const router = new VueRouter({
                 {
                     path: 'pregledani-pacijenti',
                     component: PregledaniPacijenti
-                }
+                },
             ]},
         {path: '/home-farmaceut', component: HomeFarmaceut,  children: [
                 {
@@ -118,8 +119,9 @@ const router = new VueRouter({
         {path: '/registracija', component: Registracija},
         {path: '/mail-verification', component: MailVer},
         {path: '/admin-apoteke-narudzbina',component: NaruciAdmin},
-        {path: '/admin-apoteke-apoteka',component: AdminApoteka}
-        
+        {path: '/admin-apoteke-apoteka',component: AdminApoteka},
+        {path: '/pregled-forma', component: PregledForma}
+
     ]
 });
 

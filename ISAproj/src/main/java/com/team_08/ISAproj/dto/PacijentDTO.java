@@ -16,6 +16,9 @@ public class PacijentDTO {
     private String drzava;
     private String brojTelefona;
 
+    public PacijentDTO() {
+    }
+
     public PacijentDTO(Korisnik k) {
         this.ime = k.getIme();
         this.prezime = k.getPrezime();

@@ -6,6 +6,7 @@ Vue.component("CalendarView", {
             invalidCookie: false,
             calendar: null,
             selectedEvent: {
+                id: null,
                 title: null,
                 start: new Date(),
                 end: new Date(),
@@ -15,7 +16,6 @@ Vue.component("CalendarView", {
                 dijagnoza: null,
                 pregledZakazan: null,
                 pregledObavljen: null,
-                savetovanjeObavljeno: null,
                 trajanje: null,
                 eventType: null
             }
@@ -59,15 +59,15 @@ Vue.component("CalendarView", {
             eventClick: that.eventSelected,
             locale: 'sr-latn',
             buttonText: {
-                today:    'danas',
-                month:    'mesec',
-                week:     'nedelja',
-                day:      'dan',
-                list:     'lista'
+                today: 'danas',
+                month: 'mesec',
+                week: 'nedelja',
+                day: 'dan',
+                list: 'lista'
             },
             weekText: 'sed',
             allDayText: 'ceo dan',
-            moreLinkText: function(n) {
+            moreLinkText: function (n) {
                 return '+ još ' + n
             },
             noEventsText: 'nеma događaja za prikaz',
@@ -133,17 +133,16 @@ Vue.component("CalendarView", {
               </b-row>
             </b-container>
             <template #modal-footer="{ ok }">
-              <b-button variant="success" @click="ok()">
-                <template
-                    v-if="(selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan)">
-                  OK
-                </template>
-                <template
-                    v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">
+              <b-button variant="success" @click="ok()"
+                        v-if="(selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan)">
+                OK
+              </b-button>
+              <b-button variant="success" @click="ok()" v-on:click="zapocni_pregled"
+                        v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">
+                <template v-if="rola=='DERMATOLOG' && selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen">
                   Zapocni pregled
                 </template>
-                <template
-                    v-if="rola=='FARMACEUT' && !selectedEvent.pregledObavljen">
+                <template v-if="rola=='FARMACEUT' && !selectedEvent.pregledObavljen">
                   Zapocni savetovanje
                 </template>
               </b-button>
@@ -157,6 +156,23 @@ Vue.component("CalendarView", {
         `
     ,
     methods: {
+        zapocni_pregled: function () {
+            let pregled = {
+                id: this.selectedEvent.id,
+                start: this.selectedEvent.start,
+                end: this.selectedEvent.end,
+                apoteka: this.selectedEvent.apoteka,
+                pacijent: this.selectedEvent.pacijent,
+                preporuceniLekovi: this.selectedEvent.preporuceniLekovi,
+                dijagnoza: this.selectedEvent.dijagnoza,
+                pregledZakazan: this.selectedEvent.pregledZakazan,
+                pregledObavljen: this.selectedEvent.pregledObavljen,
+                trajanje: this.selectedEvent.trajanje,
+            }
+            localStorage.setItem("pregled", JSON.stringify(pregled))
+            app.$router.push("/pregled-forma")
+        },
+
         loadData: async function (fetchInfo, successCallback, failureCallback) {
             let retVal = []
             await axios
@@ -237,6 +253,7 @@ Vue.component("CalendarView", {
             let event = info.event.extendedProps.event
             this.selectedEvent.eventType = event.eventType
             if (event.eventType == "PREGLED") {
+                this.selectedEvent.id = event.id
                 this.selectedEvent.title = event.pacijent.ime + " " + event.pacijent.prezime
                 this.selectedEvent.start = event.start
                 this.selectedEvent.end = event.end

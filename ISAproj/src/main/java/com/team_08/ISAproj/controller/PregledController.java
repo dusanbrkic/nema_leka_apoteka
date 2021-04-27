@@ -1,22 +1,23 @@
 package com.team_08.ISAproj.controller;
 
+import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
+import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.model.Pregled;
+import com.team_08.ISAproj.service.LekService;
 import com.team_08.ISAproj.service.PregledService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,7 +26,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/pregledi")
 public class PregledController {
     @Autowired
-    PregledService pregledService;
+    private PregledService pregledService;
+    @Autowired
+    private LekService lekService;
 
     @GetMapping(value = "/getPregledaniKorisniciByZdravstveniRadnik", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<PregledDTO>> getPregledaniKorisniciByZdravstveniRadnik(
@@ -42,7 +45,7 @@ public class PregledController {
         } catch (CookieNotValidException e) {
             return new ResponseEntity<Page<PregledDTO>>(HttpStatus.NOT_FOUND);
         }
-        if (pregledi==null)
+        if (pregledi == null)
             return new ResponseEntity<Page<PregledDTO>>(Page.empty(), HttpStatus.OK);
 
         Page<PregledDTO> preglediDTO = pregledi.map(new Function<Pregled, PregledDTO>() {
@@ -55,6 +58,7 @@ public class PregledController {
         });
         return new ResponseEntity<Page<PregledDTO>>(preglediDTO, HttpStatus.OK);
     }
+
     @GetMapping(value = "/getPreglediByZdravstveniRadnik", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PregledDTO>> getPreglediByZdravstveniRadnik(
             @RequestParam("cookie") String cookie,
@@ -68,7 +72,7 @@ public class PregledController {
         } catch (CookieNotValidException e) {
             return new ResponseEntity<List<PregledDTO>>(HttpStatus.NOT_FOUND);
         }
-        if (pregledi==null)
+        if (pregledi == null)
             return new ResponseEntity<List<PregledDTO>>(new ArrayList<>(), HttpStatus.OK);
 
         List<PregledDTO> preglediDTO = pregledi.stream().map(new Function<Pregled, PregledDTO>() {
@@ -80,5 +84,24 @@ public class PregledController {
             }
         }).collect(Collectors.toList());
         return new ResponseEntity<List<PregledDTO>>(preglediDTO, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/updatePregled", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updatePregled(@RequestBody PregledDTO pregledDTO) {
+        Pregled pregled = pregledService.findOneById(pregledDTO.getId());
+        if (pregled == null)
+            return new ResponseEntity<String>(HttpStatus.OK);
+        List<Lek> lekovi = pregledDTO.getPreporuceniLekovi().stream().map(new Function<LekDTO, Lek>() {
+            @Override
+            public Lek apply(LekDTO lekDTO) {
+                Lek l = lekService.findOneBySifra(lekDTO.getSifra());
+                return l;
+            }
+        }).collect(Collectors.toList());
+        pregled.setPreporuceniLekovi(new HashSet<>(lekovi));
+        pregled.setPregledObavljen(true);
+        pregled.setDijagnoza(pregledDTO.getDijagnoza());
+        pregledService.savePregled(pregled);
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 }
