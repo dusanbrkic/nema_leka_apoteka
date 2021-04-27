@@ -346,5 +346,32 @@ public class LekController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		
 	}
-	
+	//narucivanje lekova
+	@GetMapping(value="/narucivanje_lek_pacijant" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> getLekoveNaruciPacijent(@RequestParam("cookie") String cookie, 
+			@RequestParam("apotekaID") String apotekaId, 
+			@RequestParam(defaultValue = "15") int size,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(required = false) String title,
+	        @RequestParam(defaultValue = "naziv") String sort,
+	        @RequestParam(defaultValue = "opadajuce") String smer){
+
+		
+		Pageable paging = PageRequest.of(page, size);
+		Page<Lek> lekovi;
+		// svi lekovi u bazi
+		//lekovi = lekService.findAllSearch(paging,title);
+		Page<ApotekaLek> alLista = apotekaLekService.findLekoviByApotekaID(Long.parseLong(apotekaId), paging);
+		List<LekDTO> lekoviDTO = new ArrayList<LekDTO>();
+		for(ApotekaLek al: alLista) {
+			lekoviDTO.add(new LekDTO(al));
+		}	
+		Map<String, Object> response = new HashMap<>();
+		response.put("lekovi", lekoviDTO);
+		response.put("currentPage", alLista.getNumber());
+		response.put("totalItems", alLista.getTotalElements());
+		response.put("totalPages", alLista.getTotalPages());
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		
+	}
 }

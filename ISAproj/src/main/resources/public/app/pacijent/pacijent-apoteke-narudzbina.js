@@ -349,7 +349,7 @@ Vue.component("NaruciPacijent", {
       );
 
       axios
-        .get("lekovi/narucivanje_lek/", { params })
+        .get("lekovi/narucivanje_lek_pacijant/", { params })
         .then((response) => {
           const { lekovi, totalItems } = response.data;
           this.lekovi = lekovi;
