@@ -46,25 +46,24 @@ public class ApotekaLekService {
 	public Page<ApotekaLek> findByLekContaining(Lek lek, Pageable pageable) {
 		return apotekaLekRepository.findByLekContaining(lek, pageable);
 	}
+	public Page<ApotekaLek> findLekoviByApotekaID(Long ApotekaID, String lekPretraga, Pageable paging){
+		lekPretraga = "%" + lekPretraga + "%";
+		return apotekaLekRepository.findAllApotekaLekoviByApotedaIdPage(ApotekaID, lekPretraga, paging);
+	}
 	public ApotekaLek findOneBySifra(Lek l, Long ApotekaID) {
     	List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findAllByApotekaId(ApotekaID);
-    	for(ApotekaLek al:apotekaLekovi) {
-    		if(l.getId().equals(al.getId())) {
-    			return al;
-    		}
+    	ApotekaLek al = apotekaLekRepository.fetchBySifra(ApotekaID, l.getSifra());
+    	if(al == null) {
+    		return null;
     	}
-    	return null;
+    	return al;
 	}
     public void removeBySifra(Lek l,Long ApotekaID) {
-    	List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findAllByApotekaId(ApotekaID);
-    	for(ApotekaLek al:apotekaLekovi) {
-    		if(l.getId().equals(al.getId())) {
-    			apotekaLekRepository.deleteById(al.getId());
-    			return;
-    		}
-    		
+    	ApotekaLek al = apotekaLekRepository.fetchBySifra(ApotekaID, l.getSifra());
+    	if(al == null) {
+    		return;
     	}
-    	return;
+    	apotekaLekRepository.deleteById(al.getId());
     }
     public void saveAL(ApotekaLek al) {
     	apotekaLekRepository.save(al);

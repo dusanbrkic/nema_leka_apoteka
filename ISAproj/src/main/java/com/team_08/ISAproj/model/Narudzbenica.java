@@ -3,6 +3,7 @@ package com.team_08.ISAproj.model;
 import javax.persistence.*;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "NARUDZBENICA")
@@ -15,30 +16,45 @@ public class Narudzbenica {
 	private Date rokPonude;
 	
 	// connections
-	//@OneToMany(mappedBy = "narudzbenica", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	//private Set<NarudzbenicaLek> lekovi;
-	
-	@Column(name = "KOLICINA")
-	private Integer kolicina;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Lek lek;
+	@OneToMany(mappedBy = "narudzbenica", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<NarudzbenicaLek> lekovi = new HashSet<NarudzbenicaLek>();
 	
 	
+	public void addNarudzbenicaLek(NarudzbenicaLek nl) {
+		this.lekovi.add(nl);
+	}
 	
+	public Set<NarudzbenicaLek> getLekovi() {
+		return lekovi;
+	}
+
+	public void setLekovi(Set<NarudzbenicaLek> lekovi) {
+		this.lekovi = lekovi;
+	}
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Apoteka apoteka;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Pacijent pacijent;
 
 
-	public Narudzbenica(Date rokPonuda, Lek lek, int kolicina) {
+	public Pacijent getPacijent() {
+		return pacijent;
+	}
+
+	public void setPacijent(Pacijent pacijent) {
+		this.pacijent = pacijent;
+	}
+
+	public Narudzbenica(Date rokPonuda) {
 		super();
 		this.rokPonude = rokPonuda;
-		this.lek = lek;
-		this.kolicina = kolicina;
+		this.lekovi = new HashSet<NarudzbenicaLek>();
 	}
 
 	public Narudzbenica() {
-
+		this.lekovi = new HashSet<NarudzbenicaLek>();
 	}
 
 	public Date getRokPonuda() {
@@ -56,22 +72,6 @@ public class Narudzbenica {
 
 	public void setRokPonude(Date rokPonude) {
 		this.rokPonude = rokPonude;
-	}
-
-	public Integer getKolicina() {
-		return kolicina;
-	}
-
-	public void setKolicina(Integer kolicina) {
-		this.kolicina = kolicina;
-	}
-
-	public Lek getLek() {
-		return lek;
-	}
-
-	public void setLek(Lek lek) {
-		this.lek = lek;
 	}
 
 	public Apoteka getApoteka() {
