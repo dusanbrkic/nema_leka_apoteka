@@ -90,39 +90,39 @@ Vue.component("CalendarView", {
           <b-modal id="eventModal" title="Detalji">
             <b-container>
               <b-row>
-                <b-col>Pocetak:</b-col>
+                <b-col><strong>Pocetak:</strong></b-col>
                 <b-col>{{ moment(String(selectedEvent.start)).format("DD/MM/YYYY HH:mm") }}</b-col>
               </b-row>
               <b-row>
-                <b-col>Kraj:</b-col>
+                <b-col><strong>Kraj:</strong></b-col>
                 <b-col>{{ moment(String(selectedEvent.end)).format("DD/MM/YYYY HH:mm") }}</b-col>
               </b-row>
               <b-row v-if=" selectedEvent.pregledObavljen">
-                <b-col>Trajanje:</b-col>
+                <b-col><strong>Trajanje:</strong></b-col>
                 <b-col>{{ moment(String(new Date(selectedEvent.trajanje))).format("mm") }} min</b-col>
               </b-row>
               <b-row v-if="(selectedEvent.pregledZakazan)">
-                <b-col>Ime pacijenta:</b-col>
+                <b-col><strong>Ime pacijenta:</strong></b-col>
                 <b-col>{{ selectedEvent.pacijent.ime }}</b-col>
               </b-row>
               <b-row v-if="selectedEvent.pregledZakazan">
-                <b-col>Prezime pacijenta:</b-col>
+                <b-col><strong>Prezime pacijenta:</strong></b-col>
                 <b-col>{{ selectedEvent.pacijent.prezime }}</b-col>
               </b-row>
               <b-row>
-                <b-col>Ime Apoteke:</b-col>
+                <b-col><strong>Ime Apoteke:</strong></b-col>
                 <b-col>{{ selectedEvent.apoteka.naziv }}</b-col>
               </b-row>
               <b-row>
-                <b-col>Adresa apoteke:</b-col>
+                <b-col><strong>Adresa apoteke:</strong></b-col>
                 <b-col>{{ selectedEvent.apoteka.adresa }}</b-col>
               </b-row>
               <b-row v-if="selectedEvent.pregledObavljen">
-                <b-col>Dijagnoza:</b-col>
+                <b-col><strong>Dijagnoza:</strong></b-col>
                 <b-col>{{ selectedEvent.dijagnoza }}</b-col>
               </b-row>
               <b-row v-if="selectedEvent.pregledObavljen">
-                <b-col>Preporuceni lekovi:</b-col>
+                <b-col><strong>Preporuceni lekovi:</strong></b-col>
                 <b-col>
                   <b-row v-for="lek in selectedEvent.preporuceniLekovi">- {{ lek.naziv }}</b-row>
                 </b-col>
@@ -204,7 +204,7 @@ Vue.component("CalendarView", {
                             end: new Date(event.end),
                             event: event,
                             color: (() => {
-                                if (new Date() > new Date(event.end)) {
+                                if (event.pregledZakazan) {
                                     if (event.pregledObavljen)
                                         return "gray"
                                     else
