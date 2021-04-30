@@ -10,6 +10,7 @@ Vue.component("CalendarView", {
                 title: null,
                 start: new Date(),
                 end: new Date(),
+                cena: null,
                 apoteka: {naziv: null, adresa: null},
                 pacijent: {ime: null, prezime: null},
                 preporuceniLekovi: [],
@@ -121,6 +122,10 @@ Vue.component("CalendarView", {
                 <b-col>Dijagnoza:</b-col>
                 <b-col>{{ selectedEvent.dijagnoza }}</b-col>
               </b-row>
+              <b-row v-if="(selectedEvent.pregledZakazan)">
+                <b-col><strong>Cena:</strong></b-col>
+                <b-col>{{ selectedEvent.cena }}</b-col>
+              </b-row>
               <b-row v-if="selectedEvent.pregledObavljen">
                 <b-col>Preporuceni lekovi:</b-col>
                 <b-col>
@@ -207,7 +212,7 @@ Vue.component("CalendarView", {
                                 if (new Date() > new Date(event.end)) {
                                     if (event.pregledObavljen)
                                         return "gray"
-                                    else
+                                    else if(event.start < new Date())
                                         return "red"
                                 } else {
                                     if (!event.pregledZakazan)
@@ -256,6 +261,7 @@ Vue.component("CalendarView", {
                 this.selectedEvent.id = event.id
                 this.selectedEvent.title = event.pacijent.ime + " " + event.pacijent.prezime
                 this.selectedEvent.start = event.start
+                this.selectedEvent.cena = event.cena
                 this.selectedEvent.end = event.end
                 this.selectedEvent.apoteka = event.apoteka
                 this.selectedEvent.pacijent = event.pacijent

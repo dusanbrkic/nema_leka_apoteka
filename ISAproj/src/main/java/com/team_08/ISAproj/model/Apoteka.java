@@ -21,6 +21,10 @@ public class Apoteka {
 	private String adresa;
 	@Column(name="PROSECNA_OCENA")
 	private Double prosecnaOcena;
+	@Column(name="CENA_PREGLEDA")
+	private Double cenaPregleda;
+	@Column(name="CENA_SAVETOVANJA")
+	private Double cenaSavetovanja;
 	@Column(name="OPIS")
 	private String opis;
 	
@@ -178,5 +182,24 @@ public class Apoteka {
 		return "Apoteka [id=" + id + ", naziv=" + naziv + ", adresa=" + adresa + ", prosecnaOcena=" + prosecnaOcena
 				+ ", opis=" + opis + ", dermatolozi=" + dermatolozi + ", farmaceuti=" + farmaceuti + "]";
 	}
-	
+
+	public void setProsecnaOcena(Double prosecnaOcena) {
+		this.prosecnaOcena = prosecnaOcena;
+	}
+
+	public Double getCenaPregleda() {
+		return cenaPregleda;
+	}
+
+	public void setCenaPregleda(Double cenaPregleda) {
+		this.cenaPregleda = cenaPregleda;
+	}
+
+	public Double getCenaSavetovanja() {
+		return cenaSavetovanja;
+	}
+
+	public void setCenaSavetovanja(Double cenaSavetovanja) {
+		this.cenaSavetovanja = cenaSavetovanja;
+	}
 }
