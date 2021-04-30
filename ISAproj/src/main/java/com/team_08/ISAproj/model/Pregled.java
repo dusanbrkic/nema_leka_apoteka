@@ -28,7 +28,9 @@ public class Pregled {
 	private boolean pregledObavljen;
 	@Column(name = "PREGLED_ZAKAZAN")
 	private boolean pregledZakazan;
-	
+	@Column(name = "CENA")
+	private Double cena;
+
 	// connections
 	@ManyToOne(fetch = FetchType.EAGER)
 	private ZdravstveniRadnik zdravstveniRadnik;
@@ -100,5 +102,20 @@ public class Pregled {
 	public void setApoteka(Apoteka apoteka) {this.apoteka = apoteka;}
 	public Set<Lek> getPreporuceniLekovi() {return preporuceniLekovi;}
 	public void setPreporuceniLekovi(Set<Lek> preporuceniLekovi) {this.preporuceniLekovi = preporuceniLekovi;}
-	
+
+	public Double getCena() {
+		return cena;
+	}
+
+	public void setCena(Double cena) {
+		this.cena = cena;
+	}
+
+	public ZdravstveniRadnik getZdravstveniRadnik() {
+		return zdravstveniRadnik;
+	}
+
+	public void setZdravstveniRadnik(ZdravstveniRadnik zdravstveniRadnik) {
+		this.zdravstveniRadnik = zdravstveniRadnik;
+	}
 }

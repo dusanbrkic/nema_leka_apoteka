@@ -17,6 +17,7 @@ public class PregledDTO {
     private Long trajanje;
     private String apotekaId;
     private String username;
+    private Double cena;
     // connections
     private PacijentDTO pacijent;
     private ApotekaDTO apoteka;
@@ -35,6 +36,7 @@ public class PregledDTO {
         this.pacijent = new PacijentDTO(pregled.getPacijent());
         this.apoteka = new ApotekaDTO(pregled.getApoteka());
         this.trajanje = pregled.getTrajanje();
+        this.cena = pregled.getCena();
         this.preporuceniLekovi = new HashSet<LekDTO>();
     }
 
@@ -49,6 +51,14 @@ public class PregledDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Double getCena() {
+        return cena;
+    }
+
+    public void setCena(Double cena) {
+        this.cena = cena;
     }
 
     public LocalDateTime getStart() {
