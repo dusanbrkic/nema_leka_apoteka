@@ -248,7 +248,7 @@ public class NarudzbinaController {
     	for(Narudzbenica tmp : n) {
     		//System.out.print(tmp.getPacijent().getId() + " and coocke:" + pacijent.getId());
     		
-    		//if(tmp.getPacijent().getId().equals(korisnik.getId())) {
+    		if(tmp.getPacijent().getId().equals(korisnik.getId())) {
     		
 	    		String lekovi = "";
 	        	boolean first = true;
@@ -270,7 +270,7 @@ public class NarudzbinaController {
 	    				tmp.getRokPonude(),
 	    				tmp.getApoteka().getNaziv()));
     		
-    		//}
+    		}
     	}
     	
     	return new ResponseEntity<List<NarudzbenicaDTO>>(rezervacije, HttpStatus.OK);
