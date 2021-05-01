@@ -55,4 +55,13 @@ public class NarudzbenicaLek {
 	public Long getId() {
 		return id;
 	}
+	public Narudzbenica getNarudzbenica() {
+		return narudzbenica;
+	}
+	public void setNarudzbenica(Narudzbenica narudzbenica) {
+		this.narudzbenica = narudzbenica;
+	}
+	public void setKolicina(Integer kolicina) {
+		this.kolicina = kolicina;
+	}
 }

@@ -1,64 +1,81 @@
 Vue.component("PacijentNarudzbenice", {
     data: function () {
         return {
-           cookie: "",
-           narudzbenice: [],
-        
+            cookie: '',
+            fields: [
+                {
+                    key: 'idRezervacije',
+                    sortable: false
+                },
+                {
+                    key: 'lekovi',
+                    sortable: false
+                },
+                {
+                    key: 'apoteka',
+                    sortable: false
+                },
+                {
+                    key: 'datumIstekaRezervacije',
+                    sortable: false
+                },
+            ],
+
+            table_is_busy: false,
+
         }
+
     },
-      mounted () {
-      	this.cookie = localStorage.getItem("cookie")
-      	this.retrieveNarudzbine()
-  	},
+    mounted() {
+        this.cookie = localStorage.getItem("cookie")
+    },
     template: `
-    	<div>
-    	<div class="container">
-    	
+      <div>
+      <b-card style="margin: 40px auto; max-width: 1200px">
+        <b-container>
 
-		<!-- PRIKAZ PORUDZBINA -->
-		
+          <b-row>
+            <b-table
+                id="rezervacije-tabela"
+                hover
+                :items="itemProvider"
+                :fields="fields"
+                :busy.sync="table_is_busy"
+            ></b-table>
+          </b-row>
 
-        <b-row>
-        <b-card-group deck v-for="n in narudzbenice">
-            <b-card>
-              <b-card-text>
-              <h5> {{n.id}} </h5>
-              <p class="card-text">
-                 Apoteka {{n.ApotekaNaziv}} <br>
-			  </p>
-              </b-card-text>
-
-            </b-card>
-        </b-card-group>
-        </b-row>
-        
-
-
-
+        </b-container>
+      </b-card>
       </div>
-</div>
-    `
-    ,
+    `,
     methods: {
-        redirectToHome: function () {
-            app.$router.push("/")
+        loadPregledi: async function () {
+            this.table_is_busy = true
+            let items = []
+            await axios
+                .get("narudzbine/moje_rezervacije", {
+                    params:
+                        {
+                            'cookie': this.cookie,
+                        }
+                })
+                .then(response => {
+                    let pregledi = response.data
+                    for (const p of pregledi) {
+                    	console.log(p);
+                        items.push({
+                            idRezervacije: p.sifra,
+                            lekovi: p.naziv,
+                            apoteka: p.apotekaId,
+                            datumIstekaRezervacije: p.datumNarudzbine.slice(0, 10)
+                        })
+                    }
+                })
+            this.table_is_busy = false
+            return items
         },
-
-		retrieveNarudzbine() {
-
-	        
-	         axios.get("kruac", 
-			    { headers: { "Content-Type": "application/json; charset=UTF-8" },
-			      params: {},
-			    }).then((response) => {
-	          		//this.narudzbenice = response.data;
-	          		console.log(response.data);
-		        })
-		        .catch((e) => {
-		        	console.log(e);
-		        });
-	    },
-
-    }
+        itemProvider: function (ctx) {
+            return this.loadPregledi()
+        },
+    },
 });
-

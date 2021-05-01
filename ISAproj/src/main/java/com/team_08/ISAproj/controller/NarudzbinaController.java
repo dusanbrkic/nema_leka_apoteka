@@ -6,8 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.NarudzbenicaAdminDTO;
 import com.team_08.ISAproj.dto.NarudzbenicaDTO;
+import com.team_08.ISAproj.dto.PregledDTO;
+import com.team_08.ISAproj.dto.RezervacijaDTO;
+import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.AdminApoteke;
 import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.ApotekaLek;
@@ -29,6 +34,7 @@ import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.model.Narudzbenica;
 import com.team_08.ISAproj.model.NarudzbenicaLek;
 import com.team_08.ISAproj.model.Pacijent;
+import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
@@ -227,32 +233,48 @@ public class NarudzbinaController {
 		}
 	
 	// dobavljanje narudzbenica
-	@GetMapping(value="/moje_porudzbine" , produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<NarudzbenicaDTO>> getNarudzbenice() {
-    	
+	@GetMapping(value="/moje_rezervacije" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<NarudzbenicaDTO>> getNarudzbenice(
+			@RequestParam("cookie") String cookie)
+	{
+		
+
     	List<Narudzbenica> n = narudzbenicaService.findAllNarudzbenice();
 
-    	List<NarudzbenicaDTO> narudzbenice = new ArrayList<NarudzbenicaDTO>();
+    	List<NarudzbenicaDTO> rezervacije = new ArrayList<NarudzbenicaDTO>();
     	
-    	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
+    	Korisnik korisnik = korisnikService.findUserByToken(cookie);
     	
     	for(Narudzbenica tmp : n) {
-    		String lekovi = "";
-        	boolean first = true;
-    		for(NarudzbenicaLek nl : tmp.getLekovi()) {
-    			
-    			if(!first) { lekovi += ", "; } else { first = false; }
-    			
-    			lekovi += nl.getLek().getNaziv() + " x " + nl.getKolicina() + " kom";
-    		}
-    		 
-    		//narudzbenice.add(new NarudzbenicaDTO(
-    		//		tmp.getId(),
-    		//		tmp.getApoteka().getNaziv(),
-    		//		dateFormat.format(tmp.getRokPonude()),
-    		//		lekovi));
+    		//System.out.print(tmp.getPacijent().getId() + " and coocke:" + pacijent.getId());
+    		
+    		//if(tmp.getPacijent().getId().equals(korisnik.getId())) {
+    		
+	    		String lekovi = "";
+	        	boolean first = true;
+	        	//System.out.println(tmp.get);
+	    		for(NarudzbenicaLek nl : narudzbenicaService.findAllNarudzbeniceLek()) {
+	    			
+	    			if(nl.getNarudzbenica().getId() == tmp.getId()) {
+	    				
+	    				if(!first) { lekovi += ", "; } else { first = false; }
+	    				lekovi += nl.getLek().getNaziv() + " x " + nl.getKolicina() + " kom";
+	    			}
+	    		}
+	    		
+	        	
+	    		rezervacije.add(new NarudzbenicaDTO(
+	    				lekovi,
+	    				Long.toString(tmp.getId()),
+	    				0,
+	    				tmp.getRokPonude(),
+	    				tmp.getApoteka().getNaziv()));
+    		
+    		//}
     	}
     	
-		return new ResponseEntity<List<NarudzbenicaDTO>>(narudzbenice, HttpStatus.OK);
+    	return new ResponseEntity<List<NarudzbenicaDTO>>(rezervacije, HttpStatus.OK);
+
+		
 	}
 }
