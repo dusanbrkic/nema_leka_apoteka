@@ -186,15 +186,15 @@ public class LekController {
         }
         if(k instanceof AdminApoteke) {
         	AdminApoteke aa = (AdminApoteke) k;
-    	List<ApotekaLek> apotekeLekovi = apotekaLekService.findOneByApoteka(aa.getApoteka().getId());
-		if(apotekeLekovi == null) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		List<LekDTO> lekovi = new ArrayList<LekDTO>();
-		for (ApotekaLek a : apotekeLekovi) {
-			lekovi.add(new LekDTO(a.getLek()));
-		}
-		return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
+        	List<ApotekaLek> apotekeLekovi = apotekaLekService.findOneByApoteka(aa.getApoteka().getId());
+        	if(apotekeLekovi == null) {
+        		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        	}
+			List<LekDTO> lekovi = new ArrayList<LekDTO>();
+			for (ApotekaLek a : apotekeLekovi) {
+				lekovi.add(new LekDTO(a));
+			}
+			return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	}

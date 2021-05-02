@@ -4,12 +4,16 @@ import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.Farmaceut;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.ZdravstveniRadnik;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
@@ -24,4 +28,8 @@ public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
 
     @Query(value = "SELECT f FROM FARMACEUT f LEFT OUTER JOIN FETCH f.odsustva o where f.cookieTokenValue = :cookie and (:start < o.kraj and :end > o.pocetak)")
     ZdravstveniRadnik fetchFarmaceutWithOdsustvaInDateRange(@Param("cookie") String cookie, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+    
+    List<Farmaceut> findAllByApotekaId(Long ApotekaId);
+    
+    Page<Farmaceut> findAllByApotekaId(Long ApotekaId,Pageable page);
 }

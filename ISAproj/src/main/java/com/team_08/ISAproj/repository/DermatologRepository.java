@@ -3,6 +3,7 @@ package com.team_08.ISAproj.repository;
 import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.DermatologApoteka;
+import com.team_08.ISAproj.model.FarmaceutApoteka;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.ZdravstveniRadnik;
 
@@ -14,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
@@ -32,5 +34,14 @@ public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
     Dermatolog fetchDermatologByApotekaId(@Param("ap_id") Long apotekaId);
     
     @Query(value = "SELECT da FROM DERMATOLOG_APOTEKA da inner join DERMATOLOG d on d.id = da.dermatolog.id where da.apoteka.id = :ap_id")
-    Page<DermatologApoteka> fetchDermatologApotekaByApotekaId(@Param("ap_id") Long apotekaId, Pageable page);
+    Page<DermatologApoteka> fetchDermatologApotekaByApotekaIdPage(@Param("ap_id") Long apotekaId, Pageable page);
+    
+    @Query(value = "SELECT da FROM DERMATOLOG_APOTEKA da inner join DERMATOLOG d on d.id = da.dermatolog.id where da.apoteka.id = :ap_id")
+    List<DermatologApoteka> fetchDermatologApotekaByApotekaId(@Param("ap_id") Long apotekaId);
+    
+//    @Query(value = "SELECT da FROM DERMATOLOG_APOTEKA da inner join DERMATOLOG d on d.id = da.dermatolog.id where da.apoteka.id = :ap_id")
+//    Page<FarmaceutApoteka> fetchFarmaceutApotekaByApotekaIdPage(@Param("ap_id") Long apotekaId, Pageable page);
+//    
+//    @Query(value = "SELECT da FROM DERMATOLOG_APOTEKA da inner join DERMATOLOG d on d.id = da.dermatolog.id where da.apoteka.id = :ap_id")
+//    List<FarmaceutApoteka> fetchFarmaceutApotekaByApotekaId(@Param("ap_id") Long apotekaId);
 }

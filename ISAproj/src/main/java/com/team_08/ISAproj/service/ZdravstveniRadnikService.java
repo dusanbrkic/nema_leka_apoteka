@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ZdravstveniRadnikService {
@@ -33,14 +34,30 @@ public class ZdravstveniRadnikService {
         }
         return z;
     }
-    
+    //svi dermatolozi u apoteci page
     public Page<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId,Pageable page){
 		
     	
-    	return dermatologRepository.fetchDermatologApotekaByApotekaId(ApotekaId, page);
+    	return dermatologRepository.fetchDermatologApotekaByApotekaIdPage(ApotekaId, page);
     }
     public Dermatolog findOneByUsername(String username) {
     	
     	return dermatologRepository.findOneByUsername(username);
+    }
+  //svi dermatolozi u apoteci list
+    public List<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId){
+		
+  
+    	return dermatologRepository.fetchDermatologApotekaByApotekaId(ApotekaId);
+    }
+    
+    public List<Farmaceut> fetchFarmaceutsByApotekaId(Long ApotekaId){
+    	
+    	
+    	return farmaceutRepository.findAllByApotekaId(ApotekaId);
+    }
+    //dodavanje farmaceuta
+    public void saveFarmaceut(Farmaceut farmaceut) {
+    	farmaceutRepository.save(farmaceut);
     }
 }

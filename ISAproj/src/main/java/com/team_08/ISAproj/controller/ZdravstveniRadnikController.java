@@ -2,9 +2,11 @@ package com.team_08.ISAproj.controller;
 
 import com.team_08.ISAproj.dto.CookieRoleDTO;
 import com.team_08.ISAproj.dto.DermatologDTO;
+import com.team_08.ISAproj.dto.FarmaceutDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
+import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 
@@ -41,7 +43,8 @@ public class ZdravstveniRadnikController {
     private KorisnikService korisnikService;
     @Autowired
     private PregledService pregledService;
-
+    @Autowired
+    private ApotekaService apotekaService;
     @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
                                               @RequestParam("end") String endDate,
@@ -78,7 +81,7 @@ public class ZdravstveniRadnikController {
         }
         return new ResponseEntity<>(new HashSet<>(), HttpStatus.OK);
     }
-    
+    // svi dermatolozi koji rade u apoteci
     @GetMapping(value = "/getAllDermatologApoteka", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> getAllDermatologApotekaByAdmin(@RequestParam(required = false) String title,
 	        @RequestParam(defaultValue = "0") int page,
@@ -109,4 +112,101 @@ public class ZdravstveniRadnikController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	
     }
+    @GetMapping(value = "/getAllDermatologApotekaList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DermatologDTO>> getAllDermatologApotekaByAdminList(@RequestParam String cookie){
+		Korisnik k = korisnikService.findUserByToken(cookie);
+		System.out.println(k);
+		if (k == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
+		}
+		if(k instanceof AdminApoteke) {
+			AdminApoteke aa = (AdminApoteke) k;
+			List<DermatologApoteka> dermatoloziApoteke = zdravstveniRadnikService.fetchDermatologsByApotekaId(aa.getApoteka().getId());
+			List<DermatologDTO> listDermatologDTO = new ArrayList<DermatologDTO>();
+	    	for(DermatologApoteka da: dermatoloziApoteke) {
+	    		listDermatologDTO.add(new DermatologDTO(da));
+	    	}
+	    	return new ResponseEntity<>(listDermatologDTO, HttpStatus.OK);
+	    }
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    @GetMapping(value = "/getAllFarmaceutsApoteka", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FarmaceutDTO>> getAllFarmaceutsApotekaByAdminList(@RequestParam String cookie){
+    	
+		Korisnik k = korisnikService.findUserByToken(cookie);
+		System.out.println(k);
+		if (k == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
+		}
+		if(k instanceof AdminApoteke) {
+			AdminApoteke aa = (AdminApoteke) k;
+			List<Farmaceut> farmaceutiApoteke = zdravstveniRadnikService.fetchFarmaceutsByApotekaId(aa.getApoteka().getId());
+			List<FarmaceutDTO> listFarmaceutDTO = new ArrayList<FarmaceutDTO>();
+	    	for(Farmaceut f: farmaceutiApoteke) {
+	    		listFarmaceutDTO.add(new FarmaceutDTO(f));
+	    	}
+	    	return new ResponseEntity<>(listFarmaceutDTO, HttpStatus.OK);
+	    }
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	
+    }
+    @PostMapping(value = "/addFarmaceut")
+    public ResponseEntity<FarmaceutDTO> addFarmaceut(@RequestBody FarmaceutDTO farmaceutDTO){
+    	
+    	Korisnik adminApoteke = korisnikService.findUserByToken(farmaceutDTO.getCookie());
+    	if(adminApoteke == null) {
+    		return new ResponseEntity<FarmaceutDTO>(HttpStatus.BAD_REQUEST);
+    	}
+    	
+    	if(adminApoteke instanceof AdminApoteke) {
+    		AdminApoteke aa = (AdminApoteke) adminApoteke;
+        	Korisnik k = korisnikService.findUserByEmail(farmaceutDTO.getEmailAdresa());
+        	if(k != null) {
+        		return new ResponseEntity<FarmaceutDTO>(HttpStatus.BAD_REQUEST);
+        	}
+        	if(korisnikService.findUser(farmaceutDTO.getUsername()) != null) {
+        		return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
+        	}
+        	Farmaceut farmaceut = new Farmaceut(farmaceutDTO);
+            String ck = CookieToken.createTokenValue(farmaceut.getUsername(), farmaceut.getPassword());
+            farmaceut.setCookieTokenValue(ck);
+            farmaceut.setApoteka(apotekaService.findOne(aa.getApoteka().getId()));
+        	zdravstveniRadnikService.saveFarmaceut(farmaceut);
+        	return new ResponseEntity<FarmaceutDTO>(farmaceutDTO,HttpStatus.OK);
+    	}
+    	return new ResponseEntity<FarmaceutDTO>(HttpStatus.BAD_REQUEST);
+
+
+    }
+    //svi farmaceuti koji rade u apoteci
+//    @GetMapping(value = "/getAllFarmaceutApoteka", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Map<String, Object>> getAllFarmaceutpotekaByAdmin(@RequestParam(required = false) String title,
+//	        @RequestParam(defaultValue = "0") int page,
+//	        @RequestParam(defaultValue = "6") int size,
+//	        @RequestParam String cookie){
+//    	
+//		Korisnik k = korisnikService.findUserByToken(cookie);
+//		System.out.println(k);
+//		if (k == null) {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
+//		}
+//		if(k instanceof AdminApoteke) {
+//			AdminApoteke aa = (AdminApoteke) k;
+//	    	Pageable paging = PageRequest.of(page, size);
+//			Page<DermatologApoteka> farmaceutiApoteke = zdravstveniRadnikService.fetchDermatologsByApotekaId(aa.getApoteka().getId(), paging);
+//			List<DermatologDTO> listDermatologDTO = new ArrayList<DermatologDTO>();
+//	    	for(DermatologApoteka da: dermatoloziApoteke) {
+//	    		listDermatologDTO.add(new DermatologDTO(da));
+//	    	}
+//			Map<String, Object> response = new HashMap<>();
+//			response.put("dermatolozi", listDermatologDTO);
+//			response.put("currentPage", dermatoloziApoteke.getNumber());
+//			response.put("totalItems", dermatoloziApoteke.getTotalElements());
+//			response.put("totalPages", dermatoloziApoteke.getTotalPages());
+//			return new ResponseEntity<>(response, HttpStatus.OK);
+//		}
+//
+//		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    	
+//    }
 }
