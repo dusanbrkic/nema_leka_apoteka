@@ -166,7 +166,7 @@ Vue.component("PacijentLekovi", {
 		  this.losUnos = false;
 		  this.uspeh = false;
 	        
-	      axios.get("lekovi/rezervacija-leka/", 
+	      axios.get("rezervacije/rezervacija-leka/", 
 			    { headers: { "Content-Type": "application/json; charset=UTF-8" },
 			      params: 
 			       { 		
