@@ -261,9 +261,9 @@ Vue.component("CalendarView", {
             if (event.eventType == "PREGLED") {
                 this.selectedEvent.id = event.id
                 this.selectedEvent.title = event.pacijent.ime + " " + event.pacijent.prezime
-                this.selectedEvent.start = event.start
+                this.selectedEvent.start = new Date(event.start + ".000Z")
                 this.selectedEvent.cena = event.cena
-                this.selectedEvent.end = event.end
+                this.selectedEvent.end = new Date(event.end + ".000Z")
                 this.selectedEvent.apoteka = event.apoteka
                 this.selectedEvent.pacijent = event.pacijent
                 this.selectedEvent.preporuceniLekovi = event.preporuceniLekovi

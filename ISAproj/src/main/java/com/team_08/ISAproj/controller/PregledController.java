@@ -102,6 +102,32 @@ public class PregledController {
         return new ResponseEntity<List<PregledDTO>>(preglediDTO, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/getTerminiInDateRangeByDermatolog", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PregledDTO>> getTerminiInDateRangeByDermatolog(
+            @RequestParam("cookie") String cookie,
+            @RequestParam("start") String startDate,
+            @RequestParam("end") String endDate) {
+        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        List<Pregled> pregledi = null;
+        try {
+            pregledi = pregledService.findAllTermsInDateRangeByDermatolog(cookie, start, end);
+        } catch (CookieNotValidException e) {
+            return new ResponseEntity<List<PregledDTO>>(HttpStatus.NOT_FOUND);
+        }
+        if (pregledi == null)
+            return new ResponseEntity<List<PregledDTO>>(new ArrayList<>(), HttpStatus.OK);
+
+        List<PregledDTO> preglediDTO = pregledi.stream().map(new Function<Pregled, PregledDTO>() {
+            @Override
+            public PregledDTO apply(Pregled p) {
+                PregledDTO pregledDTO = new PregledDTO(p);
+                return pregledDTO;
+            }
+        }).collect(Collectors.toList());
+        return new ResponseEntity<List<PregledDTO>>(preglediDTO, HttpStatus.OK);
+    }
+
     @PutMapping(value = "/updatePregled", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updatePregled(@RequestBody PregledDTO pregledDTO) {
         Pregled pregled = pregledService.findOneById(pregledDTO.getId());
@@ -149,6 +175,23 @@ public class PregledController {
             p.setCena(a.getCenaPregleda());
         else if (zdravstveniRadnik instanceof Farmaceut)
             p.setCena(a.getCenaSavetovanja());
+        pregledService.savePregled(p);
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/updateZakazanPregled")
+    public ResponseEntity<String> updateZakazanPregled(@RequestParam("cookie") String cookie,
+                                                       @RequestParam("idPacijenta") Long idPacijenta,
+                                                       @RequestParam("idTermina") Long idTermina) {
+        ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
+        if(zdravstveniRadnik==null)
+            return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
+
+        //nova klasa
+        Pregled p = pregledService.findOneById(idTermina);
+        p.setPacijent(pacijentService.findOneById(idPacijenta));
+        p.setCena(p.getApoteka().getCenaPregleda());
+        p.setPregledZakazan(true);
         pregledService.savePregled(p);
         return new ResponseEntity<String>(HttpStatus.OK);
     }

@@ -4,10 +4,16 @@ Vue.component("PregledForma", {
             cookie: "",
             rola: "",
             optionPicked: "DATE",
-            datumPregleda: "",
+            datumPregleda: '',
+            datumTermina: '',
             today: new Date(),
             pregledStart: '',
             pregledEnd: '',
+            selectedTerm: null,
+            nullTerm: {value: null, text: 'Izaberite termin:'},
+            terms: [
+                {value: null, text: 'Izaberite termin:'}
+            ],
             pregled: {
                 start: new Date(),
                 end: new Date(),
@@ -31,18 +37,20 @@ Vue.component("PregledForma", {
         `
           <div>
           <b-modal id="zakazivanjeModal" title="Zakazi pregled pacijentu">
-            <label for="radio-group-1">Izaberite nacin zakazivanja:</label>
-            <b-form-group v-slot="{ ariaDescribedby }">
-              <b-form-radio-group
-                  id="radio-group-1"
-                  v-model="optionPicked"
-                  :aria-describedby="ariaDescribedby"
-                  name="radio-sub-component"
-              >
-                <b-form-radio value="DATE">Novi datum</b-form-radio>
-                <b-form-radio value="TERM">Definisani termin</b-form-radio>
-              </b-form-radio-group>
-            </b-form-group>
+            <template v-if="rola=='DERMATOLOG'">
+              <label for="radio-group-1">Izaberite nacin zakazivanja:</label>
+              <b-form-group v-slot="{ ariaDescribedby }">
+                <b-form-radio-group
+                    id="radio-group-1"
+                    v-model="optionPicked"
+                    :aria-describedby="ariaDescribedby"
+                    name="radio-sub-component"
+                >
+                  <b-form-radio value="DATE">Novi datum</b-form-radio>
+                  <b-form-radio value="TERM">Definisani termin</b-form-radio>
+                </b-form-radio-group>
+              </b-form-group>
+            </template>
             <template v-if="optionPicked=='DATE'">
               <label for="pregled-datepicker">Datum termina:</label>
               <b-form-datepicker
@@ -81,7 +89,19 @@ Vue.component("PregledForma", {
               </b-container>
             </template>
             <template v-if="optionPicked=='TERM'">
-              
+              <label for="pregled-datepicker">Datum termina:</label>
+              <b-form-datepicker
+                  :min="today"
+                  required="true"
+                  placeholder="Izaberite datum"
+                  locale="sr-latn"
+                  id="pregled-datepicker"
+                  v-model="datumTermina"
+                  class="mb-2"
+                  @input="datumUnesen"
+              />
+              <label for="izbor_termina">Vreme termina:</label>
+              <b-form-select id="izbor_termina" v-model="selectedTerm" :options="terms"></b-form-select>
             </template>
             <template #modal-footer="{ ok }">
               <b-button @click="ok()">
@@ -170,20 +190,56 @@ Vue.component("PregledForma", {
             }
             localStorage.removeItem("pregled")
         },
-        zakazi_pregled: function () {
+        datumUnesen: function (){
+            let endDate = new Date(this.datumTermina + " 00:00")
+            let startDate = new Date(this.datumTermina + " 00:00")
             axios
-                .post("pregledi/createZakazanPregled", null, {
+                .get("pregledi/getTerminiInDateRangeByDermatolog", {
                     params: {
-                        'start': new Date(this.datumPregleda + " " + this.pregledStart),
-                        'end': new Date(this.datumPregleda + " " + this.pregledEnd),
+                        'start': startDate,
+                        'end': new Date(endDate.setDate(endDate.getDate() + 1)),
                         'cookie': this.cookie,
-                        'idPacijenta': this.pregled.pacijent.id,
-                        'idApoteke': this.pregled.apoteka.id
                     }
                 })
-                .then()
+                .then(response => {
+                    this.terms = [this.nullTerm]
+                    for (const term of response.data){
+                        let startDate = new Date(term.start + ".000Z")
+                        let endDate = new Date(term.end+ ".000Z")
+                        this.terms.push({
+                            value: term.id,
+                            text: moment(String(startDate)).format("HH:mm") + ' - ' +
+                                moment(String(endDate)).format("HH:mm"),
+                        })
+                    }
+                })
                 .catch()
-
+        },
+        zakazi_pregled: function () {
+            if (this.optionPicked == 'DATE')
+                axios
+                    .post("pregledi/createZakazanPregled", null, {
+                        params: {
+                            'start': new Date(this.datumPregleda + " " + this.pregledStart),
+                            'end': new Date(this.datumPregleda + " " + this.pregledEnd),
+                            'cookie': this.cookie,
+                            'idPacijenta': this.pregled.pacijent.id,
+                            'idApoteke': this.pregled.apoteka.id
+                        }
+                    })
+                    .then()
+                    .catch()
+            else if (this.optionPicked == 'TERM')
+                axios
+                    .post("pregledi/updateZakazanPregled", null, {
+                        params: {
+                            'cookie': this.cookie,
+                            'idPacijenta': this.pregled.pacijent.id,
+                            'idTermina': this.selectedTerm
+                        }
+                    })
+                    .then()
+                    .catch()
         }
     }
 });
