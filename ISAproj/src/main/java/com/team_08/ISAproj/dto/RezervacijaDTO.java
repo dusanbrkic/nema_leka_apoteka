@@ -9,18 +9,42 @@ public class RezervacijaDTO {
 	
 	
 	private Long id;
-	private String lekovi;
-	private String datumNarudzbine;
+	private String sifraLeka;
+	private int kolicina;
+	private Date datumRezervacije;
 	private String apotekaId;
 	private String pacijent;
-	private String test = "RADII";
 	
-	public RezervacijaDTO(Long id,String lekovi, String datumNarudzbine, String apotekaId) {
+	public RezervacijaDTO(Long id,String sifraLeka, Date datumRezervacije, String apotekaId) {
 		super();
 		this.id = id;
-		this.lekovi = lekovi;
-		this.datumNarudzbine = datumNarudzbine;
+		this.sifraLeka = sifraLeka;
+		this.datumRezervacije = datumRezervacije;
 		this.apotekaId = apotekaId;
+	}
+
+	public String getSifraLeka() {
+		return sifraLeka;
+	}
+
+	public void setSifraLeka(String sifraLeka) {
+		this.sifraLeka = sifraLeka;
+	}
+
+	public int getKolicina() {
+		return kolicina;
+	}
+
+	public void setKolicina(int kolicina) {
+		this.kolicina = kolicina;
+	}
+
+	public Date getDatumRezervacije() {
+		return datumRezervacije;
+	}
+
+	public void setDatumRezervacije(Date datumRezervacije) {
+		this.datumRezervacije = datumRezervacije;
 	}
 
 	public Long getId() {

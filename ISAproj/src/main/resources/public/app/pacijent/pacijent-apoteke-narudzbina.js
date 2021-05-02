@@ -3,7 +3,7 @@ Vue.component("NaruciPacijent", {
     return {
       cookie: "",
       izabranLek: {
-        sifra: "",
+        sifraLeka: "",
         naziv: "",
         uputstvo: "",
         tip: "",
@@ -15,10 +15,10 @@ Vue.component("NaruciPacijent", {
         istekVazenjaCene: "",
         staraCena: "",
         cookie: "",
-        datumNarudzbine: "",
+        datumRezervacije: "",
       },
       kolicina: 0,
-      datumNarudzbine: "",
+      datumRezervacije: "",
       page: 1,
       count: 0,
       pageSize: 15,
@@ -160,12 +160,12 @@ Vue.component("NaruciPacijent", {
       <b-card style="max-width: 500px; margin: 30px auto;" >
         <b-form @submit.prevent="posaljiNarudzbinu">
         <h3>Potvrdi Rezervaciju</h3>
-       <b-form-group id="input-group-3" label="Rok ponude:" label-for="input-3">
+       <b-form-group id="input-group-3" label="Preuzeti do:" label-for="input-3">
             <b-form-input
                 id="input-3"
                 type="date"
 				min = "1"
-				v-model="datumNarudzbine"
+				v-model="datumRezervacije"
             ></b-form-input>
 		<br>
           <b-button type="submit" variant="primary">Rezervisi</b-button>
@@ -182,7 +182,6 @@ Vue.component("NaruciPacijent", {
 	
   methods: {
   
-  
   		kolicinaChange() {
   			
   			 price = 0;
@@ -197,9 +196,9 @@ Vue.component("NaruciPacijent", {
   
     dodajLek(lek) {
       axios
-        .get("/narudzbine/lekNarudzbina", {
+        .get("/rezervacije/lekNarudzbina", {
           params: {
-            sifra: lek.sifra,
+            sifraLeka: lek.sifraLeka,
             cookie: this.cookie,
           },
         })
@@ -212,7 +211,7 @@ Vue.component("NaruciPacijent", {
     },
     posaljiNarudzbinu() {
       for (i = 0; i < this.listaNarudzbina.length; i++) {
-        this.listaNarudzbina[i].datumNarudzbine = this.datumNarudzbine;
+        this.listaNarudzbina[i].datumRezervacije = this.datumRezervacije;
         this.listaNarudzbina[i].pacijent = this.cookie;
       }
       
@@ -221,7 +220,7 @@ Vue.component("NaruciPacijent", {
       
       axios
         .post(
-          "/narudzbine/pacijent",
+          "/rezervacije/pacijent",
           JSON.parse(JSON.stringify(this.listaNarudzbina))
         )
         .then((response) => { 
@@ -240,7 +239,7 @@ Vue.component("NaruciPacijent", {
     },
     obrisiLek(lek) {
       for (i = 0; i < this.listaNarudzbina.length; i++) {
-        if (this.listaNarudzbina[i].sifra === lek.sifra) {
+        if (this.listaNarudzbina[i].sifraLeka === lek.sifraLeka) {
           this.listaNarudzbina.splice(i, 1);
         }
       }
@@ -252,9 +251,9 @@ Vue.component("NaruciPacijent", {
     },
     onNaruciLek() {
       tempLek = {
-        naziv: this.izabranLek.naziv,
-        sifra: this.izabranLek.sifra,
-        datumNarudzbine: this.datumNarudzbine,
+    //    naziv: this.izabranLek.naziv,
+        sifraLeka: this.izabranLek.sifra,
+        datumRezervacije: this.datumRezervacije,
         kolicina: this.kolicina,
         apotekaId: this.apotekaID,
         cenaUkupno: this.izabranLek.cena*this.kolicina,

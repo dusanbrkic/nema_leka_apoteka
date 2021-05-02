@@ -53,7 +53,7 @@ Vue.component("PacijentNarudzbenice", {
             this.table_is_busy = true
             let items = []
             await axios
-                .get("narudzbine/moje_rezervacije", {
+                .get("rezervacije/moje_rezervacije", {
                     params:
                         {
                             'cookie': this.cookie,
@@ -64,10 +64,10 @@ Vue.component("PacijentNarudzbenice", {
                     for (const p of pregledi) {
                     	console.log(p);
                         items.push({
-                            idRezervacije: p.sifra,
-                            lekovi: p.naziv,
+                            idRezervacije: p.id,
+                            lekovi: p.sifraLeka,
                             apoteka: p.apotekaId,
-                            datumIstekaRezervacije: p.datumNarudzbine.slice(0, 10)
+                            datumIstekaRezervacije: p.datumRezervacije.slice(0, 10)
                         })
                     }
                 })
