@@ -16,7 +16,7 @@ import java.util.Set;
 public interface PregledRepository extends JpaRepository<Pregled, Long> {
 
     // za kalendar
-    @Query(value = "SELECT DISTINCT p FROM PREGLED p LEFT OUTER JOIN FETCH p.preporuceniLekovi l where p.zdravstveniRadnik.cookieTokenValue = :cookie and ((p.vreme < :endDate and p.vreme > :startDate) or (p.kraj < :endDate and p.kraj > :startDate))")
+    @Query(value = "SELECT DISTINCT p FROM PREGLED p LEFT OUTER JOIN FETCH p.preporuceniLekovi l where p.zdravstveniRadnik.cookieTokenValue = :cookie and (:startDate < p.kraj and :endDate > p.vreme)")
     List<Pregled> fetchAllWithPreporuceniLekoviInDateRangeByZdravstveniRadnik(@Param("cookie") String cookie, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     // za listu pregledanih pacijenata
@@ -24,12 +24,12 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     Page<Pregled> findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(@Param("cookie") String cookie, Pageable pageable, @Param("pretragaIme") String pretragaIme, @Param("pretragaPrezime") String pretragaPrezime);
 
     // za proveru validnosti zahteva za odsustvo
-    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and ((p.vreme < :end and p.vreme > :start) or (p.kraj < :end and p.kraj > :start))")
+    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and (:startDate < p.kraj and :endDate > p.vreme)")
     List<Pregled> findAllInDateRangeByZdravstveniRadnik(LocalDateTime start, LocalDateTime end, String cookie);
 
     Pregled findOneById(Long id);
 
     //vadjenje termina za pregled
-    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and p.pregledZakazan=false and ((p.vreme < :end and p.vreme > :start) or (p.kraj < :end and p.kraj > :start))")
+    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and p.pregledZakazan=false and (:startDate < p.kraj and :endDate > p.vreme)")
     List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end);
 }
