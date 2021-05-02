@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
     Dermatolog findOneByUsername(String username);
 
-    Korisnik findOneByCookieTokenValue(String cookie);
-    Korisnik findOneByEmailAdresa(String email_adresa);
+    Dermatolog findOneByCookieTokenValue(String cookie);
+    Dermatolog findOneByEmailAdresa(String email_adresa);
 
     @Query(value = "SELECT d FROM DERMATOLOG d LEFT OUTER JOIN FETCH d.odsustva o where d.cookieTokenValue = :cookie")
     Dermatolog fetchDermatologWithOdsustva(@Param("cookie") String cookie);

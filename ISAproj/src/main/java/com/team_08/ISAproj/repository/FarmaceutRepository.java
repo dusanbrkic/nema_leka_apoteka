@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
     Farmaceut findOneByUsername(String username);
 
-    Korisnik findOneByCookieTokenValue(String cookie);
+    Farmaceut findOneByCookieTokenValue(String cookie);
 
-    Korisnik findOneByEmailAdresa(String email_adresa);
+    Farmaceut findOneByEmailAdresa(String email_adresa);
 
     @Query(value = "SELECT f FROM FARMACEUT f LEFT OUTER JOIN FETCH f.odsustva o where f.cookieTokenValue = :cookie")
     Farmaceut fetchFarmaceutWithOdsustva(@Param("cookie") String cookie);

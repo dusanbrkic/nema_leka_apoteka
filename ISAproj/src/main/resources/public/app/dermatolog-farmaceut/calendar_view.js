@@ -205,8 +205,8 @@ Vue.component("CalendarView", {
                                     return "dodeljeni termin"
                                 }
                             })(),
-                            start: new Date(event.start),
-                            end: new Date(event.end),
+                            start: new Date(event.start+".000Z"),
+                            end: new Date(event.end+".000Z"),
                             event: event,
                             color: (() => {
                                 if (event.pregledZakazan) {
@@ -242,8 +242,8 @@ Vue.component("CalendarView", {
                         retVal.push({
                             allDay: true,
                             title: "odmor",
-                            start: new Date(event.pocetak),
-                            end: new Date(event.kraj),
+                            start: new Date(event.pocetak + ".000Z"),
+                            end: new Date(event.kraj + ".000Z"),
                             event: event,
                             color: (() => {
                                 if (new Date() > new Date(event.end)) {

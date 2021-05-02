@@ -3,19 +3,9 @@ package com.team_08.ISAproj.controller;
 import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
-import com.team_08.ISAproj.model.Lek;
+import com.team_08.ISAproj.model.*;
+import com.team_08.ISAproj.service.*;
 import com.team_08.ISAproj.model.Pregled;
-import com.team_08.ISAproj.service.LekService;
-import com.team_08.ISAproj.model.AdminApoteke;
-import com.team_08.ISAproj.model.Apoteka;
-import com.team_08.ISAproj.model.Dermatolog;
-import com.team_08.ISAproj.model.DermatologApoteka;
-import com.team_08.ISAproj.model.Korisnik;
-import com.team_08.ISAproj.model.Pregled;
-import com.team_08.ISAproj.service.ApotekaService;
-import com.team_08.ISAproj.service.KorisnikService;
-import com.team_08.ISAproj.service.PregledService;
-import com.team_08.ISAproj.service.ZdravstveniRadnikService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,6 +34,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/pregledi")
 public class PregledController {
     @Autowired
+    PacijentService pacijentService;
+    @Autowired
     private PregledService pregledService;
     @Autowired
     private LekService lekService;
@@ -53,6 +45,7 @@ public class PregledController {
     private KorisnikService korisnikService;
     @Autowired
     private ApotekaService apotekaService;
+
     @GetMapping(value = "/getPregledaniKorisniciByZdravstveniRadnik", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<PregledDTO>> getPregledaniKorisniciByZdravstveniRadnik(
             @RequestParam("cookie") String cookie,
@@ -125,6 +118,38 @@ public class PregledController {
         pregled.setPregledObavljen(true);
         pregled.setDijagnoza(pregledDTO.getDijagnoza());
         pregledService.savePregled(pregled);
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/createZakazanPregled")
+    public ResponseEntity<String> createZakazanPregled(@RequestParam("start") String startDate,
+                                                       @RequestParam("end") String endDate,
+                                                       @RequestParam("cookie") String cookie,
+                                                       @RequestParam("idPacijenta") Long idPacijenta,
+                                                       @RequestParam("idApoteke") Long idApoteke) {
+        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        if(!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
+        if(zdravstveniRadnik==null)
+            return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
+
+        //nova klasa
+        Apoteka a = apotekaService.findOne(idApoteke);
+        Pregled p = new Pregled();
+        p.setVreme(start);
+        p.setKraj(end);
+        p.setPregledZakazan(true);
+        p.setPregledObavljen(false);
+        p.setZdravstveniRadnik(zdravstveniRadnik);
+        p.setApoteka(a);
+        p.setPacijent(pacijentService.findOneById(idPacijenta));
+        if (zdravstveniRadnik instanceof Dermatolog)
+            p.setCena(a.getCenaPregleda());
+        else if (zdravstveniRadnik instanceof Farmaceut)
+            p.setCena(a.getCenaSavetovanja());
+        pregledService.savePregled(p);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 

@@ -43,4 +43,12 @@ public class ZdravstveniRadnikService {
     	
     	return dermatologRepository.findOneByUsername(username);
     }
+
+    public ZdravstveniRadnik findOneByCookie(String cookie) {
+        ZdravstveniRadnik z = dermatologRepository.findOneByCookieTokenValue(cookie);
+        if (z==null) {
+            z = farmaceutRepository.findOneByCookieTokenValue(cookie);
+        }
+        return z;
+    }
 }

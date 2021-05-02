@@ -3,6 +3,11 @@ Vue.component("PregledForma", {
         return {
             cookie: "",
             rola: "",
+            optionPicked: "DATE",
+            datumPregleda: "",
+            today: new Date(),
+            pregledStart: '',
+            pregledEnd: '',
             pregled: {
                 start: new Date(),
                 end: new Date(),
@@ -26,14 +31,66 @@ Vue.component("PregledForma", {
         `
           <div>
           <b-modal id="zakazivanjeModal" title="Zakazi pregled pacijentu">
-           <template #modal-footer="{ ok }">
+            <label for="radio-group-1">Izaberite nacin zakazivanja:</label>
+            <b-form-group v-slot="{ ariaDescribedby }">
+              <b-form-radio-group
+                  id="radio-group-1"
+                  v-model="optionPicked"
+                  :aria-describedby="ariaDescribedby"
+                  name="radio-sub-component"
+              >
+                <b-form-radio value="DATE">Novi datum</b-form-radio>
+                <b-form-radio value="TERM">Definisani termin</b-form-radio>
+              </b-form-radio-group>
+            </b-form-group>
+            <template v-if="optionPicked=='DATE'">
+              <label for="pregled-datepicker">Datum termina:</label>
+              <b-form-datepicker
+                  :min="today"
+                  required="true"
+                  placeholder="Izaberite datum"
+                  locale="sr-latn"
+                  id="pregled-datepicker"
+                  v-model="datumPregleda"
+                  class="mb-2"/>
+              <b-container>
+                <b-row>
+                  <b-col>
+                    <label for="timepicker-start">Pocetak termina:</label>
+                    <b-form-timepicker
+                        v-model="pregledStart"
+                        id="timepicker-start"
+                        placeholder="Izaberite vreme"
+                        locale="sr-latn"
+                        start="08:00"
+                        end="20:00"
+                    />
+                  </b-col>
+                  <b-col>
+                    <label for="timepicker-end">Kraj termina:</label>
+                    <b-form-timepicker
+                        v-model="pregledEnd"
+                        id="timepicker-end"
+                        placeholder="Izaberite vreme"
+                        locale="sr-latn"
+                        start="08:00"
+                        end="20:00"
+                    />
+                  </b-col>
+                </b-row>
+              </b-container>
+            </template>
+            <template v-if="optionPicked=='TERM'">
+              
+            </template>
+            <template #modal-footer="{ ok }">
               <b-button @click="ok()">
                 Otkazi
               </b-button>
               <b-button v-on:click="zakazi_pregled" variant="success" @click="ok()">
                 Zakazi
               </b-button>
-           </template>
+            </template>
           </b-modal>
           <b-card style="max-width: 700px; margin: 30px auto;" title="Upisite podatke o pregledu:">
             <b-form @submit.prevent="onSubmit">
@@ -105,15 +162,27 @@ Vue.component("PregledForma", {
             this.$bvModal.show('zakazivanjeModal')
         },
         returnToHome: function () {
-            if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut")
-            else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog")
+            if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
+            else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
             else {
                 localStorage.clear()
                 app.$router.push("home")
             }
             localStorage.removeItem("pregled")
         },
-        zakazi_pregled: function (){
+        zakazi_pregled: function () {
+            axios
+                .post("pregledi/createZakazanPregled", null, {
+                    params: {
+                        'start': new Date(this.datumPregleda + " " + this.pregledStart),
+                        'end': new Date(this.datumPregleda + " " + this.pregledEnd),
+                        'cookie': this.cookie,
+                        'idPacijenta': this.pregled.pacijent.id,
+                        'idApoteke': this.pregled.apoteka.id
+                    }
+                })
+                .then()
+                .catch()
 
         }
     }
