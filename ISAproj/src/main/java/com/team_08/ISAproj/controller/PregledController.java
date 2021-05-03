@@ -2,6 +2,7 @@ package com.team_08.ISAproj.controller;
 
 import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.PregledDTO;
+import com.team_08.ISAproj.dto.PregledLekDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.service.*;
@@ -133,11 +134,12 @@ public class PregledController {
         Pregled pregled = pregledService.findOneById(pregledDTO.getId());
         if (pregled == null)
             return new ResponseEntity<String>(HttpStatus.OK);
-        List<Lek> lekovi = pregledDTO.getPreporuceniLekovi().stream().map(new Function<LekDTO, Lek>() {
+        List<PregledLek> lekovi = pregledDTO.getPreporuceniLekovi().stream().map(new Function<PregledLekDTO, PregledLek>() {
             @Override
-            public Lek apply(LekDTO lekDTO) {
-                Lek l = lekService.findOneBySifra(lekDTO.getSifra());
-                return l;
+            public PregledLek apply(PregledLekDTO pregledLekDTO) {
+                Lek l = lekService.findOneBySifra(pregledLekDTO.getLek().getSifra());
+                PregledLek pl = new PregledLek(pregledLekDTO.getKolicina(), pregledLekDTO.getTrajanjeTerapije(), pregled, l);
+                return pl;
             }
         }).collect(Collectors.toList());
         pregled.setPreporuceniLekovi(new HashSet<>(lekovi));
