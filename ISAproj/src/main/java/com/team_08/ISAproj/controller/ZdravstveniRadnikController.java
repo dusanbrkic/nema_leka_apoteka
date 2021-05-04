@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -134,7 +135,6 @@ public class ZdravstveniRadnikController {
     public ResponseEntity<List<FarmaceutDTO>> getAllFarmaceutsApotekaByAdminList(@RequestParam String cookie){
     	
 		Korisnik k = korisnikService.findUserByToken(cookie);
-		System.out.println(k);
 		if (k == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
 		}
@@ -145,6 +145,7 @@ public class ZdravstveniRadnikController {
 	    	for(Farmaceut f: farmaceutiApoteke) {
 	    		listFarmaceutDTO.add(new FarmaceutDTO(f));
 	    	}
+	    	System.out.println(listFarmaceutDTO);
 	    	return new ResponseEntity<>(listFarmaceutDTO, HttpStatus.OK);
 	    }
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -175,38 +176,181 @@ public class ZdravstveniRadnikController {
         	return new ResponseEntity<FarmaceutDTO>(farmaceutDTO,HttpStatus.OK);
     	}
     	return new ResponseEntity<FarmaceutDTO>(HttpStatus.BAD_REQUEST);
-
-
     }
-    //svi farmaceuti koji rade u apoteci
-//    @GetMapping(value = "/getAllFarmaceutApoteka", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<Map<String, Object>> getAllFarmaceutpotekaByAdmin(@RequestParam(required = false) String title,
-//	        @RequestParam(defaultValue = "0") int page,
-//	        @RequestParam(defaultValue = "6") int size,
-//	        @RequestParam String cookie){
-//    	
-//		Korisnik k = korisnikService.findUserByToken(cookie);
-//		System.out.println(k);
-//		if (k == null) {
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
-//		}
-//		if(k instanceof AdminApoteke) {
-//			AdminApoteke aa = (AdminApoteke) k;
-//	    	Pageable paging = PageRequest.of(page, size);
-//			Page<DermatologApoteka> farmaceutiApoteke = zdravstveniRadnikService.fetchDermatologsByApotekaId(aa.getApoteka().getId(), paging);
-//			List<DermatologDTO> listDermatologDTO = new ArrayList<DermatologDTO>();
-//	    	for(DermatologApoteka da: dermatoloziApoteke) {
-//	    		listDermatologDTO.add(new DermatologDTO(da));
-//	    	}
-//			Map<String, Object> response = new HashMap<>();
-//			response.put("dermatolozi", listDermatologDTO);
-//			response.put("currentPage", dermatoloziApoteke.getNumber());
-//			response.put("totalItems", dermatoloziApoteke.getTotalElements());
-//			response.put("totalPages", dermatoloziApoteke.getTotalPages());
-//			return new ResponseEntity<>(response, HttpStatus.OK);
-//		}
-//
-//		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    	
-//    }
+    //brisanje farmaceuta
+    @DeleteMapping(value = "/deleteFarmaceut")
+    public ResponseEntity<Void> deleteFarmaceut(@RequestParam String username,@RequestParam String startDate,@RequestParam String cookie){
+ 	   
+ 	   Farmaceut f = (Farmaceut) korisnikService.findUser(username);
+ 	   if(f == null) {
+ 		   return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+ 	   }
+ 	   LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+ 	   List<Pregled> temp = pregledService.proveraOdDatumaPregleda(start,username);
+ 	   System.out.println(temp);
+ 	   if(!pregledService.proveraOdDatumaPregleda(start,username).isEmpty()) {
+ 		   return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+ 	   }
+ 	   AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
+ 	   if(aa == null) {
+ 		   return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+ 	   }
+ 	   zdravstveniRadnikService.deleteFarmaceuta(f.getId());
+ 	   return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+    //svi dermatolozi koji ne rade u apoteci
+    @GetMapping(value = "/allDermaNotInApoteka")
+    public ResponseEntity<List<DermatologDTO>> getDermatologsNotInApoteka(@RequestParam String cookie){
+		
+    	Korisnik k = korisnikService.findUserByToken(cookie);
+    	if(k == null) {
+    		return new ResponseEntity(HttpStatus.NOT_FOUND);
+    	}
+    	if(k instanceof AdminApoteke) {
+    		AdminApoteke aa = (AdminApoteke) k;
+    		
+    		List<Dermatolog> dermatolozi = zdravstveniRadnikService.fetchDermatologsNotInApotekaList(aa.getApoteka().getId());
+    		List<DermatologDTO> dermatoloziDTO = new ArrayList<DermatologDTO>();
+    		for(Dermatolog d: dermatolozi) {
+    			dermatoloziDTO.add(new DermatologDTO(d));
+    		}
+    		return new ResponseEntity(dermatoloziDTO,HttpStatus.OK);
+    	}
+    	return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    	
+    }
+   //termini rada Dermatologa
+   @GetMapping(value = "/getDermaWorkingHours")
+   public ResponseEntity<List<DermatologDTO>> getDermatologWorkingTimes(@RequestParam String username){
+	   
+	   
+	   Korisnik k = korisnikService.findUser(username);
+	   if(k == null) {
+		   return new ResponseEntity<List<DermatologDTO>>(HttpStatus.NOT_FOUND);
+	   }
+	   if(k instanceof Dermatolog) {
+		   Dermatolog d = (Dermatolog) k;
+		   
+		   List<DermatologApoteka> dermatologSatiRada = zdravstveniRadnikService.fetchAllWorkingTimesAndPricesForDermatolog(k.getId());
+		   List<DermatologDTO> dermatoloziDTO = new ArrayList<DermatologDTO>();
+		   for(DermatologApoteka da: dermatologSatiRada) {
+			   dermatoloziDTO.add(new DermatologDTO(da));
+		   }
+		   return new ResponseEntity<List<DermatologDTO>>(dermatoloziDTO,HttpStatus.OK);
+	   }
+	   return new ResponseEntity<List<DermatologDTO>>(HttpStatus.BAD_REQUEST);
+	   
+   }
+   //dodavanje novog Dermatologa
+   @GetMapping(value = "/addDermatologApoteke")
+   public ResponseEntity<DermatologDTO> addDermatologApoteka(
+		   @RequestParam("start") String startDate,
+           @RequestParam("end") String endDate,
+           @RequestParam String cena,
+           @RequestParam("cookie") String cookie,
+           @RequestParam String username){
+	   
+	   Korisnik k = korisnikService.findUserByToken(cookie);
+	   System.out.println(cena);
+	   if(k == null) {
+		   return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
+	   }
+	   if(k instanceof AdminApoteke) {
+		   	AdminApoteke aa = (AdminApoteke) k;
+	        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+	        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+	        List<DermatologApoteka> proveraRadnogVremana = zdravstveniRadnikService.checkIfGivenWorkHoursAreOk(username,start, end);
+	        System.out.println(proveraRadnogVremana);
+	        if(!proveraRadnogVremana.isEmpty()) {
+	        	return new ResponseEntity<DermatologDTO>(HttpStatus.BAD_REQUEST);
+	        }
+	        Dermatolog d = (Dermatolog) korisnikService.findUser(username);
+	        if(d == null) {
+	        	return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
+	        }
+	        DermatologApoteka da = new DermatologApoteka(d,aa.getApoteka(),Double.parseDouble(cena),start,end);
+	        zdravstveniRadnikService.addDermatologApoteke(da);
+	        return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
+	   }
+	   
+	   return new ResponseEntity<DermatologDTO>(HttpStatus.BAD_REQUEST);
+	   
+   }
+   //brisanje Dermatologa
+   @DeleteMapping(value = "/deleteDermatolog")
+   public ResponseEntity<Void> deleteDermatolog(@RequestParam String username,@RequestParam String startDate,@RequestParam String cookie){
+	   
+	   Dermatolog d = (Dermatolog) korisnikService.findUser(username);
+	   if(d == null) {
+		   return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+	   }
+	   LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+	   List<Pregled> temp = pregledService.proveraOdDatumaPregleda(start,username);
+	   System.out.println(temp);
+	   if(!pregledService.proveraOdDatumaPregleda(start,username).isEmpty()) {
+		   return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+	   }
+	   AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
+	   if(aa == null) {
+		   return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+	   }
+	   zdravstveniRadnikService.deleteDermatologApoteke(d.getId(), aa.getApoteka().getId());
+	   return new ResponseEntity<Void>(HttpStatus.OK);
+   }
+   //izmena dermatologa
+   @GetMapping(value = "/changeDermatolog")
+   public ResponseEntity<DermatologDTO> changeDermatolog(@RequestParam("start") String startDate,
+           @RequestParam("end") String endDate,
+           @RequestParam String cena,
+           @RequestParam("cookie") String cookie,
+           @RequestParam String username){
+	   
+	   AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
+	   if(aa == null) {
+		   return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
+	   }
+       LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+       LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+       List<DermatologApoteka> proveraRadnogVremana = zdravstveniRadnikService.checkIfGivenWorkHoursAreOk(username,aa.getApoteka().getId(),start, end);
+       System.out.println(proveraRadnogVremana);
+       if(!proveraRadnogVremana.isEmpty()) {
+       		return new ResponseEntity<DermatologDTO>(HttpStatus.BAD_REQUEST);
+       }
+       Dermatolog d = (Dermatolog) korisnikService.findUser(username);
+       if(d == null) {
+       	return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
+       }
+       DermatologApoteka da1 = zdravstveniRadnikService.findDermatologApoteka(d.getId(), aa.getApoteka().getId());
+       da1.setCena(Double.parseDouble(cena));
+       da1.setRadnoVremeKraj(end);
+       da1.setRadnoVremePocetak(start);
+       zdravstveniRadnikService.addDermatologApoteke(da1);
+       return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
+   }
+   //izmena farmaceuta
+   @GetMapping(value = "/changeFarmaceut")
+   public ResponseEntity<FarmaceutDTO> changeFarmaceut(@RequestParam("start") String startDate,
+           @RequestParam("end") String endDate,
+           @RequestParam String cena,
+           @RequestParam("cookie") String cookie,
+           @RequestParam String username){
+	   AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
+	   if(aa == null) {
+		   return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
+	   }
+       LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+       LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+	   
+       Farmaceut f = (Farmaceut) korisnikService.findUser(username);
+	   if(f == null) {
+		   return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
+	   }
+	   f.setCena(Double.parseDouble(cena));
+	   f.setRadnoVremePocetak(start);
+	   f.setRadnoVremeKraj(end);
+	   zdravstveniRadnikService.saveFarmaceut(f);
+	   return new ResponseEntity<FarmaceutDTO>(HttpStatus.OK);
+	   
+	   
+   }
 }

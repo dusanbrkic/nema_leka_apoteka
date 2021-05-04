@@ -27,6 +27,9 @@ Vue.component("HomeAdminApoteke", {
             <b-nav-item >Izmeni podatke o apoteci</b-nav-item>
             <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
             <b-nav-item href="#/admin-apoteke-dodaj-farmaceuta">Dodaj farmaceuta</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dodaj-dermatologa">Dodaj dermatologa</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dermatolozi">Dermatolozi</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-farmaceuti">Farmaceuti</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -151,24 +154,6 @@ Vue.component("HomeAdminApoteke", {
     redirectToHome: function () {
       localStorage.clear();
       app.$router.push("/");
-    },
-    redirectToIzmenaPacijent: function () {
-      app.$router.push("/izmena-podataka");
-    },
-    redirectToAALekovi: function () {
-      app.$router.push("/admin-apoteke-lekovi");
-    },
-    redirectToAADodaj: function () {
-      app.$router.push("/dodaj-lek-admin");
-    },
-    redirectToAAPretraga: function () {
-      app.$router.push("/pretraga-lek-admin");
-    },
-    redirectToLicniPodaci: function () {
-      app.$router.push("/izmena-podataka");
-    },
-    redirectToApotekaIzmeni: function () {
-      app.$router.push("/apoteka/" + this.apoteka.id);
     },
   },
 });

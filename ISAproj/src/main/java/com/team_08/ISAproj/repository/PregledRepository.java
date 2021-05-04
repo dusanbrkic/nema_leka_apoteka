@@ -28,4 +28,8 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     List<Pregled> findAllInDateRangeByZdravstveniRadnik(LocalDateTime start, LocalDateTime end, String cookie);
 
     Pregled findOneById(Long id);
+    
+    //provera da li ima zakazan neki pregled u buducnosti
+    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.username = :username and p.vreme > :start")
+    List<Pregled> findAllInFutureByZdravstveniRadnik(LocalDateTime start, String username);
 }

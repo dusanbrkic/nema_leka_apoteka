@@ -1,9 +1,11 @@
 package com.team_08.ISAproj.dto;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
 
+import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.DermatologApoteka;
 
 public class DermatologDTO {
@@ -13,8 +15,8 @@ public class DermatologDTO {
 	private String ime;
 	private String prezime;
 	private Double cena;
-	private Date radnoVremePocetak;
-	private Date radnoVremeKraj;
+	private LocalDateTime radnoVremePocetak;
+	private LocalDateTime radnoVremeKraj;
 	private Double prosecnaOcena;
 	public DermatologDTO() {
 		
@@ -29,6 +31,13 @@ public class DermatologDTO {
 		this.radnoVremeKraj = da.getRadnoVremeKraj();
 		this.radnoVremePocetak = da.getRadnoVremePocetak();
 		this.prosecnaOcena = da.getDermatolog().getProsecnaOcena();
+	}
+	public DermatologDTO(Dermatolog d) {
+		this.username = d.getUsername();
+		this.password = d.getPassword();
+		this.ime = d.getIme();
+		this.prezime = d.getPrezime();
+		this.prosecnaOcena = d.getProsecnaOcena();
 	}
 	public String getUsername() {
 		return username;
@@ -60,16 +69,16 @@ public class DermatologDTO {
 	public void setCena(Double cena) {
 		this.cena = cena;
 	}
-	public Date getRadnoVremePocetak() {
+	public LocalDateTime getRadnoVremePocetak() {
 		return radnoVremePocetak;
 	}
-	public void setRadnoVremePocetak(Date radnoVremePocetak) {
+	public void setRadnoVremePocetak(LocalDateTime radnoVremePocetak) {
 		this.radnoVremePocetak = radnoVremePocetak;
 	}
-	public Date getRadnoVremeKraj() {
+	public LocalDateTime getRadnoVremeKraj() {
 		return radnoVremeKraj;
 	}
-	public void setRadnoVremeKraj(Date radnoVremeKraj) {
+	public void setRadnoVremeKraj(LocalDateTime radnoVremeKraj) {
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
 	public Double getProsecnaOcena() {

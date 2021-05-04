@@ -20,7 +20,6 @@ Vue.component("DodajFarmaceuta", {
         radnoVremeKraj: "",
         cena: "",
         cookie: "",
-        apotekaID: "",
       },
       postojiMail: false,
       postojiKorisnicko: false,
@@ -29,9 +28,10 @@ Vue.component("DodajFarmaceuta", {
   mounted() {
     this.cookie = localStorage.getItem("cookie");
     this.apotekaID = localStorage.getItem("apotekaID");
-    this.farmaceutDTO.cookie = localStorage.getItem("apotekaID");
+    this.farmaceutDTO.cookie = localStorage.getItem("cookie");
   },
-  template: `<div>
+  template: `
+  <div>
       <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
         <img src="../../res/pics/logo.png" alt="Logo">

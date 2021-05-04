@@ -157,8 +157,8 @@ Vue.component("AdminSlobodniTermini", {
    
    methods:{
    		fixDate(date){
-   			
-   			return moment(date).format('HH:MM')
+   			//return date;
+   			return moment(date).format('HH:mm')
    		
    		},
    		onDodajTermin(){
@@ -226,7 +226,7 @@ Vue.component("AdminSlobodniTermini", {
           	console.log(e);
         	});
    		},
-   			    handleSortChange(value) {
+   		handleSortChange(value) {
 	      this.sortirajPo = event.target.value;
 	      this.page = 1;
 	      this.retrieveDermatologe();
