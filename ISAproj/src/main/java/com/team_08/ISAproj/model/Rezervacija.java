@@ -36,7 +36,18 @@ public class Rezervacija {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Pacijent pacijent;
+	
+	@Column(name = "PREUZETO")
+	private boolean preuzeto = false;
 
+
+	public boolean isPreuzeto() {
+		return preuzeto;
+	}
+
+	public void setPreuzeto(boolean preuzeto) {
+		this.preuzeto = preuzeto;
+	}
 
 	public Pacijent getPacijent() {
 		return pacijent;

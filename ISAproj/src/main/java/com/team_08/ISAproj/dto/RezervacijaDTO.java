@@ -14,13 +14,23 @@ public class RezervacijaDTO {
 	private Date datumRezervacije;
 	private String apotekaId;
 	private String pacijent;
+	private boolean preuzeto;
 	
-	public RezervacijaDTO(Long id,String sifraLeka, Date datumRezervacije, String apotekaId) {
+	public boolean isPreuzeto() {
+		return preuzeto;
+	}
+
+	public void setPreuzeto(boolean preuzeto) {
+		this.preuzeto = preuzeto;
+	}
+
+	public RezervacijaDTO(Long id,String sifraLeka, Date datumRezervacije, String apotekaId, boolean preuzeto) {
 		super();
 		this.id = id;
 		this.sifraLeka = sifraLeka;
 		this.datumRezervacije = datumRezervacije;
 		this.apotekaId = apotekaId;
+		this.preuzeto = preuzeto;
 	}
 
 	public String getSifraLeka() {

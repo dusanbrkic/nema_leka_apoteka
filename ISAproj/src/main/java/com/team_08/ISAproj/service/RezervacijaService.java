@@ -53,4 +53,17 @@ public class RezervacijaService {
     	
     	return rezervacijaRepository.findById(id).orElseGet(null);
     }
+    public Rezervacija findRezervacijaByID(Long id) {
+    	return rezervacijaRepository.findByRezervacijaId(id);
+    }
+    public List<RezervacijaLek> findRezervacijaLekByRezervacijaID(Long id){
+    	return rezervacijaLekRepository.findAllRezervacijaLekFromRezervacija(id);
+    }
+    
+    public void removeRezervacijaLek(Long id) {
+    	rezervacijaLekRepository.deleteById(id);
+    }
+    public void removeRezervacija(Long id) {
+    	rezervacijaRepository.deleteById(id);
+    }
 }
