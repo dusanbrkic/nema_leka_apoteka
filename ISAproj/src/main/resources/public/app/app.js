@@ -19,7 +19,7 @@ const Registracija = {template: '<Registracija></Registracija>'}
 const MailVer = {template: '<MailVer></MailVer>'}
 const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
-
+const PromenaLozinke = {template: '<PromenaLozinke></PromenaLozinke>'}
 // admin apoteke
 const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
 const AdminApotekeLekovi = {template: '<AdminApotekeLekovi></AdminApotekeLekovi>'}
@@ -29,8 +29,10 @@ const LozinkaAdmin = {template: '<LozinkaAdmin></LozinkaAdmin>'}
 const NaruciAdmin = {template: '<NaruciAdmin></NaruciAdmin>'}
 const AdminApoteka = {template: '<AdminApoteka></AdminApoteka>'}
 const AdminSlobodniTermini = {template: '<AdminSlobodniTermini></AdminSlobodniTermini>'}
-
-
+const DodajFarmaceuta = {template: '<DodajFarmaceuta></DodajFarmaceuta>'}
+const DodajDermatologa = {template: '<DodajDermatologa></DodajDermatologa>'}
+const UrediDermatologe = {template: '<UrediDermatologe></UrediDermatologe>'}
+const UrediFarmaceute = {template: '<UrediFarmaceute></UrediFarmaceute>'}
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -124,8 +126,12 @@ const router = new VueRouter({
         {path: '/admin-apoteke-narudzbina',component: NaruciAdmin},
         {path: '/admin-apoteke-apoteka',component: AdminApoteka},
         {path: '/admin-apoteke-slobodan-termin', component: AdminSlobodniTermini},
-        {path: '/pregled-forma', component: PregledForma}
-
+        {path: '/admin-apoteke-dodaj-farmaceuta', component: DodajFarmaceuta},
+        {path: '/admin-apoteke-dodaj-dermatologa', component: DodajDermatologa},
+        {path: '/pregled-forma', component: PregledForma},
+        {path: '/promena-lozinke',component: PromenaLozinke},
+        {path: '/admin-apoteke-dermatolozi', component: UrediDermatologe},
+        {path: '/admin-apoteke-farmaceuti', component: UrediFarmaceute}
     ]
 });
 

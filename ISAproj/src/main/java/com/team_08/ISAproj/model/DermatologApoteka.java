@@ -1,7 +1,10 @@
 package com.team_08.ISAproj.model;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "DERMATOLOG_APOTEKA")
@@ -14,9 +17,9 @@ public class DermatologApoteka {
 	@Column(name = "CENA")
 	private Double cena;
 	@Column(name = "RADNO_VREME_POCETAK")
-	private Date radnoVremePocetak;
+	private LocalDateTime radnoVremePocetak;
 	@Column(name = "RADNO_VREME_KRAJ")
-	private Date radnoVremeKraj;
+	private LocalDateTime radnoVremeKraj;
 
 	@ElementCollection
 	private Set<Date> slobodniTermini;
@@ -29,7 +32,7 @@ public class DermatologApoteka {
 
 
 	public DermatologApoteka(Dermatolog dermatolog, Apoteka apoteka, Set<Date> slobodniTermini, double cena,
-			Date radnoVremePocetak, Date radnoVremeKraj) {
+			LocalDateTime radnoVremePocetak, LocalDateTime radnoVremeKraj) {
 		super();
 		this.dermatolog = dermatolog;
 		this.apoteka = apoteka;
@@ -38,7 +41,16 @@ public class DermatologApoteka {
 		this.radnoVremePocetak = radnoVremePocetak;
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
-
+	public DermatologApoteka(Dermatolog dermatolog, Apoteka apoteka, double cena,
+			LocalDateTime radnoVremePocetak, LocalDateTime radnoVremeKraj) {
+		super();
+		this.dermatolog = dermatolog;
+		this.apoteka = apoteka;
+		this.slobodniTermini = new HashSet<Date>();
+		this.cena = cena;
+		this.radnoVremePocetak = radnoVremePocetak;
+		this.radnoVremeKraj = radnoVremeKraj;
+	}
 	public DermatologApoteka() {
 
 	}
@@ -67,16 +79,16 @@ public class DermatologApoteka {
 	public void setCena(double cena) {
 		this.cena = cena;
 	}
-	public Date getRadnoVremePocetak() {
+	public LocalDateTime getRadnoVremePocetak() {
 		return radnoVremePocetak;
 	}
-	public void setRadnoVremePocetak(Date radnoVremePocetak) {
+	public void setRadnoVremePocetak(LocalDateTime radnoVremePocetak) {
 		this.radnoVremePocetak = radnoVremePocetak;
 	}
-	public Date getRadnoVremeKraj() {
+	public LocalDateTime getRadnoVremeKraj() {
 		return radnoVremeKraj;
 	}
-	public void setRadnoVremeKraj(Date radnoVremeKraj) {
+	public void setRadnoVremeKraj(LocalDateTime radnoVremeKraj) {
 		this.radnoVremeKraj = radnoVremeKraj;
 	}
 

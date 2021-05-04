@@ -59,7 +59,6 @@ public class ApotekaLekService {
 	}
     public void removeBySifra(Long lekID,Long apotekaID) {
     	ApotekaLek al = apotekaLekRepository.findApotekaLekById(lekID,apotekaID);
-    	System.out.println(al);
     	if(al == null) {
     		return;
     	}
@@ -71,8 +70,6 @@ public class ApotekaLekService {
     
     
 	public ApotekaLek findInApotekaLek(Long id,Long apotekaId) {
-		
-		
 		return apotekaLekRepository.findApotekaLekById(id,apotekaId);
 		
 	}

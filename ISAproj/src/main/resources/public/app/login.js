@@ -74,7 +74,7 @@ Vue.component("Login", {
             } else if (this.userRole === "ADMIN_APOTEKE") {
 
             	if(this.firstLogin){
-            		app.$router.push("/admin-apoteke-lozinka")
+            		app.$router.push("/promena-lozinke")
             	}else{
             		app.$router.push("/home-admin_apoteke")
             	}

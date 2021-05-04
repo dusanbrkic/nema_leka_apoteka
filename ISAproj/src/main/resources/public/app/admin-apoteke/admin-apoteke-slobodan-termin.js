@@ -1,6 +1,9 @@
 Vue.component("AdminSlobodniTermini", {
 
   data: function () {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const minDate = new Date(today)
     return {
     	cookie: "",
       page: 1,
@@ -16,15 +19,18 @@ Vue.component("AdminSlobodniTermini", {
       pocetakPregleda: "",
       krajPregleda: "",
       "pregledDTO": {
-   			   		"start": "",
+   		"start": "",
    		"end": "",
    		"dijagnoza" : "",
    		"pregledObavljen": false,
    		"pregledZakazan" :false,
    		"apotekaId" : "",
    		"username" : "",
-   						
+
    		},
+   		"min":minDate,
+   		"minTime":"",
+   		"maxTime":"",
       }
    },
    mounted(){
@@ -119,22 +125,26 @@ Vue.component("AdminSlobodniTermini", {
         <b-form @submit.prevent="onDodajTermin">
         <h3>{{this.izabranDermatolog.ime}}</h3>
           <b-form-group id="input-group-3" label="Datum slobodnog termina:" label-for="input-3">
-            <b-form-input
+            <b-form-datepicker
+            	required
                 id="input-3"
                 type="date"
 				v-model="datumPregleda"
-            ></b-form-input>
+				:min="min"
+            ></b-form-datepicker>
                    <b-form-group id="input-group-3" label="Pocetak termina:" label-for="input-3">
             <b-form-input
-                id="input-3"
-                type="time"
+            	type = "time"
 				v-model="pocetakPregleda"
+				:min="minTime"
+				:max="maxTime"	
             ></b-form-input>
-                             <b-form-group id="input-group-3" label="Kraj termina:" label-for="input-3">
+           <b-form-group id="input-group-3" label="Kraj termina:" label-for="input-3">
             <b-form-input
-                id="input-3"
-                type="time"
+            	type = "time"
 				v-model="krajPregleda"
+				:min="minTime"
+				:max="maxTime"
             ></b-form-input>
 		<br>
           <b-button type="submit" variant="primary">Dodaj termin</b-button>
@@ -147,14 +157,17 @@ Vue.component("AdminSlobodniTermini", {
    
    methods:{
    		fixDate(date){
-   			
-   			return moment(date).format('HH:SS')
+   			//return date;
+   			return moment(date).format('HH:mm')
    		
    		},
    		onDodajTermin(){
- 
-   			console.log(this.datumPregleda);
-   			console.log(this.pocetakPregleda);
+
+			if(this.pocetakPregleda > this.krajPregleda){
+				alert("Vreme pocetka pregleda mora biti manje od kraja pregleda");
+				return;
+			}
+   			
    			const dateStart = this.datumPregleda + "T" + this.pocetakPregleda;
    			const dateEnd = this.datumPregleda + "T" +  this.krajPregleda;
    			this.pregledDTO.start = dateStart;
@@ -164,18 +177,22 @@ Vue.component("AdminSlobodniTermini", {
    			this.pregledDTO.pregledZakazan = false;
    			this.pregledDTO.apotekaId = this.apotekaID;
    			this.pregledDTO.username = this.izabranDermatolog.username;
-   			console.log(this.pregledDTO);
    			axios.post("pregledi/addSlobodanTermin",this.pregledDTO).then(response => console.log(response.data));
    			this.$refs["my-modal"].hide();
    		},
    		dodajTermin(dermatolog){
    			this.$refs["my-modal"].show();
+   			console.log(dermatolog);
+   			this.minTime = this.fixDate(dermatolog.radnoVremePocetak);
+   			this.maxTime = this.fixDate(dermatolog.radnoVremeKraj);
+   			console.log(this.minTime);
+   			console.log(this.maxTime);
    			this.izabranDermatolog = dermatolog;
-   			console.log(this.izabranDermatolog);
    		},
-   		logout(){
-   		
-   		},
+            logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
 	    getRequestParams(
 	      searchTitle,
 	      page,
@@ -209,7 +226,7 @@ Vue.component("AdminSlobodniTermini", {
           	console.log(e);
         	});
    		},
-   			    handleSortChange(value) {
+   		handleSortChange(value) {
 	      this.sortirajPo = event.target.value;
 	      this.page = 1;
 	      this.retrieveDermatologe();

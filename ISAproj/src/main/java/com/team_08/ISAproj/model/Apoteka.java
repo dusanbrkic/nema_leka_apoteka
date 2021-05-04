@@ -32,7 +32,7 @@ public class Apoteka {
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<DermatologApoteka> dermatolozi = new HashSet<DermatologApoteka>();
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<FarmaceutApoteka> farmaceuti= new HashSet<FarmaceutApoteka>();
+	private Set<Farmaceut> farmaceuti= new HashSet<Farmaceut>();
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Pregled> pregledi = new HashSet<Pregled>();
 	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -52,6 +52,21 @@ public class Apoteka {
 	
 	public Long getId() {
 		return id;
+	}
+	public Double getCenaPregleda() {
+		return cenaPregleda;
+	}
+	public void setCenaPregleda(Double cenaPregleda) {
+		this.cenaPregleda = cenaPregleda;
+	}
+	public Double getCenaSavetovanja() {
+		return cenaSavetovanja;
+	}
+	public void setCenaSavetovanja(Double cenaSavetovanja) {
+		this.cenaSavetovanja = cenaSavetovanja;
+	}
+	public void setProsecnaOcena(Double prosecnaOcena) {
+		this.prosecnaOcena = prosecnaOcena;
 	}
 	public void setId(Long id) {
 		this.id = id;
@@ -97,11 +112,11 @@ public class Apoteka {
 		this.dermatolozi = dermatolozi;
 	}
 
-	public Set<FarmaceutApoteka> getFarmaceuti() {
+	public Set<Farmaceut> getFarmaceuti() {
 		return farmaceuti;
 	}
 
-	public void setFarmaceuti(Set<FarmaceutApoteka> farmaceuti) {
+	public void setFarmaceuti(Set<Farmaceut> farmaceuti) {
 		this.farmaceuti = farmaceuti;
 	}
 
@@ -182,24 +197,5 @@ public class Apoteka {
 		return "Apoteka [id=" + id + ", naziv=" + naziv + ", adresa=" + adresa + ", prosecnaOcena=" + prosecnaOcena
 				+ ", opis=" + opis + ", dermatolozi=" + dermatolozi + ", farmaceuti=" + farmaceuti + "]";
 	}
-
-	public void setProsecnaOcena(Double prosecnaOcena) {
-		this.prosecnaOcena = prosecnaOcena;
-	}
-
-	public Double getCenaPregleda() {
-		return cenaPregleda;
-	}
-
-	public void setCenaPregleda(Double cenaPregleda) {
-		this.cenaPregleda = cenaPregleda;
-	}
-
-	public Double getCenaSavetovanja() {
-		return cenaSavetovanja;
-	}
-
-	public void setCenaSavetovanja(Double cenaSavetovanja) {
-		this.cenaSavetovanja = cenaSavetovanja;
-	}
+	
 }

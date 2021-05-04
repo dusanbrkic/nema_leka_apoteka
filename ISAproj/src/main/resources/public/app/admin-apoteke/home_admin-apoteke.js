@@ -3,12 +3,12 @@ Vue.component("HomeAdminApoteke", {
     return {
       message: "",
       apoteka: "",
-      cookie: '',
+      cookie: "",
     };
   },
   mounted() {
     this.cookie = localStorage.getItem("cookie");
-   	this.getApotekaInfo();
+    this.getApotekaInfo();
   },
   template: `
     <div>
@@ -24,8 +24,12 @@ Vue.component("HomeAdminApoteke", {
             <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
-            <b-nav-item href="#/admin-apoteke-apoteka">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item >Izmeni podatke o apoteci</b-nav-item>
             <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dodaj-farmaceuta">Dodaj farmaceuta</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dodaj-dermatologa">Dodaj dermatologa</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dermatolozi">Dermatolozi</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-farmaceuti">Farmaceuti</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -40,100 +44,98 @@ Vue.component("HomeAdminApoteke", {
      <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
       <b-container id="page_content">
         <b-row>
-          <b-col>
             <b-card
-                title="Dodaj lek"
-                img-src="https://picsum.photos/600/300/?image=25"
-                img-alt="Image"
-                img-top
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2"
-            >
-              <b-card-text>
-                Dodavanje novog leka u apoteku
-              </b-card-text>
+          title="Dodaj lek"
+          img-src="https://picsum.photos/600/300/?image=25"
+          img-alt="Image"
+          img-top
+          tag="article"
+          style="max-width: 20rem;"
+          class="mb-2"
+      >
+        <b-card-text>
+          Dodavanje novog leka u apoteku
+        </b-card-text>
 
-              <b-button href="#/dodaj-lek-admin" variant="primary">Otvori</b-button>
-            </b-card>
-          </b-col>
-          <b-col>
-            <b-card
-                title="Pretrazi, obrisi i uredi lekove"
-                img-src="https://picsum.photos/600/300/?image=25"
-                img-alt="Image"
-                img-top
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2"
-            >
-              <b-card-text>
-                Pretrazi, obrisi i uredi lekove
-              </b-card-text>
+        <b-button href="#/dodaj-lek-admin" variant="primary">Otvori</b-button>
+      </b-card>
+      <b-card
+          title="Pretrazi, obrisi i uredi lekove"
+          img-src="https://picsum.photos/600/300/?image=25"
+          img-alt="Image"
+          img-top
+          tag="article"
+          style="max-width: 20rem;"
+          class="mb-2"
+      >
+        <b-card-text>
+          Pretrazi, obrisi i uredi lekove
+        </b-card-text>
 
-              <b-button href="#/pretraga-lek-admin" variant="primary">Otvori</b-button>
+        <b-button href="#/pretraga-lek-admin" variant="primary">Otvori</b-button>
             </b-card>
-          </b-col>
-          <b-col>
-            <b-card
-                title="Uredjuj lek"
-                img-src="https://picsum.photos/600/300/?image=25"
-                img-alt="Image"
-                img-top
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2"
-            >
-              <b-card-text>
-                Uredjivanje lekova u apoteci
-              </b-card-text>
-              <b-button href="#/izmena-podataka" variant="primary">Otvori</b-button>
-            </b-card>
-          </b-col>
-          <b-col>
-            <b-card
-                title="Izmeni podatke o apoteci"
-                img-src="https://picsum.photos/600/300/?image=25"
-                img-alt="Image"
-                img-top
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2"
-            >
-                        <b-card-text>
-                Izmena podataka o apoteci
-                
-              </b-card-text>
-              <b-button href="#/admin-apoteke-apoteka" variant="primary">Otvori</b-button>
-          </b-col>
-          <b-col>
+            
+                      
+          <b-card
+          title="Naruci lekove"
+          img-src="https://picsum.photos/600/300/?image=25"
+          img-alt="Image"
+          img-top
+          tag="article"
+          style="max-width: 20rem;"
+          class="mb-2"
+      >
+        <b-card-text>
+          Narucivanje lekova za apoteku
+        </b-card-text>
 
-            </b-card>
-            <b-card
-                title="Naruci lekove"
-                img-src="https://picsum.photos/600/300/?image=25"
-                img-alt="Image"
-                img-top
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2"
-            >
-              <b-card-text>
-                Narucivanje lekova za apoteku
-              </b-card-text>
-
-              <b-button href="#/dodaj-lek-admin" variant="primary">Otvori</b-button>
-          </b-col>
+        <b-button href="#/dodaj-lek-admin" variant="primary">Otvori</b-button>
+        </b-card>
+        
+        </b-row>
+        <b-row>
+          <b-card
+          title="Izmeni podatke o apoteci"
+          img-src="https://picsum.photos/600/300/?image=25"
+          img-alt="Image"
+          img-top
+          tag="article"
+          style="max-width: 20rem;"
+          class="mb-2">
+                  <b-card-text>Izmena podataka o apoteci</b-card-text>
+                  <b-button href="#/admin-apoteke-apoteka" variant="primary">Otvori</b-button>
+        </b-card> 
+        <b-card
+          title="Dodaj slobodan termin dermatologu"
+          img-src="https://picsum.photos/600/300/?image=25"
+          img-alt="Image"
+          img-top
+          tag="article"
+          style="max-width: 20rem;"
+          class="mb-2">
+            <b-card-text>Dodavanje slobodnog termina dermatologu</b-card-text>
+            <b-button href="#/admin-apoteke-slobodan-termin" variant="primary">Otvori</b-button>
+        </b-card>
+        <b-card
+          title="Dodaj farmaceuta"
+          img-src="https://picsum.photos/600/300/?image=25"
+          img-alt="Image"
+          img-top
+          tag="article"
+          style="max-width: 20rem;"
+          class="mb-2">
+            <b-card-text>Dodavanje novog farmaceuta u apoteku</b-card-text>
+            <b-button href="#/admin-apoteke-dodaj-farmaceuta" variant="primary">Otvori</b-button>
+          </b-card>
         </b-row>
       </b-container>
     </div>
     `,
   methods: {
-
-  	logout: function () {
-    	localStorage.clear()
-    	app.$router.push("/");
-        },
+    logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
     redirectToApoteke: function () {
       app.$router.push("/apoteke");
     },
@@ -153,23 +155,5 @@ Vue.component("HomeAdminApoteke", {
       localStorage.clear();
       app.$router.push("/");
     },
-    redirectToIzmenaPacijent: function () {
-      app.$router.push("/izmena-podataka");
-    },
-	redirectToAALekovi: function(){
-		app.$router.push("/admin-apoteke-lekovi");
-	},
-	redirectToAADodaj: function(){
-		app.$router.push("/dodaj-lek-admin");
-	},
-	redirectToAAPretraga: function(){
-		app.$router.push("/pretraga-lek-admin");
-	},
-	redirectToLicniPodaci: function(){
-		app.$router.push("/izmena-podataka");
-	},
-	redirectToApotekaIzmeni: function(){
-		app.$router.push("/apoteka/" + this.apoteka.id);
-	}
   },
 });

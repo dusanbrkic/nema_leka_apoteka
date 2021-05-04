@@ -57,4 +57,8 @@ public class PregledService {
     public void saveSlobodanTermin(Pregled pregled) {
     	pregledRepository.save(pregled);
     }
+    
+    public List<Pregled> proveraOdDatumaPregleda(LocalDateTime start,String username){
+    	return pregledRepository.findAllInFutureByZdravstveniRadnik(start,username);
+    }
 }

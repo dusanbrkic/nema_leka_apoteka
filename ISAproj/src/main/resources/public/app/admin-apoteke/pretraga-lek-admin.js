@@ -1,49 +1,48 @@
 Vue.component("PretragaLekAdmin", {
-    data: function () {
-        return {
-           nesto: 'waiting for server response',
-           apotekaID: "",
-           lekovi: [],
-		   currentTutorial: null,
-		   currentIndex: -1,
-	       searchTitle: "",
-	       reverseLek : "",
-		   izabranLek : {
-				sifra: "",
-				naziv: "",
-				uputstvo: "",
-				tip : "",
-				oblikLeka: "",
-				dodatneNapomene: "",
-				sastav: "",
-				kolicina: "",
-				cena: "",
-				istekVazenjaCene: "",
-				staraCena: "",
-				cookie: ""
-		   },
-	       page: 1,
-	       count: 0,
-	       pageSize: 6,
-			
-	       pageSizes: [3, 6, 9, 15, 30],
-	       
-	       redosledi: ["opadajuce", "rastuce"],
-	       
-	       redosled: "opadajuce",
-	       
-	       polja: ["naziv"],
-	       
-	       sortirajPo: "naziv"
-        
-        }
-    },
-      mounted () {
-      	this.cookie = localStorage.getItem("cookie");
-        this.apotekaID = localStorage.getItem("apotekaID");
-      	this.retrieveLekove()
-  	},
-    template: `
+  data: function () {
+    return {
+      nesto: "waiting for server response",
+      apotekaID: "",
+      lekovi: [],
+      currentTutorial: null,
+      currentIndex: -1,
+      searchTitle: "",
+      reverseLek: "",
+      izabranLek: {
+        sifra: "",
+        naziv: "",
+        uputstvo: "",
+        tip: "",
+        oblikLeka: "",
+        dodatneNapomene: "",
+        sastav: "",
+        kolicina: "",
+        cena: "",
+        istekVazenjaCene: "",
+        staraCena: "",
+        cookie: "",
+      },
+      page: 1,
+      count: 0,
+      pageSize: 6,
+
+      pageSizes: [3, 6, 9, 15, 30],
+
+      redosledi: ["opadajuce", "rastuce"],
+
+      redosled: "opadajuce",
+
+      polja: ["naziv"],
+
+      sortirajPo: "naziv",
+    };
+  },
+  mounted() {
+    this.cookie = localStorage.getItem("cookie");
+    this.apotekaID = localStorage.getItem("apotekaID");
+    this.retrieveLekove();
+  },
+  template: `
     <div>
     <!-- nav bar -->
       <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
@@ -193,113 +192,129 @@ Vue.component("PretragaLekAdmin", {
         </div>
 	</b-container>
       </div>
-    `
-    ,
-    methods: {
-		onIzmeniLek: function(){
-			this.izabranLek.cookie = this.cookie;
-			axios.put("lekovi",this.izabranLek).then(response => this.retrieveLekove())
-			this.retrieveLekove()
-			this.$refs['my-modal'].hide()
-		},
-        onReset: function (event) {
-            event.preventDefault()
-            this.izabranLek = this.reverseLek
-        },
+    `,
+  methods: {
+    onIzmeniLek: function () {
+      this.izabranLek.cookie = this.cookie;
+      axios
+        .put("lekovi", this.izabranLek)
+        .then((response) => this.retrieveLekove());
+      this.retrieveLekove();
+      this.$refs["my-modal"].hide();
+    },
+    onReset: function (event) {
+      event.preventDefault();
+      this.izabranLek = this.reverseLek;
+    },
 
-	  prikaziPromeniLek(lek) {
-	  	this.reverseLek = JSON.parse(JSON.stringify(lek));
-	  	this.izabranLek = JSON.parse(JSON.stringify(lek));
-	  	console.log(this.izabranLek);
-        this.$refs['my-modal'].show()
-      },
-        redirectToHome: function () {
-            app.$router.push("/home-admin_apoteke")
-        },
-        
-	    getRequestParams(searchTitle, page, pageSize, sortirajPo, redosled, apotekaID) {
-	      let params = {};
-	
-	      if (searchTitle) {
-	        params["title"] = searchTitle;
-	      }
-		  else{
-			params["title"] = "";
-		  }
-	
-	      if (page) {
-	        params["page"] = page - 1;
-	      }
-	
-	      if (pageSize) {
-	        params["size"] = pageSize;
-	      }
-	      
-	      if(sortirajPo) {
-	      	params["sort"] = sortirajPo;
-	      }
-	
-		  if(sortirajPo) {
-	      	params["smer"] = redosled;
-	      }
-		  params["apotekaID"] = apotekaID;
-	      return params;
-	    },
-    	logout: function () {
-    		localStorage.clear()
-    		app.$router.push("/");
-        },
-        	redirectToApotekaIzmeni: function(){
-				app.$router.push("/apoteka/" + this.apoteka.id);
-		},
-		deleteLek: function(sifra){
-        	let info = {
-                params: {
-                	"sifraLeka" : sifra,
-                    "cookie": this.cookie
-                }
-            }
-            console.log(info);
-            axios.delete("/lekovi/deleteLek",info).then(response => console.log(response.data))
-        	this.retrieveLekove()
-        },
-	    retrieveLekove() {
-			const params = this.getRequestParams(this.searchTitle,this.page,this.pageSize, this.sortirajPo, this.redosled, this.apotekaID);
-	
-	
-		  axios.get("lekovi/aa/", {params})
-	        .then((response) => {
-	          const { lekovi, totalItems } = response.data;
-	          this.lekovi = lekovi;
-	          this.count = totalItems;
-	
-	          console.log(response.data);
-	        })
-	        .catch((e) => {
-	          console.log(e);
-	        });
-	    },
-	    handleSortChange(value) {
-	      this.sortirajPo = event.target.value;
-	      this.page = 1;
-	      this.retrieveLekove();
-	    },
-	    
-		handleSortOrderChange(value) {
-	      this.redosled = event.target.value;
-	      this.page = 1;
-	      this.retrieveLekove();
-	    },
+    prikaziPromeniLek(lek) {
+      this.reverseLek = JSON.parse(JSON.stringify(lek));
+      this.izabranLek = JSON.parse(JSON.stringify(lek));
+      console.log(this.izabranLek);
+      this.$refs["my-modal"].show();
+    },
+    redirectToHome: function () {
+      app.$router.push("/home-admin_apoteke");
+    },
 
-	    handlePageChange(value) {
-	      this.page = value;
-	      this.retrieveLekove();
-	    },
-	
-	    handlePageSizeChange(event) {
-	      this.pageSize = event.target.value;
-	      this.page = 1;
-	      this.retrieveLekove();
-	    },
-    }
+    getRequestParams(
+      searchTitle,
+      page,
+      pageSize,
+      sortirajPo,
+      redosled,
+      apotekaID
+    ) {
+      let params = {};
+
+      if (searchTitle) {
+        params["title"] = searchTitle;
+      } else {
+        params["title"] = "";
+      }
+
+      if (page) {
+        params["page"] = page - 1;
+      }
+
+      if (pageSize) {
+        params["size"] = pageSize;
+      }
+
+      if (sortirajPo) {
+        params["sort"] = sortirajPo;
+      }
+
+      if (sortirajPo) {
+        params["smer"] = redosled;
+      }
+      params["apotekaID"] = apotekaID;
+      return params;
+    },
+    logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
+    redirectToApotekaIzmeni: function () {
+      app.$router.push("/apoteka/" + this.apoteka.id);
+    },
+    deleteLek: function (sifra) {
+      let info = {
+        params: {
+          sifraLeka: sifra,
+          cookie: this.cookie,
+        },
+      };
+      console.log(info);
+      axios
+        .delete("/lekovi/deleteLek", info)
+        .then((response) => console.log(response.data));
+      this.retrieveLekove();
+    },
+    retrieveLekove() {
+      const params = this.getRequestParams(
+        this.searchTitle,
+        this.page,
+        this.pageSize,
+        this.sortirajPo,
+        this.redosled,
+        this.apotekaID
+      );
+
+      axios
+        .get("lekovi/aa/", { params })
+        .then((response) => {
+          const { lekovi, totalItems } = response.data;
+          this.lekovi = lekovi;
+          this.count = totalItems;
+
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    handleSortChange(value) {
+      this.sortirajPo = event.target.value;
+      this.page = 1;
+      this.retrieveLekove();
+    },
+
+    handleSortOrderChange(value) {
+      this.redosled = event.target.value;
+      this.page = 1;
+      this.retrieveLekove();
+    },
+
+    handlePageChange(value) {
+      this.page = value;
+      this.retrieveLekove();
+    },
+
+    handlePageSizeChange(event) {
+      this.pageSize = event.target.value;
+      this.page = 1;
+      this.retrieveLekove();
+    },
+  },
 });

@@ -52,7 +52,9 @@ public class KorisnikController {
     	}
     	String ck = CookieToken.createTokenValue(korisnikDTO.getUsername(), korisnikDTO.getPassword());
         k.setFirstLogin(false);
+        k.setPassword(korisnikDTO.getPassword());
         k.updateUser(korisnikDTO);
+        k.setCookieTokenValue(ck);
         korisnikService.saveUser(k);
         return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
     }

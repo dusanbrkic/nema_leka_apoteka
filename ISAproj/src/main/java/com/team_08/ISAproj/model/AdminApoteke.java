@@ -1,15 +1,21 @@
 package com.team_08.ISAproj.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+
 import java.sql.Date;
 
 @Entity(name="ADMIN_APOTEKE")
 public class AdminApoteke extends Korisnik{
 	
 	// connections
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Apoteka apoteka;
 	
 	public AdminApoteke(Apoteka apoteka) {
