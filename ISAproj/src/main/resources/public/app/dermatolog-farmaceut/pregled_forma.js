@@ -3,17 +3,25 @@ Vue.component("PregledForma", {
         return {
             cookie: "",
             rola: "",
+            kolicinaLeka: '',
+            izabraniLek: '',
+            trajanjeTerapijeLeka: '',
             optionPicked: "DATE",
             datumPregleda: '',
             datumTermina: '',
             today: new Date(),
             pregledStart: '',
             pregledEnd: '',
+            pretragaLekova: '',
+            totalLekovi: '',
+            pageLekova: 0,
+            pageSizeLekova: 6,
             selectedTerm: null,
             nullTerm: {value: null, text: 'Izaberite termin:'},
             terms: [
                 {value: null, text: 'Izaberite termin:'}
             ],
+            lekovi: [],
             pregled: {
                 start: new Date(),
                 end: new Date(),
@@ -36,6 +44,22 @@ Vue.component("PregledForma", {
     template:
         `
           <div>
+          <b-modal id="odabirKolicineModal" title="Odredi terapiju">
+            <label for="unos_kolicine">Kolicina za rezervaciju:</label>
+            <b-form-input id="unos_kolicine" type="number" v-model="kolicinaLeka">
+            </b-form-input>
+            <label for="unos_kolicine">Trajanje terapije u danima:</label>
+            <b-form-input id="unos_trajanja" type="number" v-model="trajanjeTerapijeLeka">
+            </b-form-input>
+            <template #modal-footer="{ ok }">
+              <b-button @click="ok()">
+                Otkazi
+              </b-button>
+              <b-button v-on:click="dodaj_lek" variant="success" @click="ok()">
+                Dodaj lek
+              </b-button>
+            </template>
+          </b-modal>
           <b-modal id="zakazivanjeModal" title="Zakazi pregled pacijentu">
             <template v-if="rola=='DERMATOLOG'">
               <label for="radio-group-1">Izaberite nacin zakazivanja:</label>
@@ -112,6 +136,49 @@ Vue.component("PregledForma", {
               </b-button>
             </template>
           </b-modal>
+          <b-modal size="lg" id="dodajLekModal" title="Preporuci lek pacijentu">
+            <b-container>
+              <b-row>
+                <b-col>
+                  <b-form-input v-model="pretragaLekova" type="search"/>
+                </b-col>
+                <b-col>
+                  <b-button v-on:click="loadLekovi">Pretrazi</b-button>
+                </b-col>
+              </b-row>
+            </b-container>
+            <b-container>
+              <b-row v-for="chungus in lekovi">
+                <b-col v-for="lek in chungus">
+                  <b-card
+                      style="margin: 10px auto; max-width: 225px"
+                      :header="lek.naziv"
+                      class="text-center"
+                  >
+                    <b-card-text>
+                      {{ lek.tip }} <br> {{ lek.sastav }}
+                    </b-card-text>
+                    <b-button variant="primary" v-on:click="izaberi_lek(lek)">Izaberi</b-button>
+                  </b-card>
+                </b-col>
+              </b-row>
+            </b-container>
+            <b-pagination
+                style="margin: auto; width: 50%;"
+                v-model="pageLekova"
+                :total-rows="totalLekovi"
+                :per-page="pageSizeLekova"
+                @change="handlePageChange"
+            ></b-pagination>
+            <template #modal-footer="{ ok }">
+              <b-button @click="ok()">
+                Otkazi
+              </b-button>
+              <b-button v-on:click="zakazi_pregled" variant="success" @click="ok()">
+                Dodaj lek
+              </b-button>
+            </template>
+          </b-modal>
           <b-card style="max-width: 700px; margin: 30px auto;" title="Upisite podatke o pregledu:">
             <b-form @submit.prevent="onSubmit">
               <b-container>
@@ -140,16 +207,17 @@ Vue.component("PregledForma", {
                 <b-row>
                   <b-col>
                     Preporuceni lekovi:
-                    <b-button v-on:click="returnToHome" variant="primary" style="margin-left:10px">Dodaj lek</b-button>
+                    <b-button v-on:click="dodavanje_forma" variant="primary" style="margin-left:10px">Dodaj lek
+                    </b-button>
                   </b-col>
                 </b-row>
                 <template v-for="lek in pregled.preporuceniLekovi">
                   <b-row>
                     <b-col>
-                      - {{ lek.naziv }}
+                      - {{ lek.lek.naziv }} - {{lek.trajanjeTerapije}} dana
                     </b-col>
                     <b-col>
-                      <b-button v-on:click="returnToHome" variant="danger">Izbaci lek</b-button>
+                      <b-button style="margin: 2px auto;" v-on:click="returnToHome" variant="danger">Izbaci lek</b-button>
                     </b-col>
                   </b-row>
                 </template>
@@ -181,6 +249,52 @@ Vue.component("PregledForma", {
         zakazivanje_forma: function () {
             this.$bvModal.show('zakazivanjeModal')
         },
+        izaberi_lek: function (lek) {
+            this.izabraniLek = lek
+            this.$bvModal.show('odabirKolicineModal')
+        },
+        dodaj_lek: function (){
+            this.pregled.preporuceniLekovi.push({
+                lek: this.izabraniLek,
+                kolicina: this.kolicinaLeka,
+                trajanjeTerapije: this.trajanjeTerapijeLeka
+            })
+        },
+        dodavanje_forma: function () {
+            this.pageLekova = 0
+            this.loadLekovi()
+            this.$bvModal.show('dodajLekModal')
+        },
+        handlePageChange(value) {
+            this.pageLekova = value - 1
+            this.loadLekovi()
+        },
+        loadLekovi: function () {
+            axios
+                .get("/lekovi/getAllByPacijentNotAllergic", {
+                    params: {
+                        'idPacijenta': this.pregled.pacijent.id,
+                        'cookie': this.cookie,
+                        'page': this.pageLekova,
+                        'pageSize': this.pageSizeLekova,
+                        'pretraga': this.pretragaLekova,
+                    }
+                })
+                .then(response => {
+                    this.lekovi = []
+                    this.totalLekovi = response.data['totalElements']
+                    for (let i = 0; i < 2; i = i + 1) {
+                        this.lekovi.push([])
+                        for (let j = 0; j < 3; j = j + 1) {
+                            let item = response.data.content[j + i * 3]
+                            if (typeof item === 'undefined')
+                                return
+                            this.lekovi[i].push(response.data.content[j + i * 3])
+                        }
+                    }
+
+                })
+        },
         returnToHome: function () {
             if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
             else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
@@ -190,7 +304,7 @@ Vue.component("PregledForma", {
             }
             localStorage.removeItem("pregled")
         },
-        datumUnesen: function (){
+        datumUnesen: function () {
             let endDate = new Date(this.datumTermina + " 00:00")
             let startDate = new Date(this.datumTermina + " 00:00")
             axios
@@ -203,9 +317,9 @@ Vue.component("PregledForma", {
                 })
                 .then(response => {
                     this.terms = [this.nullTerm]
-                    for (const term of response.data){
+                    for (const term of response.data) {
                         let startDate = new Date(term.start + ".000Z")
-                        let endDate = new Date(term.end+ ".000Z")
+                        let endDate = new Date(term.end + ".000Z")
                         this.terms.push({
                             value: term.id,
                             text: moment(String(startDate)).format("HH:mm") + ' - ' +

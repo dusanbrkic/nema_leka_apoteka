@@ -11,7 +11,6 @@ public class PregledLekDTO {
     private Integer trajanjeTerapije;
 
     private LekDTO lek;
-    private PregledDTO pregled;
 
     public PregledLekDTO(){}
 
@@ -19,7 +18,6 @@ public class PregledLekDTO {
         this.kolicina = p.getKolicina();
         this.trajanjeTerapije = p.getTrajanjeTerapije();
         this.lek = new LekDTO(p.getLek());
-        this.pregled = new PregledDTO(p.getPregled());
     }
 
     public Integer getKolicina() {
@@ -44,13 +42,5 @@ public class PregledLekDTO {
 
     public void setLek(LekDTO lek) {
         this.lek = lek;
-    }
-
-    public PregledDTO getPregled() {
-        return pregled;
-    }
-
-    public void setPregled(PregledDTO pregled) {
-        this.pregled = pregled;
     }
 }

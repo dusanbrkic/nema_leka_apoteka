@@ -3,6 +3,7 @@ package com.team_08.ISAproj.controller;
 import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.PregledLekDTO;
+import com.team_08.ISAproj.dto.RezervacijaDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.service.*;
@@ -23,9 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
@@ -46,6 +51,12 @@ public class PregledController {
     private KorisnikService korisnikService;
     @Autowired
     private ApotekaService apotekaService;
+    @Autowired
+    private RezervacijaService rezervacijaService;
+    @Autowired
+    private ApotekaLekService apotekaLekService;
+    @Autowired
+    private EmailService sendEmailService;
 
     @GetMapping(value = "/getPregledaniKorisniciByZdravstveniRadnik", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<PregledDTO>> getPregledaniKorisniciByZdravstveniRadnik(
@@ -134,11 +145,15 @@ public class PregledController {
         Pregled pregled = pregledService.findOneById(pregledDTO.getId());
         if (pregled == null)
             return new ResponseEntity<String>(HttpStatus.OK);
+        ArrayList<RezervacijaDTO> rezervacije = new ArrayList<>();
         List<PregledLek> lekovi = pregledDTO.getPreporuceniLekovi().stream().map(new Function<PregledLekDTO, PregledLek>() {
             @Override
             public PregledLek apply(PregledLekDTO pregledLekDTO) {
                 Lek l = lekService.findOneBySifra(pregledLekDTO.getLek().getSifra());
                 PregledLek pl = new PregledLek(pregledLekDTO.getKolicina(), pregledLekDTO.getTrajanjeTerapije(), pregled, l);
+                rezervacije.add(new RezervacijaDTO(l.getSifra(), pl.getKolicina(),
+                        Date.from(LocalDateTime.now().plusDays(7).atZone(ZoneId.systemDefault()).toInstant()),
+                        pregled.getApoteka().getId().toString(), pregled.getPacijent().getCookieTokenValue()));
                 return pl;
             }
         }).collect(Collectors.toList());
@@ -146,6 +161,66 @@ public class PregledController {
         pregled.setPregledObavljen(true);
         pregled.setDijagnoza(pregledDTO.getDijagnoza());
         pregledService.savePregled(pregled);
+
+        // r e z e r v a c i j a  copy paste
+
+        Rezervacija n = new Rezervacija();
+        n.setApoteka(apotekaService.findOne(Long.parseLong(rezervacije.get(0).getApotekaId())));
+        n.setRokPonude(rezervacije.get(0).getDatumRezervacije());
+
+        Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(rezervacije.get(0).getPacijent());
+        n.setPacijent(pacijent);
+        rezervacijaService.saveRezervacija(n);
+
+        String body = "Poštovani, " + pacijent.getIme() + "\n"
+                + "Vasa rezervacija se sastoji iz:\n";
+
+        double ukupnaCena = 0;
+
+        for(RezervacijaDTO nDTO: rezervacije) {
+
+            Lek l = lekService.findOneBySifra(nDTO.getSifraLeka());
+            RezervacijaLek rl = new RezervacijaLek(nDTO.getKolicina(), n, l);
+            rezervacijaService.saveRezervacijaLek(rl);
+
+            ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(l.getId(), Long.parseLong(rezervacije.get(0).getApotekaId()));
+
+            apotekaLek.setKolicina(apotekaLek.getKolicina()-nDTO.getKolicina());
+            apotekaLekService.saveAL(apotekaLek);
+
+
+            double cena_leka = nDTO.getKolicina()*apotekaLek.getCena();
+            ukupnaCena += cena_leka;
+            body +=	"	- " + l.getNaziv() + " x " + nDTO.getKolicina() + "kom - " + cena_leka + "din. \n";
+
+        }
+
+
+        body += "Ukupna cena je: " + ukupnaCena + " dinara \n"
+                + "Rezervaciju možete pokupiti do datuma: " + rezervacije.get(0).getDatumRezervacije() + "\n\n"
+                + "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
+                + "Srdačan pozdrav.";
+
+        String title = "Potvrda Rezervacije Leka (ID:" + n.getId() + ")";
+
+        String body_tmp = body;
+
+        try
+        {
+            Thread t = new Thread() {
+                public void run()
+                {
+                    sendEmailService.sendEmail(pacijent.getEmailAdresa(), body_tmp, title);
+                }
+            };
+            t.start();
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
+
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 

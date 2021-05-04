@@ -24,12 +24,12 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     Page<Pregled> findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(@Param("cookie") String cookie, Pageable pageable, @Param("pretragaIme") String pretragaIme, @Param("pretragaPrezime") String pretragaPrezime);
 
     // za proveru validnosti zahteva za odsustvo
-    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and (:startDate < p.kraj and :endDate > p.vreme)")
+    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and (:start < p.kraj and :end > p.vreme)")
     List<Pregled> findAllInDateRangeByZdravstveniRadnik(LocalDateTime start, LocalDateTime end, String cookie);
 
     Pregled findOneById(Long id);
 
     //vadjenje termina za pregled
-    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and p.pregledZakazan=false and (:startDate < p.kraj and :endDate > p.vreme)")
+    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and p.pregledZakazan=false and (:start < p.kraj and :end > p.vreme)")
     List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end);
 }
