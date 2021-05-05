@@ -2,6 +2,9 @@ package com.team_08.ISAproj.controller;
 
 import java.util.List;
 
+import com.team_08.ISAproj.dto.*;
+import com.team_08.ISAproj.exceptions.CookieNotValidException;
+import com.team_08.ISAproj.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,19 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.team_08.ISAproj.dto.LekDTO;
-import com.team_08.ISAproj.dto.NarudzbenicaDTO;
-import com.team_08.ISAproj.dto.ApotekaDTO;
-import com.team_08.ISAproj.dto.CookieRoleDTO;
-import com.team_08.ISAproj.dto.KorisnikDTO;
-import com.team_08.ISAproj.model.AdminApoteke;
-import com.team_08.ISAproj.model.Apoteka;
-import com.team_08.ISAproj.model.ApotekaLek;
-import com.team_08.ISAproj.model.Korisnik;
-import com.team_08.ISAproj.model.Lek;
-import com.team_08.ISAproj.model.Narudzbenica;
-import com.team_08.ISAproj.model.NarudzbenicaLek;
-import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
@@ -53,6 +43,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @RestController
 @RequestMapping("/lekovi")
@@ -373,6 +364,29 @@ public class LekController {
 		response.put("totalItems", alLista.getTotalElements());
 		response.put("totalPages", alLista.getTotalPages());
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		
+
+	}
+
+	@GetMapping(value="/getAllByPacijentNotAllergic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<LekDTO>> getAllByPacijentNotAllergic(
+			@RequestParam() String pretraga,
+			@RequestParam() Long idPacijenta,
+			@RequestParam() String cookie,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "6") int pageSize
+	){
+		Page<Lek> lekovi = null;
+		lekovi = lekService.getAllByPacijentNotAllergic(page, pageSize, idPacijenta, pretraga);
+		if (lekovi == null)
+			return new ResponseEntity<Page<LekDTO>>(Page.empty(), HttpStatus.OK);
+
+		Page<LekDTO> lekoviDTO = lekovi.map(new Function<Lek, LekDTO>() {
+			@Override
+			public LekDTO apply(Lek l) {
+				LekDTO lekDTO = new LekDTO(l);
+				return lekDTO;
+			}
+		});
+		return new ResponseEntity<Page<LekDTO>>(lekoviDTO, HttpStatus.OK);
 	}
 }

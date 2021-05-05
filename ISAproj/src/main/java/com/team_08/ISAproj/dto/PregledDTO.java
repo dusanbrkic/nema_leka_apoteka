@@ -21,7 +21,7 @@ public class PregledDTO {
     // connections
     private PacijentDTO pacijent;
     private ApotekaDTO apoteka;
-    private Set<LekDTO> preporuceniLekovi;
+    private Set<PregledLekDTO> preporuceniLekovi;
 
     public PregledDTO() {
     }
@@ -37,12 +37,12 @@ public class PregledDTO {
         this.apoteka = new ApotekaDTO(pregled.getApoteka());
         this.trajanje = pregled.getTrajanje();
         this.cena = pregled.getCena();
-        this.preporuceniLekovi = new HashSet<LekDTO>();
+        this.preporuceniLekovi = new HashSet<PregledLekDTO>();
     }
 
     public void loadLekovi(Pregled pregled) {
-        for (Lek p : pregled.getPreporuceniLekovi())
-            this.preporuceniLekovi.add(new LekDTO(p));
+        for (PregledLek p : pregled.getPreporuceniLekovi())
+            this.preporuceniLekovi.add(new PregledLekDTO(p));
     }
 
     public Long getId() {
@@ -121,11 +121,11 @@ public class PregledDTO {
         this.apoteka = apoteka;
     }
 
-    public Set<LekDTO> getPreporuceniLekovi() {
+    public Set<PregledLekDTO> getPreporuceniLekovi() {
         return preporuceniLekovi;
     }
 
-    public void setPreporuceniLekovi(Set<LekDTO> preporuceniLekovi) {
+    public void setPreporuceniLekovi(Set<PregledLekDTO> preporuceniLekovi) {
         this.preporuceniLekovi = preporuceniLekovi;
     }
 

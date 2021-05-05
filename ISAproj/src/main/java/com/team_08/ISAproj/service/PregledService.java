@@ -57,8 +57,13 @@ public class PregledService {
     public void saveSlobodanTermin(Pregled pregled) {
     	pregledRepository.save(pregled);
     }
-    
+
     public List<Pregled> proveraOdDatumaPregleda(LocalDateTime start,String username){
     	return pregledRepository.findAllInFutureByZdravstveniRadnik(start,username);
+    }
+
+    public List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end)
+            throws CookieNotValidException {
+        return pregledRepository.findAllTermsInDateRangeByDermatolog(cookie, start, end);
     }
 }

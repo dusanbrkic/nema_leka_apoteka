@@ -38,24 +38,32 @@ public class ZdravstveniRadnikService {
     }
     //svi dermatolozi u apoteci page
     public Page<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId,Pageable page){
-		
-    	
+
+
     	return dermatologRepository.fetchDermatologApotekaByApotekaIdPage(ApotekaId, page);
     }
     public Dermatolog findOneByUsername(String username) {
-    	
+
     	return dermatologRepository.findOneByUsername(username);
+    }
+
+    public ZdravstveniRadnik findOneByCookie(String cookie) {
+        ZdravstveniRadnik z = dermatologRepository.findOneByCookieTokenValue(cookie);
+        if (z==null) {
+            z = farmaceutRepository.findOneByCookieTokenValue(cookie);
+        }
+        return z;
     }
   //svi dermatolozi u apoteci list
     public List<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId){
-		
-  
+
+
     	return dermatologRepository.fetchDermatologApotekaByApotekaId(ApotekaId);
     }
-    
+
     public List<Farmaceut> fetchFarmaceutsByApotekaId(Long ApotekaId){
-    	
-    	
+
+
     	return farmaceutRepository.findAllByApotekaId(ApotekaId);
     }
     //dodavanje farmaceuta
@@ -63,12 +71,12 @@ public class ZdravstveniRadnikService {
     	farmaceutRepository.save(farmaceut);
     }
     //svi dermatolozi koji ne rade u apoteci PAGE
-    public Page<Dermatolog> fetchDermatologsNotInApotekaPage(Long ApotekaId,Pageable page){	
-		return dermatologRepository.fetchNotWorkingInApotekaPage(ApotekaId, page);	
+    public Page<Dermatolog> fetchDermatologsNotInApotekaPage(Long ApotekaId,Pageable page){
+		return dermatologRepository.fetchNotWorkingInApotekaPage(ApotekaId, page);
     }
     //svi dermatolozi koji ne rade u apoteci LIST
-    public List<Dermatolog> fetchDermatologsNotInApotekaList(Long ApotekaId){	
-		return dermatologRepository.fetchNotWorkingInApotekaList(ApotekaId);	
+    public List<Dermatolog> fetchDermatologsNotInApotekaList(Long ApotekaId){
+		return dermatologRepository.fetchNotWorkingInApotekaList(ApotekaId);
     }
     //za dermatologa sva njegova radna mesta
     public List<DermatologApoteka> fetchAllWorkingTimesAndPricesForDermatolog(Long dermatologId){
@@ -76,13 +84,13 @@ public class ZdravstveniRadnikService {
     }
     //provera radnog vremena dermatolog
     public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username,LocalDateTime start, LocalDateTime end){
-    	
+
     	return dermatologRepository.findIfDermatologTimesOverlap(username,start, end);
     }
 
 	public void addDermatologApoteke(DermatologApoteka da) {
 		dermatologApotekaRepository.save(da);
-		
+
 	}
 	public DermatologApoteka findDermatologApoteka(Long dermatologId,Long apotekaId) {
 		return dermatologApotekaRepository.findOneDermatologApotekaByIds(dermatologId,apotekaId);
@@ -97,6 +105,6 @@ public class ZdravstveniRadnikService {
 
 	public void deleteFarmaceuta(Long id) {
 		farmaceutRepository.deleteById(id);
-		
+
 	}
 }
