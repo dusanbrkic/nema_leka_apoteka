@@ -14,8 +14,12 @@ Vue.component("PregledForma", {
             pregledEnd: '',
             pretragaLekova: '',
             totalLekovi: '',
-            pageLekova: 0,
+            pageLekova: 1,
             pageSizeLekova: 6,
+            pagepreporucenihLekova: 1,
+            pageSizepreporucenihLekova: 6,
+            totalpreporuceniLekovi: 0,
+            preporuceniLekoviPrikaz: [],
             selectedTerm: null,
             nullTerm: {value: null, text: 'Izaberite termin:'},
             terms: [
@@ -44,7 +48,8 @@ Vue.component("PregledForma", {
     template:
         `
           <div>
-          <b-modal id="odabirKolicineModal" title="Odredi terapiju">
+          <!--modal odabira kolicine-->
+          <b-modal size="sm" id="odabirKolicineModal" title="Odredi terapiju">
             <label for="unos_kolicine">Kolicina za rezervaciju:</label>
             <b-form-input id="unos_kolicine" type="number" v-model="kolicinaLeka">
             </b-form-input>
@@ -55,11 +60,12 @@ Vue.component("PregledForma", {
               <b-button @click="ok()">
                 Otkazi
               </b-button>
-              <b-button v-on:click="dodaj_lek" variant="success" @click="ok()">
+              <b-button v-on:click="dodaj_lek" variant="success">
                 Dodaj lek
               </b-button>
             </template>
           </b-modal>
+          <!--modal zakazivanja-->
           <b-modal id="zakazivanjeModal" title="Zakazi pregled pacijentu">
             <template v-if="rola=='DERMATOLOG'">
               <label for="radio-group-1">Izaberite nacin zakazivanja:</label>
@@ -136,14 +142,16 @@ Vue.component("PregledForma", {
               </b-button>
             </template>
           </b-modal>
+          <!--modal odabira leka-->
           <b-modal size="lg" id="dodajLekModal" title="Preporuci lek pacijentu">
             <b-container>
               <b-row>
                 <b-col>
-                  <b-form-input v-model="pretragaLekova" type="search"/>
-                </b-col>
-                <b-col>
-                  <b-button v-on:click="loadLekovi">Pretrazi</b-button>
+                  <b-form-input
+                      placeholder="Pretrazi lekove..."
+                      v-on:input="handleSearch"
+                      v-model="pretragaLekova"
+                      type="search"/>
                 </b-col>
               </b-row>
             </b-container>
@@ -164,7 +172,9 @@ Vue.component("PregledForma", {
               </b-row>
             </b-container>
             <b-pagination
-                style="margin: auto; width: 50%;"
+                pills
+                align="center"
+                style="margin: 10px auto;"
                 v-model="pageLekova"
                 :total-rows="totalLekovi"
                 :per-page="pageSizeLekova"
@@ -174,17 +184,18 @@ Vue.component("PregledForma", {
               <b-button @click="ok()">
                 Otkazi
               </b-button>
-              <b-button v-on:click="zakazi_pregled" variant="success" @click="ok()">
-                Dodaj lek
-              </b-button>
             </template>
           </b-modal>
+          <!--main view-->
           <b-card style="max-width: 700px; margin: 30px auto;" title="Upisite podatke o pregledu:">
             <b-form @submit.prevent="onSubmit">
               <b-container>
                 <b-row>
                   <b-col>
-                    <strong>Ime i prezime pacijenta:</strong> {{ pregled.pacijent.ime }} {{ pregled.pacijent.prezime }}
+                    <strong>Pacijent:</strong> {{ pregled.pacijent.ime }} {{ pregled.pacijent.prezime }}
+                  </b-col>
+                  <b-col>
+                    <b-button v-on:click="pacijent_pobegao" variant="danger" style="float: right">Pacijent se nije pojavio</b-button>
                   </b-col>
                 </b-row>
                 <br>
@@ -206,29 +217,54 @@ Vue.component("PregledForma", {
                 </b-row>
                 <b-row>
                   <b-col>
-                    Preporuceni lekovi:
-                    <b-button v-on:click="dodavanje_forma" variant="primary" style="margin-left:10px">Dodaj lek
+                    <b-button v-on:click="dodavanje_forma" variant="primary" style="float:right;">Dodaj lek
                     </b-button>
                   </b-col>
                 </b-row>
-                <template v-for="lek in pregled.preporuceniLekovi">
-                  <b-row>
-                    <b-col>
-                      - {{ lek.lek.naziv }} - {{lek.trajanjeTerapije}} dana
-                    </b-col>
-                    <b-col>
-                      <b-button style="margin: 2px auto;" v-on:click="returnToHome" variant="danger">Izbaci lek</b-button>
+                <label for="container2" v-if="totalpreporuceniLekovi>0">Preporuceni lekovi:</label>
+                <template id="container2">
+                  <b-row v-for="chungus in this.preporuceniLekoviPrikaz">
+                    <b-col v-for="pregledlek in chungus">
+                      <b-card
+                          style="margin: 10px auto; max-width: 175px"
+                          :header="pregledlek.lek.naziv"
+                          class="text-center"
+                      >
+                        <b-card-text>
+                          Terapija: {{ pregledlek.trajanjeTerapije }} dan(a) <br>
+                          Kolicina: {{ pregledlek.kolicina }}
+                        </b-card-text>
+                        <b-button variant="danger" v-on:click="izbaci_lek(lek)">Izbaci</b-button>
+                      </b-card>
                     </b-col>
                   </b-row>
                 </template>
+                <b-row>
+                  <b-col>
+                    <b-pagination
+                        v-if="totalpreporuceniLekovi>0"
+                        pills
+                        align="center"
+                        style="margin: 10px auto;"
+                        v-model="pagepreporucenihLekova"
+                        :total-rows="totalpreporuceniLekovi"
+                        :per-page="pageSizepreporucenihLekova"
+                        @change="handlePageChangePreporucenihLekova"
+                    ></b-pagination>
+                  </b-col>
+                </b-row>
+                <b-row>
+                  <b-col>
+                    <b-button style="float: right; margin-top: 10px;" variant="primary" v-on:click="zakazivanje_forma">
+                      Zakazi dodatan pregled
+                    </b-button>
+                  </b-col>
+                </b-row>
                 <br>
                 <b-row>
                   <b-col>
-                    <b-button v-on:click="returnToHome">Nazad</b-button>
-                    <b-button type="submit" variant="primary">Sacuvaj</b-button>
-                    <b-button style="float: right" variant="primary" v-on:click="zakazivanje_forma">
-                      Zakazi dodatan pregled
-                    </b-button>
+                    <b-button style="float:right; margin-left: 5px" variant="success">Sacuvaj</b-button>
+                    <b-button style="float:right; " v-on:click="returnToCalendar">Nazad</b-button>
                   </b-col>
                 </b-row>
               </b-container>
@@ -243,8 +279,15 @@ Vue.component("PregledForma", {
             axios
                 .put("pregledi/updatePregled", this.pregled)
             localStorage.removeItem("pregled")
-            if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut")
-            else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog")
+            if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
+            else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
+        },
+        pacijent_pobegao: function (){
+            axios
+                .put("pregledi/updatePregledBezPacijenta", this.pregled)
+            localStorage.removeItem("pregled")
+            if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
+            else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
         },
         zakazivanje_forma: function () {
             this.$bvModal.show('zakazivanjeModal')
@@ -253,32 +296,58 @@ Vue.component("PregledForma", {
             this.izabraniLek = lek
             this.$bvModal.show('odabirKolicineModal')
         },
-        dodaj_lek: function (){
+        dodaj_lek: function () {
             this.pregled.preporuceniLekovi.push({
                 lek: this.izabraniLek,
                 kolicina: this.kolicinaLeka,
                 trajanjeTerapije: this.trajanjeTerapijeLeka
             })
+            this.dobavi_preporucene_lekove(this.pagepreporucenihLekova)
+            this.totalpreporuceniLekovi = this.pregled.preporuceniLekovi.length
+        },
+        handlePageChangePreporucenihLekova: function (value) {
+            this.pagepreporucenihLekova = value
+            this.dobavi_preporucene_lekove(this.pagepreporucenihLekova)
+        },
+        dobavi_preporucene_lekove: function (brojStranice) {
+            this.preporuceniLekoviPrikaz = []
+            let k = 0
+            for (let i = (brojStranice - 1) * 2; i < (brojStranice - 1) * 2 + 2; i = i + 1) {
+                this.preporuceniLekoviPrikaz.push([])
+                for (let j = 0; j < 3; j = j + 1) {
+                    let item = this.pregled.preporuceniLekovi[j + i * 3]
+                    if (typeof item === 'undefined')
+                        return
+                    this.preporuceniLekoviPrikaz[k].push(item)
+                }
+                k = k + 1
+            }
         },
         dodavanje_forma: function () {
-            this.pageLekova = 0
+            this.pageLekova = 1
             this.loadLekovi()
             this.$bvModal.show('dodajLekModal')
         },
         handlePageChange(value) {
-            this.pageLekova = value - 1
+            this.pageLekova = value
+            this.loadLekovi()
+        },
+        handleSearch: function () {
+            this.pageLekova = 1
             this.loadLekovi()
         },
         loadLekovi: function () {
+            let vecPreporuceniSifre = []
+            for (const p of this.pregled.preporuceniLekovi)
+                vecPreporuceniSifre.push(p.lek.sifra)
             axios
-                .get("/lekovi/getAllByPacijentNotAllergic", {
-                    params: {
-                        'idPacijenta': this.pregled.pacijent.id,
-                        'cookie': this.cookie,
-                        'page': this.pageLekova,
-                        'pageSize': this.pageSizeLekova,
-                        'pretraga': this.pretragaLekova,
-                    }
+                .post("/lekovi/getAllByPacijentNotAllergic", {
+                    'idPacijenta': this.pregled.pacijent.id,
+                    'cookie': this.cookie,
+                    'page': this.pageLekova - 1,
+                    'pageSize': this.pageSizeLekova,
+                    'pretraga': this.pretragaLekova,
+                    'vecPreporuceniSifre': vecPreporuceniSifre
                 })
                 .then(response => {
                     this.lekovi = []
@@ -289,13 +358,13 @@ Vue.component("PregledForma", {
                             let item = response.data.content[j + i * 3]
                             if (typeof item === 'undefined')
                                 return
-                            this.lekovi[i].push(response.data.content[j + i * 3])
+                            this.lekovi[i].push(item)
                         }
                     }
 
                 })
         },
-        returnToHome: function () {
+        returnToCalendar: function () {
             if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
             else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
             else {

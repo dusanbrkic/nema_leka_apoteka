@@ -43,6 +43,6 @@ public interface LekRepository extends JpaRepository<Lek, Long> {
 	@Query(value = "select l from LEK l where l.id NOT IN (select l1.id from LEK l1 inner join APOTEKA_LEK al on l1.id = al.lek.id where al.apoteka.id = :ap_id)")
 	Page<Lek> findAllNotInApoteka(@Param("ap_id") Long alId, Pageable pageable);
 
-	@Query(value = "select l from LEK l where l.id not in (select a.id from PACIJENT p inner join p.alergije a where :idPacijenta=p.id) and upper(l.naziv) like upper(:pretraga)")
-    Page<Lek> getAllByPacijentNotAllergic(@Param("idPacijenta") Long idPacijenta, @Param("pretraga") String pretraga, Pageable pageable);
+	@Query(value = "select l from LEK l where l.id not in (select a.id from PACIJENT p inner join p.alergije a where :idPacijenta=p.id) and upper(l.naziv) like upper(:pretraga) and l.sifra not in :vecPreporuceniSifre")
+    Page<Lek> getAllByPacijentNotAllergic(@Param("idPacijenta") Long idPacijenta, @Param("pretraga") String pretraga, Pageable pageable, List<String> vecPreporuceniSifre);
 }

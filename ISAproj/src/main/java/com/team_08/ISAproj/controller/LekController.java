@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/lekovi")
@@ -367,16 +368,20 @@ public class LekController {
 
 	}
 
-	@GetMapping(value="/getAllByPacijentNotAllergic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value="/getAllByPacijentNotAllergic" , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<LekDTO>> getAllByPacijentNotAllergic(
-			@RequestParam() String pretraga,
-			@RequestParam() Long idPacijenta,
-			@RequestParam() String cookie,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "6") int pageSize
-	){
+			@RequestBody Map<String, Object> body){
+
+		String pretraga = (String) body.get("pretraga");
+		Long idPacijenta = ((Number) body.get("idPacijenta")).longValue();
+		String cookie = (String) body.get("cookie");
+		int page = (int) body.get("page");
+		int pageSize = (int) body.get("pageSize");
+		List<String> vecPreporuceniSifre = (List<String>) body.get("vecPreporuceniSifre");
+		vecPreporuceniSifre.add("");
+
 		Page<Lek> lekovi = null;
-		lekovi = lekService.getAllByPacijentNotAllergic(page, pageSize, idPacijenta, pretraga);
+		lekovi = lekService.getAllByPacijentNotAllergic(page, pageSize, idPacijenta, pretraga, vecPreporuceniSifre);
 		if (lekovi == null)
 			return new ResponseEntity<Page<LekDTO>>(Page.empty(), HttpStatus.OK);
 

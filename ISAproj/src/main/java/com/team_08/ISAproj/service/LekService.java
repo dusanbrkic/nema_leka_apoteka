@@ -100,8 +100,8 @@ public class LekService {
 		return lekRepository.findAllNotInApoteka(id, page);
 	}
 
-    public Page<Lek> getAllByPacijentNotAllergic(int page, int pageSize, Long idPacijenta, String pretraga) {
+    public Page<Lek> getAllByPacijentNotAllergic(int page, int pageSize, Long idPacijenta, String pretraga, List<String> vecPreporuceniSifre) {
     	pretraga = "%" + pretraga + "%";
-    	return lekRepository.getAllByPacijentNotAllergic(idPacijenta, pretraga, PageRequest.of(page, pageSize));
+    	return lekRepository.getAllByPacijentNotAllergic(idPacijenta, pretraga, PageRequest.of(page, pageSize), vecPreporuceniSifre);
     }
 }
