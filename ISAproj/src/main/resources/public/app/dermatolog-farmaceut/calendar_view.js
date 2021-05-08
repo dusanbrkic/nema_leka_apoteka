@@ -130,7 +130,7 @@ Vue.component("CalendarView", {
                 <b-col><strong>Preporuceni lekovi:</strong></b-col>
                 <b-col>
                   <b-row v-for="pregledLek in selectedEvent.preporuceniLekovi">
-                    - {{ pregledLek.lek.naziv }} - {{pregledLek.trajanjeTerapije}} dana
+                    - {{ pregledLek.lek.naziv }} - {{ pregledLek.trajanjeTerapije }} dana
                   </b-row>
                 </b-col>
               </b-row>
@@ -140,6 +140,13 @@ Vue.component("CalendarView", {
               </b-row>
             </b-container>
             <template #modal-footer="{ ok }">
+              <b-button
+                  @click="ok()"
+                  v-if="selectedEvent.pregledZakazan && !selectedEvent.pregledObavljen"
+                  v-on:click="pacijent_pobegao"
+                  variant="danger">
+                Pacijent se nije pojavio
+              </b-button>
               <b-button variant="success" @click="ok()"
                         v-if="(selectedEvent.pregledObavljen || !selectedEvent.pregledZakazan)">
                 OK
@@ -163,6 +170,26 @@ Vue.component("CalendarView", {
         `
     ,
     methods: {
+        pacijent_pobegao: function () {
+            let pregled = {
+                id: this.selectedEvent.id,
+                start: this.selectedEvent.start,
+                end: this.selectedEvent.end,
+                apoteka: this.selectedEvent.apoteka,
+                pacijent: this.selectedEvent.pacijent,
+                preporuceniLekovi: this.selectedEvent.preporuceniLekovi,
+                dijagnoza: this.selectedEvent.dijagnoza,
+                pregledZakazan: this.selectedEvent.pregledZakazan,
+                pregledObavljen: this.selectedEvent.pregledObavljen,
+                trajanje: this.selectedEvent.trajanje,
+            }
+            axios
+                .put("pregledi/updatePregledBezPacijenta", {
+                    'pregled': pregled,
+                    'cookie': this.cookie
+                })
+        },
+
         zapocni_pregled: function () {
             let pregled = {
                 id: this.selectedEvent.id,
@@ -207,14 +234,14 @@ Vue.component("CalendarView", {
                                     return "dodeljeni termin"
                                 }
                             })(),
-                            start: new Date(event.start+".000Z"),
-                            end: new Date(event.end+".000Z"),
+                            start: new Date(event.start + ".000Z"),
+                            end: new Date(event.end + ".000Z"),
                             event: event,
                             color: (() => {
                                 if (event.pregledZakazan) {
                                     if (event.pregledObavljen)
                                         return "gray"
-                                    else if(event.start < new Date())
+                                    else if (event.start < new Date())
                                         return "red"
                                 } else {
                                     if (!event.pregledZakazan)

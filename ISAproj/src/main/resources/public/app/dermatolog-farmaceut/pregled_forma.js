@@ -36,7 +36,10 @@ Vue.component("PregledForma", {
                 pregledZakazan: null,
                 pregledObavljen: null,
                 trajanje: null,
-            }
+            },
+            showPraznaPoljaAlert: false,
+            lekNijeDostupan: false,
+            odabirLekaTitle: 'Preporuci lek pacijentu'
         }
     },
 
@@ -50,6 +53,7 @@ Vue.component("PregledForma", {
           <div>
           <!--modal odabira kolicine-->
           <b-modal size="sm" id="odabirKolicineModal" title="Odredi terapiju">
+            <b-alert variant="danger" v-model="showPraznaPoljaAlert">Imate prazna polja!</b-alert>
             <label for="unos_kolicine">Kolicina za rezervaciju:</label>
             <b-form-input id="unos_kolicine" type="number" v-model="kolicinaLeka">
             </b-form-input>
@@ -143,7 +147,7 @@ Vue.component("PregledForma", {
             </template>
           </b-modal>
           <!--modal odabira leka-->
-          <b-modal size="lg" id="dodajLekModal" title="Preporuci lek pacijentu">
+          <b-modal size="lg" id="dodajLekModal" :title="odabirLekaTitle">
             <b-container>
               <b-row>
                 <b-col>
@@ -181,8 +185,8 @@ Vue.component("PregledForma", {
                 @change="handlePageChange"
             ></b-pagination>
             <template #modal-footer="{ ok }">
-              <b-button @click="ok()">
-                Otkazi
+              <b-button @click="ok()" variant="primary">
+                OK
               </b-button>
             </template>
           </b-modal>
@@ -193,9 +197,6 @@ Vue.component("PregledForma", {
                 <b-row>
                   <b-col>
                     <strong>Pacijent:</strong> {{ pregled.pacijent.ime }} {{ pregled.pacijent.prezime }}
-                  </b-col>
-                  <b-col>
-                    <b-button v-on:click="pacijent_pobegao" variant="danger" style="float: right">Pacijent se nije pojavio</b-button>
                   </b-col>
                 </b-row>
                 <br>
@@ -217,7 +218,7 @@ Vue.component("PregledForma", {
                 </b-row>
                 <b-row>
                   <b-col>
-                    <b-button v-on:click="dodavanje_forma" variant="primary" style="float:right;">Dodaj lek
+                    <b-button v-on:click="dodavanje_forma" variant="primary" style="float:right;">Dodaj lekove
                     </b-button>
                   </b-col>
                 </b-row>
@@ -234,7 +235,7 @@ Vue.component("PregledForma", {
                           Terapija: {{ pregledlek.trajanjeTerapije }} dan(a) <br>
                           Kolicina: {{ pregledlek.kolicina }}
                         </b-card-text>
-                        <b-button variant="danger" v-on:click="izbaci_lek(lek)">Izbaci</b-button>
+                        <b-button variant="danger" v-on:click="izbaci_lek(pregledlek)">Izbaci</b-button>
                       </b-card>
                     </b-col>
                   </b-row>
@@ -275,16 +276,16 @@ Vue.component("PregledForma", {
         `
     ,
     methods: {
+        izbaci_lek: function (lek){
+            this.pregled.preporuceniLekovi.splice(this.pregled.preporuceniLekovi.indexOf(lek), 1)
+            if(this.pagepreporucenihLekova!=1 && ((this.pagepreporucenihLekova-1)
+                * this.pageSizepreporucenihLekova <= this.pregled.preporuceniLekovi.length))
+                this.pagepreporucenihLekova = this.pagepreporucenihLekova - 1
+            this.dobavi_preporucene_lekove(this.pagepreporucenihLekova);
+        },
         onSubmit: function () {
             axios
                 .put("pregledi/updatePregled", this.pregled)
-            localStorage.removeItem("pregled")
-            if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
-            else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
-        },
-        pacijent_pobegao: function (){
-            axios
-                .put("pregledi/updatePregledBezPacijenta", this.pregled)
             localStorage.removeItem("pregled")
             if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
             else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
@@ -294,22 +295,49 @@ Vue.component("PregledForma", {
         },
         izaberi_lek: function (lek) {
             this.izabraniLek = lek
+            this.showPraznaPoljaAlert = false
             this.$bvModal.show('odabirKolicineModal')
         },
-        dodaj_lek: function () {
+        dodaj_lek: async function () {
+            if(this.kolicinaLeka=='' || this.trajanjeTerapijeLeka=='') {
+                this.showPraznaPoljaAlert = true
+                return
+            } else this.showPraznaPoljaAlert = false
+
+                if(!
+                    await axios
+                        .get("pregledi/proveriDostupnostLeka", {
+                            params: {
+                                'sifraLeka': this.izabraniLek.sifra,
+                                'idApoteke': this.pregled.apoteka.id,
+                                'kolicina': this.kolicinaLeka,
+                                'cookie': this.cookie,
+                            }
+                        })
+                        .then(response =>  response.data)
+                ){
+                    this.lekNijeDostupan = true
+
+                    return
+                }
+
             this.pregled.preporuceniLekovi.push({
                 lek: this.izabraniLek,
                 kolicina: this.kolicinaLeka,
                 trajanjeTerapije: this.trajanjeTerapijeLeka
             })
+            if(this.pageLekova!=1 && this.lekovi[0].length==1)
+                this.pageLekova = this.pageLekova - 1
             this.dobavi_preporucene_lekove(this.pagepreporucenihLekova)
-            this.totalpreporuceniLekovi = this.pregled.preporuceniLekovi.length
+            this.$bvModal.hide('odabirKolicineModal')
+            this.loadLekovi()
         },
         handlePageChangePreporucenihLekova: function (value) {
             this.pagepreporucenihLekova = value
             this.dobavi_preporucene_lekove(this.pagepreporucenihLekova)
         },
         dobavi_preporucene_lekove: function (brojStranice) {
+            this.totalpreporuceniLekovi = this.pregled.preporuceniLekovi.length
             this.preporuceniLekoviPrikaz = []
             let k = 0
             for (let i = (brojStranice - 1) * 2; i < (brojStranice - 1) * 2 + 2; i = i + 1) {
