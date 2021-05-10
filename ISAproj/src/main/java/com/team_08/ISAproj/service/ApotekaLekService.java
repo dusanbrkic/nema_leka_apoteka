@@ -17,6 +17,10 @@ import com.team_08.ISAproj.repository.LekRepository;
 
 @Service
 public class ApotekaLekService {
+	@Autowired
+	private ApotekaLekRepository apotekaLekRepository;
+	@Autowired
+	private LekRepository lekRepository;
 
 
 	public ApotekaLek findOne(Long id) {
@@ -34,6 +38,9 @@ public class ApotekaLekService {
 
 	public Page<ApotekaLek> findAll(Pageable page) {
 		return apotekaLekRepository.findAll(page);
+	}
+	public List<ApotekaLek> findAll() {
+		return apotekaLekRepository.findAll();
 	}
 
 	public Page<ApotekaLek> findByLekContaining(Lek lek, Pageable pageable) {
@@ -60,35 +67,6 @@ public class ApotekaLekService {
     		return;
     	}
     	apotekaLekRepository.deleteById(al.getId());
-    }
-
-    public Page<ApotekaLek> findAll(Pageable page) {
-        return apotekaLekRepository.findAll(page);
-    }
-
-    public Page<ApotekaLek> findByLekContaining(Lek lek, Pageable pageable) {
-        return apotekaLekRepository.findByLekContaining(lek, pageable);
-    }
-
-    public Page<ApotekaLek> findLekoviByApotekaID(Long ApotekaID, Pageable paging) {
-        return apotekaLekRepository.findAllApotekaLekoviByApotedaIdPage(ApotekaID, paging);
-    }
-
-    public ApotekaLek findOneBySifra(Lek l, Long ApotekaID) {
-        List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findAllByApotekaId(ApotekaID);
-        ApotekaLek al = apotekaLekRepository.fetchBySifra(ApotekaID, l.getSifra());
-        if (al == null) {
-            return null;
-        }
-        return al;
-    }
-
-    public void removeBySifra(Long lekID, Long apotekaID) {
-        ApotekaLek al = apotekaLekRepository.findApotekaLekById(lekID, apotekaID);
-        if (al == null) {
-            return;
-        }
-        apotekaLekRepository.deleteById(al.getId());
     }
 
     public void saveAL(ApotekaLek al) {

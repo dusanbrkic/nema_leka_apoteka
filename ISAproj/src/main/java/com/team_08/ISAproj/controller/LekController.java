@@ -414,16 +414,12 @@ public class LekController {
 			@RequestParam Long idApoteke,
 			@RequestParam Integer kolicina){
 		ApotekaLek al = apotekaLekService.findOneBySifra(sifraLeka, idApoteke);
-		Apoteka apoteka = null;
-		Lek lek = null;
+		Apoteka apoteka = apotekaService.fetchOneByIdWithAdmini(idApoteke);
+		Lek lek = lekService.findOneBySifra(sifraLeka);
 		Integer kolicinaUApoteci = null;
 		if (al!=null){
-			apoteka = al.getApoteka();
-			lek = al.getLek();
 			kolicinaUApoteci = al.getKolicina();
 		} else{
-			apoteka = apotekaService.fetchOneByIdWithAdmini(idApoteke);
-			lek = lekService.findOneBySifra(sifraLeka);
 			kolicinaUApoteci = 0;
 		}
 		if (al==null || al.getKolicina() < kolicina) {

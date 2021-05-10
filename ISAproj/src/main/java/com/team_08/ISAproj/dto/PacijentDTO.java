@@ -21,6 +21,7 @@ public class PacijentDTO {
     }
 
     public PacijentDTO(Korisnik k) {
+        if (k==null) return;
         this.id = k.getId();
         this.ime = k.getIme();
         this.prezime = k.getPrezime();

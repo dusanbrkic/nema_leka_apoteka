@@ -45,12 +45,12 @@ public class PregledController {
     @Autowired
     private LekService lekService;
     @Autowired
-    ZdravstveniRadnikService zdravstveniRadnikService;
+    private ZdravstveniRadnikService zdravstveniRadnikService;
     @Autowired
     private KorisnikService korisnikService;
     @Autowired
     private ApotekaService apotekaService;
-
+    @Autowired
     private RezervacijaService rezervacijaService;
     @Autowired
     private ApotekaLekService apotekaLekService;
