@@ -104,4 +104,9 @@ public class LekService {
     	pretraga = "%" + pretraga + "%";
     	return lekRepository.getAllByPacijentNotAllergic(idPacijenta, pretraga, PageRequest.of(page, pageSize), vecPreporuceniSifre);
     }
+
+    public Page<Lek> getAllZamenskiLekovi(int page, int pageSize, Long idPacijenta, String pretraga, List<String> vecPreporuceniSifre, String nedostupanLekSifra, Long apotekaID, Integer kolicina) {
+		pretraga = "%" + pretraga + "%";
+    	return lekRepository.getAllZamenskiLekovi(idPacijenta, pretraga, PageRequest.of(page, pageSize), vecPreporuceniSifre, nedostupanLekSifra, apotekaID, kolicina);
+    }
 }

@@ -46,4 +46,7 @@ public class ApotekaService {
 		return apotekaRepository.findByNazivContaining(naziv, pageable);
 	}
 
+    public Apoteka fetchOneByIdWithAdmini(Long idApoteke) {
+		return apotekaRepository.fetchOneByIdWithAdmini(idApoteke);
+    }
 }

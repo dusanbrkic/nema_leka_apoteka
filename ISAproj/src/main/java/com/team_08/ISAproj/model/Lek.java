@@ -33,7 +33,7 @@ public class Lek {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Lek> zamenskiLekovi;
 
-	
+
 	// constructors
 	public Lek(String sifra, String naziv, String upustvo, TipLeka tip, OblikLeka oblikLeka, String sastav,
 			Set<Lek> sifreZamenskihLekova, String dodatneNapomene) {
@@ -62,6 +62,19 @@ public class Lek {
 		this.dodatneNapomene = lek.getDodatneNapomene();
 		this.zamenskiLekovi = new HashSet<Lek>();
 	}
+
+	@Override
+	public String toString() {
+		return "Specifikacije leka:\n" +
+				"    Sifra: " +  sifra + '\n' +
+				"    Naziv: " +  naziv + '\n' +
+				"    Uputstvo: " +  uputstvo + '\n' +
+				"    Tip: " +  tip + '\n' +
+				"    Oblik leka: " +  oblikLeka + '\n' +
+				"    Sastav: " +  sastav + '\n' +
+				"    Dodatne napomene: " +  dodatneNapomene + '\n';
+	}
+
 	// getters and setters
 	public String getSifra() {
 		return sifra;

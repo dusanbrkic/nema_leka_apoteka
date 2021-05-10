@@ -132,6 +132,7 @@ Vue.component("CalendarView", {
                   <b-row v-for="pregledLek in selectedEvent.preporuceniLekovi">
                     - {{ pregledLek.lek.naziv }} - {{ pregledLek.trajanjeTerapije }} dana
                   </b-row>
+                  <b-row v-if="selectedEvent.preporuceniLekovi.length==0">Nema preporucenih lekova</b-row>
                 </b-col>
               </b-row>
               <b-row v-if="!selectedEvent.pregledZakazan">

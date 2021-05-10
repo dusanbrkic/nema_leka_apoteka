@@ -39,7 +39,9 @@ Vue.component("PregledForma", {
             },
             showPraznaPoljaAlert: false,
             lekNijeDostupan: false,
-            odabirLekaTitle: 'Preporuci lek pacijentu'
+            odabirLekaTitle: 'Preporuci lek pacijentu:',
+            nedostupanLek: '',
+            kolicinaNedostupnogLeka: '-1'
         }
     },
 
@@ -148,6 +150,9 @@ Vue.component("PregledForma", {
           </b-modal>
           <!--modal odabira leka-->
           <b-modal size="lg" id="dodajLekModal" :title="odabirLekaTitle">
+            <b-alert variant="warning" v-model="lekNijeDostupan">
+              Lek koji ste izabrali nije dostupan, izaberite neki od zamenskih lekova.
+            </b-alert>
             <b-container>
               <b-row>
                 <b-col>
@@ -176,6 +181,7 @@ Vue.component("PregledForma", {
               </b-row>
             </b-container>
             <b-pagination
+                v-if="totalLekovi>0"
                 pills
                 align="center"
                 style="margin: 10px auto;"
@@ -184,9 +190,13 @@ Vue.component("PregledForma", {
                 :per-page="pageSizeLekova"
                 @change="handlePageChange"
             ></b-pagination>
+            <h6 align="center" style="margin: 10px;" v-if="totalLekovi==0">Nema lekova za prikaz</h6>
             <template #modal-footer="{ ok }">
-              <b-button @click="ok()" variant="primary">
+              <b-button @click="ok()" variant="primary" v-if="!lekNijeDostupan">
                 OK
+              </b-button>
+              <b-button v-on:click="nazadNaSveLekove" v-if="lekNijeDostupan">
+                Nazad na sve lekove
               </b-button>
             </template>
           </b-modal>
@@ -264,7 +274,7 @@ Vue.component("PregledForma", {
                 <br>
                 <b-row>
                   <b-col>
-                    <b-button style="float:right; margin-left: 5px" variant="success">Sacuvaj</b-button>
+                    <b-button style="float:right; margin-left: 5px" variant="success" v-on:click="onSubmit">Sacuvaj</b-button>
                     <b-button style="float:right; " v-on:click="returnToCalendar">Nazad</b-button>
                   </b-col>
                 </b-row>
@@ -276,15 +286,21 @@ Vue.component("PregledForma", {
         `
     ,
     methods: {
-        izbaci_lek: function (lek){
+        nazadNaSveLekove: function () {
+            this.lekNijeDostupan = false
+            this.odabirLekaTitle = "Preporuci lek pacijentu:"
+            this.pageLekova = 1
+            this.loadLekovi()
+        },
+        izbaci_lek: function (lek) {
             this.pregled.preporuceniLekovi.splice(this.pregled.preporuceniLekovi.indexOf(lek), 1)
-            if(this.pagepreporucenihLekova!=1 && ((this.pagepreporucenihLekova-1)
+            if (this.pagepreporucenihLekova != 1 && ((this.pagepreporucenihLekova - 1)
                 * this.pageSizepreporucenihLekova <= this.pregled.preporuceniLekovi.length))
                 this.pagepreporucenihLekova = this.pagepreporucenihLekova - 1
             this.dobavi_preporucene_lekove(this.pagepreporucenihLekova);
         },
-        onSubmit: function () {
-            axios
+        onSubmit: async function () {
+            await axios
                 .put("pregledi/updatePregled", this.pregled)
             localStorage.removeItem("pregled")
             if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
@@ -299,34 +315,42 @@ Vue.component("PregledForma", {
             this.$bvModal.show('odabirKolicineModal')
         },
         dodaj_lek: async function () {
-            if(this.kolicinaLeka=='' || this.trajanjeTerapijeLeka=='') {
+            if (this.kolicinaLeka == '' || this.trajanjeTerapijeLeka == '') {
                 this.showPraznaPoljaAlert = true
                 return
             } else this.showPraznaPoljaAlert = false
 
-                if(!
-                    await axios
-                        .get("pregledi/proveriDostupnostLeka", {
-                            params: {
-                                'sifraLeka': this.izabraniLek.sifra,
-                                'idApoteke': this.pregled.apoteka.id,
-                                'kolicina': this.kolicinaLeka,
-                                'cookie': this.cookie,
-                            }
-                        })
-                        .then(response =>  response.data)
-                ){
-                    this.lekNijeDostupan = true
-
-                    return
-                }
+            if (!
+                await axios
+                    .get("lekovi/proveriDostupnostLeka", {
+                        params: {
+                            'sifraLeka': this.izabraniLek.sifra,
+                            'idApoteke': this.pregled.apoteka.id,
+                            'kolicina': this.kolicinaLeka,
+                            'cookie': this.cookie,
+                        }
+                    })
+                    .then(response => response.data)
+            ) {
+                this.lekNijeDostupan = true
+                this.nedostupanLek = this.izabraniLek
+                this.kolicinaNedostupnogLeka = this.kolicinaLeka
+                this.pageLekova = 1
+                this.odabirLekaTitle = "Izaberite zamenski lek:"
+                this.loadLekovi()
+                this.$bvModal.hide('odabirKolicineModal')
+                return
+            } else {
+                this.lekNijeDostupan = false
+                this.odabirLekaTitle = "Preporuci lek pacijentu:"
+            }
 
             this.pregled.preporuceniLekovi.push({
                 lek: this.izabraniLek,
                 kolicina: this.kolicinaLeka,
                 trajanjeTerapije: this.trajanjeTerapijeLeka
             })
-            if(this.pageLekova!=1 && this.lekovi[0].length==1)
+            if (this.pageLekova != 1 && this.lekovi[0].length == 1)
                 this.pageLekova = this.pageLekova - 1
             this.dobavi_preporucene_lekove(this.pagepreporucenihLekova)
             this.$bvModal.hide('odabirKolicineModal')
@@ -375,7 +399,15 @@ Vue.component("PregledForma", {
                     'page': this.pageLekova - 1,
                     'pageSize': this.pageSizeLekova,
                     'pretraga': this.pretragaLekova,
-                    'vecPreporuceniSifre': vecPreporuceniSifre
+                    'vecPreporuceniSifre': vecPreporuceniSifre,
+                    'nedostupanLek': (() => {
+                        if (this.lekNijeDostupan)
+                            return this.nedostupanLek.sifra
+                        else
+                            return null
+                    })(),
+                    'kolicina': this.kolicinaNedostupnogLeka,
+                    'apotekaID': this.pregled.apoteka.id
                 })
                 .then(response => {
                     this.lekovi = []

@@ -29,10 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -161,6 +158,8 @@ public class PregledController {
         pregled.setPregledObavljen(true);
         pregled.setDijagnoza(pregledDTO.getDijagnoza());
         pregledService.savePregled(pregled);
+
+        if (rezervacije.isEmpty()) return new ResponseEntity<String>(HttpStatus.OK);
 
         // r e z e r v a c i j a  copy paste
 

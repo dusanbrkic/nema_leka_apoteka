@@ -378,10 +378,18 @@ public class LekController {
 		int page = (int) body.get("page");
 		int pageSize = (int) body.get("pageSize");
 		List<String> vecPreporuceniSifre = (List<String>) body.get("vecPreporuceniSifre");
+		String nedostupanLekSifra = (String) body.get("nedostupanLek");
+		Integer kolicina = Integer.parseInt((String)body.get("kolicina"));
+		Long apotekaID = ((Number) body.get("apotekaID")).longValue();
+
 		vecPreporuceniSifre.add("");
 
 		Page<Lek> lekovi = null;
-		lekovi = lekService.getAllByPacijentNotAllergic(page, pageSize, idPacijenta, pretraga, vecPreporuceniSifre);
+		if(nedostupanLekSifra == null)
+			lekovi = lekService.getAllByPacijentNotAllergic(page, pageSize, idPacijenta, pretraga, vecPreporuceniSifre);
+		else
+			lekovi = lekService.getAllZamenskiLekovi(page, pageSize, idPacijenta, pretraga, vecPreporuceniSifre, nedostupanLekSifra, apotekaID, kolicina);
+
 		if (lekovi == null)
 			return new ResponseEntity<Page<LekDTO>>(Page.empty(), HttpStatus.OK);
 
@@ -393,5 +401,53 @@ public class LekController {
 			}
 		});
 		return new ResponseEntity<Page<LekDTO>>(lekoviDTO, HttpStatus.OK);
+	}
+
+	@GetMapping(value="/proveriDostupnostLeka" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> proveriDostupnostLeka(
+			@RequestParam String sifraLeka,
+			@RequestParam String cookie,
+			@RequestParam Long idApoteke,
+			@RequestParam Integer kolicina){
+		ApotekaLek al = apotekaLekService.findOneBySifra(sifraLeka, idApoteke);
+		Apoteka apoteka = null;
+		Lek lek = null;
+		Integer kolicinaUApoteci = null;
+		if (al!=null){
+			apoteka = al.getApoteka();
+			lek = al.getLek();
+			kolicinaUApoteci = al.getKolicina();
+		} else{
+			apoteka = apotekaService.fetchOneByIdWithAdmini(idApoteke);
+			lek = lekService.findOneBySifra(sifraLeka);
+			kolicinaUApoteci = 0;
+		}
+		if (al==null || al.getKolicina() < kolicina) {
+			for (AdminApoteke a : apoteka.getAdmini()){
+				String title = "Lek nedostaje u apoteci (" + lek.getNaziv() + ")";
+				String bodyTmp = "Postovani,\n\nNedostaje lek u apoteci " + apoteka.getNaziv() +
+						" kojoj ste vi administrator.\n";
+				bodyTmp+=lek.toString() + '\n';
+				bodyTmp+="Kolicina leka u apoteci: " + kolicinaUApoteci + '\n';
+				bodyTmp+="Zatrazena kolicina: " + kolicina + '\n';
+				final String body = bodyTmp;
+				try
+				{
+					Thread t = new Thread() {
+						public void run()
+						{
+							sendEmailService.sendEmail(a.getEmailAdresa(), body, title);
+						}
+					};
+					t.start();
+				}
+				catch(Exception e) {
+					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+				}
+			}
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(true, HttpStatus.OK);
+		}
 	}
 }

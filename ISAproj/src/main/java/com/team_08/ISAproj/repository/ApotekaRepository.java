@@ -25,5 +25,6 @@ public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 	
 	Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable);
 
-	
+	@Query(value="select a from APOTEKA a join fetch a.admini aa")
+	Apoteka fetchOneByIdWithAdmini(Long idApoteke);
 }
