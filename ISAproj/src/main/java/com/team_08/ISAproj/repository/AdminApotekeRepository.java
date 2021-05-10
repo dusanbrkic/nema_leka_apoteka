@@ -11,7 +11,7 @@ public interface AdminApotekeRepository extends JpaRepository<AdminApoteke, Long
 
     AdminApoteke findOneByUsername(String username);
 
-    Korisnik findOneByCookieTokenValue(String cookie);
+    AdminApoteke findOneByCookieTokenValue(String cookie);
     
-    Korisnik findOneByEmailAdresa(String email_adresa);
+    AdminApoteke findOneByEmailAdresa(String email_adresa);
 }
