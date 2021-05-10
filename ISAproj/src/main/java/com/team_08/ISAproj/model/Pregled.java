@@ -38,12 +38,12 @@ public class Pregled {
 	private Pacijent pacijent;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Apoteka apoteka;
-	@OneToMany(mappedBy = "pregled", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<PregledLek> preporuceniLekovi;
+	@ManyToMany(fetch = FetchType.LAZY)
+	private Set<Lek> preporuceniLekovi;
 	
 	// constructors
 	public Pregled(LocalDateTime vreme, Long trajanje, LocalDateTime kraj, String dijagnoza, boolean pregledObavljen,
-			boolean pregledZakazan, ZdravstveniRadnik zdravstveniRadnik, Pacijent pacijent, Apoteka apoteka, Set<PregledLek> preporuceniLekovi) {
+			boolean pregledZakazan, ZdravstveniRadnik zdravstveniRadnik, Pacijent pacijent, Apoteka apoteka, Set<Lek> preporuceniLekovi) {
 		super();
 		this.vreme = vreme;
 		this.trajanje = trajanje;
@@ -100,8 +100,8 @@ public class Pregled {
 	public void setPacijent(Pacijent pacijent) {this.pacijent = pacijent;}
 	public Apoteka getApoteka() {return apoteka;}
 	public void setApoteka(Apoteka apoteka) {this.apoteka = apoteka;}
-	public Set<PregledLek> getPreporuceniLekovi() {return preporuceniLekovi;}
-	public void setPreporuceniLekovi(Set<PregledLek> preporuceniLekovi) {this.preporuceniLekovi = preporuceniLekovi;}
+	public Set<Lek> getPreporuceniLekovi() {return preporuceniLekovi;}
+	public void setPreporuceniLekovi(Set<Lek> preporuceniLekovi) {this.preporuceniLekovi = preporuceniLekovi;}
 
 	public Double getCena() {
 		return cena;

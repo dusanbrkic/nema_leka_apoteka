@@ -30,13 +30,13 @@ public class Lek {
 	@Column(name = "DODATNE_NAPOMENE")
 	private String dodatneNapomene;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Lek> zamenskiLekovi;
+	@ElementCollection
+	private Set<String> sifreZamenskihLekova;
 
 	
 	// constructors
 	public Lek(String sifra, String naziv, String upustvo, TipLeka tip, OblikLeka oblikLeka, String sastav,
-			Set<Lek> sifreZamenskihLekova, String dodatneNapomene) {
+			Set<String> sifreZamenskihLekova, String dodatneNapomene) {
 		super();
 		this.sifra = sifra;
 		this.naziv = naziv;
@@ -44,12 +44,13 @@ public class Lek {
 		this.tip = tip;
 		this.oblikLeka = oblikLeka;
 		this.sastav = sastav;
-		this.zamenskiLekovi = sifreZamenskihLekova;
+		this.sifreZamenskihLekova = sifreZamenskihLekova;
 		this.dodatneNapomene = dodatneNapomene;
+		this.sifreZamenskihLekova = new HashSet<String>();
 	}
 
 	public Lek() {
-		this.zamenskiLekovi = new HashSet<Lek>();
+		this.sifreZamenskihLekova = new HashSet<String>();
 	}
 
 	public Lek(LekDTO lek) {
@@ -60,7 +61,7 @@ public class Lek {
 		this.oblikLeka = lek.getOblikLeka();
 		this.sastav = lek.getSastav();
 		this.dodatneNapomene = lek.getDodatneNapomene();
-		this.zamenskiLekovi = new HashSet<Lek>();
+		this.sifreZamenskihLekova = new HashSet<String>();
 	}
 	// getters and setters
 	public String getSifra() {
@@ -111,21 +112,12 @@ public class Lek {
 		this.sastav = sastav;
 	}
 
-
-	public String getUputstvo() {
-		return uputstvo;
+	public Set<String> getSifreZamenskihLekova() {
+		return sifreZamenskihLekova;
 	}
 
-	public void setUputstvo(String uputstvo) {
-		this.uputstvo = uputstvo;
-	}
-
-	public Set<Lek> getZamenskiLekovi() {
-		return zamenskiLekovi;
-	}
-
-	public void setZamenskiLekovi(Set<Lek> zamenskiLekovi) {
-		this.zamenskiLekovi = zamenskiLekovi;
+	public void setSifreZamenskihLekova(Set<String> sifreZamenskihLekova) {
+		this.sifreZamenskihLekova = sifreZamenskihLekova;
 	}
 
 	public Long getId() {

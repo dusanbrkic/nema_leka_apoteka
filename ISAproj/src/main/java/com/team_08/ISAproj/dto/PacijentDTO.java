@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 public class PacijentDTO {
-    private Long id;
     private String ime;
     private String prezime;
     private Date datumRodjenja;
@@ -21,7 +20,6 @@ public class PacijentDTO {
     }
 
     public PacijentDTO(Korisnik k) {
-        this.id = k.getId();
         this.ime = k.getIme();
         this.prezime = k.getPrezime();
         this.datumRodjenja = k.getDatumRodjenja();
@@ -30,14 +28,6 @@ public class PacijentDTO {
         this.grad = k.getGrad();
         this.drzava = k.getDrzava();
         this.brojTelefona = k.getBrojTelefona();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getIme() {

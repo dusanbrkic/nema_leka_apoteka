@@ -33,14 +33,6 @@ public class RezervacijaDTO {
 		this.preuzeto = preuzeto;
 	}
 
-	public RezervacijaDTO(String sifraLeka, int kolicina, Date datumRezervacije, String apotekaId, String pacijent) {
-		this.sifraLeka = sifraLeka;
-		this.kolicina = kolicina;
-		this.datumRezervacije = datumRezervacije;
-		this.apotekaId = apotekaId;
-		this.pacijent = pacijent;
-	}
-
 	public String getSifraLeka() {
 		return sifraLeka;
 	}

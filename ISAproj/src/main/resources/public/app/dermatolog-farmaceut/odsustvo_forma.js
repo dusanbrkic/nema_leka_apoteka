@@ -68,13 +68,12 @@ Vue.component("OdsustvoForma", {
         },
         onSubmit: function (event) {
             event.preventDefault()
-            let endDate = new Date(this.forma.endDate + " 00:00")
-            let startDate = new Date(this.forma.startDate+ " 00:00")
+            let endDate = new Date(this.forma.endDate)
             axios
                 .get("zdravstveniradnik/putOdsustvo", {
                         params:
                             {
-                                'start': startDate,
+                                'start': new Date(this.forma.startDate),
                                 'end': new Date(endDate.setDate(endDate.getDate() + 1)),
                                 'cookie': this.cookie
                             }
