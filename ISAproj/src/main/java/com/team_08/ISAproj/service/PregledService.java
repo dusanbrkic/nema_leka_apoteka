@@ -56,11 +56,11 @@ public class PregledService {
     }
 
     public void saveSlobodanTermin(Pregled pregled) {
-    	pregledRepository.save(pregled);
+        pregledRepository.save(pregled);
     }
 
-    public List<Pregled> proveraOdDatumaPregleda(LocalDateTime start,String username){
-    	return pregledRepository.findAllInFutureByZdravstveniRadnik(start,username);
+    public List<Pregled> proveraOdDatumaPregleda(LocalDateTime start, String username) {
+        return pregledRepository.findAllInFutureByZdravstveniRadnik(start, username);
     }
     
     public List<Pregled> findAllFromApoteka(Long apoteka_id){
@@ -68,7 +68,7 @@ public class PregledService {
     }
     public List<Pregled> findAllByPacijent(Pacijent p){
     	return pregledRepository.findAllByPacijent(p);
-
+    }
     public List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end)
             throws CookieNotValidException {
         return pregledRepository.findAllTermsInDateRangeByDermatolog(cookie, start, end);

@@ -72,18 +72,22 @@ public class PregledDTO {
     public LocalDateTime getStart() {
         return start;
     }
+
     public String getApotekaId() {
-		return apotekaId;
-	}
-	public void setApotekaId(String apotekaId) {
-		this.apotekaId = apotekaId;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
+        return apotekaId;
+    }
+
+    public void setApotekaId(String apotekaId) {
+        this.apotekaId = apotekaId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public void setStart(LocalDateTime start) {
         this.start = start;

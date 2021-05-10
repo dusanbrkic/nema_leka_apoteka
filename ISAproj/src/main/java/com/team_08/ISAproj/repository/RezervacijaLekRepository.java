@@ -11,9 +11,9 @@ import com.team_08.ISAproj.model.NarudzbenicaLek;
 import com.team_08.ISAproj.model.RezervacijaLek;
 
 public interface RezervacijaLekRepository extends JpaRepository<RezervacijaLek, Long> {
-	
-	List<RezervacijaLek> findAll();
-	
-	@Query(value = "select rl from REZERVACIJA_LEK rl where rl.rezervacija.id = :rezervacija_id")
-	List<RezervacijaLek> findAllRezervacijaLekFromRezervacija(@Param("rezervacija_id") Long id);
+
+    List<RezervacijaLek> findAll();
+
+    @Query(value = "select rl from REZERVACIJA_LEK rl where rl.rezervacija.id = :rezervacija_id")
+    List<RezervacijaLek> findAllRezervacijaLekFromRezervacija(@Param("rezervacija_id") Long id);
 }

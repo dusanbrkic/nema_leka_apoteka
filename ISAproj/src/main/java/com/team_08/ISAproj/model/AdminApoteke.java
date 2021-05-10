@@ -11,102 +11,87 @@ import javax.persistence.SequenceGenerator;
 
 import java.sql.Date;
 
-@Entity(name="ADMIN_APOTEKE")
-public class AdminApoteke extends Korisnik{
-	
-	// connections
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Apoteka apoteka;
-	
-	public AdminApoteke(Apoteka apoteka) {
-		super();
-		this.apoteka = apoteka;
-	}
+@Entity(name = "ADMIN_APOTEKE")
+public class AdminApoteke extends Korisnik {
 
-	public Apoteka getApoteka() {
-		return apoteka;
-	}
+    // connections
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Apoteka apoteka;
 
-	public void setApoteka(Apoteka apoteka) {
-		this.apoteka = apoteka;
-	}
+    public AdminApoteke(Apoteka apoteka) {
+        super();
+        this.apoteka = apoteka;
+    }
 
-	public AdminApoteke() {
+    public Apoteka getApoteka() {
+        return apoteka;
+    }
 
-	}
+    public void setApoteka(Apoteka apoteka) {
+        this.apoteka = apoteka;
+    }
 
-	void slobodniTerminDermatolog(Dermatolog dermatolog, Date datumPregleda, Date kraj, int cena)
-	{
-		// to do
-	}
-	
-	void pretraziLekove(String sifra)
-	{
-		// to do
-	}
-	
-	void dodajLek(ApotekaLek lek)
-	{
-		// to do
-	}
-	
-	void pretraziFarmaceuta(String username)
-	{
-		// to do
-	}
-	
-	void obrisiLek(String sifra)
-	{
-		// to do
-	}
-	
-	void promeniLek(String sifra)
-	{
-		// to do
-	}
-	
-	void kreirajFarmaceuta(Farmaceut f)
-	{
-		// to do
-	}
-	
-	void obrisiFarmaceuta(String username)
-	{
-		// to do
-	}
-	
-	void pretraziDermatologa(String username)
-	{
-		// to do
-	}
-	
-	void kreirajDermatologa(Dermatolog d)
-	{
-		// to do
-	}
-	
-	void obrisiDermatologa(String username)
-	{
-		// to do
-	}
-	
-	void ispisUpita(String sifraLeka)
-	{
-		// to do
-	}
-	
-	void kreirajNarudzbinu(Narudzbenica n)
-	{
-		// to do
-	}
-	
-	void prikazNarudzbina()
-	{
-		// to do
-	}
-	
-	void definisiAkciju(Promocija p)
-	{
-		// to do
-	}
+    public AdminApoteke() {
+
+    }
+
+    void slobodniTerminDermatolog(Dermatolog dermatolog, Date datumPregleda, Date kraj, int cena) {
+        // to do
+    }
+
+    void pretraziLekove(String sifra) {
+        // to do
+    }
+
+    void dodajLek(ApotekaLek lek) {
+        // to do
+    }
+
+    void pretraziFarmaceuta(String username) {
+        // to do
+    }
+
+    void obrisiLek(String sifra) {
+        // to do
+    }
+
+    void promeniLek(String sifra) {
+        // to do
+    }
+
+    void kreirajFarmaceuta(Farmaceut f) {
+        // to do
+    }
+
+    void obrisiFarmaceuta(String username) {
+        // to do
+    }
+
+    void pretraziDermatologa(String username) {
+        // to do
+    }
+
+    void kreirajDermatologa(Dermatolog d) {
+        // to do
+    }
+
+    void obrisiDermatologa(String username) {
+        // to do
+    }
+
+    void ispisUpita(String sifraLeka) {
+        // to do
+    }
+
+    void kreirajNarudzbinu(Narudzbenica n) {
+        // to do
+    }
+
+    void prikazNarudzbina() {
+        // to do
+    }
+
+    void definisiAkciju(Promocija p) {
+        // to do
+    }
 }

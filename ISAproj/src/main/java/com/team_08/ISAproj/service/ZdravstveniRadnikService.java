@@ -6,10 +6,14 @@ import com.team_08.ISAproj.repository.DermatologRepository;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -21,9 +25,10 @@ public class ZdravstveniRadnikService {
     private FarmaceutRepository farmaceutRepository;
     @Autowired
     private DermatologApotekaRepository dermatologApotekaRepository;
+
     public ZdravstveniRadnik fetchZdravstveniRadnikWithOdsustva(String cookie) {
         ZdravstveniRadnik z = dermatologRepository.fetchDermatologWithOdsustva(cookie);
-        if (z==null) {
+        if (z == null) {
             z = farmaceutRepository.fetchFarmaceutWithOdsustva(cookie);
         }
         return z;
@@ -31,80 +36,132 @@ public class ZdravstveniRadnikService {
 
     public ZdravstveniRadnik fetchZdravstveniRadnikWithOdsustvaInDateRange(String cookie, LocalDateTime start, LocalDateTime end) {
         ZdravstveniRadnik z = dermatologRepository.fetchDermatologWithOdsustvaInDateRange(cookie, start, end);
-        if (z==null) {
+        if (z == null) {
             z = farmaceutRepository.fetchFarmaceutWithOdsustvaInDateRange(cookie, start, end);
         }
         return z;
     }
+
     //svi dermatolozi u apoteci page
-    public Page<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId,Pageable page){
+    public Page<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId, Pageable page) {
 
 
-    	return dermatologRepository.fetchDermatologApotekaByApotekaIdPage(ApotekaId, page);
+        return dermatologRepository.fetchDermatologApotekaByApotekaIdPage(ApotekaId, page);
     }
+
     public Dermatolog findOneByUsername(String username) {
 
-    	return dermatologRepository.findOneByUsername(username);
+        return dermatologRepository.findOneByUsername(username);
     }
 
     public ZdravstveniRadnik findOneByCookie(String cookie) {
         ZdravstveniRadnik z = dermatologRepository.findOneByCookieTokenValue(cookie);
-        if (z==null) {
+        if (z == null) {
             z = farmaceutRepository.findOneByCookieTokenValue(cookie);
         }
         return z;
     }
-  //svi dermatolozi u apoteci list
-    public List<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId){
+
+    //svi dermatolozi u apoteci list
+    public List<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId) {
 
 
-    	return dermatologRepository.fetchDermatologApotekaByApotekaId(ApotekaId);
+        return dermatologRepository.fetchDermatologApotekaByApotekaId(ApotekaId);
     }
 
-    public List<Farmaceut> fetchFarmaceutsByApotekaId(Long ApotekaId){
+    public List<Farmaceut> fetchFarmaceutsByApotekaId(Long ApotekaId) {
 
 
-    	return farmaceutRepository.findAllByApotekaId(ApotekaId);
+        return farmaceutRepository.findAllByApotekaId(ApotekaId);
     }
+
     //dodavanje farmaceuta
     public void saveFarmaceut(Farmaceut farmaceut) {
-    	farmaceutRepository.save(farmaceut);
+        farmaceutRepository.save(farmaceut);
     }
+
     //svi dermatolozi koji ne rade u apoteci PAGE
-    public Page<Dermatolog> fetchDermatologsNotInApotekaPage(Long ApotekaId,Pageable page){
-		return dermatologRepository.fetchNotWorkingInApotekaPage(ApotekaId, page);
+    public Page<Dermatolog> fetchDermatologsNotInApotekaPage(Long ApotekaId, Pageable page) {
+        return dermatologRepository.fetchNotWorkingInApotekaPage(ApotekaId, page);
     }
+
     //svi dermatolozi koji ne rade u apoteci LIST
-    public List<Dermatolog> fetchDermatologsNotInApotekaList(Long ApotekaId){
-		return dermatologRepository.fetchNotWorkingInApotekaList(ApotekaId);
+    public List<Dermatolog> fetchDermatologsNotInApotekaList(Long ApotekaId) {
+        return dermatologRepository.fetchNotWorkingInApotekaList(ApotekaId);
     }
+
     //za dermatologa sva njegova radna mesta
-    public List<DermatologApoteka> fetchAllWorkingTimesAndPricesForDermatolog(Long dermatologId){
-    	return dermatologRepository.fetchAllWorkingTimesAndPricesForDermatolog(dermatologId);
+    public List<DermatologApoteka> fetchAllWorkingTimesAndPricesForDermatolog(Long dermatologId) {
+        return dermatologRepository.fetchAllWorkingTimesAndPricesForDermatolog(dermatologId);
     }
+
     //provera radnog vremena dermatolog
-    public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username,LocalDateTime start, LocalDateTime end){
+    public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username, LocalDateTime start, LocalDateTime end) {
 
-    	return dermatologRepository.findIfDermatologTimesOverlap(username,start, end);
+        return dermatologRepository.findIfDermatologTimesOverlap(username, start, end);
     }
 
-	public void addDermatologApoteke(DermatologApoteka da) {
-		dermatologApotekaRepository.save(da);
+    public void addDermatologApoteke(DermatologApoteka da) {
+        dermatologApotekaRepository.save(da);
 
-	}
-	public DermatologApoteka findDermatologApoteka(Long dermatologId,Long apotekaId) {
-		return dermatologApotekaRepository.findOneDermatologApotekaByIds(dermatologId,apotekaId);
-	}
-	public void deleteDermatologApoteke(Long dermatologId,Long apotekaId) {
-		dermatologApotekaRepository.deleteById(dermatologApotekaRepository.findOneDermatologApotekaByIds(dermatologId,apotekaId).getId());
-	}
-	//provera za termine rada osim za izabranu apoteku
-	public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username, Long apotekaId, LocalDateTime start, LocalDateTime end) {
-		return dermatologRepository.findIfDermatologTimesOverlapNotInApoteka(username,apotekaId,start,end);
-	}
+    }
 
-	public void deleteFarmaceuta(Long id) {
-		farmaceutRepository.deleteById(id);
+    public DermatologApoteka findDermatologApoteka(Long dermatologId, Long apotekaId) {
+        return dermatologApotekaRepository.findOneDermatologApotekaByIds(dermatologId, apotekaId);
+    }
 
-	}
+    public void deleteDermatologApoteke(Long dermatologId, Long apotekaId) {
+        dermatologApotekaRepository.deleteById(dermatologApotekaRepository.findOneDermatologApotekaByIds(dermatologId, apotekaId).getId());
+    }
+
+    //provera za termine rada osim za izabranu apoteku
+    public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username, Long apotekaId, LocalDateTime start, LocalDateTime end) {
+        return dermatologRepository.findIfDermatologTimesOverlapNotInApoteka(username, apotekaId, start, end);
+    }
+
+    public void deleteFarmaceuta(Long id) {
+        farmaceutRepository.deleteById(id);
+
+    }
+    //svi dermatolozi u apoteci page sort search filter
+    public Page<DermatologApoteka> findOneDermatologApotekaByIdSearchedSorted(Integer page, Integer size,
+			String sortBy, Boolean sortDesc,
+    		Long apotekaId, 
+    		String pretragaIme,
+    		String pretragaPrezime, Double ocena,String pocetak,String kraj){
+    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	pretragaIme = "%" + pretragaIme + "%";
+    	pretragaPrezime = "%" + pretragaPrezime + "%";
+    	System.out.println(pretragaIme +" "+ pretragaPrezime);
+    	if(!(sortBy.equals("radnoVremePocetak") || sortBy.equals("radnoVremeKraj"))) {
+    		sortBy = "d." + sortBy;
+    	}
+    	Sort sort;
+        if (sortDesc)
+            sort = Sort.by(sortBy).descending();
+        else
+            sort = Sort.by(sortBy).ascending();
+		return dermatologApotekaRepository.findOneDermatologApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
+        //return dermatologApotekaRepository.findOneDermatologApotekaByIdSearchedSorted(PageRequest.of(page, size, sort));
+    }
+    //svi farmaceuti
+    public Page<Farmaceut> findFarmaceutApotekaByIdSearchedSorted(Integer page, Integer size,
+			String sortBy, Boolean sortDesc,
+    		Long apotekaId, 
+    		String pretragaIme,
+    		String pretragaPrezime, Double ocena,String pocetak,String kraj
+    		){
+    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	pretragaIme = "%" + pretragaIme + "%";
+    	pretragaPrezime = "%" + pretragaPrezime + "%";
+    	System.out.println(pretragaIme +" "+ pretragaPrezime);
+    	Sort sort;
+        if (sortDesc)
+            sort = Sort.by(sortBy).descending();
+        else
+            sort = Sort.by(sortBy).ascending();
+		return farmaceutRepository.findFarmaceutApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
+    }
 }

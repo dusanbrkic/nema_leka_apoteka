@@ -179,7 +179,7 @@ public class PregledController {
 
         double ukupnaCena = 0;
 
-        for(RezervacijaDTO nDTO: rezervacije) {
+        for (RezervacijaDTO nDTO : rezervacije) {
 
             Lek l = lekService.findOneBySifra(nDTO.getSifraLeka());
             RezervacijaLek rl = new RezervacijaLek(nDTO.getKolicina(), n, l);
@@ -187,13 +187,13 @@ public class PregledController {
 
             ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(l.getId(), Long.parseLong(rezervacije.get(0).getApotekaId()));
 
-            apotekaLek.setKolicina(apotekaLek.getKolicina()-nDTO.getKolicina());
+            apotekaLek.setKolicina(apotekaLek.getKolicina() - nDTO.getKolicina());
             apotekaLekService.saveAL(apotekaLek);
 
 
-            double cena_leka = nDTO.getKolicina()*apotekaLek.getCena();
+            double cena_leka = nDTO.getKolicina() * apotekaLek.getCena();
             ukupnaCena += cena_leka;
-            body +=	"	- " + l.getNaziv() + " x " + nDTO.getKolicina() + "kom - " + cena_leka + "din. \n";
+            body += "	- " + l.getNaziv() + " x " + nDTO.getKolicina() + "kom - " + cena_leka + "din. \n";
 
         }
 
@@ -207,20 +207,16 @@ public class PregledController {
 
         String body_tmp = body;
 
-        try
-        {
+        try {
             Thread t = new Thread() {
-                public void run()
-                {
+                public void run() {
                     sendEmailService.sendEmail(pacijent.getEmailAdresa(), body_tmp, title);
                 }
             };
             t.start();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
 
 
         return new ResponseEntity<String>(HttpStatus.OK);
@@ -234,10 +230,10 @@ public class PregledController {
                                                        @RequestParam("idApoteke") Long idApoteke) {
         LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        if(!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
+        if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
             return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
         ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
-        if(zdravstveniRadnik==null)
+        if (zdravstveniRadnik == null)
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
 
         //nova klasa
@@ -263,7 +259,7 @@ public class PregledController {
                                                        @RequestParam("idPacijenta") Long idPacijenta,
                                                        @RequestParam("idTermina") Long idTermina) {
         ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
-        if(zdravstveniRadnik==null)
+        if (zdravstveniRadnik == null)
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
 
         //nova klasa
@@ -276,19 +272,19 @@ public class PregledController {
     }
 
     @PostMapping(value = "addSlobodanTermin")
-    public ResponseEntity<PregledDTO> addSlobodanTermin(@RequestBody PregledDTO pregledDTO){
+    public ResponseEntity<PregledDTO> addSlobodanTermin(@RequestBody PregledDTO pregledDTO) {
 
-    	String apotekaId = pregledDTO.getApotekaId();
-    	Apoteka a = apotekaService.findOne(Long.parseLong(apotekaId));
-    	Dermatolog d = zdravstveniRadnikService.findOneByUsername(pregledDTO.getUsername());
-    	Pregled p = new Pregled(pregledDTO);
-    	p.setApoteka(a);
-    	p.setDermatolog(d);
+        String apotekaId = pregledDTO.getApotekaId();
+        Apoteka a = apotekaService.findOne(Long.parseLong(apotekaId));
+        Dermatolog d = zdravstveniRadnikService.findOneByUsername(pregledDTO.getUsername());
+        Pregled p = new Pregled(pregledDTO);
+        p.setApoteka(a);
+        p.setDermatolog(d);
 
 
-    	pregledService.saveSlobodanTermin(p);
+        pregledService.saveSlobodanTermin(p);
 
-    	//Korisnik k = korisnikService.findUserByToken(cookie);
+        //Korisnik k = korisnikService.findUserByToken(cookie);
 //    	if(k == null) {
 //    		return new ResponseEntity<PregledDTO>(HttpStatus.NOT_FOUND);
 //    	}
@@ -301,8 +297,8 @@ public class PregledController {
 //    	}
 
 
-    	return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
-	}
+        return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
+    }
 
     
     @GetMapping(value = "slobodniPregledi")

@@ -17,13 +17,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 
-	Apoteka findOneById(Long Id);
-	
-	List<Apoteka> findAll();
-	
-	Page<Apoteka> findAll(Pageable pageable);
-	
-	Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable);
+    Apoteka findOneById(Long Id);
 
-	
+    List<Apoteka> findAll();
+
+    Page<Apoteka> findAll(Pageable pageable);
+
+    Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable);
+
+
 }

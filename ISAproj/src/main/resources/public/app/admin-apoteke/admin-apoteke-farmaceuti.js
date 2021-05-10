@@ -5,25 +5,71 @@ Vue.component("UrediFarmaceute", {
       farmaceuti: [],
       cookie: "",
       apotekaID: "",
-      page: 1,
-      count: 0,
-      pageSize: 6,
-      apotekaID: "",
-      radnoVremePocetak: "",
-      radnoVremeKraj: "",
-      radnaVremena: [],
       farmaceutDTO: {
-        cookie: "",
-        cena: "",
+        ime: "",
+        prezime: "",
         radnoVremePocetak: "",
         radnoVremeKraj: "",
       },
+      pageSizes: [2, 6, 10, 20, 50],
+      fields: [
+        {
+          key: "username",
+          sortable: true,
+        },
+        {
+          key: "prezime",
+          sortable: true,
+        },
+        {
+          key: "ime",
+          sortable: true,
+        },
+        {
+          key: "prosecnaOcena",
+          sortable: true,
+        },
+        {
+          key: "radnoVremePocetak",
+          sortable: true,
+          label: "Pocetak radnog vremena",
+          formatter: (value, key, item) => {
+            return moment(value).format("HH:mm");
+          },
+        },
+        {
+          key: "radnoVremeKraj",
+          sortable: true,
+          label: "Kraj radnogVremena",
+          formatter: (value, key, item) => {
+            return moment(value).format("HH:mm");
+          },
+        },
+        {
+          key: "obrisiFarmaceuta",
+          sortable: false,
+        },
+        {
+          key: "izmeniRadnoVreme",
+          sortable: false,
+        },
+      ],
+      page: 1,
+      count: "",
+      pageSize: 6,
+      table_is_busy: false,
+      sortDesc: false,
+      sortBy: "username",
+      pretragaIme: "",
+      pretragaPrezime: "",
+      ocena: 0,
+      pocetakRadnog: "00:00",
+      krajRadnog: "23:59",
     };
   },
   mounted() {
     this.cookie = localStorage.getItem("cookie");
     this.apotekaID = localStorage.getItem("apotekaID");
-    this.retrieveFarmaceute();
   },
 
   template: `
@@ -58,37 +104,77 @@ Vue.component("UrediFarmaceute", {
       <router-view/>
      <b-alert style="text-align: center;" v-model="this.imaZakazeno" variant="danger">Ima zakazane preglede, ne moze se obrisati!!</b-alert>
       <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
-      <b-container id="page_content">
-		<!-- PRIKAZ FARMACEUTA -->
-		<b-row>
-		 <b-card-group deck v-for="farmaceut in farmaceuti">
-            <b-card
-            >
-            
-            <p class="card-text">
-                Ime  i prezime: {{farmaceut.ime}} {{farmaceut.prezime}}
-            </p>
-           <p class="card-text">
-               Korisnicko ime: {{farmaceut.username}}
-            </p>
-                       
-                       <p class="card-text">
-               Cena: {{farmaceut.cena}}
-            </p>
-                       <p class="card-text">
-              Pocetak radnog vremena: {{fixDate(farmaceut.radnoVremePocetak)}}
- 			</p>
- 		   <p class="card-text">
-              Kraj radnog vremena: {{fixDate(farmaceut.radnoVremeKraj)}}
- 			</p>
- 		 		   <p class="card-text">
-              Prosecna ocena: {{farmaceut.prosecnaOcena}}
- 			</p>
-              <b-button  v-on:click="izmeniFarmaceuta(farmaceut)" variant="primary">Izmeni farmaceuta</b-button>
-              <b-button  v-on:click="obrisiFarmaceuta(farmaceut)" variant="primary">Obrisi farmaceuta</b-button>
-            </b-card>
-           </b-card-group>
-           </b-row>
+    <b-card style="margin: 40px auto; max-width: 2000px">
+        <b-container>
+          <b-row>
+            <b-col>
+              <b-form-input v-model="pretragaIme" placeholder="Pretrazite po imenu"></b-form-input>
+            </b-col>
+            <b-col>
+              <b-form-input v-model="pretragaPrezime" placeholder="Pretrazite po prezimenu"></b-form-input>
+            </b-col>
+            <b-col>
+              <b-button v-on:click="pretraga" style="float: right">Pretrazi</b-button>
+              <b-button v-on:click="obrisiPretragu" style="float: right" variant="danger">Resetuj</b-button>
+            </b-col>
+            </b-row>
+            <b-row>
+            <br>
+              <div>
+        <label for="range-2">Prosecna ocena:
+        <b-form-input id="range-2" v-model="ocena" @change="handleOcenaChange($event)" type="range" size = "sm" min="0" max="5" step="0.5"></b-form-input>
+        
+        <div class="mt-2">Farmaceuti sa prosecnom ocenom vecom od: {{ ocena }}</div>
+        </label>
+        </div>
+
+        
+        </b-row>
+        
+        <b-row>
+          <b-col><b-form-input type= "time" v-model="pocetakRadnog" @change="handlePocetakChange($event)":max=this.krajRadnog ></b-form-input></b-col>
+          <b-col><b-form-input type= "time" v-model="krajRadnog" @change="handleKrajChange($event)" :min=pocetakRadnog></b-form-input></b-col>
+        </b-row>
+            <br>
+		          <b-row>
+                    <b-table
+                        striped
+                        id="farmaceuti-tabela"
+                        hover
+                        :items="itemProvider"
+                        :fields="fields"
+                        :per-page="pageSize"
+                        :current-page="page"
+                        :busy.sync="table_is_busy"
+                        :sort-by.sync="sortBy"
+                        sort-icon-left
+                        responsive="sm"
+                        :sort-desc.sync="sortDesc">
+                    <template #cell(obrisiFarmaceuta)="row">
+                    <b-button @click="obrisiFarmaceuta(row.item)"  variant="primary">Obrisi</b-button>
+                    </template>
+                    <template  #cell(izmeniRadnoVreme)="row">
+                    <b-button v-on:click="izmeniFarmaceuta(row.item)" variant="primary">Izmeni</b-button></template> </b-table>
+         </b-row>
+         <b-row>
+          <b-col>
+            <b-pagination
+                  v-model="page"
+                  :total-rows="count"
+                  :per-page="pageSize"
+                  @change="handlePageChange"
+              ></b-pagination>
+              </b-col>
+           <b-col>
+              <select v-model="pageSize" @change="handlePageSizeChange($event)" style="float: right">
+                <option v-for="size in pageSizes" :key="size" :value="size">
+                  {{ size }}
+                </option>
+              </select>
+          </b-col>
+         </b-row>
+         </b-containter>
+      </b-card>
            	<!-- forma za menjanje farmaceuta -->
 	<b-modal ref="my-modal" hide-footer title="Izmeni farmaceuta">
       <b-card style="max-width: 500px; margin: 30px auto;" >
@@ -141,43 +227,141 @@ Vue.component("UrediFarmaceute", {
         },
       };
       console.log(info);
-      axios
-        .get("/zdravstveniradnik/changeFarmaceut", info)
-        .then((response) => {
-          this.$refs["my-modal"].hide();
-        });
-	},
+      axios.get("/zdravstveniradnik/changeFarmaceut", info).then((response) => {
+        this.$refs["my-modal"].hide();
+      });
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
+    },
     fixTime(date) {
       return moment(date).format("HH:mm");
     },
     fixDate(date) {
       return moment(date).format("HH:mm");
     },
-    retrieveFarmaceute() {
+    itemProvider: function (ctx) {
+      console.log(ctx);
+      return this.retrieveFarmaceute(
+        ctx.page,
+        ctx.pageSize,
+        ctx.sortBy,
+        ctx.sortDesc,
+        this.pretragaIme,
+        this.pretragaPrezime
+      );
+    },
+    retrieveFarmaceute: async function (
+      page,
+      pageSize,
+      sortBy,
+      sortDesc,
+      pretragaIme,
+      pretragaPrezime
+    ) {
+      this.table_is_busy = true;
+      var today = new Date();
+      var date =
+        today.getFullYear() +
+        "-" +
+        String(today.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(today.getDate()).padStart(2, "0") +
+        "T" +
+        String(today.getHours()).padStart(2, "0") +
+        ":" +
+        String(today.getMinutes()).padStart(2, "0") +
+        ":" +
+        String(today.getSeconds()).padStart(2, "0") +
+        ".000Z";
+      var date1 =
+        today.getFullYear() +
+        "-" +
+        String(today.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(today.getDate()).padStart(2, "0") +
+        "T" +
+        String(today.getHours()).padStart(2, "0") +
+        ":" +
+        String(today.getMinutes()).padStart(2, "0") +
+        ":" +
+        String(today.getSeconds()).padStart(2, "0") +
+        ".000Z";
       let info = {
         params: {
           cookie: this.cookie,
+          page: this.page - 1,
+          size: this.pageSize,
+          sortBy: sortBy,
+          sortDesc: sortDesc,
+          pretraziIme: pretragaIme,
+          pretraziPrezime: pretragaPrezime,
+          ocena: this.ocena,
+          pocetak: "2008-01-01T" + this.pocetakRadnog + ":00.000Z",
+          kraj: "2008-01-01T" + this.krajRadnog + ":00.000Z",
         },
       };
-      axios
-       .get("/zdravstveniradnik/getAllFarmaceutsApoteka", info)
-      .then((response) => {(this.farmaceuti = response.data)
-						console.log(response.data)});
+      await axios
+        .get("/zdravstveniradnik/getAllFarmaApotekaPage", info)
+        .then((response) => {
+          console.log(response);
+          this.farmaceuti = response.data["content"];
+          this.count = response.data["totalElements"];
+        })
+        .catch((e) => {
+          console.log(e);
+        });
       console.log(this.farmaceuti);
+      this.table_is_busy = false;
+      return this.farmaceuti;
     },
     logout: function () {
       localStorage.clear();
       app.$router.push("/");
     },
     izmeniFarmaceuta(farmaceut) {
-		this.farmaceutDTO = farmaceut;
-		this.farmaceutDTO.radnoVremePocetak = this.fixTime(
+      this.farmaceutDTO = farmaceut;
+      this.farmaceutDTO.radnoVremePocetak = this.fixTime(
         farmaceut.radnoVremePocetak
       );
-      this.farmaceutDTO.radnoVremeKraj = this.fixTime(
-        farmaceut.radnoVremeKraj
-      );
+      this.farmaceutDTO.radnoVremeKraj = this.fixTime(farmaceut.radnoVremeKraj);
       this.$refs["my-modal"].show();
+    },
+    pretraga: function () {
+      this.page = 1;
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
+    },
+    handlePageChange(value) {
+      this.page = value;
+    },
+    handlePageSizeChange(event) {
+      this.page = 1;
+      this.items_per_page = event.target.value;
+    },
+
+    handlePageSizeChange(event) {
+      this.page = 1;
+      this.pageSize = event.target.value;
+    },
+    handleOcenaChange(event) {
+      this.page = 1;
+      this.ocena = event;
+      console.log(this.ocena);
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
+    },
+    handlePocetakChange(event) {
+      this.page = 1;
+      this.pocetakRadnog = event;
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
+    },
+    handleKrajChange(event) {
+      this.page = 1;
+      this.krajRadnog = event;
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
+    },
+    obrisiPretragu: function () {
+      this.pretragaIme = "";
+      this.pretragaPrezime = "";
+      this.page = 1;
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
     },
     obrisiFarmaceuta(farmaceut) {
       this.imaZakazeno = false;
@@ -202,15 +386,19 @@ Vue.component("UrediFarmaceute", {
           cookie: this.cookie,
         },
       };
-      console.log(info);
-      axios
-        .delete("/zdravstveniradnik/deleteFarmaceut", info)
-        .then((response) => console.log(response.data))
-        .catch((error) => {
-          if (error.request.status == 400) {
-            this.imaZakazeno = true;
-          }
-        });
+      if (
+        confirm("Da li ste sigurni da zelite da obrisete farmaceuta?") == true
+      ) {
+        axios
+          .delete("/zdravstveniradnik/deleteFarmaceut", info)
+          .then((response) => this.retrieveFarmaceute())
+          .catch((error) => {
+            if (error.request.status == 400) {
+              this.imaZakazeno = true;
+            }
+          });
+      }
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
     },
   },
 });

@@ -63,6 +63,7 @@ public abstract class Korisnik {
         this.drzava = drzava;
         this.brojTelefona = brojTelefona;
     }
+
     public Korisnik(KorisnikDTO kDTO) {
         this.username = kDTO.getUsername();
         this.password = kDTO.getPassword();
@@ -76,8 +77,9 @@ public abstract class Korisnik {
         this.grad = kDTO.getGrad();
         this.drzava = kDTO.getDrzava();
         this.brojTelefona = kDTO.getBrojTelefona();
-    	
+
     }
+
     // getters and setters
     public String getUsername() {
         return username;

@@ -11,191 +11,200 @@ import java.util.Set;
 
 @Entity(name = "APOTEKA")
 public class Apoteka {
-	@Id
-	@SequenceGenerator(name="ApotekaSeqGen", sequenceName = "ApotekaSeq", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ApotekaSeqGen")
-	private Long id;
-	@Column(name="NAZIV")
-	private String naziv;
-	@Column(name="ADRESA")
-	private String adresa;
-	@Column(name="PROSECNA_OCENA")
-	private Double prosecnaOcena;
-	@Column(name="CENA_PREGLEDA")
-	private Double cenaPregleda;
-	@Column(name="CENA_SAVETOVANJA")
-	private Double cenaSavetovanja;
-	@Column(name="OPIS")
-	private String opis;
-	
-	// connections
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<DermatologApoteka> dermatolozi = new HashSet<DermatologApoteka>();
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Farmaceut> farmaceuti= new HashSet<Farmaceut>();
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Pregled> pregledi = new HashSet<Pregled>();
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Pregled> savetovanja= new HashSet<Pregled>();
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Pacijent> pretplaceniKorisnici= new HashSet<Pacijent>();
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ApotekaLek> lekovi= new HashSet<ApotekaLek>();
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Narudzbenica> narudzbenice= new HashSet<Narudzbenica>();
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Promocija> promocije= new HashSet<Promocija>();
-	@OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<AdminApoteke> admini= new HashSet<AdminApoteke>();
+    @Id
+    @SequenceGenerator(name = "ApotekaSeqGen", sequenceName = "ApotekaSeq", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ApotekaSeqGen")
+    private Long id;
+    @Column(name = "NAZIV")
+    private String naziv;
+    @Column(name = "ADRESA")
+    private String adresa;
+    @Column(name = "PROSECNA_OCENA")
+    private Double prosecnaOcena;
+    @Column(name = "CENA_PREGLEDA")
+    private Double cenaPregleda;
+    @Column(name = "CENA_SAVETOVANJA")
+    private Double cenaSavetovanja;
+    @Column(name = "OPIS")
+    private String opis;
 
-	//getters and setters
-	
-	public Long getId() {
-		return id;
-	}
-	public Double getCenaPregleda() {
-		return cenaPregleda;
-	}
-	public void setCenaPregleda(Double cenaPregleda) {
-		this.cenaPregleda = cenaPregleda;
-	}
-	public Double getCenaSavetovanja() {
-		return cenaSavetovanja;
-	}
-	public void setCenaSavetovanja(Double cenaSavetovanja) {
-		this.cenaSavetovanja = cenaSavetovanja;
-	}
-	public void setProsecnaOcena(Double prosecnaOcena) {
-		this.prosecnaOcena = prosecnaOcena;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+    // connections
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<DermatologApoteka> dermatolozi = new HashSet<DermatologApoteka>();
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Farmaceut> farmaceuti = new HashSet<Farmaceut>();
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Pregled> pregledi = new HashSet<Pregled>();
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Pregled> savetovanja = new HashSet<Pregled>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Pacijent> pretplaceniKorisnici = new HashSet<Pacijent>();
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<ApotekaLek> lekovi = new HashSet<ApotekaLek>();
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Narudzbenica> narudzbenice = new HashSet<Narudzbenica>();
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Promocija> promocije = new HashSet<Promocija>();
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<AdminApoteke> admini = new HashSet<AdminApoteke>();
 
-	public String getNaziv() {
-		return naziv;
-	}
+    //getters and setters
 
-	public void setNaziv(String naziv) {
-		this.naziv = naziv;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getAdresa() {
-		return adresa;
-	}
+    public Double getCenaPregleda() {
+        return cenaPregleda;
+    }
 
-	public void setAdresa(String adresa) {
-		this.adresa = adresa;
-	}
+    public void setCenaPregleda(Double cenaPregleda) {
+        this.cenaPregleda = cenaPregleda;
+    }
 
-	public double getProsecnaOcena() {
-		return prosecnaOcena;
-	}
+    public Double getCenaSavetovanja() {
+        return cenaSavetovanja;
+    }
 
-	public void setProsecnaOcena(double prosecnaOcena) {
-		this.prosecnaOcena = prosecnaOcena;
-	}
+    public void setCenaSavetovanja(Double cenaSavetovanja) {
+        this.cenaSavetovanja = cenaSavetovanja;
+    }
 
-	public String getOpis() {
-		return opis;
-	}
+    public void setProsecnaOcena(Double prosecnaOcena) {
+        this.prosecnaOcena = prosecnaOcena;
+    }
 
-	public void setOpis(String opis) {
-		this.opis = opis;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Set<DermatologApoteka> getDermatolozi() {
-		return dermatolozi;
-	}
+    public String getNaziv() {
+        return naziv;
+    }
 
-	public void setDermatolozi(Set<DermatologApoteka> dermatolozi) {
-		this.dermatolozi = dermatolozi;
-	}
+    public void setNaziv(String naziv) {
+        this.naziv = naziv;
+    }
 
-	public Set<Farmaceut> getFarmaceuti() {
-		return farmaceuti;
-	}
+    public String getAdresa() {
+        return adresa;
+    }
 
-	public void setFarmaceuti(Set<Farmaceut> farmaceuti) {
-		this.farmaceuti = farmaceuti;
-	}
+    public void setAdresa(String adresa) {
+        this.adresa = adresa;
+    }
 
-	public Set<Pregled> getPregledi() {
-		return pregledi;
-	}
+    public double getProsecnaOcena() {
+        return prosecnaOcena;
+    }
 
-	public void setPregledi(Set<Pregled> pregledi) {
-		this.pregledi = pregledi;
-	}
+    public void setProsecnaOcena(double prosecnaOcena) {
+        this.prosecnaOcena = prosecnaOcena;
+    }
 
-	public Set<Pregled> getSavetovanja() {
-		return savetovanja;
-	}
+    public String getOpis() {
+        return opis;
+    }
 
-	public void setSavetovanja(Set<Pregled> savetovanja) {
-		this.savetovanja = savetovanja;
-	}
+    public void setOpis(String opis) {
+        this.opis = opis;
+    }
 
-	public Set<Pacijent> getPretplaceniKorisnici() {
-		return pretplaceniKorisnici;
-	}
+    public Set<DermatologApoteka> getDermatolozi() {
+        return dermatolozi;
+    }
 
-	public void setPretplaceniKorisnici(Set<Pacijent> pretplaceniKorisnici) {
-		this.pretplaceniKorisnici = pretplaceniKorisnici;
-	}
+    public void setDermatolozi(Set<DermatologApoteka> dermatolozi) {
+        this.dermatolozi = dermatolozi;
+    }
 
-	public Set<ApotekaLek> getLekovi() {
-		return lekovi;
-	}
+    public Set<Farmaceut> getFarmaceuti() {
+        return farmaceuti;
+    }
 
-	public void setLekovi(Set<ApotekaLek> lekovi) {
-		this.lekovi = lekovi;
-	}
+    public void setFarmaceuti(Set<Farmaceut> farmaceuti) {
+        this.farmaceuti = farmaceuti;
+    }
 
-	public Set<Narudzbenica> getNarudzbenice() {
-		return narudzbenice;
-	}
+    public Set<Pregled> getPregledi() {
+        return pregledi;
+    }
 
-	public void setNarudzbenice(Set<Narudzbenica> narudzbenice) {
-		this.narudzbenice = narudzbenice;
-	}
+    public void setPregledi(Set<Pregled> pregledi) {
+        this.pregledi = pregledi;
+    }
 
-	public Set<Promocija> getPromocije() {
-		return promocije;
-	}
+    public Set<Pregled> getSavetovanja() {
+        return savetovanja;
+    }
 
-	public void setPromocije(Set<Promocija> promocije) {
-		this.promocije = promocije;
-	}
+    public void setSavetovanja(Set<Pregled> savetovanja) {
+        this.savetovanja = savetovanja;
+    }
 
-	public Set<AdminApoteke> getAdmini() {
-		return admini;
-	}
+    public Set<Pacijent> getPretplaceniKorisnici() {
+        return pretplaceniKorisnici;
+    }
 
-	public void setAdmini(Set<AdminApoteke> admini) {
-		this.admini = admini;
-	}
+    public void setPretplaceniKorisnici(Set<Pacijent> pretplaceniKorisnici) {
+        this.pretplaceniKorisnici = pretplaceniKorisnici;
+    }
 
-	public Apoteka(Long id, String naziv, String adresa, double prosecnaOcena, String opis) {
-		this.id = id;
-		this.naziv = naziv;
-		this.adresa = adresa;
-		this.prosecnaOcena = prosecnaOcena;
-		this.opis = opis;
-	}
-	public Apoteka(ApotekaDTO apotekaDTO) {
-		this.naziv = apotekaDTO.getNaziv();
-		this.adresa = apotekaDTO.getAdresa();
-		this.opis = apotekaDTO.getOpis();
-		this.prosecnaOcena = apotekaDTO.getProsecnaOcena();
-	}
-	public Apoteka() {
-		// TODO Auto-generated constructor stub
-	}
-	@Override
-	public String toString() {
-		return "Apoteka [id=" + id + ", naziv=" + naziv + ", adresa=" + adresa + ", prosecnaOcena=" + prosecnaOcena
-				+ ", opis=" + opis + ", dermatolozi=" + dermatolozi + ", farmaceuti=" + farmaceuti + "]";
-	}
-	
+    public Set<ApotekaLek> getLekovi() {
+        return lekovi;
+    }
+
+    public void setLekovi(Set<ApotekaLek> lekovi) {
+        this.lekovi = lekovi;
+    }
+
+    public Set<Narudzbenica> getNarudzbenice() {
+        return narudzbenice;
+    }
+
+    public void setNarudzbenice(Set<Narudzbenica> narudzbenice) {
+        this.narudzbenice = narudzbenice;
+    }
+
+    public Set<Promocija> getPromocije() {
+        return promocije;
+    }
+
+    public void setPromocije(Set<Promocija> promocije) {
+        this.promocije = promocije;
+    }
+
+    public Set<AdminApoteke> getAdmini() {
+        return admini;
+    }
+
+    public void setAdmini(Set<AdminApoteke> admini) {
+        this.admini = admini;
+    }
+
+    public Apoteka(Long id, String naziv, String adresa, double prosecnaOcena, String opis) {
+        this.id = id;
+        this.naziv = naziv;
+        this.adresa = adresa;
+        this.prosecnaOcena = prosecnaOcena;
+        this.opis = opis;
+    }
+
+    public Apoteka(ApotekaDTO apotekaDTO) {
+        this.naziv = apotekaDTO.getNaziv();
+        this.adresa = apotekaDTO.getAdresa();
+        this.opis = apotekaDTO.getOpis();
+        this.prosecnaOcena = apotekaDTO.getProsecnaOcena();
+    }
+
+    public Apoteka() {
+        // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public String toString() {
+        return "Apoteka [id=" + id + ", naziv=" + naziv + ", adresa=" + adresa + ", prosecnaOcena=" + prosecnaOcena
+                + ", opis=" + opis + ", dermatolozi=" + dermatolozi + ", farmaceuti=" + farmaceuti + "]";
+    }
+
 }

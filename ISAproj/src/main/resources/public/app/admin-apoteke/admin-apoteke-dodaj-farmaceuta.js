@@ -139,13 +139,6 @@ Vue.component("DodajFarmaceuta", {
                 type="time"
                 :min = this.farmaceutDTO.radnoVremePocetak
             ></b-form-input>
-            		<b-form-group id="input-group-12" label="Cena:" label-for="input-12">
-            <b-form-input
-                id="input-12"
-                v-model="farmaceutDTO.cena"
-                type="number"
-                :min = 0
-            ></b-form-input>
           </b-form-group>
           <b-button type="submit" variant="primary">Registruj se</b-button>
         </b-form>
@@ -160,16 +153,10 @@ Vue.component("DodajFarmaceuta", {
       app.$router.push("/");
     },
     onSubmit: function () {
-      const dateStart =
-        this.farmaceutDTO.datumRodjenja +
-        "T" +
-        this.farmaceutDTO.radnoVremePocetak;
-      const dateEnd =
-        this.farmaceutDTO.datumRodjenja +
-        "T" +
-        this.farmaceutDTO.radnoVremeKraj;
-      this.farmaceutDTO.radnoVremePocetak = dateStart;
-      this.farmaceutDTO.radnoVremeKraj = dateEnd;
+      this.farmaceutDTO.radnoVremePocetak =
+        "2008-01-01T" + this.farmaceutDTO.radnoVremePocetak + ":00.000Z";
+      this.farmaceutDTO.radnoVremeKraj =
+        "2008-01-01T" + this.farmaceutDTO.radnoVremeKraj + ":00.000Z";
       this.postojiMail = false;
       this.postojiKorisnicko = false;
       console.log(this.farmaceutDTO);

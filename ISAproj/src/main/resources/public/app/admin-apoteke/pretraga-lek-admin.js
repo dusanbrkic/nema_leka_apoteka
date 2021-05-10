@@ -1,13 +1,8 @@
 Vue.component("PretragaLekAdmin", {
   data: function () {
     return {
-      nesto: "waiting for server response",
       apotekaID: "",
       lekovi: [],
-      currentTutorial: null,
-      currentIndex: -1,
-      searchTitle: "",
-      reverseLek: "",
       izabranLek: {
         sifra: "",
         naziv: "",
@@ -22,29 +17,72 @@ Vue.component("PretragaLekAdmin", {
         staraCena: "",
         cookie: "",
       },
+      fields: [
+        {
+          key: "naziv",
+          sortable: true,
+        },
+        {
+          key: "sifra",
+          sortable: true,
+        },
+        {
+          key: "sastav",
+          sortable: true,
+        },
+        {
+          key: "uputstvo",
+          sortable: false,
+        },
+        {
+          key: "tip",
+          sortable: true,
+        },
+        {
+          key: "oblikLeka",
+          sortable: true,
+        },
+        {
+          key: "cena",
+          sortable: true,
+        },
+        {
+          key: "staraCena",
+          sortable: true,
+        },
+        {
+          key: "istekVazenjaCene",
+          sortable: true,
+          label: "Datum isteka vazenja cene",
+          formatter: (value, key, item) => {
+            return moment(value).format("DD/MM/YYYY");
+          },
+        },
+        {
+          key: "obrisiLek",
+          sortable: false,
+        },
+        {
+          key: "izmeniLek",
+          sortable: false,
+        },
+      ],
       page: 1,
-      count: 0,
+      count: "",
       pageSize: 6,
-
-      pageSizes: [3, 6, 9, 15, 30],
-
-      redosledi: ["opadajuce", "rastuce"],
-
-      redosled: "opadajuce",
-
-      polja: ["naziv"],
-
-      sortirajPo: "naziv",
+      pageSizes: [6, 10, 20, 50],
+      table_is_busy: false,
+      sortDesc: false,
+      sortBy: "naziv",
+      searchTitle: "",
     };
   },
   mounted() {
     this.cookie = localStorage.getItem("cookie");
     this.apotekaID = localStorage.getItem("apotekaID");
-    this.retrieveLekove();
   },
   template: `
     <div>
-    <!-- nav bar -->
       <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
         <img src="../../res/pics/logo.png" alt="Logo">
@@ -57,8 +95,12 @@ Vue.component("PretragaLekAdmin", {
             <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
-            <b-nav-item v-on:click="redirectToApotekaIzmeni">Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item >Izmeni podatke o apoteci</b-nav-item>
             <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dodaj-farmaceuta">Dodaj farmaceuta</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dodaj-dermatologa">Dodaj dermatologa</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-dermatolozi">Dermatolozi</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-farmaceuti">Farmaceuti</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -69,84 +111,64 @@ Vue.component("PretragaLekAdmin", {
         </b-collapse>
       </b-navbar>
       <router-view/>
-      
-    	
-    <!-- PRETRAGA -->
-       <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
-      <b-container id="page_content">
-    	 <div class="form-group">
-            <input
-	          type="text"
-	          class="form-control"
-	          placeholder="Pretraga lekova"
-	          v-model="searchTitle"
-	          @input="page = 1; retrieveLekove();"
-	        />
-          </div>
-          
-	      <!-- BIRANJE VELICINE STRANE -->
-	        Lekovi po strani:
-		    <select v-model="pageSize" @change="handlePageSizeChange($event)">
-		      <option v-for="size in pageSizes" :key="size" :value="size">
-		        {{ size }}
-		      </option>
-			</select>
-	
-		<br>
-		<br>
+      	
+    <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
+    <b-card style="margin: 40px auto; max-width: 2000px">
+        <b-container>
+          <b-row>
+            <b-col>
+              <b-form-input v-model="searchTitle" placeholder="Pretrazite lekove"></b-form-input>
+            </b-col>
+            <b-col>
+              <b-button v-on:click="pretraga" style="float: right">Pretrazi</b-button>
+              <b-button v-on:click="obrisiPretragu" style="float: right" variant="danger">Resetuj</b-button>
+            </b-col>
+            </b-row>
+            <br>
+		          <b-row>
+                    <b-table
+                        id="lekovi-tabela"
+                        hover
+                        :items="itemProvider"
+                        :fields="fields"
+                        :per-page="pageSize"
+                        :current-page="page"
+                        :busy.sync="table_is_busy"
+                        :sort-by.sync="sortBy"
+                        sort-icon-left
+                        responsive="sm"
+                        :sort-desc.sync="sortDesc">
+                    <template #cell(obrisiLek)="row">
+                    <b-button @click="deleteLek(row.item)"  variant="primary">Obrisi</b-button>
+                    </template>
+                    <template  #cell(izmeniLek)="row">
+                    <b-button v-on:click="prikaziPromeniLek(row.item)" variant="primary">Izmeni</b-button></template>
+                     </b-table>
+         </b-row>
+         <b-row>
+          <b-col>
+            <b-pagination
+                  v-model="page"
+                  :total-rows="count"
+                  :per-page="pageSize"
+                  @change="handlePageChange"
+              ></b-pagination>
+              </b-col>
+           <b-col>
+              <select v-model="pageSize" @change="handlePageSizeChange($event)" style="float: right">
+                <option v-for="size in pageSizes" :key="size" :value="size">
+                  {{ size }}
+                </option>
+              </select>
+          </b-col>
+         </b-row>
+         </b-containter>
+      </b-card>
+<!-- <b-button v-on:click="deleteLek(lek.sifra)" variant="primary">Obrisi</b-button>
+              <b-button v-on:click="prikaziPromeniLek(lek)" variant="primary">Izmeni</b-button> -->
 
-	   <!-- NAVIGACIJA PO STRANICAMA -->
-	   <div class="mt-3">
-	    <b-pagination
-	      v-model="page"
-	      :total-rows="count"
-	      :per-page="pageSize"
-	      aria-controls="my-table"
-	      @change="handlePageChange"
-	    	></b-pagination>
-	 	 </div>  
-		<!-- PRIKAZ LEKOVA -->
-		<b-row>
-		 <b-card-group deck v-for="lek in lekovi">
-            <b-card
-            >
-            
-            <p class="card-text">
-                Naziv : {{lek.naziv}}
-            </p>
-            <p class="card-text">
-                Sifra : {{lek.sifra}}
-            </p>
-            <p class="card-text">
-                Sastav : {{lek.sastav}}
-            </p>
-           <p class="card-text">
-                Uputstvo : {{lek.uputstvo}}
-            </p>
-            <p class="card-text">
-                Tip : {{lek.tip}}
-            </p>
-            <p class="card-text">
-                Oblik : {{lek.oblikLeka}}
-            </p>
-            <p class="card-text">
-                Cena : {{lek.cena}}
-            </p>
-            <p class="card-text">
-                Kolicina : {{lek.kolicina}}
-            </p>
-            <p class="card-text">
-                Stara cena : {{lek.staraCena}}
-            </p>
-            <p class="card-text">
-               	Datum isteka vazenja cene : {{lek.istekVazenjaCene}}
-            </p>
-              <b-button v-on:click="deleteLek(lek.sifra)" variant="primary">Obrisi</b-button>
-              <b-button v-on:click="prikaziPromeniLek(lek)" variant="primary">Izmeni</b-button>
-            </b-card>
-           </b-card-group>
-           </b-row>
-	
+
+
 	<!-- forma za promenu podataka -->
 	<b-modal ref="my-modal" hide-footer title="Izmena podataka lekova">
       <b-card style="max-width: 500px; margin: 30px auto;" >
@@ -184,137 +206,100 @@ Vue.component("PretragaLekAdmin", {
            </b-form>
       	</b-card>
     	</b-modal>	
-  	</div>	
-
-<br><br>
-			<div class="mt-2">
-        	<b-button variant="primary" type="button" v-on:click="redirectToHome" class="ml-2">Return to home</b-button>
-        </div>
-	</b-container>
       </div>
     `,
   methods: {
     onIzmeniLek: function () {
       this.izabranLek.cookie = this.cookie;
-      axios
-        .put("lekovi", this.izabranLek)
-        .then((response) => this.retrieveLekove());
-      this.retrieveLekove();
+      axios.put("lekovi", this.izabranLek);
       this.$refs["my-modal"].hide();
+      this.$root.$emit("bv::refresh::table", "lekovi-tabela");
     },
     onReset: function (event) {
-      event.preventDefault();
       this.izabranLek = this.reverseLek;
     },
 
     prikaziPromeniLek(lek) {
       this.reverseLek = JSON.parse(JSON.stringify(lek));
       this.izabranLek = JSON.parse(JSON.stringify(lek));
-      console.log(this.izabranLek);
       this.$refs["my-modal"].show();
     },
     redirectToHome: function () {
       app.$router.push("/home-admin_apoteke");
     },
 
-    getRequestParams(
-      searchTitle,
-      page,
-      pageSize,
-      sortirajPo,
-      redosled,
-      apotekaID
-    ) {
-      let params = {};
-
-      if (searchTitle) {
-        params["title"] = searchTitle;
-      } else {
-        params["title"] = "";
-      }
-
-      if (page) {
-        params["page"] = page - 1;
-      }
-
-      if (pageSize) {
-        params["size"] = pageSize;
-      }
-
-      if (sortirajPo) {
-        params["sort"] = sortirajPo;
-      }
-
-      if (sortirajPo) {
-        params["smer"] = redosled;
-      }
-      params["apotekaID"] = apotekaID;
-      return params;
-    },
     logout: function () {
       localStorage.clear();
       app.$router.push("/");
     },
-    redirectToApotekaIzmeni: function () {
-      app.$router.push("/apoteka/" + this.apoteka.id);
-    },
-    deleteLek: function (sifra) {
+    deleteLek: function (lek) {
       let info = {
         params: {
-          sifraLeka: sifra,
+          sifraLeka: lek.sifra,
           cookie: this.cookie,
         },
       };
-      console.log(info);
       axios
         .delete("/lekovi/deleteLek", info)
         .then((response) => console.log(response.data));
-      this.retrieveLekove();
+      this.$root.$emit("bv::refresh::table", "lekovi-tabela");
     },
-    retrieveLekove() {
-      const params = this.getRequestParams(
-        this.searchTitle,
-        this.page,
-        this.pageSize,
-        this.sortirajPo,
-        this.redosled,
-        this.apotekaID
+    itemProvider: function (ctx) {
+      console.log(ctx);
+      return this.retrieveLekove(
+        ctx.page,
+        ctx.pageSize,
+        ctx.sortBy,
+        ctx.sortDesc,
+        this.searchTitle
       );
-
-      axios
-        .get("lekovi/aa/", { params })
-        .then((response) => {
-          const { lekovi, totalItems } = response.data;
-          this.lekovi = lekovi;
-          this.count = totalItems;
-
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
     },
-    handleSortChange(value) {
-      this.sortirajPo = event.target.value;
-      this.page = 1;
-      this.retrieveLekove();
+    retrieveLekove: async function (
+      page,
+      pageSize,
+      sortBy,
+      sortDesc,
+      searchTitle
+    ) {
+      this.table_is_busy = true;
+      let info = {
+        params: {
+          cookie: this.cookie,
+          page: this.page - 1,
+          size: this.pageSize,
+          sortBy: sortBy,
+          sortDesc: sortDesc,
+          title: searchTitle,
+        },
+      };
+      console.log(info);
+      await axios.get("lekovi/aa", info).then((response) => {
+        this.lekovi = response.data["content"];
+        this.count = response.data["totalElements"];
+      });
+      this.table_is_busy = false;
+      return this.lekovi;
     },
-
-    handleSortOrderChange(value) {
-      this.redosled = event.target.value;
-      this.page = 1;
-      this.retrieveLekove();
+    pretraga: function () {
+      this.page = 0;
+      this.$root.$emit("bv::refresh::table", "lekovi-tabela");
     },
-
     handlePageChange(value) {
       this.page = value;
-      this.retrieveLekove();
+    },
+    handlePageSizeChange(event) {
+      this.page = 1;
+      this.items_per_page = event.target.value;
     },
 
     handlePageSizeChange(event) {
-      this.pageSize = event.target.value;
       this.page = 1;
-      this.retrieveLekove();
+      this.pageSize = event.target.value;
+    },
+    obrisiPretragu: function () {
+      this.searchTitle = "";
+      this.page = 0;
+      this.$root.$emit("bv::refresh::table", "lekovi-tabela");
     },
   },
 });

@@ -36,6 +36,7 @@ const DodajFarmaceuta = {template: '<DodajFarmaceuta></DodajFarmaceuta>'}
 const DodajDermatologa = {template: '<DodajDermatologa></DodajDermatologa>'}
 const UrediDermatologe = {template: '<UrediDermatologe></UrediDermatologe>'}
 const UrediFarmaceute = {template: '<UrediFarmaceute></UrediFarmaceute>'}
+const AdminNarudzbenice = {template: '<AdminNarudzbenice></AdminNarudzbenice>'}
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -142,7 +143,8 @@ const router = new VueRouter({
         {path: '/pregled-forma', component: PregledForma},
         {path: '/promena-lozinke',component: PromenaLozinke},
         {path: '/admin-apoteke-dermatolozi', component: UrediDermatologe},
-        {path: '/admin-apoteke-farmaceuti', component: UrediFarmaceute}
+        {path: '/admin-apoteke-farmaceuti', component: UrediFarmaceute},
+        {path: '/admin-apoteke-narudzbenice', component: AdminNarudzbenice}
     ]
 });
 
