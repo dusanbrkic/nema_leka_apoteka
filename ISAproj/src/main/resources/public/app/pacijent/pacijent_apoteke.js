@@ -118,6 +118,7 @@ Vue.component("PacijentApoteke", {
               </b-card-text>
               
               <b-button v-on:click="prikaziLekove(apoteka)" variant="primary">Rezervisi lekove</b-button>
+              <b-button v-on:click="prikaziTemineDermatologa(apoteka)" variant="primary">Zakazi pregled kod dermatologa</b-button>
 
             </b-card>
           </b-col>
@@ -205,6 +206,10 @@ Vue.component("PacijentApoteke", {
 	    prikaziLekove(apoteka){
 	    	localStorage.setItem('apotekaID', apoteka.id);
 	    	app.$router.push("/home-pacijent/rezervacija");
+	    },
+	    prikaziTemineDermatologa(apoteka){
+	    	localStorage.setItem('apotekaID', apoteka.id);
+	    	app.$router.push("/home-pacijent/zakazivanje_kod_dermatologa");
 	    }
     }
 });

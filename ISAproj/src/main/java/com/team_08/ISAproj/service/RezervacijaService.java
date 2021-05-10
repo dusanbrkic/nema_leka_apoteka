@@ -15,6 +15,7 @@ import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.model.Narudzbenica;
 import com.team_08.ISAproj.model.NarudzbenicaLek;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.model.Rezervacija;
 import com.team_08.ISAproj.model.RezervacijaLek;
@@ -59,7 +60,9 @@ public class RezervacijaService {
     public List<RezervacijaLek> findRezervacijaLekByRezervacijaID(Long id){
     	return rezervacijaLekRepository.findAllRezervacijaLekFromRezervacija(id);
     }
-    
+    public List<Rezervacija> findRezervacijeByPacijent(Pacijent p) {
+    	return rezervacijaRepository.findAllRezervacijeFromKorisnik(p);
+    }
     public void removeRezervacijaLek(Long id) {
     	rezervacijaLekRepository.deleteById(id);
     }

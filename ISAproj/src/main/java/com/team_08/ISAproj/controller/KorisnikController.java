@@ -4,12 +4,17 @@ import com.team_08.ISAproj.dto.CookieRoleDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
+import com.team_08.ISAproj.repository.PacijentRepository;
+import com.team_08.ISAproj.service.ApotekaLekService;
+import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 
 import java.util.Random;
 
 import com.team_08.ISAproj.service.PregledService;
+import com.team_08.ISAproj.service.RezervacijaService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +44,10 @@ public class KorisnikController {
   	private EmailService sendEmailService;
     @Autowired
     private PregledService pregledService;
-
+    @Autowired
+    private RezervacijaService rezervacijaService;
+    @Autowired
+    private ApotekaLekService apotekaLekService;
 
     //change password
     @PutMapping(value = "/updatePass", consumes = "application/json",produces = "application/json")
@@ -79,7 +88,35 @@ public class KorisnikController {
             k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
-            if(k instanceof Pacijent) korisnickaRola = KorisnickaRola.PACIJENT;
+            if(k instanceof Pacijent) 
+            {
+            	korisnickaRola = KorisnickaRola.PACIJENT;
+        		List<Rezervacija> rezervacije = rezervacijaService.findRezervacijeByPacijent((Pacijent) k);
+        		Date currentDate = new Date();
+        		
+        		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        		
+        		
+        		for(Rezervacija r : rezervacije) {
+        			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().before(currentDate) && !sdf.format(r.getRokPonude()).equals(sdf.format(currentDate))) {
+        				r.setIsteklo(true);
+        				((Pacijent) k).setBrPenala(((Pacijent) k).getBrPenala() + 1);
+        				
+        				List<RezervacijaLek> lekovi = rezervacijaService.findRezervacijaLekByRezervacijaID(r.getId());
+        				for(RezervacijaLek rl : lekovi) {
+        					ApotekaLek al = apotekaLekService.findInApotekaLek(rl.getLek().getId(), r.getApoteka().getId());
+        					al.setKolicina(al.getKolicina() + rl.getKolicina());
+            				apotekaLekService.saveAL(al);
+        				}
+        				
+        				korisnikService.saveUser(k);
+        				rezervacijaService.saveRezervacija(r);
+        			}
+        		}
+            	if(((Pacijent) k).getBrPenala() == 3) {
+            		return new ResponseEntity<CookieRoleDTO>(HttpStatus.FORBIDDEN);
+            	}
+            }
             else if(k instanceof Dermatolog) korisnickaRola = KorisnickaRola.DERMATOLOG;
             else if(k instanceof Farmaceut) korisnickaRola = KorisnickaRola.FARMACEUT;
             else if(k instanceof AdminApoteke) korisnickaRola = KorisnickaRola.ADMIN_APOTEKE;
@@ -97,7 +134,7 @@ public class KorisnikController {
         if(k == null) {
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }
-
+        
         return new ResponseEntity<Void>(HttpStatus.OK);
 
     }
@@ -108,6 +145,11 @@ public class KorisnikController {
 
         if(k == null) {
             return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
+        }
+        if(k instanceof Pacijent) {
+        	KorisnikDTO pDTO = new KorisnikDTO((Pacijent) k);
+        	return new ResponseEntity<KorisnikDTO>(pDTO, HttpStatus.OK);
+
         }
 
         KorisnikDTO korisnikDTO = new KorisnikDTO(k);

@@ -4,15 +4,20 @@ import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.Lek;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
+import com.team_08.ISAproj.model.Rezervacija;
+import com.team_08.ISAproj.model.RezervacijaLek;
 import com.team_08.ISAproj.service.LekService;
 import com.team_08.ISAproj.model.AdminApoteke;
 import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.DermatologApoteka;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.service.ApotekaService;
+import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 import com.team_08.ISAproj.service.PregledService;
 import com.team_08.ISAproj.service.ZdravstveniRadnikService;
@@ -53,6 +58,9 @@ public class PregledController {
     private KorisnikService korisnikService;
     @Autowired
     private ApotekaService apotekaService;
+    @Autowired
+    private EmailService sendEmailService;
+    
     @GetMapping(value = "/getPregledaniKorisniciByZdravstveniRadnik", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<PregledDTO>> getPregledaniKorisniciByZdravstveniRadnik(
             @RequestParam("cookie") String cookie,
@@ -157,5 +165,70 @@ public class PregledController {
     	return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
 	}
 
-
+    
+    @GetMapping(value = "slobodniPregledi")
+    public ResponseEntity<List<PregledDTO>> getSlobodaniTermini(@RequestParam("id_apoteke") Long id_apoteke){
+    	
+    	List<PregledDTO> pregledi = new ArrayList<PregledDTO>();
+    	
+    	for(Pregled p : pregledService.findAllFromApoteka(id_apoteke)) {
+    		pregledi.add(new PregledDTO(p.getId(), p.getVreme(), p.getKraj(), p.getCena(), p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime()));
+    	}
+    	return new ResponseEntity<List<PregledDTO>>(pregledi, HttpStatus.OK);
+	}
+	@GetMapping(value="/zakaziPregled")
+	public ResponseEntity<Void> otkaziRezervaciju(
+			@RequestParam("id_pregleda") Long id_pregleda,
+			@RequestParam("cookie") String cookie
+	){
+			Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
+			
+			Pregled pregled = pregledService.findOneById(id_pregleda);
+			pregled.setPacijent(p);
+			pregled.setPregledZakazan(true);
+			pregledService.savePregled(pregled);
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		    String dateTime = pregled.getVreme().format(formatter);
+			
+			String body = "Poštovani, " + p.getIme() + "\n"
+					+ "Zakazali ste pregled kod dermatologa. Više informacija u nastavku. \n"
+					+ "Datum i vreme: " + dateTime + "\n"
+					+ "Dermatolog: " + pregled.getZdravstveniRadnik().getIme() + " " + pregled.getZdravstveniRadnik().getPrezime() + "\n"
+					+ "Cena: " + pregled.getCena() + "\n"
+					+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
+					+ "Srdačan pozdrav.";
+			
+			String title = "Potvrda pregleda (ID:" + pregled.getId() + ")";
+		
+			try
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmailService.sendEmail(p.getEmailAdresa(), body, title);
+					}
+				};
+				t.start();
+			}
+			catch(Exception e) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+	    	
+	    	return new ResponseEntity<>(HttpStatus.OK);
+	}
+    @GetMapping(value = "posete_dermatologu")
+    public ResponseEntity<List<PregledDTO>> getPoseteDermatologu(@RequestParam("cookie") String cookie){
+    	
+    	List<PregledDTO> pregledi = new ArrayList<PregledDTO>();
+    	
+    	Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(cookie);
+    	
+    	for(Pregled p : pregledService.findAllByPacijent(pacijent)) {
+    		PregledDTO tmp = new PregledDTO(p);
+    		tmp.setUsername(p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime());
+    		pregledi.add(tmp);
+    	}
+    	return new ResponseEntity<List<PregledDTO>>(pregledi, HttpStatus.OK);
+	}
 }

@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.repository;
 
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,4 +33,12 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     //provera da li ima zakazan neki pregled u buducnosti
     @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.username = :username and p.vreme > :start")
     List<Pregled> findAllInFutureByZdravstveniRadnik(LocalDateTime start, String username);
+    
+    // nadji sve preglede jedne apoteke
+    @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and p.pregledZakazan = false and p.pregledObavljen = false")
+    List<Pregled> findAllfromApoteka(Long apoteka_id);
+    
+    // nadji sve preglede jednog pacijenta
+    @Query(value = "SELECT p FROM PREGLED p where p.pacijent = :pacijent")
+    List<Pregled> findAllByPacijent(Pacijent pacijent);
 }

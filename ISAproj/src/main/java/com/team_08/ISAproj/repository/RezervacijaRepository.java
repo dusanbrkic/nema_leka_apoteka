@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Narudzbenica;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.model.Rezervacija;
 import com.team_08.ISAproj.model.RezervacijaLek;
@@ -28,4 +29,7 @@ public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> 
 
 	@Query(value = "select r from REZERVACIJA r where r.id = :param_id")
 	Rezervacija findByRezervacijaId(@Param("param_id") Long id);
+	
+	@Query(value = "select r from REZERVACIJA r where r.pacijent = pacijent")
+	List<Rezervacija> findAllRezervacijeFromKorisnik(@Param("pacijent") Pacijent p);
 }

@@ -3,6 +3,7 @@ package com.team_08.ISAproj.dto;
 import java.util.Date;
 
 import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Pacijent;
 
 
 public class KorisnikDTO {
@@ -19,6 +20,7 @@ public class KorisnikDTO {
 	private String grad;
 	private String drzava;
 	private String brojTelefona;
+	private Integer brPenala = 0;
 
 	public KorisnikDTO() {
 		
@@ -38,6 +40,23 @@ public class KorisnikDTO {
 		this.drzava = k.getDrzava();
 		this.brojTelefona = k.getBrojTelefona();
 	}
+	public KorisnikDTO(Pacijent k) {
+		super();
+		this.username = k.getUsername();
+		this.password = k.getPassword();
+		this.ime = k.getIme();
+		this.prezime = k.getPrezime();
+		this.datumRodjenja = k.getDatumRodjenja();
+		this.emailAdresa = k.getEmailAdresa();
+		this.cookie = k.getCookieToken();
+		this.firstLogin = k.getFirstLogin();
+		this.adresa = k.getAdresa();
+		this.grad = k.getGrad();
+		this.drzava = k.getDrzava();
+		this.brojTelefona = k.getBrojTelefona();
+		this.setBrPenala(k.getBrPenala());
+	}
+	
 	public KorisnikDTO(String username, String password, String ime, String prezime, Date datumRodjenja,
 			String emailAdresa, String cookie) {
 		super();
@@ -130,6 +149,12 @@ public class KorisnikDTO {
 	}
 	public void setCookie(String cookie) {
 		this.cookie = cookie;
+	}
+	public Integer getBrPenala() {
+		return brPenala;
+	}
+	public void setBrPenala(Integer brPenala) {
+		this.brPenala = brPenala;
 	}
 
 }

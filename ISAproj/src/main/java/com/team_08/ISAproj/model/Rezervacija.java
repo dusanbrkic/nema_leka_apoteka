@@ -39,7 +39,18 @@ public class Rezervacija {
 	
 	@Column(name = "PREUZETO")
 	private boolean preuzeto = false;
+	
+	@Column(name = "ISTEKLO")
+	private boolean isteklo = false;
 
+
+	public boolean isIsteklo() {
+		return isteklo;
+	}
+
+	public void setIsteklo(boolean isteklo) {
+		this.isteklo = isteklo;
+	}
 
 	public boolean isPreuzeto() {
 		return preuzeto;

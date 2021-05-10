@@ -10,6 +10,8 @@ const PacijentApoteke = {template: '<PacijentApoteke></PacijentApoteke>'}
 const PacijentLekovi = {template: '<PacijentLekovi></PacijentLekovi>'}
 const PacijentNarudzbenice = {template: '<PacijentNarudzbenice></PacijentNarudzbenice>'}
 const NaruciPacijent = {template: '<NaruciPacijent></NaruciPacijent>'}
+const PacijentZakaziPregled = {template: '<PacijentZakaziPregled></PacijentZakaziPregled>'}
+const PacijentPoseteDermatologu = {template: '<PacijentPoseteDermatologu></PacijentPoseteDermatologu>'}
 
 // dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
@@ -20,6 +22,7 @@ const MailVer = {template: '<MailVer></MailVer>'}
 const IzmenaPodataka = {template: '<IzmenaPodataka></IzmenaPodataka>'}
 const Lekovi = {template: '<Lekovi></Lekovi>'}
 const PromenaLozinke = {template: '<PromenaLozinke></PromenaLozinke>'}
+
 // admin apoteke
 const HomeAdminApoteke = {template: '<HomeAdminApoteke></HomeAdminApoteke>'}
 const AdminApotekeLekovi = {template: '<AdminApotekeLekovi></AdminApotekeLekovi>'}
@@ -114,6 +117,14 @@ const router = new VueRouter({
             {
                 path: 'rezervacija',
                 component: NaruciPacijent
+            },
+            {
+            	path: 'zakazivanje_kod_dermatologa',
+            	component: PacijentZakaziPregled
+            },
+            {
+            	path: 'posete-dermatologu',
+            	component: PacijentPoseteDermatologu
             }
 	    ]},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},

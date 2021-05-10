@@ -45,5 +45,4 @@ public class ApotekaService {
 	public Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable) {
 		return apotekaRepository.findByNazivContaining(naziv, pageable);
 	}
-
 }

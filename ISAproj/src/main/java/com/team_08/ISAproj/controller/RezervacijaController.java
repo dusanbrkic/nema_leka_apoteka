@@ -217,9 +217,6 @@ public class RezervacijaController {
 	    			}
 	    		}
 	    		
-	    		System.out.println("------------------------------------------------------");
-	    		System.out.println(tmp.getRokPonude());
-	    		
 	    		rezervacije.add(new RezervacijaDTO(
 	    				tmp.getId(),
 	    				lekovi,

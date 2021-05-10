@@ -39,6 +39,14 @@ public class PregledDTO {
         this.cena = pregled.getCena();
         this.preporuceniLekovi = new HashSet<LekDTO>();
     }
+    
+    public PregledDTO(Long id, LocalDateTime start, LocalDateTime end, Double cena, String username) {
+    	this.start = start;
+        this.id = id;
+        this.end = end;
+        this.cena = cena;
+        this.username = username;
+    }
 
     public void loadLekovi(Pregled pregled) {
         for (Lek p : pregled.getPreporuceniLekovi())
