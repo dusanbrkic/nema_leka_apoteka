@@ -2,6 +2,7 @@ package com.team_08.ISAproj.service;
 
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.repository.PregledRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +56,22 @@ public class PregledService {
     }
 
     public void saveSlobodanTermin(Pregled pregled) {
-    	pregledRepository.save(pregled);
+        pregledRepository.save(pregled);
     }
 
+    public List<Pregled> proveraOdDatumaPregleda(LocalDateTime start, String username) {
+        return pregledRepository.findAllInFutureByZdravstveniRadnik(start, username);
+    }
+    
+    public List<Pregled> findAllFromApoteka(Long apoteka_id){
+    	return pregledRepository.findAllfromApoteka(apoteka_id);
+    }
+    public List<Pregled> findAllByPacijent(Pacijent p){
+    	return pregledRepository.findAllByPacijent(p);
+    }
     public List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end)
             throws CookieNotValidException {
         return pregledRepository.findAllTermsInDateRangeByDermatolog(cookie, start, end);
+
     }
 }

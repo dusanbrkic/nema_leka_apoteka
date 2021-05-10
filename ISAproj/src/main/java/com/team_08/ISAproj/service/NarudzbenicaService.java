@@ -21,34 +21,35 @@ import com.team_08.ISAproj.repository.NarudzbenicaRepository;
 
 @Service
 public class NarudzbenicaService {
-	
-	@Autowired
-	private NarudzbenicaRepository narudzbenicaRepository;
-	@Autowired 
-	private NarudzbenicaLekRepository narudzbenicaLekRepository;
-	
-	public Narudzbenica saveNarudzbenica(Narudzbenica n) {
-		return narudzbenicaRepository.save(n);
+
+    @Autowired
+    private NarudzbenicaRepository narudzbenicaRepository;
+    @Autowired
+    private NarudzbenicaLekRepository narudzbenicaLekRepository;
+
+    public Narudzbenica saveNarudzbenica(Narudzbenica n) {
+        return narudzbenicaRepository.save(n);
     }
-	
-	public void saveNarudzbenicaLek(NarudzbenicaLek nl)
-	{
-		narudzbenicaLekRepository.save(nl);
-	}
-	
+
+    public void saveNarudzbenicaLek(NarudzbenicaLek nl) {
+        narudzbenicaLekRepository.save(nl);
+    }
+
     public List<Narudzbenica> findAllNarudzbenice() {
-    	
-    	return narudzbenicaRepository.findAll();
+
+        return narudzbenicaRepository.findAll();
     }
-    
+
     public List<NarudzbenicaLek> findAllNarudzbeniceLek() {
-    	
-    	return narudzbenicaLekRepository.findAll();
+
+        return narudzbenicaLekRepository.findAll();
     }
+
     public Narudzbenica findNarudzbenica(Long id) {
-    	
-    	return narudzbenicaRepository.findById(id).orElseGet(null);
+
+        return narudzbenicaRepository.findById(id).orElseGet(null);
     }
+
     public Page<Narudzbenica> findAllNarudzbenicePagedAndSorted(
             String cookie, Integer page, Integer size, String sortBy, Boolean sortDesc) throws CookieNotValidException {
         if (!sortBy.equals("vreme"))
@@ -60,5 +61,13 @@ public class NarudzbenicaService {
             sort = Sort.by(sortBy).ascending();
 
         return narudzbenicaRepository.findAllNarudzbenicePagedAndSorted(cookie, PageRequest.of(page, size, sort));
+    }
+    public Page<Narudzbenica> findAllNarudzbeniceApotekaPagedAndSorted(Long apotekaId, Integer page, Integer size, String sortBy, Boolean sortDesc){
+        Sort sort;
+        if (sortDesc)
+            sort = Sort.by(sortBy).descending();
+        else
+            sort = Sort.by(sortBy).ascending();
+        return narudzbenicaRepository.findAllNarudzbeniceApotekaPagedAndSorted(apotekaId, PageRequest.of(page, size, sort));
     }
 }

@@ -217,12 +217,12 @@ public class RezervacijaController {
 	    			}
 	    		}
 	    		
-	        	
 	    		rezervacije.add(new RezervacijaDTO(
 	    				tmp.getId(),
 	    				lekovi,
 	    				tmp.getRokPonude(),
-	    				tmp.getApoteka().getNaziv()));
+	    				tmp.getApoteka().getNaziv(),
+	    				tmp.isPreuzeto()));
     		
     		}
     	}
@@ -230,5 +230,27 @@ public class RezervacijaController {
     	return new ResponseEntity<List<RezervacijaDTO>>(rezervacije, HttpStatus.OK);
 
 		
+	}
+	
+	// rezervacija iz jedne apoteke
+	@GetMapping(value="/otkazi-rezervaciju")
+	public ResponseEntity<Void> otkaziRezervaciju(@RequestParam String id_rezervacije){
+		
+			Rezervacija r = rezervacijaService.findRezervacijaByID(Long.parseLong(id_rezervacije));
+			if(r==null) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+	    	
+			List<RezervacijaLek> rl = rezervacijaService.findRezervacijaLekByRezervacijaID(Long.parseLong(id_rezervacije));
+			
+			for(RezervacijaLek tmp: rl) {
+				ApotekaLek al = apotekaLekService.findOneBySifra(tmp.getLek(), r.getApoteka().getId());
+				al.setKolicina(al.getKolicina()+tmp.getKolicina());
+				apotekaLekService.saveAL(al);
+			}
+			
+	    	rezervacijaService.removeRezervacija(r.getId());
+	    	
+	    	return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

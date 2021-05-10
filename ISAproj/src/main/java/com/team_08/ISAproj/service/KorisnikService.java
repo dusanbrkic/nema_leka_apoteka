@@ -25,37 +25,39 @@ public class KorisnikService {
     }
 
     public Korisnik findUser(String username) {
-       Korisnik k = pacijentRepository.findOneByUsername(username);
-       if (k==null) k = dermatologRepository.findOneByUsername(username);
-       if (k==null) k = farmaceutRepository.findOneByUsername(username);
-       if (k==null) k = adminApotekeRepository.findOneByUsername(username);
-       return k;
+        Korisnik k = pacijentRepository.findOneByUsername(username);
+        if (k == null) k = dermatologRepository.findOneByUsername(username);
+        if (k == null) k = farmaceutRepository.findOneByUsername(username);
+        if (k == null) k = adminApotekeRepository.findOneByUsername(username);
+        return k;
     }
 
     public Korisnik findUserByToken(String cookie) {
         Korisnik k = pacijentRepository.findOneByCookieTokenValue(cookie);
-        if (k==null) k = dermatologRepository.findOneByCookieTokenValue(cookie);
-        if (k==null) k = farmaceutRepository.findOneByCookieTokenValue(cookie);
-        if (k==null) k = adminApotekeRepository.findOneByCookieTokenValue(cookie);
+        if (k == null) k = dermatologRepository.findOneByCookieTokenValue(cookie);
+        if (k == null) k = farmaceutRepository.findOneByCookieTokenValue(cookie);
+        if (k == null) k = adminApotekeRepository.findOneByCookieTokenValue(cookie);
         return k;
     }
+
     public Korisnik findUserByEmail(String email) {
         Korisnik k = pacijentRepository.findOneByEmailAdresa(email);
-        if (k==null) k = dermatologRepository.findOneByEmailAdresa(email);
-        if (k==null) k = farmaceutRepository.findOneByEmailAdresa(email);
-        if (k==null) k = adminApotekeRepository.findOneByEmailAdresa(email);
-        return k;	
-    	
+        if (k == null) k = dermatologRepository.findOneByEmailAdresa(email);
+        if (k == null) k = farmaceutRepository.findOneByEmailAdresa(email);
+        if (k == null) k = adminApotekeRepository.findOneByEmailAdresa(email);
+        return k;
+
     }
+
     public void saveUser(Korisnik k) {
         if (k instanceof Pacijent)
-            pacijentRepository.save((Pacijent)k);
+            pacijentRepository.save((Pacijent) k);
         else if (k instanceof Dermatolog)
-            dermatologRepository.save((Dermatolog)k);
+            dermatologRepository.save((Dermatolog) k);
         else if (k instanceof Farmaceut)
             farmaceutRepository.save((Farmaceut) k);
         else if (k instanceof AdminApoteke)
-            adminApotekeRepository.save((AdminApoteke)k);
+            adminApotekeRepository.save((AdminApoteke) k);
 
     }
 }

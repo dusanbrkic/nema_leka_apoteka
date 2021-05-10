@@ -7,6 +7,7 @@ Vue.component("Login", {
             userRole: "",
             wrongUsername : false,
             wrongPassword : false,
+            Blocked : false,
 			firstLogin: "",
 			ver: false,
         }
@@ -18,6 +19,7 @@ Vue.component("Login", {
       <b-alert style="text-align: center;" v-model="ver" variant="danger">Niste izvrsili verifikaciju!</b-alert>
       <b-alert style="text-align: center;" v-model="wrongUsername" variant="danger">Wrong Username!</b-alert>
       <b-alert style="text-align: center;" v-model="wrongPassword" variant="danger">Wrong Password!</b-alert>
+      <b-alert style="text-align: center;" v-model="Blocked" variant="danger"> Nalog je blokiran! </b-alert>
         <b-card title="Log in" id="login_screen">
           <b-form @submit.prevent="login">
             <b-form-input required type="text" v-model="username" placeholder="Enter Username"/>
@@ -55,9 +57,16 @@ Vue.component("Login", {
                     if (error.request.status==404) {
                         this.wrongUsername = true
                         this.wrongPassword = false
+                        this.Blocked = false
                     } else if (error.request.status==401) {
                         this.wrongUsername = false
                         this.wrongPassword = true
+                        this.Blocked = false
+                    }
+                    else if (error.request.status==403) {
+                        this.wrongUsername = false
+                        this.wrongPassword = false
+                        this.Blocked = true
                     }
                     else if(error.request.status==400){
                     		this.ver = true;
@@ -74,7 +83,7 @@ Vue.component("Login", {
             } else if (this.userRole === "ADMIN_APOTEKE") {
 
             	if(this.firstLogin){
-            		app.$router.push("/admin-apoteke-lozinka")
+            		app.$router.push("/promena-lozinke")
             	}else{
             		app.$router.push("/home-admin_apoteke")
             	}

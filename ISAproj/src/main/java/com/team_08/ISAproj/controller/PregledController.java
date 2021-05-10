@@ -5,9 +5,11 @@ import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.PregledLekDTO;
 import com.team_08.ISAproj.dto.RezervacijaDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
+
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.service.*;
 import com.team_08.ISAproj.model.Pregled;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,7 +50,7 @@ public class PregledController {
     private KorisnikService korisnikService;
     @Autowired
     private ApotekaService apotekaService;
-    @Autowired
+
     private RezervacijaService rezervacijaService;
     @Autowired
     private ApotekaLekService apotekaLekService;
@@ -176,7 +178,7 @@ public class PregledController {
 
         double ukupnaCena = 0;
 
-        for(RezervacijaDTO nDTO: rezervacije) {
+        for (RezervacijaDTO nDTO : rezervacije) {
 
             Lek l = lekService.findOneBySifra(nDTO.getSifraLeka());
             RezervacijaLek rl = new RezervacijaLek(nDTO.getKolicina(), n, l);
@@ -184,13 +186,13 @@ public class PregledController {
 
             ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(l.getId(), Long.parseLong(rezervacije.get(0).getApotekaId()));
 
-            apotekaLek.setKolicina(apotekaLek.getKolicina()-nDTO.getKolicina());
+            apotekaLek.setKolicina(apotekaLek.getKolicina() - nDTO.getKolicina());
             apotekaLekService.saveAL(apotekaLek);
 
 
-            double cena_leka = nDTO.getKolicina()*apotekaLek.getCena();
+            double cena_leka = nDTO.getKolicina() * apotekaLek.getCena();
             ukupnaCena += cena_leka;
-            body +=	"	- " + l.getNaziv() + " x " + nDTO.getKolicina() + "kom - " + cena_leka + "din. \n";
+            body += "	- " + l.getNaziv() + " x " + nDTO.getKolicina() + "kom - " + cena_leka + "din. \n";
 
         }
 
@@ -204,20 +206,16 @@ public class PregledController {
 
         String body_tmp = body;
 
-        try
-        {
+        try {
             Thread t = new Thread() {
-                public void run()
-                {
+                public void run() {
                     sendEmailService.sendEmail(pacijent.getEmailAdresa(), body_tmp, title);
                 }
             };
             t.start();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
 
 
         return new ResponseEntity<String>(HttpStatus.OK);
@@ -231,10 +229,10 @@ public class PregledController {
                                                        @RequestParam("idApoteke") Long idApoteke) {
         LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        if(!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
+        if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
             return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
         ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
-        if(zdravstveniRadnik==null)
+        if (zdravstveniRadnik == null)
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
 
         //nova klasa
@@ -260,7 +258,7 @@ public class PregledController {
                                                        @RequestParam("idPacijenta") Long idPacijenta,
                                                        @RequestParam("idTermina") Long idTermina) {
         ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
-        if(zdravstveniRadnik==null)
+        if (zdravstveniRadnik == null)
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
 
         //nova klasa
@@ -273,19 +271,19 @@ public class PregledController {
     }
 
     @PostMapping(value = "addSlobodanTermin")
-    public ResponseEntity<PregledDTO> addSlobodanTermin(@RequestBody PregledDTO pregledDTO){
+    public ResponseEntity<PregledDTO> addSlobodanTermin(@RequestBody PregledDTO pregledDTO) {
 
-    	String apotekaId = pregledDTO.getApotekaId();
-    	Apoteka a = apotekaService.findOne(Long.parseLong(apotekaId));
-    	Dermatolog d = zdravstveniRadnikService.findOneByUsername(pregledDTO.getUsername());
-    	Pregled p = new Pregled(pregledDTO);
-    	p.setApoteka(a);
-    	p.setDermatolog(d);
+        String apotekaId = pregledDTO.getApotekaId();
+        Apoteka a = apotekaService.findOne(Long.parseLong(apotekaId));
+        Dermatolog d = zdravstveniRadnikService.findOneByUsername(pregledDTO.getUsername());
+        Pregled p = new Pregled(pregledDTO);
+        p.setApoteka(a);
+        p.setDermatolog(d);
 
 
-    	pregledService.saveSlobodanTermin(p);
+        pregledService.saveSlobodanTermin(p);
 
-    	//Korisnik k = korisnikService.findUserByToken(cookie);
+        //Korisnik k = korisnikService.findUserByToken(cookie);
 //    	if(k == null) {
 //    		return new ResponseEntity<PregledDTO>(HttpStatus.NOT_FOUND);
 //    	}
@@ -298,8 +296,73 @@ public class PregledController {
 //    	}
 
 
-    	return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
+        return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
+    }
+
+    
+    @GetMapping(value = "slobodniPregledi")
+    public ResponseEntity<List<PregledDTO>> getSlobodaniTermini(@RequestParam("id_apoteke") Long id_apoteke){
+    	
+    	List<PregledDTO> pregledi = new ArrayList<PregledDTO>();
+    	
+    	for(Pregled p : pregledService.findAllFromApoteka(id_apoteke)) {
+    		pregledi.add(new PregledDTO(p.getId(), p.getVreme(), p.getKraj(), p.getCena(), p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime()));
+    	}
+    	return new ResponseEntity<List<PregledDTO>>(pregledi, HttpStatus.OK);
 	}
-
-
+	@GetMapping(value="/zakaziPregled")
+	public ResponseEntity<Void> otkaziRezervaciju(
+			@RequestParam("id_pregleda") Long id_pregleda,
+			@RequestParam("cookie") String cookie
+	){
+			Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
+			
+			Pregled pregled = pregledService.findOneById(id_pregleda);
+			pregled.setPacijent(p);
+			pregled.setPregledZakazan(true);
+			pregledService.savePregled(pregled);
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		    String dateTime = pregled.getVreme().format(formatter);
+			
+			String body = "Poštovani, " + p.getIme() + "\n"
+					+ "Zakazali ste pregled kod dermatologa. Više informacija u nastavku. \n"
+					+ "Datum i vreme: " + dateTime + "\n"
+					+ "Dermatolog: " + pregled.getZdravstveniRadnik().getIme() + " " + pregled.getZdravstveniRadnik().getPrezime() + "\n"
+					+ "Cena: " + pregled.getCena() + "\n"
+					+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
+					+ "Srdačan pozdrav.";
+			
+			String title = "Potvrda pregleda (ID:" + pregled.getId() + ")";
+		
+			try
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmailService.sendEmail(p.getEmailAdresa(), body, title);
+					}
+				};
+				t.start();
+			}
+			catch(Exception e) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+	    	
+	    	return new ResponseEntity<>(HttpStatus.OK);
+	}
+    @GetMapping(value = "posete_dermatologu")
+    public ResponseEntity<List<PregledDTO>> getPoseteDermatologu(@RequestParam("cookie") String cookie){
+    	
+    	List<PregledDTO> pregledi = new ArrayList<PregledDTO>();
+    	
+    	Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(cookie);
+    	
+    	for(Pregled p : pregledService.findAllByPacijent(pacijent)) {
+    		PregledDTO tmp = new PregledDTO(p);
+    		tmp.setUsername(p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime());
+    		pregledi.add(tmp);
+    	}
+    	return new ResponseEntity<List<PregledDTO>>(pregledi, HttpStatus.OK);
+	}
 }

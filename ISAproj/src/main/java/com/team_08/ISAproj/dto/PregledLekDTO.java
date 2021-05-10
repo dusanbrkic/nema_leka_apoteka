@@ -12,7 +12,8 @@ public class PregledLekDTO {
 
     private LekDTO lek;
 
-    public PregledLekDTO(){}
+    public PregledLekDTO() {
+    }
 
     public PregledLekDTO(PregledLek p) {
         this.kolicina = p.getKolicina();

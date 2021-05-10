@@ -29,6 +29,7 @@ Vue.component("IzmenaPodataka", {
                 "grad": "",
                 "drzava": "",
                 "brojTelefona": "",
+                "brPenala": "",
             },
             userRole: ""
         };
@@ -109,6 +110,13 @@ Vue.component("IzmenaPodataka", {
                 v-model="forma.brojTelefona"
             ></b-form-input>
           </b-form-group>
+          <b-form-group v-if="forma.brPenala" id="input-group-9" label="Broj penala:" label-for="input-9">
+            <b-form-input
+                id="input-9"
+                v-model="forma.brPenala"
+                readonly
+            ></b-form-input>
+          </b-form-group>
           <b-button v-on:click="returnToHome">Nazad</b-button>
           <b-button type="submit" variant="primary">Sacuvaj</b-button>
           <b-button type="reset" variant="danger">Resetuj</b-button>
@@ -131,6 +139,7 @@ Vue.component("IzmenaPodataka", {
                     this.korisnik = response.data
                     this.korisnik.datumRodjenja = this.fixDate(this.korisnik.datumRodjenja)
                     this.forma = JSON.parse(JSON.stringify(this.korisnik))
+                    console.log(this.korisnik);
                 })
         },
         onReset: function (event) {

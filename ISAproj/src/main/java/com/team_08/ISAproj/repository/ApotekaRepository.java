@@ -18,11 +18,11 @@ import org.springframework.stereotype.Repository;
 public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 
 	Apoteka findOneById(Long Id);
-	
+
 	List<Apoteka> findAll();
-	
+
 	Page<Apoteka> findAll(Pageable pageable);
-	
+
 	Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable);
 
 	@Query(value="select a from APOTEKA a join fetch a.admini aa")

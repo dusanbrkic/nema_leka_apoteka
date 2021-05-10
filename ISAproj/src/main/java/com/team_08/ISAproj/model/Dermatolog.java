@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-@Entity(name="DERMATOLOG")
+@Entity(name = "DERMATOLOG")
 public class Dermatolog extends ZdravstveniRadnik {
 
     //connections
@@ -18,6 +18,7 @@ public class Dermatolog extends ZdravstveniRadnik {
     public Set<DermatologApoteka> getApoteke() {
         return apoteke;
     }
+
     public void setApoteke(Set<DermatologApoteka> apoteke) {
         this.apoteke = apoteke;
     }

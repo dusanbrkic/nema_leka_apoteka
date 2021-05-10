@@ -29,19 +29,19 @@ public class ApotekaService {
 	public Apoteka findOne(Long id) {
 		return apotekaRepository.findById(id).orElseGet(null);
 	}
-	
-	
+
+
 	public Apoteka create(Apoteka apoteka) {
 		Long id = apoteka.getId();
-		
+
 		//Apoteka tempApoteka = apotekaRepository.create(apoteka);
 		return null;
 	}
-	
+
 	public Page<Apoteka> findAll(Pageable page) {
 		return apotekaRepository.findAll(page);
 	}
-	
+
 	public Page<Apoteka> findByNazivContaining(String naziv, Pageable pageable) {
 		return apotekaRepository.findByNazivContaining(naziv, pageable);
 	}

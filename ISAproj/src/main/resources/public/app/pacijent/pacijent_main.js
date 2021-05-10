@@ -61,10 +61,10 @@ Vue.component("PacijentMain", {
                 class="mb-2"
             >
               <b-card-text>
-                Prikazi i zakazivanje poseta kod dermatologa
+                Prikazi zakazane preglede kod dermatologa
               </b-card-text>
               
-              <!-- <a href="#/home-pacijent/pregledi" class="stretched-link"></a> -->
+              <a href="#/home-pacijent/posete-dermatologu" class="stretched-link"></a>
 
             </b-card>
           </b-col>
@@ -81,10 +81,10 @@ Vue.component("PacijentMain", {
                 class="mb-2"
             >
               <b-card-text>
-                Prikazi i zakazivanje savetovanja kod farmaceuta
+                Prikazi zakazana savetovanja kod farmaceuta
               </b-card-text>
              
-             
+             <!-- <a href="#/home-pacijent/pregledi" class="stretched-link"></a> -->
 
             </b-card>
           </b-col>

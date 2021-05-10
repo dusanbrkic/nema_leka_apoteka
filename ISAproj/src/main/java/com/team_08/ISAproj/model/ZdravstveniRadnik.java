@@ -5,7 +5,7 @@ import java.util.Set;
 
 @Entity(name = "ZDRAVSTVENI_RADNIK")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class ZdravstveniRadnik extends Korisnik{
+public class ZdravstveniRadnik extends Korisnik {
 
     @Column(name = "PROSECNA_OCENA")
     private Double prosecnaOcena;

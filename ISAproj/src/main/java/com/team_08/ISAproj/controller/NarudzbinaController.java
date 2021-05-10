@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.team_08.ISAproj.dto.FarmaceutDTO;
 import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.NarudzbenicaAdminDTO;
 import com.team_08.ISAproj.dto.NarudzbenicaDTO;
@@ -29,6 +30,7 @@ import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.AdminApoteke;
 import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.ApotekaLek;
+import com.team_08.ISAproj.model.Farmaceut;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.model.Narudzbenica;
@@ -46,55 +48,87 @@ import com.team_08.ISAproj.service.NarudzbenicaService;
 @RequestMapping("/narudzbine")
 public class NarudzbinaController {
 
-	
-	@Autowired
-	private NarudzbenicaService narudzbenicaService;
-	@Autowired
-	private LekService lekService;
-	@Autowired
-	private ApotekaService apotekaService;
-	@Autowired
-	private KorisnikService korisnikService;
-	@Autowired
-	private ApotekaLekService apotekaLekService;
-	@Autowired
-	private EmailService sendEmailService;
 
-	@PostMapping(value="/admin")
-	public ResponseEntity<List<NarudzbenicaAdminDTO>> dodajNarudzbenice(@RequestBody List<NarudzbenicaAdminDTO> narudzbenice){
-		
-		Narudzbenica n = new Narudzbenica();
-		n.setApoteka(apotekaService.findOne(Long.parseLong(narudzbenice.get(0).getApotekaId())));
-		n.setRokPonude(narudzbenice.get(0).getDatumNarudzbine());
-		n.setPacijent(null);
-		narudzbenicaService.saveNarudzbenica(n);
-		for(NarudzbenicaAdminDTO nDTO: narudzbenice) {
-			Lek l = lekService.findOneBySifra(nDTO.getSifra());
-			NarudzbenicaLek nl = new NarudzbenicaLek(nDTO.getKolicina(), n, l);
-			narudzbenicaService.saveNarudzbenicaLek(nl);
+    @Autowired
+    private NarudzbenicaService narudzbenicaService;
+    @Autowired
+    private LekService lekService;
+    @Autowired
+    private ApotekaService apotekaService;
+    @Autowired
+    private KorisnikService korisnikService;
+    @Autowired
+    private ApotekaLekService apotekaLekService;
+    @Autowired
+    private EmailService sendEmailService;
 
-		}
-		return new ResponseEntity<List<NarudzbenicaAdminDTO>>(narudzbenice,HttpStatus.OK);
-		
-	}
-	@GetMapping(value="lekNarudzbina")
-	public ResponseEntity<LekDTO> saveLek(@RequestParam String cookie,@RequestParam String sifra){
-		Korisnik k = korisnikService.findUserByToken(cookie);
-		if(k == null) {
-			return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
-		}
-		if(k instanceof AdminApoteke) {
+    @PostMapping(value = "/admin")
+    public ResponseEntity<List<NarudzbenicaAdminDTO>> dodajNarudzbenice(@RequestBody List<NarudzbenicaAdminDTO> narudzbenice) {
+
+        Narudzbenica n = new Narudzbenica();
+        n.setApoteka(apotekaService.findOne(Long.parseLong(narudzbenice.get(0).getApotekaId())));
+        n.setRokPonude(narudzbenice.get(0).getDatumNarudzbine());
+        n.setPacijent(null);
+        narudzbenicaService.saveNarudzbenica(n);
+        for (NarudzbenicaAdminDTO nDTO : narudzbenice) {
+            Lek l = lekService.findOneBySifra(nDTO.getSifra());
+            NarudzbenicaLek nl = new NarudzbenicaLek(nDTO.getKolicina(), n, l);
+            narudzbenicaService.saveNarudzbenicaLek(nl);
+
+        }
+        return new ResponseEntity<List<NarudzbenicaAdminDTO>>(narudzbenice, HttpStatus.OK);
+
+    }
+
+    @GetMapping(value = "lekNarudzbina")
+    public ResponseEntity<LekDTO> saveLek(@RequestParam String cookie, @RequestParam String sifra) {
+        Korisnik k = korisnikService.findUserByToken(cookie);
+        if (k == null) {
+            return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
+        }
+        if (k instanceof AdminApoteke) {
+
+            AdminApoteke aa = (AdminApoteke) k;
+            ApotekaLek al = lekService.addApotekaLek(sifra, aa.getApoteka().getId());
+            System.out.println(al);
+            if (al == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            }
+            return new ResponseEntity<LekDTO>(HttpStatus.CREATED);
+        }
+        return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
+    }
+    
+    @GetMapping(value ="sveNarudzbine")
+    public ResponseEntity<Page<NarudzbenicaDTO>> getNarudzbenice(@RequestParam String cookie,
+    		@RequestParam("page") Integer page,
+            @RequestParam("size") Integer size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("sortDesc") Boolean sortDesc){
     	
-			AdminApoteke aa = (AdminApoteke) k;
-			ApotekaLek al = lekService.addApotekaLek(sifra,aa.getApoteka().getId());
-			System.out.println(al);
-			if(al == null) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
-				
-			}
-			return new ResponseEntity<LekDTO>(HttpStatus.CREATED);
-		}
-		return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
-	}
+    	
+    	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(cookie);
+    	if(a == null) {
+    		return new ResponseEntity<Page<NarudzbenicaDTO>>(HttpStatus.NOT_FOUND);
+    	}
+    	Page<Narudzbenica> narudzbenice = null;
+    	narudzbenice = narudzbenicaService.findAllNarudzbeniceApotekaPagedAndSorted(a.getApoteka().getId(), page, size, sortBy, sortDesc);
+		
+    	if(narudzbenice == null) {
+    		return new ResponseEntity<Page<NarudzbenicaDTO>>(Page.empty(), HttpStatus.OK);
+    	}
+        
+    	
+	    Page<NarudzbenicaDTO> narudzbeniceDTO = narudzbenice.map(new Function<Narudzbenica, NarudzbenicaDTO>() {
+	        @Override
+	        public NarudzbenicaDTO apply(Narudzbenica n) {
+	        	NarudzbenicaDTO narudzbenicaDTO = new NarudzbenicaDTO(n);
+	            return narudzbenicaDTO;
+	        }
+	    });
+	    return new ResponseEntity<Page<NarudzbenicaDTO>>(narudzbeniceDTO, HttpStatus.OK);
+    	
+    }
 
 }

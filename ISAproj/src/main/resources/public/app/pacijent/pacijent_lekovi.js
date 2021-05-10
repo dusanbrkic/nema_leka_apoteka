@@ -165,6 +165,10 @@ Vue.component("PacijentLekovi", {
 	
 		  this.losUnos = false;
 		  this.uspeh = false;
+		  
+		  //var datumRez = new Date( this.izabranLek.istekRezervacije + ".000Z");
+		  
+		  //this.izabranLek.istekRezervacije.setMinutes(this.izabranLek.istekRezervacije.getMinutes() + this.izabranLek.istekRezervacije.getTimezoneOffset())
 	        
 	      axios.get("rezervacije/rezervacija-leka/", 
 			    { headers: { "Content-Type": "application/json; charset=UTF-8" },
@@ -183,8 +187,8 @@ Vue.component("PacijentLekovi", {
 		        .catch((e) => {
 		        
 		        	this.$refs['my-modal'].hide();
-		        
 		        	this.losUnos = true;
+		        	console.log(e);
 		        });
 		        
 		   this.retrieveLekovi();

@@ -1,15 +1,11 @@
-Vue.component("PacijentNarudzbenice", {
+Vue.component("PacijentPoseteDermatologu", {
     data: function () {
         return {
             cookie: '',
-            rezervacije: [],
+            pregledi: [],
             fields: [
                 {
-                    key: 'idRezervacije',
-                    sortable: false
-                },
-                {
-                    key: 'lekovi',
+                    key: 'idPregleda',
                     sortable: false
                 },
                 {
@@ -17,7 +13,23 @@ Vue.component("PacijentNarudzbenice", {
                     sortable: false
                 },
                 {
-                    key: 'datumIstekaRezervacije',
+                	key: 'dermatolog',
+                	sortable: false
+                },
+                {
+                    key: 'datum',
+                    sortable: false
+                },
+                {
+                    key: 'pocetak',
+                    sortable: false
+                },
+                                {
+                    key: 'kraj',
+                    sortable: false
+                },
+                {
+                    key: 'cena',
                     sortable: false
                 },
                 {
@@ -43,10 +55,6 @@ Vue.component("PacijentNarudzbenice", {
       <b-card style="margin: 40px auto; max-width: 1200px">
         <b-container>
 
-		<b-alert style="text-align: center;" v-model="this.greska" variant="danger"> Greska prilikom otkazivanja! </b-alert>
-      	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesno otkazivanje</b-alert>
-
-
 
           <b-row>
             <b-table
@@ -59,10 +67,12 @@ Vue.component("PacijentNarudzbenice", {
             
 	            <template #cell(status)="row">
 
-	            	<b-button size="sm" v-if="rezervacije[row.index].rowVariant == 'warning' " @click="otkazi(row.index)" class="mr-1">
-			          Otkazi
-			        </b-button>
-			        
+	            	<div size="sm" v-if="pregledi[row.index].rowVariant == 'warning' " class="mr-1">
+			          narandzasto
+			        </div>
+			        <div size="sm" v-if="pregledi[row.index].rowVariant == 'success' " class="mr-1">
+			          zeleno
+			        </div>
 
 			    </template>
             </b-table>
@@ -87,52 +97,20 @@ Vue.component("PacijentNarudzbenice", {
     	
     	//console.log(today.toISOString().slice(0, 10) + " - " + r.datumRezervacije.slice(0, 10));
     	
-    	//console.log(r);
-    	
-   		if(r.preuzeto) {
+   		if(r.pregledObavljen) {
    			r.rowVariant = 'success';
    		}
     	else {
-	    	if(today.toISOString().slice(0, 10) > r.datumRezervacije.slice(0, 10)) {
-	    		r.rowVariant = 'danger';
-	    	}
-	    	else {
-	    		r.rowVariant = 'warning';
-	    	}
+	    	r.rowVariant = 'warning';
     	}
 
     },
-    
-    otkazi(index) {
-    
-        	this.greska = false;
-		    this.uspeh = false;
-		    			
-		    //console.log("ID:" + this.rezervacije[index].id);
-		    
-		    
-		     axios.get("rezervacije/otkazi-rezervaciju", 
-			    {		
-			    params: {
-			       'id_rezervacije': this.rezervacije[index].id
-			       }
-			    }).then((response) => {
-	          		//this.uspeh = true;
-	          		//this.rezervacije.splice(index, 1);
-   		   			//this.$refs.table.refresh();
-   		   			//localStorage.setItem("uspeh", true);
-   		   			location.reload();
-		        })
-		        .catch((e) => {
-		        	this.greska = true;
-		        });
-      },
     
         loadPregledi: async function () {
             this.table_is_busy = true
             let items = []
             await axios
-                .get("rezervacije/moje_rezervacije", {
+                .get("pregledi/posete_dermatologu", {
                     params:
                         {
                             'cookie': this.cookie,
@@ -143,14 +121,17 @@ Vue.component("PacijentNarudzbenice", {
                     for (const p of rez) {
         
                     	this.checkDate(p);	
-                    	this.rezervacije.push(p);
+                    	this.pregledi.push(p);
                     	console.log(p);
                     	
                         items.push({
-                            idRezervacije: p.id,
-                            lekovi: p.sifraLeka,
-                            apoteka: p.apotekaId,
-                            datumIstekaRezervacije: p.datumRezervacije.slice(0, 10),
+                            idPregleda: p.id,
+                            apoteka: p.apoteka.naziv,
+                            dermatolog: p.username,
+                            pocetak: p.start.slice(11, 20),
+                            datum: p.start.slice(0, 10),
+                            kraj: p.end.slice(11, 20),
+                            cena: p.cena + ' din.',
                           	_rowVariant: p.rowVariant
                             
                         })
