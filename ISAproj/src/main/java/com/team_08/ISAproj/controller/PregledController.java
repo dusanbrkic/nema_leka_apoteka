@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/pregledi")
 public class PregledController {
     @Autowired
-    PacijentService pacijentService;
+    private PacijentService pacijentService;
     @Autowired
     private PregledService pregledService;
     @Autowired
@@ -229,8 +229,19 @@ public class PregledController {
                                                        @RequestParam("idApoteke") Long idApoteke) {
         LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        // provera da li je dermatolog ili farmaceut slobodan
         if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
-            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Vi ste zauzeti u zadatom terminu!",HttpStatus.BAD_REQUEST);
+        // provera da li je pacijent slobodan
+        if (!pregledService.findAllInDateRangeByPacijentId(start, end, idPacijenta).isEmpty())
+            return new ResponseEntity<String>("Pacijent je zauzet u zadatom terminu!", HttpStatus.BAD_REQUEST);
+        //provera da li je unutar radnog vremena
+        if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), cookie)!=null)
+            return new ResponseEntity<String>("Termin nije unutar vaseg radnog vremena!", HttpStatus.BAD_REQUEST);
+        //provera da li je na odsustvu
+        if (!zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(cookie, start, end).getOdsustva().isEmpty())
+            return new ResponseEntity<String>("Vi ste na odsustvu u tom terminu!", HttpStatus.BAD_REQUEST);
+
         ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
         if (zdravstveniRadnik == null)
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
@@ -260,9 +271,10 @@ public class PregledController {
         ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);
         if (zdravstveniRadnik == null)
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
-
         //nova klasa
         Pregled p = pregledService.findOneById(idTermina);
+        if (!pregledService.findAllInDateRangeByPacijentId(p.getVreme(), p.getKraj(), idPacijenta).isEmpty())
+            return new ResponseEntity<String>("Pacijent je zauzet u zadatom terminu!", HttpStatus.BAD_REQUEST);
         p.setPacijent(pacijentService.findOneById(idPacijenta));
         p.setCena(p.getApoteka().getCenaPregleda());
         p.setPregledZakazan(true);

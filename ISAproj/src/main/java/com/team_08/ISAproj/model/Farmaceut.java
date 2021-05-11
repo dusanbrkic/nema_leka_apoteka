@@ -5,6 +5,7 @@ import javax.persistence.*;
 import com.team_08.ISAproj.dto.FarmaceutDTO;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -18,9 +19,9 @@ public class Farmaceut extends ZdravstveniRadnik {
     @ElementCollection
     private Set<Date> slobodniTermini;
     @Column(name = "RADNO_VREME_POCETAK")
-    private LocalDateTime radnoVremePocetak;
+    private LocalTime radnoVremePocetak;
     @Column(name = "RADNO_VREME_KRAJ")
-    private LocalDateTime radnoVremeKraj;
+    private LocalTime radnoVremeKraj;
 
     // constructors
     public Farmaceut() {
@@ -64,22 +65,22 @@ public class Farmaceut extends ZdravstveniRadnik {
 
 
 
-    public LocalDateTime getRadnoVremePocetak() {
+    public LocalTime getRadnoVremePocetak() {
         return radnoVremePocetak;
     }
 
 
-    public void setRadnoVremePocetak(LocalDateTime radnoVremePocetak) {
+    public void setRadnoVremePocetak(LocalTime radnoVremePocetak) {
         this.radnoVremePocetak = radnoVremePocetak;
     }
 
 
-    public LocalDateTime getRadnoVremeKraj() {
+    public LocalTime getRadnoVremeKraj() {
         return radnoVremeKraj;
     }
 
 
-    public void setRadnoVremeKraj(LocalDateTime radnoVremeKraj) {
+    public void setRadnoVremeKraj(LocalTime radnoVremeKraj) {
         this.radnoVremeKraj = radnoVremeKraj;
     }
 

@@ -13,7 +13,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -163,5 +165,12 @@ public class ZdravstveniRadnikService {
         else
             sort = Sort.by(sortBy).ascending();
 		return farmaceutRepository.findFarmaceutApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
+    }
+
+    public ZdravstveniRadnik checkRadnoVreme(LocalTime start, LocalTime end, String cookie) {
+        if (dermatologRepository.findOneByCookieTokenValue(cookie)!=null)
+            return dermatologRepository.checkRadnoVreme(start, end, cookie);
+        else
+            return farmaceutRepository.checkRadnoVreme(start, end, cookie);
     }
 }
