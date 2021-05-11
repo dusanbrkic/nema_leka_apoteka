@@ -236,10 +236,10 @@ public class PregledController {
         if (!pregledService.findAllInDateRangeByPacijentId(start, end, idPacijenta).isEmpty())
             return new ResponseEntity<String>("Pacijent je zauzet u zadatom terminu!", HttpStatus.BAD_REQUEST);
         //provera da li je unutar radnog vremena
-        if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), cookie)!=null)
+        if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), cookie, idApoteke)==null)
             return new ResponseEntity<String>("Termin nije unutar vaseg radnog vremena!", HttpStatus.BAD_REQUEST);
         //provera da li je na odsustvu
-        if (!zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(cookie, start, end).getOdsustva().isEmpty())
+        if (zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(cookie, start, end)!=null)
             return new ResponseEntity<String>("Vi ste na odsustvu u tom terminu!", HttpStatus.BAD_REQUEST);
 
         ZdravstveniRadnik zdravstveniRadnik = zdravstveniRadnikService.findOneByCookie(cookie);

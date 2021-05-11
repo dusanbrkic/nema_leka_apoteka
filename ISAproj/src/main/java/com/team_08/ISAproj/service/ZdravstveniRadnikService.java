@@ -167,9 +167,9 @@ public class ZdravstveniRadnikService {
 		return farmaceutRepository.findFarmaceutApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
     }
 
-    public ZdravstveniRadnik checkRadnoVreme(LocalTime start, LocalTime end, String cookie) {
+    public ZdravstveniRadnik checkRadnoVreme(LocalTime start, LocalTime end, String cookie, Long idApoteke) {
         if (dermatologRepository.findOneByCookieTokenValue(cookie)!=null)
-            return dermatologRepository.checkRadnoVreme(start, end, cookie);
+            return dermatologRepository.checkRadnoVreme(start, end, cookie, idApoteke);
         else
             return farmaceutRepository.checkRadnoVreme(start, end, cookie);
     }
