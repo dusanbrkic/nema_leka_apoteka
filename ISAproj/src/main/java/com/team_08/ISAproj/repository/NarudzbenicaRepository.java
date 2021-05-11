@@ -18,9 +18,9 @@ public interface NarudzbenicaRepository extends JpaRepository<Narudzbenica, Long
 
     List<Narudzbenica> findAll();
 
-    // za listu rezervisanih lekova
-    @Query(value = "SELECT p FROM NARUDZBENICA p JOIN PACIJENT pac ON p.pacijent.id=pac.id where p.pacijent.cookieTokenValue = :cookie")
-    Page<Narudzbenica> findAllNarudzbenicePagedAndSorted(@Param("cookie") String cookie, Pageable pageable);
+//    // za listu rezervisanih lekova
+//    @Query(value = "SELECT p FROM NARUDZBENICA p JOIN PACIJENT pac ON p.pacijent.id=pac.id where p.pacijent.cookieTokenValue = :cookie")
+//    Page<Narudzbenica> findAllNarudzbenicePagedAndSorted(@Param("cookie") String cookie, Pageable pageable);
 
     
     @Query(value = "SELECT n FROM NARUDZBENICA n where n.apoteka.id = :ap_id")

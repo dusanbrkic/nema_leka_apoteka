@@ -27,8 +27,10 @@ public class Apoteka {
     private Double cenaSavetovanja;
     @Column(name = "OPIS")
     private String opis;
-
+    
     // connections
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Pretplata> pretplate = new HashSet<Pretplata>();
     @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DermatologApoteka> dermatolozi = new HashSet<DermatologApoteka>();
     @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -54,7 +56,15 @@ public class Apoteka {
         return id;
     }
 
-    public Double getCenaPregleda() {
+    public Set<Pretplata> getPretplate() {
+		return pretplate;
+	}
+
+	public void setPretplate(Set<Pretplata> pretplate) {
+		this.pretplate = pretplate;
+	}
+
+	public Double getCenaPregleda() {
         return cenaPregleda;
     }
 

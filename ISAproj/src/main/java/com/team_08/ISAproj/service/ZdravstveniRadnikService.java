@@ -145,7 +145,7 @@ public class ZdravstveniRadnikService {
 		return dermatologApotekaRepository.findOneDermatologApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
         //return dermatologApotekaRepository.findOneDermatologApotekaByIdSearchedSorted(PageRequest.of(page, size, sort));
     }
-    //svi farmaceuti
+    //svi farmaceuti iz apoteke
     public Page<Farmaceut> findFarmaceutApotekaByIdSearchedSorted(Integer page, Integer size,
 			String sortBy, Boolean sortDesc,
     		Long apotekaId, 
@@ -163,5 +163,51 @@ public class ZdravstveniRadnikService {
         else
             sort = Sort.by(sortBy).ascending();
 		return farmaceutRepository.findFarmaceutApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
+    }
+    //svi farmaceuti
+    public Page<Farmaceut> findFarmaceutSearchedSorted(Integer page, Integer size,
+			String sortBy, Boolean sortDesc,
+			String apotekaIme,
+    		String pretragaIme,
+    		String pretragaPrezime, Double ocena,String pocetak,String kraj
+    		){
+    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	pretragaIme = "%" + pretragaIme + "%";
+    	pretragaPrezime = "%" + pretragaPrezime + "%";
+    	System.out.println(pretragaIme +" "+ pretragaPrezime);
+    	Sort sort;
+        if (sortDesc)
+            sort = Sort.by(sortBy).descending();
+        else
+            sort = Sort.by(sortBy).ascending();
+        if(apotekaIme.equals("")) {
+        	return farmaceutRepository.findFarmaceutSearchedSorted(PageRequest.of(page, size, sort),pretragaIme, pretragaPrezime,ocena,start,end);
+        }
+		return farmaceutRepository.findFarmaceutSearchedSortedNaziv(PageRequest.of(page, size, sort),apotekaIme,pretragaIme, pretragaPrezime,ocena,start,end);
+    }
+    //svi derma po nazivu apoteke
+    public Page<DermatologApoteka> findAllDermatologApotekaByApotekaNazivSearched(Integer page, Integer size,
+			String sortBy, Boolean sortDesc,
+    		String naziv, 
+    		String pretragaIme,
+    		String pretragaPrezime, Double ocena,String pocetak,String kraj){
+    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	pretragaIme = "%" + pretragaIme + "%";
+    	pretragaPrezime = "%" + pretragaPrezime + "%";
+    	System.out.println(pretragaIme +" "+ pretragaPrezime);
+    	if(!(sortBy.equals("radnoVremePocetak") || sortBy.equals("radnoVremeKraj"))) {
+    		sortBy = "d." + sortBy;
+    	}
+    	Sort sort;
+        if (sortDesc)
+            sort = Sort.by(sortBy).descending();
+        else
+            sort = Sort.by(sortBy).ascending();
+        if(naziv.equals("")) {
+        	return dermatologApotekaRepository.findAllDermatologApotekaSearched(PageRequest.of(page, size, sort), pretragaIme, pretragaPrezime,ocena,start,end);
+        }
+        return dermatologApotekaRepository.findAllDermatologApotekaByApotekaNazivSearched(PageRequest.of(page, size, sort), naziv, pretragaIme, pretragaPrezime,ocena,start,end);
     }
 }

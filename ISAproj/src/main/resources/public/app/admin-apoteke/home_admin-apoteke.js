@@ -30,6 +30,8 @@ Vue.component("HomeAdminApoteke", {
             <b-nav-item href="#/admin-apoteke-dodaj-dermatologa">Dodaj dermatologa</b-nav-item>
             <b-nav-item href="#/admin-apoteke-dermatolozi">Dermatolozi</b-nav-item>
             <b-nav-item href="#/admin-apoteke-farmaceuti">Farmaceuti</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-narudzbenice">Narudzbine</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-promocija">Promocije</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->

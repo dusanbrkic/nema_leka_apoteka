@@ -12,7 +12,8 @@ const PacijentNarudzbenice = {template: '<PacijentNarudzbenice></PacijentNarudzb
 const NaruciPacijent = {template: '<NaruciPacijent></NaruciPacijent>'}
 const PacijentZakaziPregled = {template: '<PacijentZakaziPregled></PacijentZakaziPregled>'}
 const PacijentPoseteDermatologu = {template: '<PacijentPoseteDermatologu></PacijentPoseteDermatologu>'}
-
+const PacijentDermatolozi = { template: '<PacijentDermatolozi></PacijentDermatolozi>' };
+const PacijentFarmaceuti = {template: '<PacijentFarmaceuti></PacijentFarmaceuti>'}
 // dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
@@ -37,6 +38,7 @@ const DodajDermatologa = {template: '<DodajDermatologa></DodajDermatologa>'}
 const UrediDermatologe = {template: '<UrediDermatologe></UrediDermatologe>'}
 const UrediFarmaceute = {template: '<UrediFarmaceute></UrediFarmaceute>'}
 const AdminNarudzbenice = {template: '<AdminNarudzbenice></AdminNarudzbenice>'}
+const AdminPromocija = {template: '<AdminPromocija></AdminPromocija>'}
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -144,7 +146,10 @@ const router = new VueRouter({
         {path: '/promena-lozinke',component: PromenaLozinke},
         {path: '/admin-apoteke-dermatolozi', component: UrediDermatologe},
         {path: '/admin-apoteke-farmaceuti', component: UrediFarmaceute},
-        {path: '/admin-apoteke-narudzbenice', component: AdminNarudzbenice}
+        {path: '/admin-apoteke-narudzbenice', component: AdminNarudzbenice},
+        {path: '/admin-apoteke-promocija', component: AdminPromocija },
+        {path: '/pacijent_dermatolozi', component: PacijentDermatolozi },
+        {path: '/pacijent_farmaceuti',component: PacijentFarmaceuti},
     ]
 });
 

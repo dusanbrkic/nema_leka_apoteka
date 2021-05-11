@@ -43,6 +43,10 @@ Vue.component("PretragaLekAdmin", {
           sortable: true,
         },
         {
+          key: "kolicina",
+          sortable: true,
+        },
+        {
           key: "cena",
           sortable: true,
         },
@@ -212,6 +216,7 @@ Vue.component("PretragaLekAdmin", {
     onIzmeniLek: function () {
       this.izabranLek.cookie = this.cookie;
       axios.put("lekovi", this.izabranLek);
+      this.izabranLek = "";
       this.$refs["my-modal"].hide();
       this.$root.$emit("bv::refresh::table", "lekovi-tabela");
     },

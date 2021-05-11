@@ -15,11 +15,13 @@ public class NarudzbenicaDTO {
     private String naziv;
     private String sifra;
     private int kolicina;
-    private Date datumNarudzbine;
+    private Date rokPonude;
     private String apotekaId;
-    private String pacijent;
+    private String status;
+    private boolean preuzet;
     private List<NarudzbenicaAdminDTO> narudzbenice = new ArrayList<NarudzbenicaAdminDTO>();
-    private Set<NarudzbenicaLek> narudzbeniceLek = new HashSet<NarudzbenicaLek>();
+    private List<NarudzbenicaLek> narudzbeniceLek = new ArrayList<NarudzbenicaLek>();
+    private List<NarudzbenicaAdminDTO> narudzbeniceLekDTO = new ArrayList<NarudzbenicaAdminDTO>();
     public NarudzbenicaDTO() {
 
 
@@ -30,7 +32,7 @@ public class NarudzbenicaDTO {
         this.naziv = naziv;
         this.sifra = sifra;
         this.kolicina = kolicina;
-        this.datumNarudzbine = datumNarudzbine;
+        this.rokPonude = datumNarudzbine;
         this.apotekaId = aID;
     }
     public NarudzbenicaDTO(String naziv, String sifra, int kolicina, Date datumNarudzbine, String aID, ArrayList<NarudzbenicaAdminDTO> narudzbine) {
@@ -38,21 +40,53 @@ public class NarudzbenicaDTO {
         this.naziv = naziv;
         this.sifra = sifra;
         this.kolicina = kolicina;
-        this.datumNarudzbine = datumNarudzbine;
+        this.rokPonude = datumNarudzbine;
         this.apotekaId = aID;
         this.narudzbenice = narudzbine;
     }
     
     public NarudzbenicaDTO(Narudzbenica n) {
-    	this.datumNarudzbine = n.getRokPonude();
-		this.narudzbeniceLek = n.getLekovi(); 
+    	this.rokPonude = n.getRokPonude();
+    	this.preuzet =n.getPreuzet();
+		//this.narudzbeniceLek = n.getLekovi(); 
 	}
 
-	public Set<NarudzbenicaLek> getNarudzbeniceLek() {
+    public void dodajLekove(List<NarudzbenicaLek> narudzbeniceLek) {
+    	for(NarudzbenicaLek nl: narudzbeniceLek) {
+    		narudzbeniceLekDTO.add(new  NarudzbenicaAdminDTO(nl.getLek().getNaziv(),nl.getKolicina()));
+    	}
+    	
+    }
+	public List<NarudzbenicaAdminDTO> getNarudzbeniceLekDTO() {
+		return narudzbeniceLekDTO;
+	}
+
+	public void setNarudzbeniceLekDTO(List<NarudzbenicaAdminDTO> narudzbeniceLekDTO) {
+		this.narudzbeniceLekDTO = narudzbeniceLekDTO;
+	}
+
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public boolean isPreuzet() {
+		return preuzet;
+	}
+
+	public void setPreuzet(boolean preuzet) {
+		this.preuzet = preuzet;
+	}
+
+	public List<NarudzbenicaLek> getNarudzbeniceLek() {
 		return narudzbeniceLek;
 	}
 
-	public void setNarudzbeniceLek(Set<NarudzbenicaLek> narudzbeniceLek) {
+	public void setNarudzbeniceLek(List<NarudzbenicaLek> narudzbeniceLek) {
 		this.narudzbeniceLek = narudzbeniceLek;
 	}
 
@@ -96,19 +130,12 @@ public class NarudzbenicaDTO {
         this.kolicina = kolicina;
     }
 
-    public Date getDatumNarudzbine() {
-        return datumNarudzbine;
-    }
+	public Date getRokPonude() {
+		return rokPonude;
+	}
 
-    public void setDatumNarudzbine(Date datumNarudzbine) {
-        this.datumNarudzbine = datumNarudzbine;
-    }
+	public void setRokPonude(Date rokPonude) {
+		this.rokPonude = rokPonude;
+	}
 
-    public String getPacijent() {
-        return pacijent;
-    }
-
-    public void setPacijent(String korisnik) {
-        this.pacijent = korisnik;
-    }
 }

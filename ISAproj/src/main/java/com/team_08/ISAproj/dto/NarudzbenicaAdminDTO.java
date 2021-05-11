@@ -32,7 +32,10 @@ public class NarudzbenicaAdminDTO {
 
     public NarudzbenicaAdminDTO(Narudzbenica n) {
 	}
-
+    public NarudzbenicaAdminDTO(String naziv,int kolicina) {
+    	this.naziv = naziv;
+    	this.kolicina = kolicina;
+    }
 	public String getApotekaId() {
         return apotekaId;
     }
