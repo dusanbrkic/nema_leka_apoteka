@@ -33,26 +33,24 @@ public class Narudzbenica {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Apoteka apoteka;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Pacijent pacijent;
-
-
-    public Pacijent getPacijent() {
-        return pacijent;
-    }
-
-    public void setPacijent(Pacijent pacijent) {
-        this.pacijent = pacijent;
-    }
-
+    
+    @Column(name = "PREUZET")
+    private boolean preuzet;
     public Narudzbenica(Date rokPonuda) {
         super();
         this.rokPonude = rokPonuda;
         this.lekovi = new HashSet<NarudzbenicaLek>();
     }
+    
+    public boolean getPreuzet() {
+		return preuzet;
+	}
 
-    public Narudzbenica() {
+	public void setPreuzet(boolean preuzet) {
+		this.preuzet = preuzet;
+	}
+
+	public Narudzbenica() {
         this.lekovi = new HashSet<NarudzbenicaLek>();
     }
 

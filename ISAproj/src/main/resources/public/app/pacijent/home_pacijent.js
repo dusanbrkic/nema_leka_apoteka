@@ -1,13 +1,13 @@
 Vue.component("HomePacijent", {
   data: function () {
     return {
-      message: '',
-      apoteka: '',
-      cookie: '',
+      message: "",
+      apoteka: "",
+      cookie: "",
     };
   },
   mounted() {
-  	this.cookie = localStorage.getItem("cookie")
+    this.cookie = localStorage.getItem("cookie");
   },
   template: `
     <div>
@@ -24,6 +24,8 @@ Vue.component("HomePacijent", {
             <b-nav-item href="#/home-pacijent/apoteke">Apoteke</b-nav-item>
             <b-nav-item href="#/home-pacijent/lekovi">Lekovi</b-nav-item>
             <b-nav-item href="#/home-pacijent/pregledi">Pregledi</b-nav-item>
+            <b-nav-item href="#/pacijent_dermatolozi">Dermatolozi</b-nav-item>
+            <b-nav-item href="#/pacijent_farmaceuti">Farmaceuti</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -40,9 +42,9 @@ Vue.component("HomePacijent", {
     </div>
     `,
   methods: {
-	    logout: function () {
-	        localStorage.clear()
-	        app.$router.push("/");
-	    },
+    logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
   },
 });

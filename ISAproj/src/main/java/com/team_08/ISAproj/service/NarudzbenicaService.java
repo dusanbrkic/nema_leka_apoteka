@@ -44,24 +44,27 @@ public class NarudzbenicaService {
 
         return narudzbenicaLekRepository.findAll();
     }
-
+    public List<NarudzbenicaLek> findNarudzbeniceLekNarudzbenica(Long id){
+    	
+    	return narudzbenicaLekRepository.findNarudzbeniceLekNarudzbenica(id);
+    }
     public Narudzbenica findNarudzbenica(Long id) {
 
         return narudzbenicaRepository.findById(id).orElseGet(null);
     }
 
-    public Page<Narudzbenica> findAllNarudzbenicePagedAndSorted(
-            String cookie, Integer page, Integer size, String sortBy, Boolean sortDesc) throws CookieNotValidException {
-        if (!sortBy.equals("vreme"))
-            sortBy = "pac." + sortBy;
-        Sort sort;
-        if (sortDesc)
-            sort = Sort.by(sortBy).descending();
-        else
-            sort = Sort.by(sortBy).ascending();
-
-        return narudzbenicaRepository.findAllNarudzbenicePagedAndSorted(cookie, PageRequest.of(page, size, sort));
-    }
+//    public Page<Narudzbenica> findAllNarudzbenicePagedAndSorted(
+//            String cookie, Integer page, Integer size, String sortBy, Boolean sortDesc) throws CookieNotValidException {
+//        if (!sortBy.equals("vreme"))
+//            sortBy = "pac." + sortBy;
+//        Sort sort;
+//        if (sortDesc)
+//            sort = Sort.by(sortBy).descending();
+//        else
+//            sort = Sort.by(sortBy).ascending();
+//
+//        return narudzbenicaRepository.findAllNarudzbenicePagedAndSorted(cookie, PageRequest.of(page, size, sort));
+//    }
     public Page<Narudzbenica> findAllNarudzbeniceApotekaPagedAndSorted(Long apotekaId, Integer page, Integer size, String sortBy, Boolean sortDesc){
         Sort sort;
         if (sortDesc)

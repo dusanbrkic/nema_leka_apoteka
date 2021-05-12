@@ -10,6 +10,7 @@ import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.KorisnikService;
 
+import org.aspectj.weaver.patterns.HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -136,4 +137,20 @@ public class ApotekaController {
         }
 		return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
     }
+	@GetMapping(value = "/allApoteke")
+	public ResponseEntity<List<String>> allApotekeName(@RequestParam String cookie){
+		Korisnik k = korisnikService.findUserByToken(cookie);
+		if(k == null) {
+			return new ResponseEntity<List<String>>(HttpStatus.NOT_FOUND);
+		}
+		List<String> nazivi = new ArrayList<String>();
+		for(Apoteka a: apotekaService.findAll()) {
+			nazivi.add(a.getNaziv());
+		}
+		System.out.println(nazivi);
+		return new ResponseEntity<List<String>>(nazivi,HttpStatus.OK);
+		
+		
+		
+	}
 }

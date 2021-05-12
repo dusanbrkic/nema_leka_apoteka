@@ -262,6 +262,41 @@ public class ZdravstveniRadnikController {
         });
         return new ResponseEntity<Page<DermatologDTO>>(dermatoloziDTO, HttpStatus.OK);
     }
+    //svi dermatolozi po nazivu apoteke page
+    @GetMapping(value = "/getAllDermatologPage")
+    public ResponseEntity<Page<DermatologDTO>> getAllDermaPacijent(@RequestParam("cookie") String cookie,
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("sortDesc") Boolean sortDesc,
+            @RequestParam("pretraziIme") String pretraziIme,
+            @RequestParam("pretraziPrezime") String pretraziPrezime,
+            @RequestParam("ocena") Double ocena,
+            @RequestParam("pocetak") String pocetak,
+            @RequestParam("kraj") String kraj,
+            @RequestParam String apoteka){
+    	
+    	Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
+    	if(p == null) {
+    		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    	}
+    	Page<DermatologApoteka> dermatoloziApoteke = null;
+
+    	dermatoloziApoteke = zdravstveniRadnikService.findAllDermatologApotekaByApotekaNazivSearched(page, size, sortBy, sortDesc, apoteka,pretraziIme,pretraziPrezime,ocena,pocetak,kraj);
+    	System.out.println(dermatoloziApoteke);
+    	if (dermatoloziApoteke == null)
+            return new ResponseEntity<Page<DermatologDTO>>(Page.empty(), HttpStatus.OK);
+    	
+        Page<DermatologDTO> dermatoloziDTO = dermatoloziApoteke.map(new Function<DermatologApoteka, DermatologDTO>() {
+            @Override
+            public DermatologDTO apply(DermatologApoteka da) {
+            	DermatologDTO dermaDTO = new DermatologDTO(da);
+                return dermaDTO;
+            }
+        });
+        return new ResponseEntity<Page<DermatologDTO>>(dermatoloziDTO, HttpStatus.OK);
+    }
+    // svi farmaceuti admin apoteke
     @GetMapping(value = "/getAllFarmaApotekaPage")
     public ResponseEntity<Page<FarmaceutDTO>> getAllFarmaPage(@RequestParam("cookie") String cookie,
             @RequestParam("page") Integer page,
@@ -281,6 +316,39 @@ public class ZdravstveniRadnikController {
     	Page<Farmaceut> farmaceuti = null;
 
     	farmaceuti = zdravstveniRadnikService.findFarmaceutApotekaByIdSearchedSorted(page, size, sortBy, sortDesc, aa.getApoteka().getId(),pretraziIme,pretraziPrezime,ocena,pocetak,kraj);
+    	System.out.println(farmaceuti);
+    	if (farmaceuti == null)
+            return new ResponseEntity<Page<FarmaceutDTO>>(Page.empty(), HttpStatus.OK);
+    	
+        Page<FarmaceutDTO> farmaceutDTO = farmaceuti.map(new Function<Farmaceut, FarmaceutDTO>() {
+            @Override
+            public FarmaceutDTO apply(Farmaceut f) {
+            	FarmaceutDTO farmaDTO = new FarmaceutDTO(f);
+                return farmaDTO;
+            }
+        });
+        return new ResponseEntity<Page<FarmaceutDTO>>(farmaceutDTO, HttpStatus.OK);
+    }
+    //svi farmaceuti iz baze
+    @GetMapping(value = "/getAllFarmaPage")
+    public ResponseEntity<Page<FarmaceutDTO>> getAllFarmaPagePacijent(@RequestParam("cookie") String cookie,
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("sortDesc") Boolean sortDesc,
+            @RequestParam("pretraziIme") String pretraziIme,
+            @RequestParam("pretraziPrezime") String pretraziPrezime,
+            @RequestParam("ocena") Double ocena,
+            @RequestParam("pocetak") String pocetak,
+            @RequestParam("kraj") String kraj,
+            @RequestParam String apoteka){
+    	
+    	Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
+    	if(p == null) {
+    		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    	}
+    	Page<Farmaceut> farmaceuti = null;
+    	farmaceuti = zdravstveniRadnikService.findFarmaceutSearchedSorted(page, size, sortBy, sortDesc,apoteka,pretraziIme,pretraziPrezime,ocena,pocetak,kraj);
     	System.out.println(farmaceuti);
     	if (farmaceuti == null)
             return new ResponseEntity<Page<FarmaceutDTO>>(Page.empty(), HttpStatus.OK);
@@ -425,7 +493,5 @@ public class ZdravstveniRadnikController {
         f.setRadnoVremeKraj(end.toLocalTime());
         zdravstveniRadnikService.saveFarmaceut(f);
         return new ResponseEntity<FarmaceutDTO>(HttpStatus.OK);
-
-
     }
 }

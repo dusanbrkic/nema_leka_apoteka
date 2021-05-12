@@ -66,15 +66,18 @@ public class NarudzbinaController {
     public ResponseEntity<List<NarudzbenicaAdminDTO>> dodajNarudzbenice(@RequestBody List<NarudzbenicaAdminDTO> narudzbenice) {
 
         Narudzbenica n = new Narudzbenica();
+        Long apotekaId = Long.parseLong(narudzbenice.get(0).getApotekaId());
         n.setApoteka(apotekaService.findOne(Long.parseLong(narudzbenice.get(0).getApotekaId())));
         n.setRokPonude(narudzbenice.get(0).getDatumNarudzbine());
-        n.setPacijent(null);
+        n.setPreuzet(true);
         narudzbenicaService.saveNarudzbenica(n);
         for (NarudzbenicaAdminDTO nDTO : narudzbenice) {
             Lek l = lekService.findOneBySifra(nDTO.getSifra());
             NarudzbenicaLek nl = new NarudzbenicaLek(nDTO.getKolicina(), n, l);
             narudzbenicaService.saveNarudzbenicaLek(nl);
-
+            ApotekaLek al = apotekaLekService.findInApotekaLek(l.getId(), apotekaId);
+            al.setKolicina(al.getKolicina() + nDTO.getKolicina());
+            apotekaLekService.saveAL(al);
         }
         return new ResponseEntity<List<NarudzbenicaAdminDTO>>(narudzbenice, HttpStatus.OK);
 
@@ -100,7 +103,7 @@ public class NarudzbinaController {
         return new ResponseEntity<LekDTO>(HttpStatus.NOT_FOUND);
     }
     
-    @GetMapping(value ="sveNarudzbine")
+    @GetMapping(value ="/sveNarudzbine")
     public ResponseEntity<Page<NarudzbenicaDTO>> getNarudzbenice(@RequestParam String cookie,
     		@RequestParam("page") Integer page,
             @RequestParam("size") Integer size,
@@ -114,7 +117,7 @@ public class NarudzbinaController {
     	}
     	Page<Narudzbenica> narudzbenice = null;
     	narudzbenice = narudzbenicaService.findAllNarudzbeniceApotekaPagedAndSorted(a.getApoteka().getId(), page, size, sortBy, sortDesc);
-		
+		System.out.println(narudzbenice);
     	if(narudzbenice == null) {
     		return new ResponseEntity<Page<NarudzbenicaDTO>>(Page.empty(), HttpStatus.OK);
     	}
@@ -123,7 +126,9 @@ public class NarudzbinaController {
 	    Page<NarudzbenicaDTO> narudzbeniceDTO = narudzbenice.map(new Function<Narudzbenica, NarudzbenicaDTO>() {
 	        @Override
 	        public NarudzbenicaDTO apply(Narudzbenica n) {
+	        	List<NarudzbenicaLek> lekovi = narudzbenicaService.findNarudzbeniceLekNarudzbenica(n.getId());
 	        	NarudzbenicaDTO narudzbenicaDTO = new NarudzbenicaDTO(n);
+	        	narudzbenicaDTO.dodajLekove(lekovi);
 	            return narudzbenicaDTO;
 	        }
 	    });

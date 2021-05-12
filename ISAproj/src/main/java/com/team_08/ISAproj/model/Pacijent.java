@@ -25,14 +25,15 @@ public class Pacijent extends Korisnik {
     private Set<Lek> alergije;
     @OneToMany(mappedBy = "pacijent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Pregled> savetovanja;
-
+    @OneToMany(mappedBy = "pacijent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Pretplata> pretplate;
     // constructors
     public Pacijent() {
         super();
     }
 
     public Pacijent(int poeni, int brPenala, Set<Pregled> pregledi, Set<Narudzbenica> narudzbenice,
-                    Set<Apoteka> pretplaceneApoteke, Set<Lek> alergije, Set<Pregled> savetovanja) {
+                    Set<Apoteka> pretplaceneApoteke, Set<Lek> alergije, Set<Pregled> savetovanja,Set<Pretplata> pretplate) {
         super();
         this.poeni = poeni;
         this.brPenala = brPenala;
@@ -41,6 +42,7 @@ public class Pacijent extends Korisnik {
         this.pretplaceneApoteke = pretplaceneApoteke;
         this.alergije = alergije;
         this.savetovanja = savetovanja;
+        this.pretplate = pretplate;
     }
 
     public Pacijent(KorisnikDTO kDTO) {
@@ -62,7 +64,23 @@ public class Pacijent extends Korisnik {
         ;
     }
 
-    // methods
+    public Set<Pretplata> getPretplate() {
+		return pretplate;
+	}
+
+	public void setPretplate(Set<Pretplata> pretplate) {
+		this.pretplate = pretplate;
+	}
+
+	public void setPoeni(Integer poeni) {
+		this.poeni = poeni;
+	}
+
+	public void setBrPenala(Integer brPenala) {
+		this.brPenala = brPenala;
+	}
+
+	// methods
     public void pretplatiSe(Apoteka a) {
         // to do
     }
