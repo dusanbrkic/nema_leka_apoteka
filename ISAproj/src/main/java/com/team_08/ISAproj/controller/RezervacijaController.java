@@ -2,10 +2,14 @@ package com.team_08.ISAproj.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.team_08.ISAproj.model.*;
+import com.team_08.ISAproj.repository.FarmaceutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,14 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.team_08.ISAproj.dto.NarudzbenicaDTO;
 import com.team_08.ISAproj.dto.RezervacijaDTO;
-import com.team_08.ISAproj.model.ApotekaLek;
-import com.team_08.ISAproj.model.Korisnik;
-import com.team_08.ISAproj.model.Lek;
-import com.team_08.ISAproj.model.Narudzbenica;
-import com.team_08.ISAproj.model.NarudzbenicaLek;
-import com.team_08.ISAproj.model.Pacijent;
-import com.team_08.ISAproj.model.Rezervacija;
-import com.team_08.ISAproj.model.RezervacijaLek;
 import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
@@ -51,7 +47,46 @@ public class RezervacijaController {
 	private ApotekaLekService apotekaLekService;
 	@Autowired
 	private EmailService sendEmailService;
-	
+	@Autowired
+	private FarmaceutRepository farmaceutRepository;
+
+	@GetMapping(value = "/izdajLekove")
+	public ResponseEntity<String> izdajLekove(@RequestParam String cookie,
+											  @RequestParam Long idRezervacije){
+		Farmaceut f = farmaceutRepository.findOneByCookieTokenValue(cookie);
+
+		Rezervacija r = rezervacijaService.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije,
+				f.getApoteka().getId(), LocalDateTime.now().plusDays(1));
+		if(r==null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+		r.setPreuzeto(true);
+		rezervacijaService.saveRezervacija(r);
+
+		String body = "Poštovani, " + r.getPacijent().getIme() + "\n"
+				+ "Vasa rezervacija sa jedinstveni brojem '" + r.getId() + "' je upravo prihvacena i lekovi su Vam izdati.\n" +
+				"Srdacan pozdrav.";
+
+		String title = "Potvrda izdavanja lekova rezervacije (ID:" + r.getId() + ")";
+
+		final String body_tmp = body;
+
+		try
+		{
+			Thread t = new Thread() {
+				public void run()
+				{
+					sendEmailService.sendEmail(r.getPacijent().getEmailAdresa(), body_tmp, title);
+				}
+			};
+			t.start();
+		}
+		catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 	// rezervacija iz jedne apoteke
 	@PostMapping(value="/pacijent")
 	public ResponseEntity<List<RezervacijaDTO>> dodajRezervaciju(@RequestBody List<RezervacijaDTO> rezervacije){
@@ -144,7 +179,7 @@ public class RezervacijaController {
 					apotekaLekService.saveAL(al);
 					
 					
-					Rezervacija n = new Rezervacija((Date) new SimpleDateFormat("yyyy-MM-dd").parse(datum));
+					Rezervacija n = new Rezervacija(LocalDateTime.parse(datum, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 					RezervacijaLek nl = new RezervacijaLek(kolicina, n,lek);
 					
 					n.addRezervacijaLek(nl);

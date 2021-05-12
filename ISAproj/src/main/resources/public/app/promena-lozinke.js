@@ -34,7 +34,7 @@ Vue.component("PromenaLozinke",{
       </div>
 	`,
 	methods:{
-		changePass: function () {
+		changePass: async function () {
 			let info = {
 				
 				params: {
@@ -43,14 +43,14 @@ Vue.component("PromenaLozinke",{
 					"newPass": this.new_password
 				}
 			}
-            axios
-                .put("korisnici/updatePass", {info})
-                .then((response) => (this.korisnik = response.data))
-				localStorage.clear()
-                app.$router.push("/")
+            await axios
+                .post("korisnici/updatePass", null, info)
+                .then((response) => {
+					localStorage.setItem("cookie", response.data.cookie)
+				})
         },
 		redirectUser: function(){
-			if(this.currentPass == this.repeatPass){
+			if(this.currentPass != this.repeatPass){
 				this.badRepeatPassword = true;
 				return;
 			}
@@ -59,8 +59,6 @@ Vue.component("PromenaLozinke",{
 				return;
 			}
             this.changePass();
-			let cookie = this.korisnik.username + "-" + this.korisnik.password;
-			localStorage.setItem("cookie", cookie)
             if (this.userRole === "PACIJENT") {
                 app.$router.push("/home-pacijent")
             } else if (this.userRole === "DERMATOLOG") {

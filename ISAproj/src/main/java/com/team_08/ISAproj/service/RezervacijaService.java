@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +69,9 @@ public class RezervacijaService {
     }
     public void removeRezervacija(Long id) {
     	rezervacijaRepository.deleteById(id);
+    }
+
+    public Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
+	    return rezervacijaRepository.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
     }
 }

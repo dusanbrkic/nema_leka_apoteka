@@ -50,22 +50,24 @@ public class KorisnikController {
     private ApotekaLekService apotekaLekService;
 
     //change password
-    @PutMapping(value = "/updatePass", consumes = "application/json",produces = "application/json")
-    public ResponseEntity<KorisnikDTO> changePassUser(@RequestBody KorisnikDTO korisnikDTO) throws Exception {
-    	Korisnik k = korisnikService.findUserByToken(korisnikDTO.getCookie());
+    @PostMapping(value = "/updatePass", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CookieRoleDTO> changePassUser(
+            @RequestParam String cookie,
+            @RequestParam String currentPass,
+            @RequestParam String newPass){
+    	Korisnik k = korisnikService.findUserByToken(cookie);
         if(k == null) {
         	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    	if(k.getPassword().equals(korisnikDTO.getPassword())) {
+    	if(!k.getPassword().equals(currentPass)) {
     		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     	}
-    	String ck = CookieToken.createTokenValue(korisnikDTO.getUsername(), korisnikDTO.getPassword());
+    	String ck = CookieToken.createTokenValue(k.getUsername(), newPass);
         k.setFirstLogin(false);
-        k.setPassword(korisnikDTO.getPassword());
-        k.updateUser(korisnikDTO);
+        k.setPassword(newPass);
         k.setCookieTokenValue(ck);
         korisnikService.saveUser(k);
-        return new ResponseEntity<>(korisnikDTO,HttpStatus.OK);
+        return new ResponseEntity<>(new CookieRoleDTO(ck, null),HttpStatus.OK);
     }
 
     @GetMapping(value = "/loginUser", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -92,13 +94,13 @@ public class KorisnikController {
             {
             	korisnickaRola = KorisnickaRola.PACIJENT;
         		List<Rezervacija> rezervacije = rezervacijaService.findRezervacijeByPacijent((Pacijent) k);
-        		Date currentDate = new Date();
+        		LocalDateTime currentDate = LocalDateTime.now();
         		
         		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         		
         		
         		for(Rezervacija r : rezervacije) {
-        			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().before(currentDate) && !sdf.format(r.getRokPonude()).equals(sdf.format(currentDate))) {
+        			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().isBefore(currentDate) && !sdf.format(r.getRokPonude()).equals(sdf.format(currentDate))) {
         				r.setIsteklo(true);
         				((Pacijent) k).setBrPenala(((Pacijent) k).getBrPenala() + 1);
         				

@@ -89,5 +89,7 @@ public class Farmaceut extends ZdravstveniRadnik {
         this.apoteka = apoteka;
     }
 
-
+    public Apoteka getApoteka() {
+        return apoteka;
+    }
 }

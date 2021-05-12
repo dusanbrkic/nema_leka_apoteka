@@ -151,7 +151,7 @@ public class PregledController {
                 Lek l = lekService.findOneBySifra(pregledLekDTO.getLek().getSifra());
                 PregledLek pl = new PregledLek(pregledLekDTO.getKolicina(), pregledLekDTO.getTrajanjeTerapije(), pregled, l);
                 rezervacije.add(new RezervacijaDTO(l.getSifra(), pl.getKolicina(),
-                        Date.from(LocalDateTime.now().plusDays(7).atZone(ZoneId.systemDefault()).toInstant()),
+                        LocalDateTime.now().plusDays(7),
                         pregled.getApoteka().getId().toString(), pregled.getPacijent().getCookieTokenValue()));
                 return pl;
             }
