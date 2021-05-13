@@ -45,4 +45,7 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     // nadji sve preglede jednog pacijenta
     @Query(value = "SELECT p FROM PREGLED p where p.pacijent = :pacijent")
     List<Pregled> findAllByPacijent(Pacijent pacijent);
+
+    @Query(value = "SELECT p FROM PREGLED p where p.pacijent.id=:idPacijenta and (:vreme < p.kraj and :kraj > p.vreme)")
+    List<Pregled> findAllInDateRangeByPacijentId(LocalDateTime vreme, LocalDateTime kraj, Long idPacijenta);
 }

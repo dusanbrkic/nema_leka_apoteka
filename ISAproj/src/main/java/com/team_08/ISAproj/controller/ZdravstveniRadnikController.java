@@ -411,7 +411,7 @@ public class ZdravstveniRadnikController {
             if (d == null) {
                 return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
             }
-            DermatologApoteka da = new DermatologApoteka(d, aa.getApoteka(), start, end);
+            DermatologApoteka da = new DermatologApoteka(d, aa.getApoteka(), start.toLocalTime(), end.toLocalTime());
             zdravstveniRadnikService.addDermatologApoteke(da);
             return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
         }
@@ -466,8 +466,8 @@ public class ZdravstveniRadnikController {
             return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
         }
         DermatologApoteka da1 = zdravstveniRadnikService.findDermatologApoteka(d.getId(), aa.getApoteka().getId());
-        da1.setRadnoVremeKraj(end);
-        da1.setRadnoVremePocetak(start);
+        da1.setRadnoVremeKraj(end.toLocalTime());
+        da1.setRadnoVremePocetak(start.toLocalTime());
         zdravstveniRadnikService.addDermatologApoteke(da1);
         return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
     }
@@ -489,8 +489,8 @@ public class ZdravstveniRadnikController {
         if (f == null) {
             return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
         }
-        f.setRadnoVremePocetak(start);
-        f.setRadnoVremeKraj(end);
+        f.setRadnoVremePocetak(start.toLocalTime());
+        f.setRadnoVremeKraj(end.toLocalTime());
         zdravstveniRadnikService.saveFarmaceut(f);
         return new ResponseEntity<FarmaceutDTO>(HttpStatus.OK);
     }

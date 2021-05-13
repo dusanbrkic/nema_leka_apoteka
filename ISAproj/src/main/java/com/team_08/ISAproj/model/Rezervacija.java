@@ -2,6 +2,7 @@ package com.team_08.ISAproj.model;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,7 @@ public class Rezervacija {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RezervacijaSeqGen")
 	private Long id;
 	@Column(name = "ROK_PONUDE")
-	private Date rokPonude;
+	private LocalDateTime rokPonude;
 	
 	// connections
 	@OneToMany(mappedBy = "rezervacija", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -68,7 +69,7 @@ public class Rezervacija {
 		this.pacijent = pacijent;
 	}
 
-	public Rezervacija(Date rokPonuda) {
+	public Rezervacija(LocalDateTime rokPonuda) {
 		super();
 		this.rokPonude = rokPonuda;
 		this.lekovi = new HashSet<RezervacijaLek>();
@@ -78,20 +79,20 @@ public class Rezervacija {
 		this.lekovi = new HashSet<RezervacijaLek>();
 	}
 
-	public Date getRokPonuda() {
+	public LocalDateTime getRokPonuda() {
 		return rokPonude;
 	}
 
-	public void setRokPonuda(Date rokPonuda) {
+	public void setRokPonuda(LocalDateTime rokPonuda) {
 		this.rokPonude = rokPonuda;
 	}
 
 
-	public Date getRokPonude() {
+	public LocalDateTime getRokPonude() {
 		return rokPonude;
 	}
 
-	public void setRokPonude(Date rokPonude) {
+	public void setRokPonude(LocalDateTime rokPonude) {
 		this.rokPonude = rokPonude;
 	}
 

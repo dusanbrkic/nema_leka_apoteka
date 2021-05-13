@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -11,7 +12,7 @@ public class RezervacijaDTO {
     private Long id;
     private String sifraLeka;
     private int kolicina;
-    private Date datumRezervacije;
+    private LocalDateTime datumRezervacije;
     private String apotekaId;
     private String pacijent;
     private boolean preuzeto;
@@ -24,7 +25,7 @@ public class RezervacijaDTO {
         this.preuzeto = preuzeto;
     }
 
-    public RezervacijaDTO(Long id, String sifraLeka, Date datumRezervacije, String apotekaId, boolean preuzeto) {
+    public RezervacijaDTO(Long id, String sifraLeka, LocalDateTime datumRezervacije, String apotekaId, boolean preuzeto) {
         super();
         this.id = id;
         this.sifraLeka = sifraLeka;
@@ -33,7 +34,7 @@ public class RezervacijaDTO {
         this.preuzeto = preuzeto;
     }
 
-    public RezervacijaDTO(String sifraLeka, int kolicina, Date datumRezervacije, String apotekaId, String pacijent) {
+    public RezervacijaDTO(String sifraLeka, int kolicina, LocalDateTime datumRezervacije, String apotekaId, String pacijent) {
         this.sifraLeka = sifraLeka;
         this.kolicina = kolicina;
         this.datumRezervacije = datumRezervacije;
@@ -57,11 +58,11 @@ public class RezervacijaDTO {
         this.kolicina = kolicina;
     }
 
-    public Date getDatumRezervacije() {
+    public LocalDateTime getDatumRezervacije() {
         return datumRezervacije;
     }
 
-    public void setDatumRezervacije(Date datumRezervacije) {
+    public void setDatumRezervacije(LocalDateTime datumRezervacije) {
         this.datumRezervacije = datumRezervacije;
     }
 

@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.dto;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 import com.team_08.ISAproj.model.Farmaceut;
@@ -20,8 +21,8 @@ public class FarmaceutDTO {
     private String grad;
     private String drzava;
     private String brojTelefona;
-    private LocalDateTime radnoVremePocetak;
-    private LocalDateTime radnoVremeKraj;
+    private LocalTime radnoVremePocetak;
+    private LocalTime radnoVremeKraj;
     private Double prosecnaOcena;
     private Double cena;
 
@@ -144,19 +145,19 @@ public class FarmaceutDTO {
         this.cena = cena;
     }
 
-    public LocalDateTime getRadnoVremePocetak() {
+    public LocalTime getRadnoVremePocetak() {
         return radnoVremePocetak;
     }
 
-    public void setRadnoVremePocetak(LocalDateTime radnoVremePocetak) {
+    public void setRadnoVremePocetak(LocalTime radnoVremePocetak) {
         this.radnoVremePocetak = radnoVremePocetak;
     }
 
-    public LocalDateTime getRadnoVremeKraj() {
+    public LocalTime getRadnoVremeKraj() {
         return radnoVremeKraj;
     }
 
-    public void setRadnoVremeKraj(LocalDateTime radnoVremeKraj) {
+    public void setRadnoVremeKraj(LocalTime radnoVremeKraj) {
         this.radnoVremeKraj = radnoVremeKraj;
     }
 

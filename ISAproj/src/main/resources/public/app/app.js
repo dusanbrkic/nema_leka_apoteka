@@ -48,6 +48,7 @@ const FarmaceutMain = {template: '<FarmaceutMain></FarmaceutMain>'}
 const PregledaniPacijenti = {template: '<PregledaniPacijenti></PregledaniPacijenti>'}
 const OdsustvoForma = {template: '<OdsustvoForma></OdsustvoForma>'}
 const PregledForma = {template: '<PregledForma></PregledForma>'}
+const IzdavanjeLeka = {template: '<IzdavanjeLeka></IzdavanjeLeka>'}
 
 const router = new VueRouter({
     mode : 'hash',
@@ -88,6 +89,10 @@ const router = new VueRouter({
                 {
                     path: '',
                     component: FarmaceutMain
+                },
+                {
+                    path: 'izdaj-lek',
+                    component: IzdavanjeLeka
                 },
                 {
                     path: 'calendar-view',

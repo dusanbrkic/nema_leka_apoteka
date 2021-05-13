@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +33,7 @@ public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> 
 	
 	@Query(value = "select r from REZERVACIJA r where r.pacijent = pacijent")
 	List<Rezervacija> findAllRezervacijeFromKorisnik(@Param("pacijent") Pacijent p);
+
+	@Query(value = "select r from REZERVACIJA r where r.apoteka.id = :idApoteke and r.id=:idRezervacije and r.rokPonude>:tommorow and r.preuzeto=false")
+    Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow);
 }

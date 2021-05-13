@@ -13,7 +13,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -126,7 +128,7 @@ public class ZdravstveniRadnikService {
     //svi dermatolozi u apoteci page sort search filter
     public Page<DermatologApoteka> findOneDermatologApotekaByIdSearchedSorted(Integer page, Integer size,
 			String sortBy, Boolean sortDesc,
-    		Long apotekaId, 
+    		Long apotekaId,
     		String pretragaIme,
     		String pretragaPrezime, Double ocena,String pocetak,String kraj){
     	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
@@ -148,7 +150,7 @@ public class ZdravstveniRadnikService {
     //svi farmaceuti iz apoteke
     public Page<Farmaceut> findFarmaceutApotekaByIdSearchedSorted(Integer page, Integer size,
 			String sortBy, Boolean sortDesc,
-    		Long apotekaId, 
+    		Long apotekaId,
     		String pretragaIme,
     		String pretragaPrezime, Double ocena,String pocetak,String kraj
     		){
@@ -164,6 +166,13 @@ public class ZdravstveniRadnikService {
             sort = Sort.by(sortBy).ascending();
 		return farmaceutRepository.findFarmaceutApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
     }
+
+    public ZdravstveniRadnik checkRadnoVreme(LocalTime start, LocalTime end, String cookie, Long idApoteke) {
+        if (dermatologRepository.findOneByCookieTokenValue(cookie)!=null)
+            return dermatologRepository.checkRadnoVreme(start, end, cookie, idApoteke);
+        else
+            return farmaceutRepository.checkRadnoVreme(start, end, cookie);
+          }
     //svi farmaceuti
     public Page<Farmaceut> findFarmaceutSearchedSorted(Integer page, Integer size,
 			String sortBy, Boolean sortDesc,
@@ -189,7 +198,7 @@ public class ZdravstveniRadnikService {
     //svi derma po nazivu apoteke
     public Page<DermatologApoteka> findAllDermatologApotekaByApotekaNazivSearched(Integer page, Integer size,
 			String sortBy, Boolean sortDesc,
-    		String naziv, 
+    		String naziv,
     		String pretragaIme,
     		String pretragaPrezime, Double ocena,String pocetak,String kraj){
     	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));

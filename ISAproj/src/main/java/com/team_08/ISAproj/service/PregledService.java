@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -73,5 +74,9 @@ public class PregledService {
             throws CookieNotValidException {
         return pregledRepository.findAllTermsInDateRangeByDermatolog(cookie, start, end);
 
+    }
+
+    public List<Pregled> findAllInDateRangeByPacijentId(LocalDateTime vreme, LocalDateTime kraj, Long idPacijenta) {
+        return pregledRepository.findAllInDateRangeByPacijentId(vreme, kraj, idPacijenta);
     }
 }

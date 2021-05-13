@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.dto;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,8 +16,8 @@ public class DermatologDTO {
     private String ime;
     private String prezime;
     private Double cena;
-    private LocalDateTime radnoVremePocetak;
-    private LocalDateTime radnoVremeKraj;
+    private LocalTime radnoVremePocetak;
+    private LocalTime radnoVremeKraj;
     private Double prosecnaOcena;
 
     public DermatologDTO() {
@@ -82,19 +83,19 @@ public class DermatologDTO {
         this.cena = cena;
     }
 
-    public LocalDateTime getRadnoVremePocetak() {
+    public LocalTime getRadnoVremePocetak() {
         return radnoVremePocetak;
     }
 
-    public void setRadnoVremePocetak(LocalDateTime radnoVremePocetak) {
+    public void setRadnoVremePocetak(LocalTime radnoVremePocetak) {
         this.radnoVremePocetak = radnoVremePocetak;
     }
 
-    public LocalDateTime getRadnoVremeKraj() {
+    public LocalTime getRadnoVremeKraj() {
         return radnoVremeKraj;
     }
 
-    public void setRadnoVremeKraj(LocalDateTime radnoVremeKraj) {
+    public void setRadnoVremeKraj(LocalTime radnoVremeKraj) {
         this.radnoVremeKraj = radnoVremeKraj;
     }
 

@@ -15,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -60,4 +61,7 @@ public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
     //proveramo da li se dermatologovi termini rada u drugim apotekama poklapaju sa izmenjenim
     @Query(value = "SELECT da FROM DERMATOLOG_APOTEKA da join DERMATOLOG d on d.id = da.dermatolog.id where :username = d.username and not ((:start > da.radnoVremeKraj and :kraj > da.radnoVremeKraj) or (:start< da.radnoVremePocetak and :kraj < da.radnoVremePocetak)) and not da.apoteka.id = :ap_id ")
     List<DermatologApoteka> findIfDermatologTimesOverlapNotInApoteka(@Param("username") String username, @Param("ap_id") Long apotekaId, @Param("start") LocalDateTime start, @Param("kraj") LocalDateTime end);
+
+    @Query(value = "SELECT d FROM DERMATOLOG d join DERMATOLOG_APOTEKA da on da.dermatolog.id=d.id where d.cookieTokenValue=:cookie and da.apoteka.id=:idApoteke and (:start > da.radnoVremePocetak and :end > da.radnoVremePocetak) and (:start< da.radnoVremeKraj and :end < da.radnoVremeKraj)")
+    Dermatolog checkRadnoVreme(LocalTime start, LocalTime end, String cookie, Long idApoteke);
 }

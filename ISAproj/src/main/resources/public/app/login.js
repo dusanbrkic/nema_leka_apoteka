@@ -77,9 +77,15 @@ Vue.component("Login", {
             if (this.userRole === "PACIJENT") {
                 app.$router.push("/home-pacijent")
             } else if (this.userRole === "DERMATOLOG") {
-                app.$router.push("/home-dermatolog")
+                if(this.firstLogin)
+                    app.$router.push("/promena-lozinke")
+                else
+                    app.$router.push("/home-dermatolog")
             } else if (this.userRole === "FARMACEUT") {
-                app.$router.push("/home-farmaceut")
+                if(this.firstLogin)
+                    app.$router.push("/promena-lozinke")
+                else
+                    app.$router.push("/home-farmaceut")
             } else if (this.userRole === "ADMIN_APOTEKE") {
 
             	if(this.firstLogin){

@@ -162,7 +162,7 @@ Vue.component("IzmenaPodataka", {
         },
         onChangePass: function (event) {
             event.preventDefault()
-            app.$router.push("/admin-apoteke-lozinka")
+            app.$router.push("/promena-lozinke")
         },
         onSubmit: function (event) {
             event.preventDefault()
