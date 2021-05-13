@@ -60,12 +60,13 @@ public class PromocijeController {
     	p.setTekstPromocije(promocije.get(0).getTekstPromocije());
     	promocijaService.savePromocija(p);
     	for (PromocijaDTO pDTO: promocije) {
-    		ApotekaLek al = apotekaLekService.findOneBySifra(pDTO.getSifra(), aa.getApoteka().getId());
-    		al.setStaraCena(pDTO.getStaraCena());
+    		ApotekaLek  al= apotekaLekService.findOneBySifra(pDTO.getSifra(), aa.getApoteka().getId());
+    		al.setPromotivnaCena(pDTO.getStaraCena());
     		al.setCena(pDTO.getCena());
     		al.setIstekVazenjaCene(pDTO.getKrajVazenja());
+    		al.setPocetakVazenjaCene(pDTO.getPocetakVazenja());
     		apotekaLekService.saveAL(al);
-    		poruka = poruka + al.getLek().getNaziv() + " Nova cena:" + al.getCena() + " Stara cena: " + al.getStaraCena() + "\n";
+    		poruka = poruka + al.getLek().getNaziv() + " Nova cena:" + al.getPromotivnaCena()+ " Stara cena: " + al.getCena() + "\n";
     	}
     	List<Pretplata> pretplate = pacijentService.findPretplateApoteka(aa.getApoteka().getId());
     	

@@ -26,25 +26,25 @@ insert into lek_zamenski_lekovi (lek_id,zamenski_lekovi_id) values (4, 2);
 insert into lek_zamenski_lekovi (lek_id,zamenski_lekovi_id) values (3, 7);
 insert into lek_zamenski_lekovi (lek_id,zamenski_lekovi_id) values (7, 3);
 
-insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Marka Markovica 22, Subotica','Apoteka Markovic','opis apoteke',3.6, 400, 200);
+insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Cara Dušana 107, Zrenjanin|20.391395129936356, 45.38985699678626','Apoteka Markovic','opis apoteke',3.6, 400, 200);
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Lazara Obilica 15, Beograd','Apoteka Djincic','opis apoteke',4.5, 350, 250);
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Cara Lazara 103, Novi Sad','Apoteka Lazarevic','opis apoteke',2.2, 600, 400);
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Zmaj Jovina 45, Sid','Apoteka Zmaj','opis apoteke',4.8, 500, 440);
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Matije Grupca 35, Novi Sad','Apoteka Antic','opis apoteke',3.2, 1020, 670);
 
 
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'100','10','50','1','1');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'500','33','450','1','2');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'1000','4','800','1','3');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'800','140','450','2','4');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'1800','43','1450','2','5');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'80','200','45','3','6');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'1200','58','1200','4','7');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'600','15','670','4','8');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'700','23','770','4','9');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'300','74','340','4','10');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'320','5','300','5','11');
-insert into apoteka_lek (id,cena,kolicina,stara_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'540','23','500','5','12');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'100','10','50','1','1');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'500','33','450','1','2');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'1000','4','800','1','3');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'800','140','450','2','4');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'1800','43','1450','2','5');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'80','200','45','3','6');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'1200','58','1200','4','7');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'600','15','670','4','8');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'700','23','770','4','9');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'300','74','340','4','10');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'320','5','300','5','11');
+insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) values (nextval('apoteka_lek_seq'),'540','23','500','5','12');
 
 
 

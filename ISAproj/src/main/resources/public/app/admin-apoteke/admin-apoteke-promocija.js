@@ -74,7 +74,7 @@ Vue.component("AdminPromocija", {
       page: 1,
       count: "",
       pageSize: 6,
-      pageSizes: [6, 10, 20, 50],
+      pageSizes: [2, 6, 10, 20, 50],
       table_is_busy: false,
       sortDesc: false,
       sortBy: "naziv",
@@ -83,11 +83,13 @@ Vue.component("AdminPromocija", {
       pocetakVazenja: "",
       krajVazenja: "",
       tekstPromocije: "",
+      lekIndex: "",
     };
   },
   mounted() {
     this.cookie = localStorage.getItem("cookie");
     this.apotekaID = localStorage.getItem("apotekaID");
+    this.itemProvider(this);
   },
   template: `    <div>
       <link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
@@ -143,7 +145,7 @@ Vue.component("AdminPromocija", {
       </b-col>
     </b-row>
     <br>
-        <b-row >
+            <b-row >
         <b-col sm="2">
         <label>Pocetak promocije:</label>
         </b-col>
@@ -154,8 +156,10 @@ Vue.component("AdminPromocija", {
         <b-col sm="2"><b-form-datepicker v-model = "krajVazenja" :min="min" type= "date"></<b-form-datepicker></b-col>
         </b-row>
         <br>
+    <b-tabs content-class="mt-3">
+    <b-tab title="First" active>
+
       <!-- Tabela dodatih -->
-      <div v-if="lekoviPromocija.length != 0">
         <div class="text-center">
             <b-row >
         <b-table
@@ -178,17 +182,20 @@ Vue.component("AdminPromocija", {
           </b-row>
         <br>
         <b-row>
-        <b-button v-on:click="onDodajPromociju"variant="primary">Dodaj promociju</b-button>
+         <div v-if="lekoviPromocija.length != 0">
+        <b-button class="text-right" v-on:click="onDodajPromociju"variant="primary">Dodaj promociju</b-button>
+          </div>
         </b-row>
         <br>
-        </div>
       </div>
+      </b-tab>
+      <b-tab title="First" active>
          <!-- Tabela ostalih -->
         <b-row>
           <b-table
               id="lekovi-tabela"
               hover
-              :items="itemProvider"
+              :items="lekovi"
               :fields="fields"
               :per-page="pageSize"
               :current-page="page"
@@ -198,12 +205,33 @@ Vue.component("AdminPromocija", {
               responsive="sm"
               :sort-desc.sync="sortDesc">
           <template #cell(dodajPromociju)="row">
-            <b-button v-on:click="dodajLekPromociju(row.item)" variant="primary">Dodaj lek u promociju</b-button>
+            <b-button v-on:click="dodajLekPromociju(row)" variant="primary">Dodaj lek u promociju</b-button>
           </template>
         </b-table>
         </b-row>
+                 </b-row>
+         <b-row>
+          <b-col>
+            <b-pagination
+                  v-model="page"
+                  :total-rows="count"
+                  :per-page="pageSize"
+                  @change="handlePageChange"
+              ></b-pagination>
+              </b-col>
+           <b-col>
+              <select v-model="pageSize" @change="handlePageSizeChange($event)" style="float: right">
+                <option v-for="size in pageSizes" :key="size" :value="size">
+                  {{ size }}
+                </option>
+              </select>
+          </b-col>
+         </b-row>
+         </b-tab>
+         </b-tabs>
 			</b-container>
 		</b-card>
+
 		<!-- forma za dodavanje -->
      <b-modal ref="my-modal" hide-footer title="Dodaj lek u promociju">
   <b-card style="max-width: 500px; margin: 30px auto;" >
@@ -267,18 +295,20 @@ Vue.component("AdminPromocija", {
       console.log(index);
       this.lekoviPromocija.splice(index, 1);
     },
-    dodajLekPromociju(lek) {
-      console.log(lek);
-      this.izabranLek = JSON.parse(JSON.stringify(lek));
+    dodajLekPromociju(row) {
+      console.log(row);
+      this.izabranLek = JSON.parse(JSON.stringify(row.item));
+      this.lekIndex = row.index;
+      console.log(this.lekIndex);
       this.$refs["my-modal"].show();
     },
     onDodajLekPromociju() {
       this.lekoviPromocija.push(this.izabranLek);
       this.izabranLek.cookie = this.cookie;
-      axios.put("lekovi", this.izabranLek);
+      this.lekovi.splice(this.lekIndex, 1);
+      console.log(this.lekIndex);
       this.izabranLek = "";
       this.$refs["my-modal"].hide();
-      this.$root.$emit("bv::refresh::table", "lekovi-tabela");
     },
     itemProvider: function (ctx) {
       console.log(ctx);
@@ -315,6 +345,13 @@ Vue.component("AdminPromocija", {
       });
       this.table_is_busy = false;
       return this.lekovi;
+    },
+    handlePageChange(value) {
+      this.page = value;
+    },
+    handlePageSizeChange(event) {
+      this.page = 1;
+      this.items_per_page = event.target.value;
     },
   },
 });

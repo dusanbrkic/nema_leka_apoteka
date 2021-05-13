@@ -19,8 +19,10 @@ public class ApotekaLek {
     private Double cena;
     @Column(name = "ISTEK_VAZENJA_CENE")
     private Date istekVazenjaCene;
-    @Column(name = "STARA_CENA")
-    private Double staraCena;
+    @Column(name = "POCETAK_VAZENJA_CENE")
+    private Date pocetakVazenjaCene;
+    @Column(name = "PROMOTIVNA_CENA")
+    private Double promotivnaCena;
 
     // connections
     @ManyToOne(fetch = FetchType.EAGER)
@@ -30,12 +32,12 @@ public class ApotekaLek {
 
 
     // constructors
-    public ApotekaLek(int kolicina, double cena, Date istekVazenjaCene, double staraCena, Apoteka apoteka, Lek lek) {
+    public ApotekaLek(int kolicina, double cena, Date istekVazenjaCene, double promotivnaCena, Apoteka apoteka, Lek lek) {
         super();
         this.kolicina = kolicina;
         this.cena = cena;
         this.istekVazenjaCene = istekVazenjaCene;
-        this.staraCena = staraCena;
+        this.promotivnaCena = promotivnaCena;
         this.apoteka = apoteka;
         this.lek = lek;
     }
@@ -48,12 +50,29 @@ public class ApotekaLek {
         this.kolicina = lekDTO.getKolicina();
         this.cena = lekDTO.getCena();
         this.istekVazenjaCene = lekDTO.getIstekVazenjaCene();
-        this.staraCena = lekDTO.getStaraCena();
+        this.promotivnaCena = lekDTO.getPromotivnaCena();
         this.apoteka = apoteka;
         this.lek = lek;
     }
 
-    // getters and setters
+    public Date getPocetakVazenjaCene() {
+		return pocetakVazenjaCene;
+	}
+
+	public void setPocetakVazenjaCene(Date pocetakVazenjaCene) {
+		this.pocetakVazenjaCene = pocetakVazenjaCene;
+	}
+
+	public void setKolicina(Integer kolicina) {
+		this.kolicina = kolicina;
+	}
+
+	public void setCena(Double cena) {
+		this.cena = cena;
+	}
+
+
+	// getters and setters
     public int getKolicina() {
         return kolicina;
     }
@@ -78,15 +97,16 @@ public class ApotekaLek {
         this.istekVazenjaCene = istekVazenjaCene;
     }
 
-    public double getStaraCena() {
-        return staraCena;
-    }
 
-    public void setStaraCena(double staraCena) {
-        this.staraCena = staraCena;
-    }
+    public Double getPromotivnaCena() {
+		return promotivnaCena;
+	}
 
-    public Apoteka getApoteka() {
+	public void setPromotivnaCena(Double promotivnaCena) {
+		this.promotivnaCena = promotivnaCena;
+	}
+
+	public Apoteka getApoteka() {
         return apoteka;
     }
 
@@ -114,6 +134,6 @@ public class ApotekaLek {
         this.kolicina = lekDTO.getKolicina();
         this.cena = lekDTO.getCena();
         this.istekVazenjaCene = lekDTO.getIstekVazenjaCene();
-        this.staraCena = lekDTO.getStaraCena();
+        this.promotivnaCena = lekDTO.getPromotivnaCena();
     }
 }

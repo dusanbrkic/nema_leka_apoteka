@@ -205,6 +205,8 @@ public class Apoteka {
         this.adresa = apotekaDTO.getAdresa();
         this.opis = apotekaDTO.getOpis();
         this.prosecnaOcena = apotekaDTO.getProsecnaOcena();
+        this.cenaPregleda = apotekaDTO.getCenaPregleda();
+        this.cenaSavetovanja = apotekaDTO.getCenaSavetovanja();
     }
 
     public Apoteka() {

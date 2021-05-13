@@ -20,7 +20,7 @@ public class LekDTO {
     private Integer kolicina;
     private Double cena;
     private Date istekVazenjaCene;
-    private Double staraCena;
+    private Double promotivnaCena;
     private String cookie;
 
     public LekDTO() {
@@ -48,7 +48,7 @@ public class LekDTO {
         this.dodatneNapomene = lek.getDodatneNapomene();
         this.cena = al.getCena();
         this.kolicina = al.getKolicina();
-        this.staraCena = al.getStaraCena();
+        this.promotivnaCena = al.getPromotivnaCena();
         this.istekVazenjaCene = al.getIstekVazenjaCene();
     }
 
@@ -84,15 +84,16 @@ public class LekDTO {
         this.istekVazenjaCene = istekVazenjaCene;
     }
 
-    public Double getStaraCena() {
-        return staraCena;
-    }
 
-    public void setStaraCena(Double staraCena) {
-        this.staraCena = staraCena;
-    }
+    public Double getPromotivnaCena() {
+		return promotivnaCena;
+	}
 
-    public String getSifra() {
+	public void setPromotivnaCena(Double promotivnaCena) {
+		this.promotivnaCena = promotivnaCena;
+	}
+
+	public String getSifra() {
         return sifra;
     }
 
