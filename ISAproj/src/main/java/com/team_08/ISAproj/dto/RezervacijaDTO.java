@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.team_08.ISAproj.model.Narudzbenica;
 
 public class RezervacijaDTO {
@@ -23,6 +24,9 @@ public class RezervacijaDTO {
 
     public void setPreuzeto(boolean preuzeto) {
         this.preuzeto = preuzeto;
+    }
+    public RezervacijaDTO() {
+    	
     }
 
     public RezervacijaDTO(Long id, String sifraLeka, LocalDateTime datumRezervacije, String apotekaId, boolean preuzeto) {

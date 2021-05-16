@@ -14,6 +14,8 @@ const PacijentZakaziPregled = {template: '<PacijentZakaziPregled></PacijentZakaz
 const PacijentPoseteDermatologu = {template: '<PacijentPoseteDermatologu></PacijentPoseteDermatologu>'}
 const PacijentDermatolozi = { template: '<PacijentDermatolozi></PacijentDermatolozi>' };
 const PacijentFarmaceuti = {template: '<PacijentFarmaceuti></PacijentFarmaceuti>'}
+const PacijentZakazivanjeSavetovanja = {template: '<PacijentZakazivanjeSavetovanja></PacijentZakazivanjeSavetovanja>'}
+
 // dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
@@ -133,6 +135,10 @@ const router = new VueRouter({
             {
             	path: 'posete-dermatologu',
             	component: PacijentPoseteDermatologu
+            },
+            {
+            	path: 'zakazivanje-savetovanja',
+            	component: PacijentZakazivanjeSavetovanja
             }
 	    ]},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},

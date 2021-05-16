@@ -122,7 +122,8 @@ insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, tra
 
 
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, cena) values (nextval('pregled_seq'), false, '', '2021-04-13T13:00:01.0', false, 600000, '2021-04-13T11:45:01.0', '1', '1', 440);
-insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, cena) values (nextval('pregled_seq'), false, '', '2021-04-15T13:45:01.0', false, 600000, '2021-04-15T11:45:01.0', '1', '1', 1440);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, cena) values (nextval('pregled_seq'), false, '', '2021-05-15T13:45:01.0', false, 600000, '2021-05-15T11:45:01.0', '1', '1', 1440);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, cena) values (nextval('pregled_seq'), false, '', '2021-06-15T13:45:01.0', false, 600000, '2021-06-15T11:45:01.0', '1', '1', 1440);
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, cena) values (nextval('pregled_seq'), false, '', '2021-04-15T12:35:01.0', false, 600000, '2021-04-18T11:45:01.0', '2', '1', 1440);
 
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-16T13:00:01.0', true, 0, '2021-05-16T11:45:01.0', '1', '1', '2', 550);

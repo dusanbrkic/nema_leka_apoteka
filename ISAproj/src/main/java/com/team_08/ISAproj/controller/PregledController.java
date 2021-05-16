@@ -8,8 +8,6 @@ import com.team_08.ISAproj.exceptions.CookieNotValidException;
 
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.service.*;
-import com.team_08.ISAproj.model.Pregled;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -376,5 +374,19 @@ public class PregledController {
     		pregledi.add(tmp);
     	}
     	return new ResponseEntity<List<PregledDTO>>(pregledi, HttpStatus.OK);
+	}
+	@GetMapping(value="/otkazi-pregled")
+	public ResponseEntity<Void> otkaziPregled(@RequestParam String id_pregleda){
+		
+			Pregled p = pregledService.findOneById(Long.parseLong(id_pregleda));
+			if(p==null || !p.isPregledZakazan()) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+	    	
+			p.setPacijent(null);
+			p.setPregledZakazan(false);
+			pregledService.savePregled(p);
+	    	
+	    	return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

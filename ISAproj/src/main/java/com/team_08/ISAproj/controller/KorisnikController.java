@@ -9,6 +9,7 @@ import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.PacijentService;
 
 import java.util.Random;
 
@@ -31,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +50,8 @@ public class KorisnikController {
     private RezervacijaService rezervacijaService;
     @Autowired
     private ApotekaLekService apotekaLekService;
+    @Autowired
+    private PacijentService pacijentService;
 
     //change password
     @PostMapping(value = "/updatePass", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,6 +94,13 @@ public class KorisnikController {
             k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
+            
+    		if(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1) {
+    			for(Pacijent p : pacijentService.findAll()) {
+    				p.setBrPenala(0);
+    			}
+    		}
+            
             if(k instanceof Pacijent) 
             {
             	korisnickaRola = KorisnickaRola.PACIJENT;
@@ -100,7 +111,8 @@ public class KorisnikController {
         		
         		
         		for(Rezervacija r : rezervacije) {
-        			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().isBefore(currentDate) && !sdf.format(r.getRokPonude()).equals(sdf.format(currentDate))) {
+        			r.getRokPonude().isBefore(currentDate);
+        			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().isBefore(currentDate) && !r.getRokPonude().equals(currentDate)) {
         				r.setIsteklo(true);
         				((Pacijent) k).setBrPenala(((Pacijent) k).getBrPenala() + 1);
         				
@@ -115,9 +127,6 @@ public class KorisnikController {
         				rezervacijaService.saveRezervacija(r);
         			}
         		}
-            	if(((Pacijent) k).getBrPenala() == 3) {
-            		return new ResponseEntity<CookieRoleDTO>(HttpStatus.FORBIDDEN);
-            	}
             }
             else if(k instanceof Dermatolog) korisnickaRola = KorisnickaRola.DERMATOLOG;
             else if(k instanceof Farmaceut) korisnickaRola = KorisnickaRola.FARMACEUT;
@@ -228,5 +237,18 @@ public class KorisnikController {
         korisnikService.saveUser(k);
         KorisnikDTO kDTO = new KorisnikDTO(k);
         return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
+    }
+    @GetMapping(value = "/blocked")
+    public ResponseEntity<Void> isBlocked(@RequestParam("cookie") String cookie){
+        Korisnik k = korisnikService.findUserByToken(cookie);
+
+        if(k instanceof Pacijent) {
+        	if(((Pacijent) k).getBrPenala() >= 3) {
+        		return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        	}
+        }
+        
+        return new ResponseEntity<Void>(HttpStatus.OK);
+
     }
 }

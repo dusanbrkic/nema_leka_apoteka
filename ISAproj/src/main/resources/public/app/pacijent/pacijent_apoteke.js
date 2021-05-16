@@ -1,6 +1,7 @@
 Vue.component("PacijentApoteke", {
     data: function () {
         return {
+           cookie: "",
            apoteke: [],
 		   currentTutorial: null,
 		   currentIndex: -1,
@@ -22,14 +23,18 @@ Vue.component("PacijentApoteke", {
 	       
 	       gradeValues: [0,1,2,3,4,5],
         
+        blocked: false,
         }
     },
       mounted () {
       	this.retrieveApoteke()
+        this.cookie = localStorage.getItem("cookie");
+        this.getPenali();
   	},
     template: `
     	<div class="container">
     	
+    	      <b-alert style="text-align: center;" v-model="blocked" variant="danger"> Nalog je blokiran! </b-alert>
     	
     	<!-- PRETRAGA -->
     	 <div class="form-group">
@@ -117,8 +122,8 @@ Vue.component("PacijentApoteke", {
 				 Opis: {{apoteka.opis}}
               </b-card-text>
               
-              <b-button v-on:click="prikaziLekove(apoteka)" variant="primary">Rezervisi lekove</b-button>
-              <b-button v-on:click="prikaziTemineDermatologa(apoteka)" variant="primary">Zakazi pregled kod dermatologa</b-button>
+              <b-button v-if="!blocked" v-on:click="prikaziLekove(apoteka)" variant="primary">Rezervisi lekove</b-button>
+              <b-button v-if="!blocked" v-on:click="prikaziTemineDermatologa(apoteka)" variant="primary">Zakazi pregled kod dermatologa</b-button>
 
             </b-card>
           </b-col>
@@ -162,6 +167,10 @@ Vue.component("PacijentApoteke", {
 	          const { apoteke, totalItems } = response.data;
 	          this.apoteke = apoteke;
 	          this.count = totalItems;
+	          
+	          for(var i = 0; i< this.apoteke.length; i++){
+	          	this.fixAdresu(this.apoteke[i]);
+	          }
 	
 	          console.log(response.data);
 	        })
@@ -210,6 +219,34 @@ Vue.component("PacijentApoteke", {
 	    prikaziTemineDermatologa(apoteka){
 	    	localStorage.setItem('apotekaID', apoteka.id);
 	    	app.$router.push("/home-pacijent/zakazivanje_kod_dermatologa");
+	    },
+	    fixAdresu(ap) {
+	    
+	      const words = ap.adresa.split("|");
+	      
+	      if(words.length != 0){
+	      	ap.adresa = words[0];
+	      }
+	    },
+	    getPenali() {
+	    	 axios.get("korisnici/blocked", 
+	    	 {
+	    	 	params: {
+                            'cookie': this.cookie,
+                        }
+	    	 })
+	        .then((response) => {
+
+              		this.blocked = false;
+	          
+	        })
+	        .catch((e) => {
+	          if (e.request.status == 403) {
+	          		console.log("blokiran");
+	                this.blocked = true;
+              }
+	          console.log(e);
+	        });
 	    }
     }
 });

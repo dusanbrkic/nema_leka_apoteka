@@ -58,11 +58,17 @@ Vue.component("PacijentNarudzbenice", {
             >
             
 	            <template #cell(status)="row">
-
-	            	<b-button size="sm" v-if="rezervacije[row.index].rowVariant == 'warning' " @click="otkazi(row.index)" class="mr-1">
+	            
+			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'info' || rezervacije[row.index].rowVariant == 'warning'" class="mr-1">
+			          Potrebno preuzeti
+			        </div>
+	            	<b-button size="sm" v-if="rezervacije[row.index].rowVariant == 'info' " @click="otkazi(row.index)" class="mr-1">
 			          Otkazi
 			        </b-button>
-			        
+			       
+			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'success' " class="mr-1">
+			          Preuzeto
+			        </div>
 
 			    </template>
             </b-table>
@@ -82,22 +88,25 @@ Vue.component("PacijentNarudzbenice", {
     	
         var today = new Date();
     	
-    	today.setDate(today.getDate() + 1);
+    	var nextDay = new Date();
     	
-    	
-    	//console.log(today.toISOString().slice(0, 10) + " - " + r.datumRezervacije.slice(0, 10));
-    	
-    	//console.log(r);
+    	nextDay.setDate(nextDay.getDate() + 1);
     	
    		if(r.preuzeto) {
    			r.rowVariant = 'success';
    		}
     	else {
-	    	if(today.toISOString().slice(0, 10) > r.datumRezervacije.slice(0, 10)) {
-	    		r.rowVariant = 'danger';
+	    	if(nextDay.toISOString().slice(0, 10) > r.datumRezervacije.slice(0, 10)) {
+	    	
+	    		console.log(today.toISOString().slice(0, 10) + " - " + r.datumRezervacije.slice(0, 10));
+	    		if(today.toISOString().slice(0, 10) == r.datumRezervacije.slice(0, 10)){
+	    			r.rowVariant = 'warning';
+	    		} else {
+	    			r.rowVariant = 'danger';
+	    		}
 	    	}
 	    	else {
-	    		r.rowVariant = 'warning';
+	    		r.rowVariant = 'info';
 	    	}
     	}
 
