@@ -41,6 +41,8 @@ const UrediDermatologe = {template: '<UrediDermatologe></UrediDermatologe>'}
 const UrediFarmaceute = {template: '<UrediFarmaceute></UrediFarmaceute>'}
 const AdminNarudzbenice = {template: '<AdminNarudzbenice></AdminNarudzbenice>'}
 const AdminPromocija = {template: '<AdminPromocija></AdminPromocija>'}
+const AdminOdsustvo = {template: '<AdminOdsustvo></AdminOdsustvo>'}
+
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -161,6 +163,8 @@ const router = new VueRouter({
         {path: '/admin-apoteke-promocija', component: AdminPromocija },
         {path: '/pacijent_dermatolozi', component: PacijentDermatolozi },
         {path: '/pacijent_farmaceuti',component: PacijentFarmaceuti},
+        {path: '/admin-apoteke-odsustvo', component: AdminOdsustvo},
+        
     ]
 });
 

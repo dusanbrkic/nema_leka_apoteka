@@ -11,8 +11,9 @@ public class ZdravstveniRadnik extends Korisnik {
     private Double prosecnaOcena;
 
     // connections
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "zdravstveniRadnik", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Odsustvo> odsustva;
+    
     @OneToMany(mappedBy = "zdravstveniRadnik", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Pregled> pregledi;
 
