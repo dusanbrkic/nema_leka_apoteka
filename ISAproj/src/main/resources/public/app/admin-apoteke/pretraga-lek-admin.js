@@ -16,7 +16,28 @@ Vue.component("PretragaLekAdmin", {
         istekVazenjaCene: "",
         staraCena: "",
         cookie: "",
+        zahtevLekovi: [],
       },
+      fieldsZahtev: [
+        {
+          key: "username",
+        },
+        {
+          key: "ime",
+        },
+        {
+          key: "prezime",
+        },
+        {
+          key: "lek",
+        },
+        {
+          key: "lekSifra",
+        },
+        {
+          key: "kolicina",
+        },
+      ],
       fields: [
         {
           key: "naziv",
@@ -79,6 +100,10 @@ Vue.component("PretragaLekAdmin", {
       sortDesc: false,
       sortBy: "naziv",
       searchTitle: "",
+      pageZahtev: 1,
+      countZahtev: "",
+      pageSizeZahtev: 6,
+      pageSizesZahtev: [6, 10, 20, 50],
     };
   },
   mounted() {
@@ -119,6 +144,8 @@ Vue.component("PretragaLekAdmin", {
     <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
     <b-card style="margin: 40px auto; max-width: 2000px">
         <b-container>
+          <b-tabs content-class="mt-3">
+            <b-tab title="Lekovi" active>
           <b-row>
             <b-col>
               <b-form-input v-model="searchTitle" placeholder="Pretrazite lekove"></b-form-input>
@@ -166,10 +193,23 @@ Vue.component("PretragaLekAdmin", {
               </select>
           </b-col>
          </b-row>
-         </b-containter>
+         </b-tab>
+         <b-tab title="Zahtevi">
+         		          <b-row>
+                    <b-table
+                        id="zahtevi-tabela"
+                        hover
+                        :items="itemProviderZahtev"
+                        :fields="fieldsZahtev"
+                        :per-page="pageSizeZahtev"
+                        :current-page="pageZahtev"
+                        :busy.sync="table_is_busy"
+                        responsive="sm">
+                     </b-table>
+         </b-row>
+         </b-tab>
+        </b-containter>
       </b-card>
-<!-- <b-button v-on:click="deleteLek(lek.sifra)" variant="primary">Obrisi</b-button>
-              <b-button v-on:click="prikaziPromeniLek(lek)" variant="primary">Izmeni</b-button> -->
 
 
 
@@ -248,6 +288,25 @@ Vue.component("PretragaLekAdmin", {
         .delete("/lekovi/deleteLek", info)
         .then((response) => console.log(response.data));
       this.$root.$emit("bv::refresh::table", "lekovi-tabela");
+    },
+    itemProviderZahtev: function (ctx) {
+      return this.retrieveZahtevLek(ctx.page, ctx.pageSize);
+    },
+    retrieveZahtevLek: async function (page, pageSize) {
+      let info = {
+        params: {
+          cookie: this.cookie,
+          page: this.pageZahtev - 1,
+          size: this.pageSizeZahtev,
+        },
+      };
+      await axios.get("lekovi/zahteviZaLek", info).then((response) => {
+        console.log(response.data);
+        this.zahtevLekovi = response.data["content"];
+        this.countZahtev = response.data["totalElements"];
+        console.log(this.zahtevLekovi);
+      });
+      return this.zahtevLekovi;
     },
     itemProvider: function (ctx) {
       console.log(ctx);
