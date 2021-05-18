@@ -369,9 +369,11 @@ public class PregledController {
     	Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(cookie);
     	
     	for(Pregled p : pregledService.findAllByPacijent(pacijent)) {
-    		PregledDTO tmp = new PregledDTO(p);
-    		tmp.setUsername(p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime());
-    		pregledi.add(tmp);
+    		if (p.getZdravstveniRadnik() instanceof Dermatolog) {
+	    		PregledDTO tmp = new PregledDTO(p);
+	    		tmp.setUsername(p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime());
+	    		pregledi.add(tmp);
+    		}
     	}
     	return new ResponseEntity<List<PregledDTO>>(pregledi, HttpStatus.OK);
 	}
@@ -388,5 +390,73 @@ public class PregledController {
 			pregledService.savePregled(p);
 	    	
 	    	return new ResponseEntity<>(HttpStatus.OK);
+	}
+    @GetMapping(value = "/createSavetovanje")
+    public ResponseEntity<Void> createSavetovanje(@RequestParam("start") String startDate,
+                                                       @RequestParam("end") String endDate,
+                                                       @RequestParam("cookie") String cookie,
+                                                       @RequestParam("idFarmaceuta") Long idFarmaceuta,
+                                                       @RequestParam("idApoteke") Long idApoteke) {
+        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        
+        ZdravstveniRadnik zdravstveniRadnik = (ZdravstveniRadnik) zdravstveniRadnikService.findOneById(idFarmaceuta);
+        System.out.println(zdravstveniRadnik);
+        Pacijent pac = (Pacijent) korisnikService.findUserByToken(cookie);
+        
+        Apoteka a = apotekaService.findOne(idApoteke);
+        Pregled p = new Pregled();
+        p.setVreme(start);
+        p.setKraj(end);
+        p.setPregledZakazan(true);
+        p.setPregledObavljen(false);
+        p.setZdravstveniRadnik(zdravstveniRadnik);
+        p.setApoteka(a);
+        p.setPacijent(pac);
+        if (zdravstveniRadnik instanceof Farmaceut)
+            p.setCena(a.getCenaSavetovanja());
+        pregledService.savePregled(p);
+        
+        String body = "Poštovani, " + pac.getIme() + "\n"
+				+ "Zakazali ste savetovanje kod farmaceuta. Više informacija u nastavku. \n"
+				+ "Datum i vreme: " + start + "\n"
+				+ "Farmaceut: " + zdravstveniRadnik.getIme() + " " + zdravstveniRadnik.getPrezime() + "\n"
+				+ "Cena: " + a.getCenaSavetovanja() + " din. \n"
+				+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
+				+ "Srdačan pozdrav.";
+		
+		String title = "Potvrda savetovanja (ID:" + p.getId() + ")";
+	
+		try
+		{
+			Thread t = new Thread() {
+				public void run()
+				{
+					sendEmailService.sendEmail(pac.getEmailAdresa(), body, title);
+				}
+			};
+			t.start();
+		}
+		catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+        
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping(value = "savetovanja_farmaceuta")
+    public ResponseEntity<List<PregledDTO>> getSavetovanjaFarmaceuta(@RequestParam("cookie") String cookie){
+    	
+    	List<PregledDTO> savetovanja = new ArrayList<PregledDTO>();
+    	
+    	Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(cookie);
+    	
+    	for(Pregled p : pregledService.findAllByPacijent(pacijent)) {
+    		if (p.getZdravstveniRadnik() instanceof Farmaceut) {
+	    		PregledDTO tmp = new PregledDTO(p);
+	    		tmp.setUsername(p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime());
+	    		savetovanja.add(tmp);
+    		}
+    	}
+    	return new ResponseEntity<List<PregledDTO>>(savetovanja, HttpStatus.OK);
 	}
 }

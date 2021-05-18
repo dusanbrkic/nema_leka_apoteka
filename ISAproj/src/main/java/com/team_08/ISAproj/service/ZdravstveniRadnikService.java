@@ -76,6 +76,10 @@ public class ZdravstveniRadnikService {
 
         return farmaceutRepository.findAllByApotekaId(ApotekaId);
     }
+    
+    public Farmaceut findOneById(Long id) {
+        return farmaceutRepository.findOneById(id);
+    }
 
     //dodavanje farmaceuta
     public void saveFarmaceut(Farmaceut farmaceut) {

@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.service;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Lek;
+import com.team_08.ISAproj.model.Pregled;
 
 import org.springframework.stereotype.Service;
 
@@ -48,5 +50,9 @@ public class ApotekaService {
 
     public Apoteka fetchOneByIdWithAdmini(Long idApoteke) {
 		return apotekaRepository.fetchOneByIdWithAdmini(idApoteke);
+    }
+    
+    public List<Apoteka> findAllInDateRangeWithFreeZdravstveniRadnik(LocalDateTime start, LocalDateTime end) {
+        return apotekaRepository.findAllInDateRangeWithFreeZdravstveniRadnik(start, end);
     }
 }

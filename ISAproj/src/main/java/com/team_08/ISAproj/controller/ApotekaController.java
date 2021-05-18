@@ -1,5 +1,7 @@
 package com.team_08.ISAproj.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +11,8 @@ import java.util.Map;
 import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.PregledService;
+import com.team_08.ISAproj.service.ZdravstveniRadnikService;
 
 import org.aspectj.weaver.patterns.HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,8 @@ import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.Farmaceut;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.Pacijent;
+import com.team_08.ISAproj.model.Pregled;
+import com.team_08.ISAproj.model.ZdravstveniRadnik;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
 
 @RestController
@@ -49,7 +55,10 @@ public class ApotekaController {
 
     @Autowired
     private KorisnikService korisnikService;
-	
+    @Autowired
+    private PregledService pregledService;
+    @Autowired
+    private ZdravstveniRadnikService zdravstveniRadnikService;
 	
 	@GetMapping("")
 	public ResponseEntity<Map<String, Object>> getApoteke(
@@ -149,8 +158,34 @@ public class ApotekaController {
 		}
 		System.out.println(nazivi);
 		return new ResponseEntity<List<String>>(nazivi,HttpStatus.OK);
-		
-		
-		
+	}
+	
+	@GetMapping(value = "/sveApotekeSaSlobodnimFarmaceutom")
+	public ResponseEntity<List<ApotekaDTO>> sveApotekeSaSlobodnimFarmaceutom(@RequestParam("start") String startDate,
+            															 	 @RequestParam("end") String endDate)
+	{
+		LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        
+        List<ApotekaDTO> apotekeDTO = new ArrayList<ApotekaDTO>();
+        
+        boolean slobodan = false;
+        for(Apoteka a: apotekaService.findAll()) {
+        	for(Farmaceut f : zdravstveniRadnikService.fetchFarmaceutsByApotekaId(a.getId())) {
+                if (pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, f.getCookieToken()).isEmpty()) {
+                	if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), f.getCookieToken(), a.getId())!=null)
+                		if (zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(f.getCookieToken(), start, end)==null) {
+                        	slobodan = true;
+                		}
+                }
+        	}
+        	if(slobodan) {
+        		//a.setNaziv(f.getIme() + " " + f.getPrezime());
+        		apotekeDTO.add(new ApotekaDTO(a));
+        	}
+        	slobodan = false;
+        }
+        
+        return new ResponseEntity<List<ApotekaDTO>>(apotekeDTO, HttpStatus.OK);
 	}
 }

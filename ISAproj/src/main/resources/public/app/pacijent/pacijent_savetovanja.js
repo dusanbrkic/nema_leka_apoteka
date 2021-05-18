@@ -1,15 +1,11 @@
-Vue.component("PacijentNarudzbenice", {
+Vue.component("PacijentSavetovanja", {
     data: function () {
         return {
             cookie: '',
-            rezervacije: [],
+            pregledi: [],
             fields: [
                 {
-                    key: 'idRezervacije',
-                    sortable: false
-                },
-                {
-                    key: 'lekovi',
+                    key: 'idSavetovanja',
                     sortable: false
                 },
                 {
@@ -17,7 +13,23 @@ Vue.component("PacijentNarudzbenice", {
                     sortable: false
                 },
                 {
-                    key: 'datumIstekaRezervacije',
+                	key: 'farmaceut',
+                	sortable: false
+                },
+                {
+                    key: 'datum',
+                    sortable: false
+                },
+                {
+                    key: 'pocetak',
+                    sortable: false
+                },
+                                {
+                    key: 'kraj',
+                    sortable: false
+                },
+                {
+                    key: 'cena',
                     sortable: false
                 },
                 {
@@ -43,10 +55,6 @@ Vue.component("PacijentNarudzbenice", {
       <b-card style="margin: 40px auto; max-width: 1200px">
         <b-container>
 
-		<b-alert style="text-align: center;" v-model="this.greska" variant="danger"> Greska prilikom otkazivanja! </b-alert>
-      	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesno otkazivanje</b-alert>
-
-
 
           <b-row>
             <b-table
@@ -58,16 +66,18 @@ Vue.component("PacijentNarudzbenice", {
             >
             
 	            <template #cell(status)="row">
-	            
-			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'info' || rezervacije[row.index].rowVariant == 'warning'" class="mr-1">
-			          Potrebno preuzeti
+
+ 					<div size="sm" v-if="pregledi[row.index].rowVariant == 'info' || pregledi[row.index].rowVariant == 'warning'" class="mr-1">
+			          Potrebno obaviti
 			        </div>
-	            	<b-button size="sm" v-if="rezervacije[row.index].rowVariant == 'info' " @click="otkazi(row.index)" class="mr-1">
+	            	<b-button size="sm" v-if="pregledi[row.index].rowVariant == 'info' " @click="otkazi(row.index)" class="mr-1">
 			          Otkazi
 			        </b-button>
-			       
-			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'success' " class="mr-1">
-			          Preuzeto
+			        <div size="sm" v-if="pregledi[row.index].rowVariant == 'success' " class="mr-1">
+			          Obavljen
+			        </div>
+			        <div size="sm" v-if="pregledi[row.index].rowVariant == 'danger' " class="mr-1">
+			          Nije obavljen
 			        </div>
 
 			    </template>
@@ -87,41 +97,40 @@ Vue.component("PacijentNarudzbenice", {
     
     	
         var today = new Date();
+        
+        var nextDay = new Date();
     	
-    	var nextDay = new Date();
+    	nextDay.setDate(today.getDate() + 1);
     	
-    	nextDay.setDate(nextDay.getDate() + 1);
-    	
-   		if(r.preuzeto) {
+   		if(r.pregledObavljen) {
    			r.rowVariant = 'success';
    		}
     	else {
-	    	if(nextDay.toISOString().slice(0, 10) > r.datumRezervacije.slice(0, 10)) {
-	    	
-	    		console.log(today.toISOString().slice(0, 10) + " - " + r.datumRezervacije.slice(0, 10));
-	    		if(today.toISOString().slice(0, 10) == r.datumRezervacije.slice(0, 10)){
-	    			r.rowVariant = 'warning';
-	    		} else {
-	    			r.rowVariant = 'danger';
-	    		}
+    		console.log(nextDay.toISOString().slice(0, 10) + " - " + r.start.slice(0, 10));
+		   	if(nextDay.toISOString().slice(0, 10) > r.start.slice(0, 10)) {
+		   		if(today.toISOString().slice(0, 10) == r.start.slice(0, 10)){
+    				r.rowVariant = 'warning';
+    			}
+    			else {	
+					r.rowVariant = 'danger';
+				}
 	    	}
-	    	else {
-	    		r.rowVariant = 'info';
-	    	}
+			else {	
+					r.rowVariant = 'info';
+			}
     	}
 
     },
-    
     otkazi(index) {
     
         	this.greska = false;
 		    this.uspeh = false;
 		    
 		    
-		     axios.get("rezervacije/otkazi-rezervaciju", 
+		     axios.get("pregledi/otkazi-pregled", 
 			    {		
 			    params: {
-			       'id_rezervacije': this.rezervacije[index].id
+			       'id_pregleda': this.pregledi[index].id
 			       }
 			    }).then((response) => {
 	          		//this.uspeh = true;
@@ -139,7 +148,7 @@ Vue.component("PacijentNarudzbenice", {
             this.table_is_busy = true
             let items = []
             await axios
-                .get("rezervacije/moje_rezervacije", {
+                .get("pregledi/savetovanja_farmaceuta", {
                     params:
                         {
                             'cookie': this.cookie,
@@ -150,14 +159,17 @@ Vue.component("PacijentNarudzbenice", {
                     for (const p of rez) {
         
                     	this.checkDate(p);	
-                    	this.rezervacije.push(p);
+                    	this.pregledi.push(p);
                     	console.log(p);
                     	
                         items.push({
-                            idRezervacije: p.id,
-                            lekovi: p.sifraLeka,
-                            apoteka: p.apotekaId,
-                            datumIstekaRezervacije: p.datumRezervacije.slice(0, 10),
+                            idSavetovanja: p.id,
+                            apoteka: p.apoteka.naziv,
+                            farmaceut: p.username,
+                            pocetak: p.start.slice(11, 20),
+                            datum: p.start.slice(0, 10),
+                            kraj: p.end.slice(11, 20),
+                            cena: p.cena + ' din.',
                           	_rowVariant: p.rowVariant
                             
                         })

@@ -3,6 +3,7 @@ package com.team_08.ISAproj.repository;
 import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.Farmaceut;
 import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.ZdravstveniRadnik;
 
 import org.springframework.data.domain.Page;
@@ -25,6 +26,8 @@ public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
 
     Farmaceut findOneByEmailAdresa(String email_adresa);
 
+    Farmaceut findOneById(Long id);
+    
     @Query(value = "SELECT f FROM FARMACEUT f LEFT OUTER JOIN FETCH f.odsustva o where f.cookieTokenValue = :cookie")
     Farmaceut fetchFarmaceutWithOdsustva(@Param("cookie") String cookie);
 

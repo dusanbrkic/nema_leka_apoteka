@@ -20,6 +20,7 @@ import java.util.List;
 
 @Repository
 public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
+	
     Dermatolog findOneByUsername(String username);
 
     Dermatolog findOneByCookieTokenValue(String cookie);

@@ -72,8 +72,28 @@ Vue.component("PacijentMain", {
           
           <b-col>
             <b-card 
-                title="Savetovanje kod farmaceuta"
+                title="Zakazi savetovanje kod farmaceuta"
                 img-src="https://editiadedimineata.ro/wp-content/uploads/2018/01/farmacisti.jpg"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem;"
+                class="mb-2"
+            >
+              <b-card-text>
+                Zakazi savetovanje kod farmaceuta
+              </b-card-text>
+             
+             <a href="#/home-pacijent/zakazivanje-savetovanja" class="stretched-link"></a>
+
+            </b-card>
+          </b-col>
+          
+          
+          <b-col>
+            <b-card 
+                title="Zakazana savetovanja kod farmaceuta"
+                img-src="https://image.freepik.com/free-photo/doctor-consulting-with-patient-checking-sickness-condition-while-presenting-results-diagnosis-symptom-examining-about-problem-illness-recommend-treatment-method-healthcare-medical_122498-230.jpg"
                 img-alt="Image"
                 img-top
                 tag="article"
@@ -84,11 +104,10 @@ Vue.component("PacijentMain", {
                 Prikazi zakazana savetovanja kod farmaceuta
               </b-card-text>
              
-             <!-- <a href="#/home-pacijent/pregledi" class="stretched-link"></a> -->
+              <a href="#/home-pacijent/savetovanja" class="stretched-link"></a> 
 
             </b-card>
           </b-col>
-          
           
            <b-col>
             <b-card 

@@ -8,7 +8,6 @@ import com.team_08.ISAproj.model.Farmaceut;
 
 public class FarmaceutDTO {
 
-
     private String username;
     private String password;
     private String ime;
