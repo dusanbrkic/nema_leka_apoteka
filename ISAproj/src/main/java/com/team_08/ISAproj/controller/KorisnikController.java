@@ -1,6 +1,8 @@
 package com.team_08.ISAproj.controller;
 
+import com.team_08.ISAproj.dto.ApotekaDTO;
 import com.team_08.ISAproj.dto.CookieRoleDTO;
+import com.team_08.ISAproj.dto.FarmaceutDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
@@ -9,11 +11,13 @@ import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.PacijentService;
 
 import java.util.Random;
 
 import com.team_08.ISAproj.service.PregledService;
 import com.team_08.ISAproj.service.RezervacijaService;
+import com.team_08.ISAproj.service.ZdravstveniRadnikService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +54,10 @@ public class KorisnikController {
     private RezervacijaService rezervacijaService;
     @Autowired
     private ApotekaLekService apotekaLekService;
+    @Autowired
+    private PacijentService pacijentService;
+    @Autowired
+    private ZdravstveniRadnikService zdravstveniRadnikService;
 
     //change password
     @PostMapping(value = "/updatePass", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,6 +100,13 @@ public class KorisnikController {
             k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
+            
+    		if(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1) {
+    			for(Pacijent p : pacijentService.findAll()) {
+    				p.setBrPenala(0);
+    			}
+    		}
+            
             if(k instanceof Pacijent) 
             {
             	korisnickaRola = KorisnickaRola.PACIJENT;
@@ -100,7 +117,8 @@ public class KorisnikController {
         		
         		
         		for(Rezervacija r : rezervacije) {
-        			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().isBefore(currentDate) && !sdf.format(r.getRokPonude()).equals(sdf.format(currentDate))) {
+        			r.getRokPonude().isBefore(currentDate);
+        			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().isBefore(currentDate) && !r.getRokPonude().equals(currentDate)) {
         				r.setIsteklo(true);
         				((Pacijent) k).setBrPenala(((Pacijent) k).getBrPenala() + 1);
         				
@@ -115,9 +133,6 @@ public class KorisnikController {
         				rezervacijaService.saveRezervacija(r);
         			}
         		}
-            	if(((Pacijent) k).getBrPenala() == 3) {
-            		return new ResponseEntity<CookieRoleDTO>(HttpStatus.FORBIDDEN);
-            	}
             }
             else if(k instanceof Dermatolog) korisnickaRola = KorisnickaRola.DERMATOLOG;
             else if(k instanceof Farmaceut) korisnickaRola = KorisnickaRola.FARMACEUT;
@@ -228,5 +243,44 @@ public class KorisnikController {
         korisnikService.saveUser(k);
         KorisnikDTO kDTO = new KorisnikDTO(k);
         return new ResponseEntity<KorisnikDTO>(kDTO, HttpStatus.OK);
+    }
+    @GetMapping(value = "/blocked")
+    public ResponseEntity<Void> isBlocked(@RequestParam("cookie") String cookie){
+        Korisnik k = korisnikService.findUserByToken(cookie);
+
+        if(k instanceof Pacijent) {
+        	if(((Pacijent) k).getBrPenala() >= 3) {
+        		return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        	}
+        }
+        
+        return new ResponseEntity<Void>(HttpStatus.OK);
+
+    }
+    @GetMapping(value = "/slobodni_farmaceuti_apoteke")
+    public ResponseEntity<List<FarmaceutDTO>> slobodniFarmaceutiApoteke(@RequestParam("start") String startDate,
+		 	 											  				@RequestParam("end") String endDate,
+		 	 											  				@RequestParam("idApoteke") Long idApoteke)
+    {
+    	LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        
+        List<FarmaceutDTO> farmaceutiDTO = new ArrayList<FarmaceutDTO>();
+        
+        boolean slobodan = false;
+    	for(Farmaceut f : zdravstveniRadnikService.fetchFarmaceutsByApotekaId(idApoteke)) {
+            if (pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, f.getCookieToken()).isEmpty()) {
+            	if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), f.getCookieToken(), idApoteke)!=null) {
+            		if (zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(f.getCookieToken(), start, end)==null) {
+            			FarmaceutDTO fdto = new FarmaceutDTO(f);
+            			fdto.setUsername(Long.toString(f.getId()));
+            			farmaceutiDTO.add(fdto);
+            		}
+            	}
+            }
+    	}
+        
+        return new ResponseEntity<List<FarmaceutDTO>>(farmaceutiDTO, HttpStatus.OK);
+
     }
 }

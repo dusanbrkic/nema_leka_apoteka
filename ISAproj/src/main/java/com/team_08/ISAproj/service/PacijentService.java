@@ -24,4 +24,8 @@ public class PacijentService {
     public List<Pretplata> findPretplateApoteka(Long apotekaId){
     	return pretplataRepository.findPretplateApoteka(apotekaId);
     }
+    
+    public List<Pacijent> findAll(){
+    	return pacijentRepository.findAll();
+    }
 }

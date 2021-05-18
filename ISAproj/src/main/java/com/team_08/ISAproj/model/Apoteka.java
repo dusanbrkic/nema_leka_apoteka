@@ -49,14 +49,23 @@ public class Apoteka {
     private Set<Promocija> promocije = new HashSet<Promocija>();
     @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<AdminApoteke> admini = new HashSet<AdminApoteke>();
-
+    @OneToMany(mappedBy = "apoteka", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<ZahtevLek> zahtevLekovi = new HashSet<ZahtevLek>();
     //getters and setters
 
     public Long getId() {
         return id;
     }
 
-    public Set<Pretplata> getPretplate() {
+    public Set<ZahtevLek> getZahtevLekovi() {
+		return zahtevLekovi;
+	}
+
+	public void setZahtevLekovi(Set<ZahtevLek> zahtevLekovi) {
+		this.zahtevLekovi = zahtevLekovi;
+	}
+
+	public Set<Pretplata> getPretplate() {
 		return pretplate;
 	}
 
@@ -205,6 +214,8 @@ public class Apoteka {
         this.adresa = apotekaDTO.getAdresa();
         this.opis = apotekaDTO.getOpis();
         this.prosecnaOcena = apotekaDTO.getProsecnaOcena();
+        this.cenaPregleda = apotekaDTO.getCenaPregleda();
+        this.cenaSavetovanja = apotekaDTO.getCenaSavetovanja();
     }
 
     public Apoteka() {

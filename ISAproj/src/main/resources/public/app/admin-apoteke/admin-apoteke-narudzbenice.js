@@ -67,7 +67,8 @@ Vue.component("AdminNarudzbenice", {
       <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
     <b-card style="margin: 40px auto; max-width: 2000px">
       <b-container id="page_content">
-
+			      <div class="text-center"><h2>Narudzbenice</h2></div>
+          <br>	
       <b-row>
                     <b-table
                         striped

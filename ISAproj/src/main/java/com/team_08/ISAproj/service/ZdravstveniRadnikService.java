@@ -76,6 +76,10 @@ public class ZdravstveniRadnikService {
 
         return farmaceutRepository.findAllByApotekaId(ApotekaId);
     }
+    
+    public Farmaceut findOneById(Long id) {
+        return farmaceutRepository.findOneById(id);
+    }
 
     //dodavanje farmaceuta
     public void saveFarmaceut(Farmaceut farmaceut) {
@@ -131,8 +135,8 @@ public class ZdravstveniRadnikService {
     		Long apotekaId,
     		String pretragaIme,
     		String pretragaPrezime, Double ocena,String pocetak,String kraj){
-    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalTime start = LocalTime.parse(pocetak, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+    	LocalTime end = LocalTime.parse(kraj, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
     	pretragaIme = "%" + pretragaIme + "%";
     	pretragaPrezime = "%" + pretragaPrezime + "%";
     	System.out.println(pretragaIme +" "+ pretragaPrezime);
@@ -154,8 +158,8 @@ public class ZdravstveniRadnikService {
     		String pretragaIme,
     		String pretragaPrezime, Double ocena,String pocetak,String kraj
     		){
-    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalTime start = LocalTime.parse(pocetak, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+    	LocalTime end = LocalTime.parse(kraj, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
     	pretragaIme = "%" + pretragaIme + "%";
     	pretragaPrezime = "%" + pretragaPrezime + "%";
     	System.out.println(pretragaIme +" "+ pretragaPrezime);
@@ -180,8 +184,8 @@ public class ZdravstveniRadnikService {
     		String pretragaIme,
     		String pretragaPrezime, Double ocena,String pocetak,String kraj
     		){
-    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalTime start = LocalTime.parse(pocetak, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+    	LocalTime end = LocalTime.parse(kraj, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
     	pretragaIme = "%" + pretragaIme + "%";
     	pretragaPrezime = "%" + pretragaPrezime + "%";
     	System.out.println(pretragaIme +" "+ pretragaPrezime);
@@ -201,8 +205,8 @@ public class ZdravstveniRadnikService {
     		String naziv,
     		String pretragaIme,
     		String pretragaPrezime, Double ocena,String pocetak,String kraj){
-    	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-    	LocalDateTime end = LocalDateTime.parse(kraj, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    	LocalTime start = LocalTime.parse(pocetak, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+    	LocalTime end = LocalTime.parse(kraj, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
     	pretragaIme = "%" + pretragaIme + "%";
     	pretragaPrezime = "%" + pretragaPrezime + "%";
     	System.out.println(pretragaIme +" "+ pretragaPrezime);

@@ -13,7 +13,7 @@ public class PromocijaDTO {
 	private Date krajVazenja;
     private Double cena;
     private Date istekVazenjaCene;
-    private Double staraCena;
+    private Double promotivnaCena;
 	private String cookie;
 	private String tekstPromocije;
 	private String sifra;
@@ -86,12 +86,13 @@ public class PromocijaDTO {
 		this.istekVazenjaCene = istekVazenjaCene;
 	}
 
-	public Double getStaraCena() {
-		return staraCena;
+
+	public Double getPromotivnaCena() {
+		return promotivnaCena;
 	}
 
-	public void setStaraCena(Double staraCena) {
-		this.staraCena = staraCena;
+	public void setPromotivnaCena(Double promotivnaCena) {
+		this.promotivnaCena = promotivnaCena;
 	}
 
 	public String getCookie() {

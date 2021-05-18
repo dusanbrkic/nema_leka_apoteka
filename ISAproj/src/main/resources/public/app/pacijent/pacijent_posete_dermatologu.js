@@ -67,11 +67,17 @@ Vue.component("PacijentPoseteDermatologu", {
             
 	            <template #cell(status)="row">
 
-	            	<div size="sm" v-if="pregledi[row.index].rowVariant == 'warning' " class="mr-1">
-			          narandzasto
+ 					<div size="sm" v-if="pregledi[row.index].rowVariant == 'info' || pregledi[row.index].rowVariant == 'warning'" class="mr-1">
+			          Potrebno obaviti
 			        </div>
+	            	<b-button size="sm" v-if="pregledi[row.index].rowVariant == 'info' " @click="otkazi(row.index)" class="mr-1">
+			          Otkazi
+			        </b-button>
 			        <div size="sm" v-if="pregledi[row.index].rowVariant == 'success' " class="mr-1">
-			          zeleno
+			          Obavljen
+			        </div>
+			        <div size="sm" v-if="pregledi[row.index].rowVariant == 'danger' " class="mr-1">
+			          Nije obavljen
 			        </div>
 
 			    </template>
@@ -91,20 +97,52 @@ Vue.component("PacijentPoseteDermatologu", {
     
     	
         var today = new Date();
+        
+        var nextDay = new Date();
     	
-    	today.setDate(today.getDate() + 1);
-    	
-    	
-    	//console.log(today.toISOString().slice(0, 10) + " - " + r.datumRezervacije.slice(0, 10));
+    	nextDay.setDate(today.getDate() + 1);
     	
    		if(r.pregledObavljen) {
    			r.rowVariant = 'success';
    		}
     	else {
-	    	r.rowVariant = 'warning';
+    		console.log(nextDay.toISOString().slice(0, 10) + " - " + r.start.slice(0, 10));
+		   	if(nextDay.toISOString().slice(0, 10) > r.start.slice(0, 10)) {
+		   		if(today.toISOString().slice(0, 10) == r.start.slice(0, 10)){
+    				r.rowVariant = 'warning';
+    			}
+    			else {	
+					r.rowVariant = 'danger';
+				}
+	    	}
+			else {	
+					r.rowVariant = 'info';
+			}
     	}
 
     },
+    otkazi(index) {
+    
+        	this.greska = false;
+		    this.uspeh = false;
+		    
+		    
+		     axios.get("pregledi/otkazi-pregled", 
+			    {		
+			    params: {
+			       'id_pregleda': this.pregledi[index].id
+			       }
+			    }).then((response) => {
+	          		//this.uspeh = true;
+	          		//this.rezervacije.splice(index, 1);
+   		   			//this.$refs.table.refresh();
+   		   			//localStorage.setItem("uspeh", true);
+   		   			location.reload();
+		        })
+		        .catch((e) => {
+		        	this.greska = true;
+		        });
+      },
     
         loadPregledi: async function () {
             this.table_is_busy = true

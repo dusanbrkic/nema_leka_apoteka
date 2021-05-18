@@ -5,11 +5,13 @@ import com.team_08.ISAproj.dto.DermatologDTO;
 import com.team_08.ISAproj.dto.FarmaceutDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.dto.LekDTO;
+import com.team_08.ISAproj.dto.OdsustvoDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.OdsustvoService;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -34,6 +36,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,7 +54,10 @@ public class ZdravstveniRadnikController {
     private PregledService pregledService;
     @Autowired
     private ApotekaService apotekaService;
-
+    @Autowired
+    private OdsustvoService odsustvoService;
+    @Autowired
+    private EmailService sendEmailService;
     @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
                                               @RequestParam("end") String endDate,
@@ -66,11 +74,13 @@ public class ZdravstveniRadnikController {
             if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            z.getOdsustva().add(new Odsustvo(start, end));
+            odsustvoService.saveOdsustvo(new Odsustvo(start, end,"cekanju",z));
+            
+           // z.getOdsustva().add(new Odsustvo(start, end,"cekanju"));
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        korisnikService.saveUser(z);
+        //korisnikService.saveUser(z);
         return new ResponseEntity<>("User successfully updated", HttpStatus.OK);
     }
 
@@ -493,5 +503,80 @@ public class ZdravstveniRadnikController {
         f.setRadnoVremeKraj(end.toLocalTime());
         zdravstveniRadnikService.saveFarmaceut(f);
         return new ResponseEntity<FarmaceutDTO>(HttpStatus.OK);
+    }
+    //sva odusustva 
+    @GetMapping(value="/allOdsustvo")
+    public ResponseEntity<List<OdsustvoDTO>> allOdsustvo(@RequestParam String cookie){
+    	
+    	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(cookie);
+    	
+    	if(a == null) {
+    		return new ResponseEntity<List<OdsustvoDTO>>(HttpStatus.NOT_FOUND);
+    	}
+    	List<Odsustvo> odsustva = null;
+    	odsustva = odsustvoService.fetchOdsustvaByApotekaId(a.getApoteka().getId());
+    	System.out.println(odsustva);
+    	List<OdsustvoDTO> odsustvoDTO = new ArrayList<OdsustvoDTO>();
+		for(Odsustvo o: odsustva) {
+			odsustvoDTO.add(new OdsustvoDTO(o));
+		}
+		return new ResponseEntity<List<OdsustvoDTO>>(odsustvoDTO,HttpStatus.OK);
+    	
+    	
+    	
+    	
+    }
+   
+    //Odbijanje i prihvatanje odustava za godisnji odmor
+    @PutMapping(value = "/updateOdsustvo")
+    public ResponseEntity<Void> updateOdsustvo(@RequestBody OdsustvoDTO odsustvoDTO) throws ParseException{
+    	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(odsustvoDTO.getCookie());
+    	
+    	if(a == null) {
+    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+    	}
+    	Odsustvo o = odsustvoService.findOne(odsustvoDTO.getId());
+    	if(o == null) {
+    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+    	}
+    	String title = "Godisnji odmor - " + a.getApoteka().getNaziv();
+    	String body; 
+    	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    	if(odsustvoDTO.getStatus().equals("odobreno")) {
+    		body = "Odobren vam je godisnji odmor.\nTrajace u periodu od " + odsustvoDTO.getPocetak() +  " - " + odsustvoDTO.getKraj();
+    		try
+    		{
+    			Thread t = new Thread() {
+    				public void run()
+    				{
+    					sendEmailService.sendEmail(o.getZdravstveniRadnik().getEmailAdresa(), body, title);
+    				}
+    			};
+    			t.start();
+    		}
+    		catch(Exception e) {
+    			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+    		}
+    	}
+    	else if(odsustvoDTO.getStatus().equals("odbijeno")) {
+    		body = "Odbijen vam je godisnji odmor.\nRazlog: \n" + odsustvoDTO.getRazlog();
+    		try
+    		{
+    			Thread t = new Thread() {
+    				public void run()
+    				{
+    					sendEmailService.sendEmail(o.getZdravstveniRadnik().getEmailAdresa(), body, title);
+    				}
+    			};
+    			t.start();
+    		}
+    		catch(Exception e) {
+    			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+    		}
+    	}
+    	o.updateOdustov(odsustvoDTO);
+    	odsustvoService.saveOdsustvo(o);
+    	return new ResponseEntity<Void>(HttpStatus.OK);
+    	
     }
 }

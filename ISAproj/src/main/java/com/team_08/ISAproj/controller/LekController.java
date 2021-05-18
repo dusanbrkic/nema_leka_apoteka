@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.remoting.jaxws.SimpleHttpServerJaxWsServiceExporter;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
 import com.team_08.ISAproj.service.LekService;
 import com.team_08.ISAproj.service.NarudzbenicaService;
+import com.team_08.ISAproj.service.ZahtevLekService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,7 +65,8 @@ public class LekController {
     private EmailService sendEmailService;
     @Autowired
     private NarudzbenicaService narudzbenicaService;
-
+    @Autowired
+    private ZahtevLekService zahtevLekService;
 
 //    @RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public ResponseEntity<List<LekDTO>> getLekovi1() {
@@ -325,8 +328,6 @@ public class LekController {
 
 		Pageable paging = PageRequest.of(page, size);
 		Page<Lek> lekovi;
-		// svi lekovi u bazi
-		//lekovi = lekService.findAllSearch(paging,title);
 		lekovi = lekService.test(paging,Long.parseLong(apotekaId));
 		ApotekaLek al;
 		LekDTO lekDTO;
@@ -406,13 +407,15 @@ public class LekController {
 		});
 		return new ResponseEntity<Page<LekDTO>>(lekoviDTO, HttpStatus.OK);
 	}
-
+	
+	//dostupnost leka
 	@GetMapping(value="/proveriDostupnostLeka" , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> proveriDostupnostLeka(
 			@RequestParam String sifraLeka,
 			@RequestParam String cookie,
 			@RequestParam Long idApoteke,
 			@RequestParam Integer kolicina){
+		ZdravstveniRadnik zr = (ZdravstveniRadnik) korisnikService.findUserByToken(cookie);
 		ApotekaLek al = apotekaLekService.findOneBySifra(sifraLeka, idApoteke);
 		Apoteka apoteka = apotekaService.fetchOneByIdWithAdmini(idApoteke);
 		Lek lek = lekService.findOneBySifra(sifraLeka);
@@ -423,6 +426,10 @@ public class LekController {
 			kolicinaUApoteci = 0;
 		}
 		if (al==null || al.getKolicina() < kolicina) {
+			ZahtevLek zahtevLek = new ZahtevLek(apoteka,lek,kolicina,zr);
+			System.out.println("--------------------------------------------");
+			zahtevLekService.saveZahtevLek(zahtevLek);
+			System.out.println("--------------------------------------------");
 			for (AdminApoteke a : apoteka.getAdmini()){
 				String title = "Lek nedostaje u apoteci (" + lek.getNaziv() + ")";
 				String bodyTmp = "Postovani,\n\nNedostaje lek u apoteci " + apoteka.getNaziv() +
@@ -450,4 +457,33 @@ public class LekController {
 			return new ResponseEntity<>(true, HttpStatus.OK);
 		}
 	}
+	
+	//svi zahtevi za lekove koji nisu na stanju za apoteku
+	@GetMapping(value="/zahteviZaLek")
+	public ResponseEntity<Page<ZahtevLekDTO>> getZahtevLekByApotekaId(@RequestParam String cookie,
+			@RequestParam("page") Integer page,
+            @RequestParam("size") Integer size){
+
+		AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(cookie);
+		
+		if(a == null) {
+			return new ResponseEntity<Page<ZahtevLekDTO>>(HttpStatus.NOT_FOUND);
+		}
+		Page<ZahtevLek> zahtevLekovi = null;
+		zahtevLekovi = zahtevLekService.findAllByApotekaId(page,size,a.getApoteka().getId());
+    	if (zahtevLekovi == null)
+            return new ResponseEntity<Page<ZahtevLekDTO>>(Page.empty(), HttpStatus.OK);
+
+        Page<ZahtevLekDTO> zahteviLekDTO = zahtevLekovi.map(new Function<ZahtevLek, ZahtevLekDTO>() {
+            @Override
+            public ZahtevLekDTO apply(ZahtevLek zl) {
+            	ZahtevLekDTO zahteviLekDTO = new ZahtevLekDTO(zl);
+                return zahteviLekDTO;
+            }
+        });
+        return new ResponseEntity<Page<ZahtevLekDTO>>(zahteviLekDTO, HttpStatus.OK);
+		
+		
+	}
+	
 }

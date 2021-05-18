@@ -34,12 +34,13 @@ Vue.component("PacijentLekovi", {
 	       ukupnaCena: 0,
 	       losUnos: false,
 	       uspeh: false,
-        
+           blocked: false,
         }
     },
       mounted () {
       	this.cookie = localStorage.getItem("cookie")
-      	this.retrieveLekovi()
+      	this.retrieveLekovi();
+      	this.getPenali();
   	},
     template: `
     	<div>
@@ -47,7 +48,7 @@ Vue.component("PacijentLekovi", {
     	
     	<b-alert style="text-align: center;" v-model="this.losUnos" variant="danger"> Los unos podataka! </b-alert>
       	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesna rezervacija, pogledajte svoj email.</b-alert>
-    	
+    	<b-alert style="text-align: center;" v-model="blocked" variant="danger"> Nalog je blokiran! </b-alert>
 
       <!-- BIRANJE VELICINE STRANE -->
         Lekova po strani:
@@ -84,7 +85,7 @@ Vue.component("PacijentLekovi", {
 			  </p>
               </b-card-text>
               
-              <b-button v-on:click="prikaziLek(lek)" variant="primary">Rezervisi</b-button>
+              <b-button v-if="!blocked" v-on:click="prikaziLek(lek)" variant="primary">Rezervisi</b-button>
 
             </b-card>
         </b-card-group>
@@ -237,6 +238,26 @@ Vue.component("PacijentLekovi", {
 	        });
 	       
         },
-    }
+            getPenali() {
+			 axios.get("korisnici/blocked", 
+			 {
+			 	params: {
+			                'cookie': this.cookie,
+			            }
+			 })
+			.then((response) => {
+			
+			  		this.blocked = false;
+			  
+			})
+			.catch((e) => {
+			  if (e.request.status == 403) {
+			  		console.log("blokiran");
+			        this.blocked = true;
+			  }
+			  console.log(e);
+			});
+	    }
+    },
 });
 

@@ -44,7 +44,7 @@ public class LekService {
         al.setApoteka(a);
         al.setCena(lekDTO.getCena());
         al.setKolicina(lekDTO.getKolicina());
-        al.setStaraCena(lekDTO.getCena());
+        al.setPromotivnaCena(0.0);
         al.setIstekVazenjaCene(null);
 
         lekRepository.save(l);
@@ -65,10 +65,9 @@ public class LekService {
         al.setApoteka(a);
         al.setKolicina(0);
         al.setCena(0);
-        al.setStaraCena(0);
+        al.setPromotivnaCena(0.0);
         al.setIstekVazenjaCene(null);
         apotekaLekRepository.save(al);
-        //a.getLekovi().add(al);
         return al;
     }
 

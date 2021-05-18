@@ -14,6 +14,10 @@ const PacijentZakaziPregled = {template: '<PacijentZakaziPregled></PacijentZakaz
 const PacijentPoseteDermatologu = {template: '<PacijentPoseteDermatologu></PacijentPoseteDermatologu>'}
 const PacijentDermatolozi = { template: '<PacijentDermatolozi></PacijentDermatolozi>' };
 const PacijentFarmaceuti = {template: '<PacijentFarmaceuti></PacijentFarmaceuti>'}
+const PacijentZakazivanjeSavetovanja = {template: '<PacijentZakazivanjeSavetovanja></PacijentZakazivanjeSavetovanja>'}
+const PacijentSavetovanja = {template: '<PacijentSavetovanja></PacijentSavetovanja>'}
+
+
 // dodatno
 const Apoteke = { template: '<Apoteke></Apoteke>'}
 const Apoteka = {template: '<Apoteka></Apoteka>'}
@@ -39,6 +43,8 @@ const UrediDermatologe = {template: '<UrediDermatologe></UrediDermatologe>'}
 const UrediFarmaceute = {template: '<UrediFarmaceute></UrediFarmaceute>'}
 const AdminNarudzbenice = {template: '<AdminNarudzbenice></AdminNarudzbenice>'}
 const AdminPromocija = {template: '<AdminPromocija></AdminPromocija>'}
+const AdminOdsustvo = {template: '<AdminOdsustvo></AdminOdsustvo>'}
+
 //dermatolog-farmaceut
 const HomeDermatolog = {template: '<HomeDermatolog></HomeDermatolog>'}
 const HomeFarmaceut = {template: '<HomeFarmaceut></HomeFarmaceut>'}
@@ -133,7 +139,15 @@ const router = new VueRouter({
             {
             	path: 'posete-dermatologu',
             	component: PacijentPoseteDermatologu
-            }
+            },
+            {
+            	path: 'zakazivanje-savetovanja',
+            	component: PacijentZakazivanjeSavetovanja
+            },
+            {
+            	path: 'savetovanja',
+            	component: PacijentSavetovanja
+            },
 	    ]},
         {path: '/admin-apoteke-lekovi', component: AdminApotekeLekovi},
         {path: '/lekovi', component: Lekovi},
@@ -155,6 +169,8 @@ const router = new VueRouter({
         {path: '/admin-apoteke-promocija', component: AdminPromocija },
         {path: '/pacijent_dermatolozi', component: PacijentDermatolozi },
         {path: '/pacijent_farmaceuti',component: PacijentFarmaceuti},
+        {path: '/admin-apoteke-odsustvo', component: AdminOdsustvo},
+        
     ]
 });
 
