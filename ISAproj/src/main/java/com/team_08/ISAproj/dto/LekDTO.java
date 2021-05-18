@@ -20,6 +20,7 @@ public class LekDTO {
     private Integer kolicina;
     private Double cena;
     private Date istekVazenjaCene;
+    private Date pocetakVazenjaCene;
     private Double promotivnaCena;
     private String cookie;
 
@@ -50,9 +51,18 @@ public class LekDTO {
         this.kolicina = al.getKolicina();
         this.promotivnaCena = al.getPromotivnaCena();
         this.istekVazenjaCene = al.getIstekVazenjaCene();
+        this.pocetakVazenjaCene = al.getPocetakVazenjaCene();
     }
 
-    public String getCookie() {
+    public Date getPocetakVazenjaCene() {
+		return pocetakVazenjaCene;
+	}
+
+	public void setPocetakVazenjaCene(Date pocetakVazenjaCene) {
+		this.pocetakVazenjaCene = pocetakVazenjaCene;
+	}
+
+	public String getCookie() {
         return cookie;
     }
 

@@ -5,7 +5,7 @@ insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_s
 insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Andol','tableta 75mg','5','Max 2 puta dnevno',0);
 insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Viralex','tableta: 200mg','6','Max 2 puta dnevno',1);
 insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Humira','rastvor za injekciju u napunjenom penu 50mg','7','Max 2 puta dnevno',1);
-insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Aspirin','oblozena tableta; 1500mg','8','Max 2 puta dnevno',1);
+insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Aspirin1','oblozena tableta; 1500mg','8','Max 2 puta dnevno',1);
 insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Vaminolast','rastvor za infuziju','9','Max 2 puta dnevno',0);
 insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Alpha D3','tableta za alfe','10','Max 2 puta dnevno',2);
 insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Helex','oblozena tableta; 500mg','11','Max 2 puta dnevno',2);

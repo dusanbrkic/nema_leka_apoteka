@@ -134,7 +134,7 @@ Vue.component("AdminApoteka", {
 			  <b-row>
 			  <b-col>
 	            <label>Lekovi:</label>
-	        <b-list-group flush style="max-height: 200px; max-width: 300px; 
+	        <b-list-group flush style="max-height: 200px; 
 	        overflow:scroll; 
 	        margin-bottom: 10px;
 	         overflow:scroll;
@@ -148,8 +148,11 @@ Vue.component("AdminApoteka", {
                       <p class="text-sm mb-0"> Cena: {{lek.cena}}  </p>
                         </b-col>
                 </b-col>
-                <b-col md="auto" class="float-right"> 
-                </b-col>
+        	</b-row>
+        	<b-row align-v="right" >
+        	<div class="col-md-12 bg-light text-right">
+        	<b-button size="sm" href="#/pretraga-lek-admin" variant="primary"> Uredi lekove </b-button>
+        	</div>
         	</b-row>
         </b-list-group-item>
         </b-list-group>
@@ -157,7 +160,7 @@ Vue.component("AdminApoteka", {
 		<b-col>
         <label>Dermatolozi:</label>
 
-        <b-list-group flush style="max-height: 200px; max-width: 300px; 
+        <b-list-group flush style="max-height: 200px;
 	        overflow:scroll; 
 	        margin-bottom: 10px;
     		-webkit-overflow-scrolling: touch;">
@@ -166,13 +169,17 @@ Vue.component("AdminApoteka", {
     	</b-list-group-item>	
     	</b-list-group>
 		</b-col>
-		
+		        	<b-row align-v="right" >
+        	<div class="col-md-12 bg-light text-right">
+        	<b-button size="sm" variant="primary" href="#/admin-apoteke-dermatolozi"> Uredi dermatologe </b-button>
+        	</div>
+        	</b-row>
     	<label>Farmaceuti:</label>
 		<b-col>
 		</b-list-group-item>
         </b-list-group>
 
-        <b-list-group flush style="max-height: 200px; max-width: 300px; 
+        <b-list-group flush style="max-height: 200px;
 	        overflow:scroll; 
 	        margin-bottom: 10px;
 	         overflow:scroll;
@@ -183,6 +190,11 @@ Vue.component("AdminApoteka", {
     	</b-list-group>
 			</b-col>
 		</b-row>
+		        	<b-row align-v="right" >
+        	<div class="col-md-12 bg-light text-right">
+        	<b-button size="sm" variant="primary" href="#/admin-apoteke-farmaceuti"> Uredi farmaceute </b-button>
+        	</div>
+        	</b-row>
 	    </div>
 			<b-button type="button" size="sm" v-on:click="redirectToHome()" variant="primary">Povratak na glavnu stranu</b-button>
 			<b-button type="button" size="sm" v-on:click="saveApoteka()" variant="primary">Sacuvaj podatke</b-button>

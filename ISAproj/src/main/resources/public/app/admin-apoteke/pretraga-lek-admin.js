@@ -72,8 +72,17 @@ Vue.component("PretragaLekAdmin", {
           sortable: true,
         },
         {
-          key: "staraCena",
+          key: "promotivnaCena",
           sortable: true,
+        },
+        {
+          key: "pocetakVazenjaCene",
+          sortable: true,
+          label: "Datum pocetka vazenja cene",
+          formatter: (value, key, item) => {
+            return moment(value).format("DD/MM/YYYY");
+          },
+        
         },
         {
           key: "istekVazenjaCene",
@@ -239,13 +248,14 @@ Vue.component("PretragaLekAdmin", {
                 v-model="izabranLek.istekVazenjaCene"
             ></b-form-input>
 
-       <b-form-group id="input-group-3" label="Stara cena:" label-for="input-3">
+       <b-form-group id="input-group-3" label="Promotivna cena:" label-for="input-3">
             <b-form-input
                 id="input-3"
                 type="number"
-                v-model="this.izabranLek.staraCena"
+                v-model="this.izabranLek.promotivnaCena"
                 min = "0"
             ></b-form-input>
+            <br>
           <b-button type="submit" variant="primary">Sacuvaj</b-button>
            </b-form>
       	</b-card>

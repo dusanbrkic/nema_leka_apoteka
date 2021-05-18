@@ -242,7 +242,7 @@ Vue.component("AdminPromocija", {
           readonly
             id="input-3"
             type="number"
-            v-model="izabranLek.staraCena"
+            v-model="izabranLek.cena"
         ></b-form-input>
         </b-form-group>
     <b-form-group id="input-group-3" label="Kolicina:" label-for="input-3">
@@ -258,7 +258,7 @@ Vue.component("AdminPromocija", {
           required
             id="input-3"
             type="number"
-            v-model="izabranLek.cena"
+            v-model="izabranLek.promotivnaCena"
         ></b-form-input>
         </b-form-group>
 <br>

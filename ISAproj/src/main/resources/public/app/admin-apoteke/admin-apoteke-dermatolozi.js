@@ -247,8 +247,8 @@ Vue.component("UrediDermatologe", {
       let info = {
         params: {
           start:
-            "2008-01-01T" + this.dermatologDTO.radnoVremePocetak + ":00.000Z",
-          end: "2008-01-01T" + this.dermatologDTO.radnoVremeKraj + ":00.000Z",
+            this.dermatologDTO.radnoVremePocetak + ":00.000Z",
+          end: this.dermatologDTO.radnoVremeKraj + ":00.000Z",
           cena: this.dermatologDTO.cena,
           cookie: this.cookie,
           username: this.dermatologDTO.username,
@@ -367,8 +367,8 @@ Vue.component("UrediDermatologe", {
           pretraziIme: pretragaIme,
           pretraziPrezime: pretragaPrezime,
           ocena: this.ocena,
-          pocetak: "2008-01-01T" + this.pocetakRadnog + ":00.000Z",
-          kraj: "2008-01-01T" + this.krajRadnog + ":00.000Z",
+          pocetak: this.pocetakRadnog + ":00.000Z",
+          kraj:  this.krajRadnog + ":00.000Z",
         },
       };
       console.log("123");

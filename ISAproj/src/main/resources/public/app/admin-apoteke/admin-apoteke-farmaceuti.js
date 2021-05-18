@@ -33,17 +33,14 @@ Vue.component("UrediFarmaceute", {
           key: "radnoVremePocetak",
           sortable: true,
           label: "Pocetak radnog vremena",
-          formatter: (value, key, item) => {
-            return moment(value).format("HH:mm");
-          },
         },
         {
           key: "radnoVremeKraj",
           sortable: true,
           label: "Kraj radnogVremena",
-          formatter: (value, key, item) => {
-            return moment(value).format("HH:mm");
-          },
+          //formatter: (value, key, item) => {
+            //return moment(value).format("HH:mm");
+         // },
         },
         {
           key: "obrisiFarmaceuta",
@@ -295,8 +292,8 @@ Vue.component("UrediFarmaceute", {
           pretraziIme: pretragaIme,
           pretraziPrezime: pretragaPrezime,
           ocena: this.ocena,
-          pocetak: "2008-01-01T" + this.pocetakRadnog + ":00.000Z",
-          kraj: "2008-01-01T" + this.krajRadnog + ":00.000Z",
+          pocetak: this.pocetakRadnog + ":00.000Z",
+          kraj: this.krajRadnog + ":00.000Z",
         },
       };
       await axios
