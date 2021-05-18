@@ -68,7 +68,6 @@ public class LekService {
         al.setPromotivnaCena(0.0);
         al.setIstekVazenjaCene(null);
         apotekaLekRepository.save(al);
-        //a.getLekovi().add(al);
         return al;
     }
 
