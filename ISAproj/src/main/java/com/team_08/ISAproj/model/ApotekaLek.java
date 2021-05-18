@@ -5,6 +5,7 @@ import javax.persistence.*;
 import com.team_08.ISAproj.dto.LekDTO;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity(name = "APOTEKA_LEK")
 public class ApotekaLek {
@@ -17,10 +18,10 @@ public class ApotekaLek {
     private Integer kolicina;
     @Column(name = "CENA")
     private Double cena;
-    @Column(name = "ISTEK_VAZENJA_CENE")
-    private Date istekVazenjaCene;
     @Column(name = "POCETAK_VAZENJA_CENE")
-    private Date pocetakVazenjaCene;
+    private LocalDateTime pocetakVazenjaCene;
+    @Column(name = "ISTEK_VAZENJA_CENE")
+    private LocalDateTime istekVazenjaCene;
     @Column(name = "PROMOTIVNA_CENA")
     private Double promotivnaCena;
 
@@ -32,7 +33,7 @@ public class ApotekaLek {
 
 
     // constructors
-    public ApotekaLek(int kolicina, double cena, Date istekVazenjaCene, double promotivnaCena, Apoteka apoteka, Lek lek) {
+    public ApotekaLek(int kolicina, double cena, LocalDateTime istekVazenjaCene, double promotivnaCena, Apoteka apoteka, Lek lek) {
         super();
         this.kolicina = kolicina;
         this.cena = cena;
@@ -55,13 +56,6 @@ public class ApotekaLek {
         this.lek = lek;
     }
 
-    public Date getPocetakVazenjaCene() {
-		return pocetakVazenjaCene;
-	}
-
-	public void setPocetakVazenjaCene(Date pocetakVazenjaCene) {
-		this.pocetakVazenjaCene = pocetakVazenjaCene;
-	}
 
 	public void setKolicina(Integer kolicina) {
 		this.kolicina = kolicina;
@@ -89,16 +83,24 @@ public class ApotekaLek {
         this.cena = cena;
     }
 
-    public Date getIstekVazenjaCene() {
-        return istekVazenjaCene;
-    }
 
-    public void setIstekVazenjaCene(Date istekVazenjaCene) {
-        this.istekVazenjaCene = istekVazenjaCene;
-    }
+    public LocalDateTime getPocetakVazenjaCene() {
+		return pocetakVazenjaCene;
+	}
 
+	public void setPocetakVazenjaCene(LocalDateTime pocetakVazenjaCene) {
+		this.pocetakVazenjaCene = pocetakVazenjaCene;
+	}
 
-    public Double getPromotivnaCena() {
+	public LocalDateTime getIstekVazenjaCene() {
+		return istekVazenjaCene;
+	}
+
+	public void setIstekVazenjaCene(LocalDateTime istekVazenjaCene) {
+		this.istekVazenjaCene = istekVazenjaCene;
+	}
+
+	public Double getPromotivnaCena() {
 		return promotivnaCena;
 	}
 

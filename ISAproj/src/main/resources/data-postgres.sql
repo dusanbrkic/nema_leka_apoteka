@@ -26,7 +26,7 @@ insert into lek_zamenski_lekovi (lek_id,zamenski_lekovi_id) values (4, 2);
 insert into lek_zamenski_lekovi (lek_id,zamenski_lekovi_id) values (3, 7);
 insert into lek_zamenski_lekovi (lek_id,zamenski_lekovi_id) values (7, 3);
 
-insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Cara Dušana 107, Zrenjanin|20.391395129936356, 45.38985699678626','Apoteka Markovic','opis apoteke',3.6, 400, 200);
+insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja, latitude, longitude) values (nextval('apoteka_seq'),'Cara Dušana 107, Zrenjanin','Apoteka Markovic','opis apoteke',3.6, 400, 200, 20.391395129936356, 45.38985699678626);
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Lazara Obilica 15, Beograd','Apoteka Djincic','opis apoteke',4.5, 350, 250);
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Cara Lazara 103, Novi Sad','Apoteka Lazarevic','opis apoteke',2.2, 600, 400);
 insert into apoteka (id,adresa,naziv,opis,prosecna_ocena, cena_pregleda, cena_savetovanja) values (nextval('apoteka_seq'),'Zmaj Jovina 45, Sid','Apoteka Zmaj','opis apoteke',4.8, 500, 440);
