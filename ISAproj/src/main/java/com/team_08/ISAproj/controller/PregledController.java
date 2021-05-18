@@ -139,6 +139,21 @@ public class PregledController {
         return new ResponseEntity<List<PregledDTO>>(preglediDTO, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/nadjiPregled", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PregledDTO> nadjiPregled(
+            @RequestParam("cookie") String cookie,
+            @RequestParam("start") String startDate) {
+        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        Pregled pregled = null;
+        pregled = pregledService.findOneStartsNow(cookie, start);
+        if (pregled == null)
+            return new ResponseEntity<PregledDTO>(HttpStatus.BAD_REQUEST);
+
+        PregledDTO pregledDTO = new PregledDTO(pregled);
+
+        return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
+    }
+
     @PutMapping(value = "/updatePregled", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updatePregled(@RequestBody PregledDTO pregledDTO) {
         Pregled pregled = pregledService.findOneById(pregledDTO.getId());

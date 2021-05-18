@@ -79,4 +79,8 @@ public class PregledService {
     public List<Pregled> findAllInDateRangeByPacijentId(LocalDateTime vreme, LocalDateTime kraj, Long idPacijenta) {
         return pregledRepository.findAllInDateRangeByPacijentId(vreme, kraj, idPacijenta);
     }
+
+    public Pregled findOneStartsNow(String cookie, LocalDateTime start) {
+        return pregledRepository.findOneStartsNow(cookie, start);
+    }
 }

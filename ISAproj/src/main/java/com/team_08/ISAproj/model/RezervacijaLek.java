@@ -10,6 +10,8 @@ public class RezervacijaLek {
     private Long id;
     @Column(name = "KOLICINA")
     private Integer kolicina;
+    @Column(name = "CENA")
+    private Integer cena;
 
     //connections
 
@@ -70,5 +72,13 @@ public class RezervacijaLek {
 
     public void setKolicina(Integer kolicina) {
         this.kolicina = kolicina;
+    }
+
+    public Integer getCena() {
+        return cena;
+    }
+
+    public void setCena(Integer cena) {
+        this.cena = cena;
     }
 }

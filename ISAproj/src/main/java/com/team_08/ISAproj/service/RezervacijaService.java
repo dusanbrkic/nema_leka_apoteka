@@ -74,4 +74,8 @@ public class RezervacijaService {
     public Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
 	    return rezervacijaRepository.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
     }
+
+    public Rezervacija fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
+	    return rezervacijaRepository.fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
+    }
 }

@@ -17,7 +17,6 @@ Vue.component("CalendarView", {
                 dijagnoza: null,
                 pregledZakazan: null,
                 pregledObavljen: null,
-                trajanje: null,
                 eventType: null
             }
         }
@@ -88,7 +87,7 @@ Vue.component("CalendarView", {
           <b-alert style="text-align: center;" v-model="invalidCookie" variant="danger">Nisi ulogovan kao
             dermatolog/farmaceut!
           </b-alert>
-          <b-modal id="eventModal" title="Detalji">
+          <b-modal id="eventModal" centered  title="Detalji">
             <b-container>
               <b-row>
                 <b-col><strong>Pocetak:</strong></b-col>
@@ -97,10 +96,6 @@ Vue.component("CalendarView", {
               <b-row>
                 <b-col><strong>Kraj:</strong></b-col>
                 <b-col>{{ moment(String(selectedEvent.end)).format("DD/MM/YYYY HH:mm") }}</b-col>
-              </b-row>
-              <b-row v-if=" selectedEvent.pregledObavljen">
-                <b-col><strong>Trajanje:</strong></b-col>
-                <b-col>{{ moment(String(new Date(selectedEvent.trajanje))).format("mm") }} min</b-col>
               </b-row>
               <b-row v-if="(selectedEvent.pregledZakazan)">
                 <b-col><strong>Ime pacijenta:</strong></b-col>
@@ -182,7 +177,6 @@ Vue.component("CalendarView", {
                 dijagnoza: this.selectedEvent.dijagnoza,
                 pregledZakazan: this.selectedEvent.pregledZakazan,
                 pregledObavljen: this.selectedEvent.pregledObavljen,
-                trajanje: this.selectedEvent.trajanje,
             }
             axios
                 .put("pregledi/updatePregledBezPacijenta", {
@@ -202,7 +196,6 @@ Vue.component("CalendarView", {
                 dijagnoza: this.selectedEvent.dijagnoza,
                 pregledZakazan: this.selectedEvent.pregledZakazan,
                 pregledObavljen: this.selectedEvent.pregledObavljen,
-                trajanje: this.selectedEvent.trajanje,
             }
             localStorage.setItem("pregled", JSON.stringify(pregled))
             app.$router.push("/pregled-forma")
@@ -300,7 +293,6 @@ Vue.component("CalendarView", {
                 this.selectedEvent.dijagnoza = event.dijagnoza
                 this.selectedEvent.pregledZakazan = event.pregledZakazan
                 this.selectedEvent.pregledObavljen = event.pregledObavljen
-                this.selectedEvent.trajanje = event.trajanje
                 this.$bvModal.show('eventModal')
             }
         }
