@@ -21,7 +21,7 @@ public class Odsustvo {
     @Column(name = "RAZLOG")
     private String razlog;
     
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER)
     private ZdravstveniRadnik zdravstveniRadnik;
     
 

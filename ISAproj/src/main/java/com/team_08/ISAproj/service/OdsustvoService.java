@@ -1,6 +1,8 @@
 package com.team_08.ISAproj.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,4 +34,8 @@ public class OdsustvoService {
 	public Odsustvo findOne(Long id) {
 		return odsustvoRepository.findById(id).orElseGet(null);
 	}
+
+    public Set<Odsustvo> fetchOdsustvaByZdravstveniRadnikCookieInDateRange(String cookie, LocalDateTime start, LocalDateTime end) {
+		return odsustvoRepository.fetchOdsustvaByZdravstveniRadnikCookieInDateRange(cookie, start, end);
+    }
 }

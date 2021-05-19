@@ -1,11 +1,6 @@
 package com.team_08.ISAproj.controller;
 
-import com.team_08.ISAproj.dto.CookieRoleDTO;
-import com.team_08.ISAproj.dto.DermatologDTO;
-import com.team_08.ISAproj.dto.FarmaceutDTO;
-import com.team_08.ISAproj.dto.KorisnikDTO;
-import com.team_08.ISAproj.dto.LekDTO;
-import com.team_08.ISAproj.dto.OdsustvoDTO;
+import com.team_08.ISAproj.dto.*;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.ApotekaService;
@@ -42,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/zdravstveniradnik")
@@ -85,14 +81,20 @@ public class ZdravstveniRadnikController {
     }
 
     @GetMapping(value = "/fetchOdsustvaInDateRange", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Odsustvo>> fetchOdsustvaInDateRange(@RequestParam("cookie") String cookie,
+    public ResponseEntity<Set<OdsustvoDTO>> fetchOdsustvaInDateRange(@RequestParam("cookie") String cookie,
                                                                   @RequestParam("start") String startDate,
                                                                   @RequestParam("end") String endDate) {
         LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        ZdravstveniRadnik z = zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(cookie, start, end);
-        if (z != null) {
-            return new ResponseEntity<>(z.getOdsustva(), HttpStatus.OK);
+        Set<Odsustvo> odsustva = odsustvoService.fetchOdsustvaByZdravstveniRadnikCookieInDateRange(cookie, start, end);
+        if (odsustva != null) {
+            Set<OdsustvoDTO> odsustvaDTO = odsustva.stream().map(new Function<Odsustvo, OdsustvoDTO>() {
+                @Override
+                public OdsustvoDTO apply(Odsustvo o) {
+                    return new OdsustvoDTO(o);
+                }
+            }).collect(Collectors.toSet());
+            return new ResponseEntity<>(odsustvaDTO, HttpStatus.OK);
         }
         return new ResponseEntity<>(new HashSet<>(), HttpStatus.OK);
     }
