@@ -19,6 +19,10 @@ public class Apoteka {
     private String naziv;
     @Column(name = "ADRESA")
     private String adresa;
+    @Column(name = "LATITUDE")
+    private Double latitude;
+    @Column(name = "LONGITUDE")
+    private Double longitude;
     @Column(name = "PROSECNA_OCENA")
     private Double prosecnaOcena;
     @Column(name = "CENA_PREGLEDA")
@@ -57,7 +61,23 @@ public class Apoteka {
         return id;
     }
 
-    public Set<ZahtevLek> getZahtevLekovi() {
+    public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public Set<ZahtevLek> getZahtevLekovi() {
 		return zahtevLekovi;
 	}
 

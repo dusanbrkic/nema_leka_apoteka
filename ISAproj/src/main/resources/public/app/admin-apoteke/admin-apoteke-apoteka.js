@@ -227,7 +227,9 @@ Vue.component("AdminApoteka", {
       };
       axios.get("apoteke/getByAdmin/", info).then((response) => {
         this.apoteka = response.data;
-        this.fixAdresu();
+        this.center = [this.apoteka.latitude, this.apoteka.longitude],
+        this.location = this.center
+        //this.fixAdresu();
       });
     },
     loadDermatologe() {
@@ -265,12 +267,6 @@ Vue.component("AdminApoteka", {
       app.$router.push("/");
     },
     fixAdresu() {
-      const words = this.apoteka.adresa.split("|");
-      this.apoteka.adresa = words[0];
-
-      this.center = words[1].split(",");
-      this.location = this.center;
-      console.log(this.center);
     },
   },
 });

@@ -94,10 +94,12 @@ Vue.component("PretragaLekAdmin", {
         },
         {
           key: "obrisiLek",
+          label : "",
           sortable: false,
         },
         {
           key: "izmeniLek",
+          label : "",
           sortable: false,
         },
       ],

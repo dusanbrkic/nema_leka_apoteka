@@ -276,8 +276,8 @@ Vue.component("AdminPromocija", {
     },
     onDodajPromociju() {
       for (i = 0; i < this.lekoviPromocija.length; i++) {
-        this.lekoviPromocija[i].pocetakVazenja = this.pocetakVazenja;
-        this.lekoviPromocija[i].krajVazenja = this.krajVazenja;
+        this.lekoviPromocija[i].pocetakVazenja = this.pocetakVazenja + 'T' + "00:00:00.000Z";
+        this.lekoviPromocija[i].krajVazenja = this.krajVazenja+ 'T' + "00:00:00.000Z";
         this.lekoviPromocija[i].tekstPromocije = this.tekstPromocije;
         console.log(this.lekoviPromocija[i]);
         this.$root.$emit("bv::refresh::table", "lekovi-tabela");

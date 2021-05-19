@@ -11,11 +11,13 @@ public class ApotekaDTO {
     private String opis;
     private Double cenaPregleda;
     private Double cenaSavetovanja;
+    private Double longitude;
+    private Double latitude;
     public ApotekaDTO() {
 
     }
 
-    public ApotekaDTO(Long id, String naziv, String adresa, Double prosecnaOcena, String opis, Double cenaPregleda, Double cenaSavetovanja) {
+    public ApotekaDTO(Long id, String naziv, String adresa, Double prosecnaOcena, String opis, Double cenaPregleda, Double cenaSavetovanja,Double longitude, Double latitude) {
         super();
         this.id = id;
         this.naziv = naziv;
@@ -24,6 +26,8 @@ public class ApotekaDTO {
         this.opis = opis;
         this.cenaSavetovanja = cenaSavetovanja;
         this.cenaPregleda = cenaPregleda;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public ApotekaDTO(Apoteka a) {
@@ -34,9 +38,27 @@ public class ApotekaDTO {
         this.opis = a.getOpis();
         this.cenaPregleda = a.getCenaPregleda();
         this.cenaSavetovanja = a.getCenaSavetovanja();
+        this.longitude = a.getLongitude();
+        this.latitude = a.getLatitude();
     }
 
-    public Double getCenaPregleda() {
+    public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getCenaPregleda() {
 		return cenaPregleda;
 	}
 
