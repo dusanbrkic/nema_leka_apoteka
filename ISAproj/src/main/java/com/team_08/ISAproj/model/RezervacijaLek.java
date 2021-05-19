@@ -11,7 +11,7 @@ public class RezervacijaLek {
     @Column(name = "KOLICINA")
     private Integer kolicina;
     @Column(name = "CENA")
-    private Integer cena;
+    private Double cena;
 
     //connections
 
@@ -26,6 +26,14 @@ public class RezervacijaLek {
         this.kolicina = kolicina;
         this.lek = lek;
         this.rezervacija = n;
+    }
+
+    public RezervacijaLek(int kolicina, Rezervacija n, Lek lek, Double cena) {
+        super();
+        this.kolicina = kolicina;
+        this.lek = lek;
+        this.rezervacija = n;
+        this.cena = cena;
     }
 
     public RezervacijaLek(int kolicina, Lek lek) {
@@ -74,11 +82,11 @@ public class RezervacijaLek {
         this.kolicina = kolicina;
     }
 
-    public Integer getCena() {
+    public Double getCena() {
         return cena;
     }
 
-    public void setCena(Integer cena) {
+    public void setCena(Double cena) {
         this.cena = cena;
     }
 }

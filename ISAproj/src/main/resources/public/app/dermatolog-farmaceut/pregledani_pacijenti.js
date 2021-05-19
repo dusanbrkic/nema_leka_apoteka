@@ -87,6 +87,7 @@ Vue.component("PregledaniPacijenti", {
             <b-table
                 id="pacijenti-tabela"
                 hover
+                stripped
                 :items="itemProvider"
                 :fields="fields"
                 :per-page="items_per_page"
@@ -99,6 +100,7 @@ Vue.component("PregledaniPacijenti", {
           <b-row>
             <b-col>
               <b-pagination
+                  pills
                   v-model="page"
                   :total-rows="totalItems"
                   :per-page="items_per_page"

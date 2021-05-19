@@ -6,11 +6,27 @@ Vue.component("IzdavanjeLeka", {
             idNeodgovarajuciAlert: false,
             idUspesnoPoslat: false,
             lekoviIzdati: false,
-            rezervacije: {
-                kolicina: null,
-                lek: null
-            }
-        };
+            rezervacije: [],
+            ukupnaCena: '',
+            fields: [
+                {
+                    key: 'sifra',
+                    label: 'Sifra leka',
+                },
+                {
+                    key: 'naziv',
+                    label: 'Naziv leka',
+                },
+                {
+                    key: 'kolicina',
+                    label: 'Kolicina',
+                },
+                {
+                    key: 'cena',
+                    label: 'Cena',
+                }
+            ]
+        }
     },
     mounted() {
         this.cookie = localStorage.getItem("cookie");
@@ -22,8 +38,8 @@ Vue.component("IzdavanjeLeka", {
       </b-alert>
       <b-alert style="text-align: center;" v-model="lekoviIzdati" variant="primary">Uspesno ste izdali lekove!
       </b-alert>
-      <template v-if="!idUspesnoPoslat">
-        <b-card style="max-width: 500px; margin: 30px auto;" title="Izdavanje leka">
+      <b-card style="max-width: 500px; margin: 30px auto;" title="Izdavanje leka">
+        <template v-if="!idUspesnoPoslat">
           <b-form @submit.prevent="onSubmit">
             <b-form-group
                 id="input-group-1"
@@ -39,7 +55,27 @@ Vue.component("IzdavanjeLeka", {
             </b-form-group>
             <b-button align="center" type="submit" variant="primary">Proveri</b-button>
           </b-form>
-        </b-card>
+        </template>
+        <template v-if="idUspesnoPoslat">
+          <b-table
+              id="pacijenti-tabela"
+              hover
+              stripped
+              :items="rezervacije"
+              :fields="fields"
+          ></b-table>
+          <b-container>
+            <b-row>
+              <label style="align-items: end">Ukupna cena: {{ ukupnaCena }}</label>
+            </b-row>
+            <b-row>
+              <b-button style="float: right; margin: 5px" v-on:click="izdajLekove" variant="primary">Izdaj</b-button>
+              <b-button style="float: right; margin: 5px" v-on:click="returnToUnosId">Nazad</b-button>
+            </b-row>
+          </b-container>
+        </template>
+      </b-card>
+      <template v-if="idUspesnoPoslat">
       </template>
       </div>
     `,
@@ -59,7 +95,16 @@ Vue.component("IzdavanjeLeka", {
                     this.idNeodgovarajuciAlert = false
                     this.lekoviIzdati = false
                     this.idUspesnoPoslat = true
-                    this.rezervacije = response.data
+                    this.ukupnaCena = 0
+                    for (const lek of response.data) {
+                        this.ukupnaCena += lek.cena * lek.kolicina
+                        this.rezervacije.push({
+                            naziv: lek.lek.naziv,
+                            cena: lek.cena,
+                            kolicina: lek.kolicina,
+                            sifra: lek.lek.sifra
+                        })
+                    }
                 })
                 .catch(error => {
                     if (error.request.status == 400) {
@@ -91,6 +136,9 @@ Vue.component("IzdavanjeLeka", {
                         this.lekoviIzdati = false
                     }
                 })
+        },
+        returnToUnosId: function () {
+            this.idUspesnoPoslat = false
         }
     },
 });

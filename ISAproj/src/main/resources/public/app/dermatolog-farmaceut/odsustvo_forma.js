@@ -9,7 +9,8 @@ Vue.component("OdsustvoForma", {
             },
             terminZauzet: false,
             uspesnoPoslat: false,
-            datumiNeodgovarajuci: false
+            datumiNeodgovarajuci: false,
+            today: new Date(),
         };
     },
     mounted() {
@@ -30,24 +31,29 @@ Vue.component("OdsustvoForma", {
               label="Pocetak:"
               label-for="input-1"
               description="Unesi datum pocetka godisnjeg odmora">
-            <b-form-input
+            <b-form-datepicker
                 id="input-1"
+                :min="today"
                 v-model="forma.startDate"
-                type="date"
-                required
-            ></b-form-input>
+                required="true"
+                placeholder="Izaberite datum"
+                locale="sr-latn"
+                class="mb-2"
+            ></b-form-datepicker>
           </b-form-group>
           <b-form-group
               id="input-group-2"
               label="Kraj:"
               label-for="input-2"
               description="Unesi datum kraja godisnjeg odmora">
-            <b-form-input
-                id="input-2"
+            <b-form-datepicker
+                :min="today"
                 v-model="forma.endDate"
-                type="date"
-                required
-            ></b-form-input>
+                required="true"
+                placeholder="Izaberite datum"
+                locale="sr-latn"
+                class="mb-2"
+            ></b-form-datepicker>
           </b-form-group>
           <b-button v-on:click="returnToHome">Nazad</b-button>
           <b-button type="submit" variant="primary">Posalji</b-button>
