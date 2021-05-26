@@ -118,9 +118,45 @@ insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, tra
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-16T13:00:01.0', false, 0, '2021-05-16T11:45:01.0', '1', '4', '9', 550);
 
 
+--ocene lekova
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 11, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 11, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 11, 7);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 1, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 1, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),2,'2021-05-16T11:45:01.0', 1, 7);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 2, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 2, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 2, 7);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),3,'2021-05-16T11:45:01.0', 8, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 8, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),3,'2021-05-16T11:45:01.0', 8, 7);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),2,'2021-05-16T11:45:01.0', 7, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),1,'2021-05-16T11:45:01.0', 7, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),3,'2021-05-16T11:45:01.0', 5, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),3,'2021-05-16T11:45:01.0', 5, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),2,'2021-05-16T11:45:01.0', 6, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),3,'2021-05-16T11:45:01.0', 6, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 4, 2);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 4, 6);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 4, 7);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 4, 8);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 4, 9);
+insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 4, 5);
 
-
-
+--ocene apoteka
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),3,'2021-05-16T11:45:01.0', 1, 2);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 1, 6);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 1, 7);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 2, 8);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 2, 9);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),1,'2021-05-16T11:45:01.0', 2, 5);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),3,'2021-05-16T11:45:01.0', 3, 2);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 3, 6);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 4, 7);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 5, 8);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 5, 9);
+insert into ocena_apoteka (id,ocena,datum,apoteka_id, pacijent_id) values (nextval('ocena_seq'),1,'2021-05-16T11:45:01.0', 5, 5);
 
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, cena) values (nextval('pregled_seq'), false, '', '2021-04-13T13:00:01.0', false, 600000, '2021-04-13T11:45:01.0', '1', '1', 440);
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, cena) values (nextval('pregled_seq'), false, '', '2021-05-15T13:45:01.0', false, 600000, '2021-05-15T11:45:01.0', '1', '1', 1440);

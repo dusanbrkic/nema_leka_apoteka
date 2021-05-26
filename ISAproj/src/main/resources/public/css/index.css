@@ -1,3 +1,55 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+
+ body {
+     margin: 0;
+     padding: 0;
+     font-family: 'Open Sans', serif;
+     background: #eee
+ }
+
+ .content {
+     width: 420px;
+     margin-top: 100px
+ }
+
+ .ratings {
+     background-color: #fff;
+     padding: 54px;
+     border: 1px solid rgba(0, 0, 0, 0.1);
+     box-shadow: 0px 10px 10px #E0E0E0
+ }
+
+ .product-rating {
+     font-size: 50px
+ }
+
+ .stars five {
+     font-size: 18px;
+     color: #28a745
+ }
+ .stars four {
+     font-size: 18px;
+     color: #73e600
+ }
+ .stars three {
+     font-size: 18px;
+     color: #e6e600
+ }
+ .stars two {
+     font-size: 18px;
+     color: #ff8000
+ }
+ .stars one {
+     font-size: 18px;
+     color: #cc0000
+ }
+
+ .rating-text {
+     margin-top: 10px
+ }
+
+
 body{
 	background-image: url("../res/pics/bg.jpg");
 	background-repeat: no-repeat;

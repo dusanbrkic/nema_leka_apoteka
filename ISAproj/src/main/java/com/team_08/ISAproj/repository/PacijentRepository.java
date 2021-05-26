@@ -22,5 +22,8 @@ public interface PacijentRepository extends JpaRepository<Pacijent, Long> {
     Pacijent findOneByEmailAdresa(String email_adresa);
 
     Pacijent findOneById(Long id);
+    
+    @Query(value = "select p from PACIJENT p left outer join fetch p.alergije a where p.cookieTokenValue = :cookie")
+    Pacijent fetchPacijentWithAlergijeByCookie(String cookie);
    
 }

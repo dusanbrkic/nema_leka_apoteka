@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,6 +30,9 @@ public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 
 	@Query(value="select a from APOTEKA a join fetch a.admini aa")
 	Apoteka fetchOneByIdWithAdmini(Long idApoteke);
+	
+	@Query(value="select a from APOTEKA a where a.id = :idApoteke")
+	Apoteka findOneByID(@Param("idApoteke") Long idApoteke);
 	
 	// pronalazimo sve apoteke sa slobodnim farmaceutom
     @Query(value = "SELECT a FROM APOTEKA a")

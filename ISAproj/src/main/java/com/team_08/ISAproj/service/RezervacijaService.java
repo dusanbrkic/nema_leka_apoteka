@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.team_08.ISAproj.dto.LekDTO;
@@ -73,5 +74,13 @@ public class RezervacijaService {
 
     public Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
 	    return rezervacijaRepository.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
+    }
+
+    public List<RezervacijaLek> findRezervacijaLekFromKorisnikByLek(Long idPacijent, Long idLeka) {
+	    return rezervacijaRepository.findRezervacijaLekFromKorisnikByLek(idPacijent, idLeka);
+    }
+    
+    public List<RezervacijaLek> findRezervacijaLekFromKorisnikByApoteka(Long idPacijent, Long idApoteke) {
+	    return rezervacijaRepository.findRezervacijaLekFromKorisnikByApoteka(idPacijent, idApoteke);
     }
 }

@@ -31,6 +31,8 @@ import com.team_08.ISAproj.service.LekService;
 import com.team_08.ISAproj.service.NarudzbenicaService;
 import com.team_08.ISAproj.service.RezervacijaService;
 
+import net.bytebuddy.asm.Advice.Local;
+
 @RestController
 @RequestMapping("/rezervacije")
 public class RezervacijaController {
@@ -166,6 +168,9 @@ public class RezervacijaController {
 			ApotekaLek al = null;
 			
 			Long porudzbinaId = (long) 0;
+
+			LocalDateTime dateTime = LocalDateTime.parse(datum);
+			
 			
 			for (ApotekaLek a : apotekaLekService.findAll()) {
 				if(sifra.equals(a.getLek().getSifra())) {
@@ -178,8 +183,10 @@ public class RezervacijaController {
 		
 					apotekaLekService.saveAL(al);
 					
+					Rezervacija n = new Rezervacija();
+					n.setRokPonude(dateTime);
 					
-					Rezervacija n = new Rezervacija(LocalDateTime.parse(datum, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+					
 					RezervacijaLek nl = new RezervacijaLek(kolicina, n,lek);
 					
 					n.addRezervacijaLek(nl);

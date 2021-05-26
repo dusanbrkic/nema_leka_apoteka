@@ -11,7 +11,26 @@ public class ApotekaDTO {
     private String opis;
     private Double cenaPregleda;
     private Double cenaSavetovanja;
-    public ApotekaDTO() {
+    private int brojOcena;
+    private boolean pravoOcene = false;
+
+    public int getBrojOcena() {
+		return brojOcena;
+	}
+
+	public void setBrojOcena(int brojOcena) {
+		this.brojOcena = brojOcena;
+	}
+
+	public boolean isPravoOcene() {
+		return pravoOcene;
+	}
+
+	public void setPravoOcene(boolean pravoOcene) {
+		this.pravoOcene = pravoOcene;
+	}
+
+	public ApotekaDTO() {
 
     }
 

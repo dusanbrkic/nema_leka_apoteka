@@ -96,4 +96,9 @@ public class ApotekaLekService {
             sort = Sort.by(sortBy).ascending();
         return apotekaLekRepository.findAllApotekaLekoviSortedAndSearchedAndDone(PageRequest.of(page, size, sort), title, apotekaId);
 	}
+	
+    public Page<ApotekaLek> getAllLekovi(int page, int pageSize, String pretraga) {
+    	pretraga = "%" + pretraga + "%";
+    	return apotekaLekRepository.getAllLekovi(pretraga, PageRequest.of(page, pageSize));
+    }
 }

@@ -32,6 +32,9 @@ public class ApotekaService {
 		return apotekaRepository.findById(id).orElseGet(null);
 	}
 
+	public Apoteka findOneByID(Long id) {
+		return apotekaRepository.findOneByID(id);
+	}
 
 	public Apoteka create(Apoteka apoteka) {
 		Long id = apoteka.getId();

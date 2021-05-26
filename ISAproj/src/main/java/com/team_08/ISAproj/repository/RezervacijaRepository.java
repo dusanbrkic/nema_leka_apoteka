@@ -33,7 +33,13 @@ public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> 
 	
 	@Query(value = "select r from REZERVACIJA r where r.pacijent = pacijent")
 	List<Rezervacija> findAllRezervacijeFromKorisnik(@Param("pacijent") Pacijent p);
+	
+	@Query(value = "select r from REZERVACIJA_LEK r join REZERVACIJA rez on r.rezervacija.id = rez.id where rez.pacijent.id = :idPacijent and r.lek.id = :idLeka")
+	List<RezervacijaLek> findRezervacijaLekFromKorisnikByLek(@Param("idPacijent") Long idPacijent, @Param("idLeka") Long idLeka);
 
+	@Query(value = "select r from REZERVACIJA_LEK r join REZERVACIJA rez on r.rezervacija.id = rez.id where rez.pacijent.id = :idPacijent and rez.apoteka.id = :idApoteke")
+	List<RezervacijaLek> findRezervacijaLekFromKorisnikByApoteka(@Param("idPacijent") Long idPacijent, @Param("idApoteke") Long idApoteke);
+	
 	@Query(value = "select r from REZERVACIJA r where r.apoteka.id = :idApoteke and r.id=:idRezervacije and r.rokPonude>:tommorow and r.preuzeto=false")
     Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow);
 }

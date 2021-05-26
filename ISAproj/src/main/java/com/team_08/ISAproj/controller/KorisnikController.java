@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -100,12 +101,6 @@ public class KorisnikController {
             k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
-            
-    		if(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1) {
-    			for(Pacijent p : pacijentService.findAll()) {
-    				p.setBrPenala(0);
-    			}
-    		}
             
             if(k instanceof Pacijent) 
             {
@@ -283,4 +278,16 @@ public class KorisnikController {
         return new ResponseEntity<List<FarmaceutDTO>>(farmaceutiDTO, HttpStatus.OK);
 
     }
+    
+    //@Scheduled(cron = "1 0 1 * * ?") // svakog prvog u mesecu
+    @Scheduled(cron = "1 * * * * ?") // provera svaki minut
+	public void cronJob() {
+		
+    	System.out.println("BRISANJE PENALA");
+
+		for(Pacijent p : pacijentService.findAll()) {
+			p.setBrPenala(0);
+			korisnikService.saveUser(p);
+		}
+	}
 }

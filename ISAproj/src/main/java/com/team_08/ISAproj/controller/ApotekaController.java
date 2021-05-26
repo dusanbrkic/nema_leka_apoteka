@@ -7,11 +7,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.OcenaService;
+import com.team_08.ISAproj.service.PacijentService;
 import com.team_08.ISAproj.service.PregledService;
+import com.team_08.ISAproj.service.RezervacijaService;
 import com.team_08.ISAproj.service.ZdravstveniRadnikService;
 
 import org.aspectj.weaver.patterns.HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor;
@@ -41,6 +45,9 @@ import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.Farmaceut;
 import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Lek;
+import com.team_08.ISAproj.model.OcenaApoteka;
+import com.team_08.ISAproj.model.OcenaLek;
 import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.model.ZdravstveniRadnik;
@@ -52,14 +59,19 @@ public class ApotekaController {
 
 	@Autowired
 	private ApotekaService apotekaService;
-
     @Autowired
     private KorisnikService korisnikService;
     @Autowired
     private PregledService pregledService;
     @Autowired
     private ZdravstveniRadnikService zdravstveniRadnikService;
-	
+    @Autowired
+    private PacijentService pacijentService;
+    @Autowired
+    private OcenaService ocenaService;
+	@Autowired
+	private RezervacijaService rezervacijaService;
+    
 	@GetMapping("")
 	public ResponseEntity<Map<String, Object>> getApoteke(
 			@RequestParam(required = false) String title,
@@ -68,10 +80,12 @@ public class ApotekaController {
 	        @RequestParam(defaultValue = "naziv") String sort,
 	        @RequestParam(defaultValue = "opadajuce") String smer,
 	        @RequestParam(defaultValue = "0") int fromGrade,
-	        @RequestParam(defaultValue = "5") int toGrade)
+	        @RequestParam(defaultValue = "5") int toGrade,
+	        @RequestParam("cookie") String cookie)
     {
 		try {
 			List<Order> orders = new ArrayList<Order>();
+			Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
 			
 			if(smer.equals("opadajuce")) {
 				Order order1 = new Order(Sort.Direction.DESC, sort);
@@ -94,7 +108,17 @@ public class ApotekaController {
 	    	
 			for (Apoteka a : apoteke) {
 				if(a.getProsecnaOcena() >= fromGrade && a.getProsecnaOcena() <= toGrade) {
-					apotekeDTO.add(new ApotekaDTO(a));
+					ApotekaDTO ad = new ApotekaDTO(a);
+					ad.setProsecnaOcena(ocenaService.findProsecnaOcenaApotekeByID(a.getId()));
+					if(ad.getProsecnaOcena()==null) {
+						ad.setProsecnaOcena((double) 0);
+					}
+					ad.setBrojOcena(ocenaService.findOceneApotekeByID(a.getId()).size());
+					
+					if(rezervacijaService.findRezervacijaLekFromKorisnikByApoteka(p.getId(), a.getId()).size() != 0) {
+						ad.setPravoOcene(true);
+					}
+					apotekeDTO.add(ad);
 				}
 			}
 			
@@ -104,13 +128,11 @@ public class ApotekaController {
 			response.put("totalItems", apoteke.getTotalElements());
 			response.put("totalPages", apoteke.getTotalPages());
 			
-			
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
 	
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApotekaDTO> getApoteka(@PathVariable("id") Long id) {
@@ -187,5 +209,46 @@ public class ApotekaController {
         }
         
         return new ResponseEntity<List<ApotekaDTO>>(apotekeDTO, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/getOcena")
+	public ResponseEntity<Map<String, Object>> getOcena(@RequestParam String cookie,
+										 				@RequestParam Long id){
+		
+		Apoteka a = apotekaService.findOneByID(id);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+		OcenaApoteka ocenaApoteka = ocenaService.findOcenaApotekeByPacijentID(a.getId(), p.getId());
+		
+		if(ocenaApoteka == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("ocena", ocenaApoteka.getOcena());
+		
+        return new ResponseEntity<Map<String, Object>>( response, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/oceni")
+	public ResponseEntity<Void> setOcena(@RequestParam String cookie,
+										 @RequestParam Long id,
+										 @RequestParam Integer ocena){
+		Apoteka a = apotekaService.findOne(id);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+
+		OcenaApoteka ocenaApoteka = ocenaService.findOcenaApotekeByPacijentID(a.getId(), p.getId());
+		
+		if(ocenaApoteka == null) {
+			ocenaApoteka = new OcenaApoteka(a, ocena, LocalDateTime.now(), p);
+		}
+		else {
+			ocenaApoteka.setDatum(LocalDateTime.now());
+			ocenaApoteka.setOcena(ocena);
+		}
+
+		ocenaService.saveOcena(ocenaApoteka);
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

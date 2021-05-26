@@ -32,7 +32,9 @@ public class Lek {
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Lek> zamenskiLekovi;
-
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Ocena> ocene;
 
 	// constructors
 	public Lek(String sifra, String naziv, String upustvo, TipLeka tip, OblikLeka oblikLeka, String sastav,
@@ -157,4 +159,11 @@ public class Lek {
 		this.dodatneNapomene = dodatneNapomene;
 	}
 
+	public Set<Ocena> getOcene() {
+		return ocene;
+	}
+
+	public void setOcene(Set<Ocena> ocene) {
+		this.ocene = ocene;
+	}
 }
