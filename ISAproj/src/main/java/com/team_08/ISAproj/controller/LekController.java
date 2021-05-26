@@ -339,8 +339,6 @@ public class LekController {
 
 		Pageable paging = PageRequest.of(page, size);
 		Page<Lek> lekovi;
-		// svi lekovi u bazi
-		//lekovi = lekService.findAllSearch(paging,title);
 		lekovi = lekService.test(paging,Long.parseLong(apotekaId));
 		ApotekaLek al;
 		LekDTO lekDTO;

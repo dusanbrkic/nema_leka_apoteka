@@ -61,7 +61,7 @@ public class PromocijeController {
     	promocijaService.savePromocija(p);
     	for (PromocijaDTO pDTO: promocije) {
     		ApotekaLek  al= apotekaLekService.findOneBySifra(pDTO.getSifra(), aa.getApoteka().getId());
-    		al.setPromotivnaCena(pDTO.getStaraCena());
+    		al.setPromotivnaCena(pDTO.getPromotivnaCena());
     		al.setCena(pDTO.getCena());
     		al.setIstekVazenjaCene(pDTO.getKrajVazenja());
     		al.setPocetakVazenjaCene(pDTO.getPocetakVazenja());

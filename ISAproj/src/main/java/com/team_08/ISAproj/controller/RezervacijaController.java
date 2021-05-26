@@ -7,7 +7,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import com.team_08.ISAproj.dto.PregledDTO;
+import com.team_08.ISAproj.dto.RezervacijaLekDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +56,32 @@ public class RezervacijaController {
 	@Autowired
 	private FarmaceutRepository farmaceutRepository;
 
-	@GetMapping(value = "/izdajLekove")
+	@GetMapping(value = "/proveriRezervaciju")
+	public ResponseEntity<List<RezervacijaLekDTO>> proveriRezervaciju(
+			@RequestParam String cookie,
+			@RequestParam Long idRezervacije) {
+		Farmaceut f = farmaceutRepository.findOneByCookieTokenValue(cookie);
+
+		if (f == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+		Rezervacija r = rezervacijaService.fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(idRezervacije,
+				f.getApoteka().getId(), LocalDateTime.now().plusDays(1));
+		if (r == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+		List<RezervacijaLekDTO> rezervacijeLekoviDTO = r.getLekovi().stream().map(new Function<RezervacijaLek, RezervacijaLekDTO>() {
+			@Override
+			public RezervacijaLekDTO apply(RezervacijaLek rezervacijaLek) {
+				return new RezervacijaLekDTO(rezervacijaLek);
+			}
+		}).collect(Collectors.toList());
+
+		return new ResponseEntity<>(rezervacijeLekoviDTO, HttpStatus.OK);
+	}
+
+
+		@GetMapping(value = "/izdajLekove")
 	public ResponseEntity<String> izdajLekove(@RequestParam String cookie,
 											  @RequestParam Long idRezervacije){
 		Farmaceut f = farmaceutRepository.findOneByCookieTokenValue(cookie);

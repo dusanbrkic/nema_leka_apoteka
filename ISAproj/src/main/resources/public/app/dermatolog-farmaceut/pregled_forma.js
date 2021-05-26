@@ -41,7 +41,9 @@ Vue.component("PregledForma", {
             lekNijeDostupan: false,
             odabirLekaTitle: 'Preporuci lek pacijentu:',
             nedostupanLek: '',
-            kolicinaNedostupnogLeka: '-1'
+            kolicinaNedostupnogLeka: '-1',
+            showZakazivanjeAlert: false,
+            zakazivanjeAlertReason: ''
         }
     },
 
@@ -73,6 +75,9 @@ Vue.component("PregledForma", {
           </b-modal>
           <!--modal zakazivanja-->
           <b-modal id="zakazivanjeModal" title="Zakazi pregled pacijentu">
+            <b-alert variant="warning" v-model="showZakazivanjeAlert">
+              {{zakazivanjeAlertReason}}
+            </b-alert>
             <template v-if="rola=='DERMATOLOG'">
               <label for="radio-group-1">Izaberite nacin zakazivanja:</label>
               <b-form-group v-slot="{ ariaDescribedby }">
@@ -143,7 +148,7 @@ Vue.component("PregledForma", {
               <b-button @click="ok()">
                 Otkazi
               </b-button>
-              <b-button v-on:click="zakazi_pregled" variant="success" @click="ok()">
+              <b-button v-on:click="zakazi_pregled" variant="success">
                 Zakazi
               </b-button>
             </template>
@@ -470,8 +475,16 @@ Vue.component("PregledForma", {
                             'idApoteke': this.pregled.apoteka.id
                         }
                     })
-                    .then()
-                    .catch()
+                    .then(response => {
+                        this.showZakazivanjeAlert = false
+                        this.$bvModal.hide('zakazivanjeModal')
+                    })
+                    .catch(reason => {
+                        if(reason.request.status === 400){
+                            this.showZakazivanjeAlert = true
+                            this.zakazivanjeAlertReason = reason.request.response
+                        }
+                    })
             else if (this.optionPicked == 'TERM')
                 axios
                     .post("pregledi/updateZakazanPregled", null, {

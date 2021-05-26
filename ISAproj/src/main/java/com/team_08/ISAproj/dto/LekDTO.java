@@ -2,6 +2,7 @@ package com.team_08.ISAproj.dto;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 
@@ -20,7 +21,8 @@ public class LekDTO {
     private String dodatneNapomene;
     private Integer kolicina;
     private Double cena;
-    private Date istekVazenjaCene;
+    private LocalDateTime istekVazenjaCene;
+    private LocalDateTime pocetakVazenjaCene;
     private Double promotivnaCena;
     private String cookie;
     private Double prosecnaOcena;
@@ -88,9 +90,10 @@ public class LekDTO {
         this.kolicina = al.getKolicina();
         this.promotivnaCena = al.getPromotivnaCena();
         this.istekVazenjaCene = al.getIstekVazenjaCene();
+        this.pocetakVazenjaCene = al.getPocetakVazenjaCene();
     }
 
-    public String getCookie() {
+	public String getCookie() {
         return cookie;
     }
 
@@ -114,16 +117,25 @@ public class LekDTO {
         this.cena = cena;
     }
 
-    public Date getIstekVazenjaCene() {
-        return istekVazenjaCene;
-    }
-
-    public void setIstekVazenjaCene(Date istekVazenjaCene) {
-        this.istekVazenjaCene = istekVazenjaCene;
-    }
 
 
-    public Double getPromotivnaCena() {
+    public LocalDateTime getIstekVazenjaCene() {
+		return istekVazenjaCene;
+	}
+
+	public void setIstekVazenjaCene(LocalDateTime istekVazenjaCene) {
+		this.istekVazenjaCene = istekVazenjaCene;
+	}
+
+	public LocalDateTime getPocetakVazenjaCene() {
+		return pocetakVazenjaCene;
+	}
+
+	public void setPocetakVazenjaCene(LocalDateTime pocetakVazenjaCene) {
+		this.pocetakVazenjaCene = pocetakVazenjaCene;
+	}
+
+	public Double getPromotivnaCena() {
 		return promotivnaCena;
 	}
 

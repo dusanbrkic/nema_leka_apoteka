@@ -82,5 +82,8 @@ public class RezervacijaService {
     
     public List<RezervacijaLek> findRezervacijaLekFromKorisnikByApoteka(Long idPacijent, Long idApoteke) {
 	    return rezervacijaRepository.findRezervacijaLekFromKorisnikByApoteka(idPacijent, idApoteke);
+
+    public Rezervacija fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
+	    return rezervacijaRepository.fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
     }
 }

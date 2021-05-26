@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.dto;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 
@@ -9,11 +10,11 @@ import com.team_08.ISAproj.model.Apoteka;
 public class PromocijaDTO {
 	
 	private String apotekaId;
-	private Date pocetakVazenja;
-	private Date krajVazenja;
+	private LocalDateTime pocetakVazenja;
+	private LocalDateTime krajVazenja;
     private Double cena;
-    private Date istekVazenjaCene;
-    private Double staraCena;
+    private LocalDateTime istekVazenjaCene;
+    private Double promotivnaCena;
 	private String cookie;
 	private String tekstPromocije;
 	private String sifra;
@@ -54,22 +55,6 @@ public class PromocijaDTO {
 		this.apotekaId = apotekaId;
 	}
 
-	public Date getPocetakVazenja() {
-		return pocetakVazenja;
-	}
-
-	public void setPocetakVazenja(Date pocetakVazenja) {
-		this.pocetakVazenja = pocetakVazenja;
-	}
-
-	public Date getKrajVazenja() {
-		return krajVazenja;
-	}
-
-	public void setKrajVazenja(Date krajVazenja) {
-		this.krajVazenja = krajVazenja;
-	}
-
 	public Double getCena() {
 		return cena;
 	}
@@ -78,20 +63,38 @@ public class PromocijaDTO {
 		this.cena = cena;
 	}
 
-	public Date getIstekVazenjaCene() {
+
+
+	public LocalDateTime getPocetakVazenja() {
+		return pocetakVazenja;
+	}
+
+	public void setPocetakVazenja(LocalDateTime pocetakVazenja) {
+		this.pocetakVazenja = pocetakVazenja;
+	}
+
+	public LocalDateTime getKrajVazenja() {
+		return krajVazenja;
+	}
+
+	public void setKrajVazenja(LocalDateTime krajVazenja) {
+		this.krajVazenja = krajVazenja;
+	}
+
+	public LocalDateTime getIstekVazenjaCene() {
 		return istekVazenjaCene;
 	}
 
-	public void setIstekVazenjaCene(Date istekVazenjaCene) {
+	public void setIstekVazenjaCene(LocalDateTime istekVazenjaCene) {
 		this.istekVazenjaCene = istekVazenjaCene;
 	}
 
-	public Double getStaraCena() {
-		return staraCena;
+	public Double getPromotivnaCena() {
+		return promotivnaCena;
 	}
 
-	public void setStaraCena(Double staraCena) {
-		this.staraCena = staraCena;
+	public void setPromotivnaCena(Double promotivnaCena) {
+		this.promotivnaCena = promotivnaCena;
 	}
 
 	public String getCookie() {

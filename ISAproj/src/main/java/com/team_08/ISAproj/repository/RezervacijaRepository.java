@@ -42,4 +42,7 @@ public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> 
 	
 	@Query(value = "select r from REZERVACIJA r where r.apoteka.id = :idApoteke and r.id=:idRezervacije and r.rokPonude>:tommorow and r.preuzeto=false")
     Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow);
+
+	@Query(value = "select r from REZERVACIJA r join fetch r.lekovi l where r.apoteka.id = :idApoteke and r.id=:idRezervacije and r.rokPonude>:tommorow and r.preuzeto=false")
+	Rezervacija fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow);
 }

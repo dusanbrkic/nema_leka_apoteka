@@ -11,84 +11,75 @@ Vue.component("DermatologMain", {
         <b-row>
           <b-col>
             <b-card
+                align="center"
                 title="Pregledani pacijenti"
-                img-src="https://picsum.photos/600/300/?image=25"
+                img-src="res/pics/patient.jpg"
+                img-height="200px"
                 img-alt="Image"
                 img-top
                 tag="article"
-                style="max-width: 20rem;"
+                style="width: 22rem; height: 21rem; margin: 5px auto"
                 class="mb-2"
             >
               <b-card-text>
                 Prikazi listu svih pregledanih pacijenata
               </b-card-text>
 
-              <b-button href="#/home-dermatolog/pregledani-pacijenti" variant="primary">Otvori</b-button>
+              <a href="#/home-dermatolog/pregledani-pacijenti" class="stretched-link"></a>
             </b-card>
           </b-col>
           <b-col>
             <b-card
-                title="Zakazi pregled"
-                img-src="https://picsum.photos/600/300/?image=25"
-                img-alt="Image"
-                img-top
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2"
-            >
-              <b-card-text>
-                Idi na stranicu za zakazivanje pregleda
-              </b-card-text>
-
-              <b-button href="#/zakazivanje" variant="primary">Otvori</b-button>
-            </b-card>
-          </b-col>
-          <b-col>
-            <b-card
+                align="center"
                 title="Godisnji odmor"
-                img-src="https://picsum.photos/600/300/?image=25"
+                img-src="res/pics/beach.jpg"
+                img-height="200px"
                 img-alt="Image"
                 img-top
                 tag="article"
-                style="max-width: 20rem;"
+                style="width: 22rem; height: 21rem; margin: 5px auto"
                 class="mb-2"
             >
               <b-card-text>
                 Idi na stranicu za kreiranje zahteva za godisnji odmor
               </b-card-text>
-              <b-button href="#/odsustvo-forma" variant="primary">Otvori</b-button>
+              <a href="#/odsustvo-forma" class="stretched-link"></a>
             </b-card>
           </b-col>
           <b-col>
             <b-card
+                align="center"
                 title="Zapocni pregled"
-                img-src="https://picsum.photos/600/300/?image=25"
+                img-src="res/pics/pregled.jpg"
+                img-height="200px"
                 img-alt="Image"
                 img-top
                 tag="article"
-                style="max-width: 20rem;"
+                style="width: 22rem; height: 21rem; margin: 5px auto"
                 class="mb-2"
             >
               <b-card-text>
                 Zapocni pregled koji upravo treba da se odigra
               </b-card-text>
-              <b-button href="#/pregled-forma" variant="primary">Otvori</b-button>
+              <a v-on:click="app.$emit('zakazivanjeChosen')" style="cursor: pointer;" class="stretched-link"></a>
             </b-card>
           </b-col>
           <b-col>
             <b-card
+                align="center"
                 title="Radni kalendar"
-                img-src="https://picsum.photos/600/300/?image=25"
+                img-src="res/pics/kalendar.jpg"
+                img-height="200px"
                 img-alt="Image"
                 img-top
                 tag="article"
-                style="max-width: 20rem;"
+                style="width: 22rem; height: 21rem; margin: 5px auto"
                 class="mb-2"
             >
               <b-card-text>
                 Prikazi radni kalendar
               </b-card-text>
-              <b-button href="#/home-dermatolog/calendar-view" variant="primary">Otvori</b-button>
+              <a href="#/home-dermatolog/calendar-view" class="stretched-link"></a>
             </b-card>
           </b-col>
         </b-row>
