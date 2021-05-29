@@ -70,9 +70,10 @@ public class ZdravstveniRadnikController {
             if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            odsustvoService.saveOdsustvo(new Odsustvo(start, end,"cekanju",z));
+            Odsustvo o = new Odsustvo(start, end,"cekanju",z);
+            odsustvoService.saveOdsustvo(o);
             
-           // z.getOdsustva().add(new Odsustvo(start, end,"cekanju"));
+          // z.getOdsustva().add(o);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

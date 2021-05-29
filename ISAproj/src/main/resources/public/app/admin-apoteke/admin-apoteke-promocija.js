@@ -62,7 +62,7 @@ Vue.component("AdminPromocija", {
           sortable: true,
         },
         {
-          key: "staraCena",
+          key: "promotivnaCena",
           sortable: true,
         },
         { key: "obrisiLek", label: "", sortable: false },
@@ -157,39 +157,8 @@ Vue.component("AdminPromocija", {
         </b-row>
         <br>
     <b-tabs content-class="mt-3">
-    <b-tab title="First" active>
 
-      <!-- Tabela dodatih -->
-        <div class="text-center">
-            <b-row >
-        <b-table
-            striped
-            id="promocija-tabela"
-            hover
-            :items="lekoviPromocija"
-            :fields="fieldsPromocija"
-            :per-page="pageSize"
-            :current-page="page"
-            :busy.sync="table_is_busy"
-            :sort-by.sync="sortBy"
-            sort-icon-left
-            responsive="sm"
-            :sort-desc.sync="sortDesc">
-          <template #cell(obrisiLek)="row">
-            <b-button v-on:click="obrisiIzPromocije(row.index)" variant="danger">Obrisi</b-button>
-          </template>
-          </b-table>
-          </b-row>
-        <br>
-        <b-row>
-         <div v-if="lekoviPromocija.length != 0">
-        <b-button class="text-right" v-on:click="onDodajPromociju"variant="primary">Dodaj promociju</b-button>
-          </div>
-        </b-row>
-        <br>
-      </div>
-      </b-tab>
-      <b-tab title="First" active>
+      <b-tab title="Lekovi" active>
          <!-- Tabela ostalih -->
         <b-row>
           <b-table
@@ -228,6 +197,38 @@ Vue.component("AdminPromocija", {
           </b-col>
          </b-row>
          </b-tab>
+      <b-tab title="Dodate promocije">
+
+      <!-- Tabela dodatih -->
+        <div class="text-center">
+            <b-row >
+        <b-table
+            striped
+            id="promocija-tabela"
+            hover
+            :items="lekoviPromocija"
+            :fields="fieldsPromocija"
+            :per-page="pageSize"
+            :current-page="page"
+            :busy.sync="table_is_busy"
+            :sort-by.sync="sortBy"
+            sort-icon-left
+            responsive="sm"
+            :sort-desc.sync="sortDesc">
+          <template #cell(obrisiLek)="row">
+            <b-button v-on:click="obrisiIzPromocije(row.index)" variant="danger">Obrisi</b-button>
+          </template>
+          </b-table>
+          </b-row>
+        <br>
+        <b-row>
+         <div v-if="lekoviPromocija.length != 0">
+        <b-button class="text-right" v-on:click="onDodajPromociju"variant="primary">Dodaj promociju</b-button>
+          </div>
+        </b-row>
+        <br>
+      </div>
+      </b-tab>
          </b-tabs>
 			</b-container>
 		</b-card>
@@ -276,13 +277,14 @@ Vue.component("AdminPromocija", {
     },
     onDodajPromociju() {
       for (i = 0; i < this.lekoviPromocija.length; i++) {
-        this.lekoviPromocija[i].pocetakVazenja = this.pocetakVazenja + 'T' + "00:00:00.000Z";
-        this.lekoviPromocija[i].krajVazenja = this.krajVazenja+ 'T' + "00:00:00.000Z";
+        this.lekoviPromocija[i].pocetakVazenja =
+          this.pocetakVazenja + "T" + "00:00:00.000Z";
+        this.lekoviPromocija[i].krajVazenja =
+          this.krajVazenja + "T" + "00:00:00.000Z";
         this.lekoviPromocija[i].tekstPromocije = this.tekstPromocije;
         console.log(this.lekoviPromocija[i]);
         this.$root.$emit("bv::refresh::table", "lekovi-tabela");
       }
-      // console.log(JSON.parse(JSON.stringify(this.listaNarudzbina)));
       axios
         .post(
           "/promocije/addPromocija",
@@ -292,8 +294,12 @@ Vue.component("AdminPromocija", {
       this.lekoviPromocija = [];
     },
     obrisiIzPromocije(index) {
-      console.log(index);
+      console.log();
+      this.lekovi.push(this.lekoviPromocija[index]);
+      console.log(this.lekovi);
       this.lekoviPromocija.splice(index, 1);
+      this.$root.$emit("bv::refresh::table", "lekovi-tabela");
+      
     },
     dodajLekPromociju(row) {
       console.log(row);
@@ -308,6 +314,7 @@ Vue.component("AdminPromocija", {
       this.lekovi.splice(this.lekIndex, 1);
       console.log(this.lekIndex);
       this.izabranLek = "";
+      this.$root.$emit("bv::refresh::table", "lekovi-tabela");
       this.$refs["my-modal"].hide();
     },
     itemProvider: function (ctx) {

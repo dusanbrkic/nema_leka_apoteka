@@ -243,19 +243,13 @@ Vue.component("PretragaLekAdmin", {
                 v-model="izabranLek.kolicina"
                 min = "0"
             ></b-form-input>
-        <b-form-group id="input-group-2" label="Datum isteka vazenja cene:" label-for="input-2">
-            <b-form-input
-                id="input-2"
-                type="date"
-                v-model="izabranLek.istekVazenjaCene"
-            ></b-form-input>
-
        <b-form-group id="input-group-3" label="Promotivna cena:" label-for="input-3">
             <b-form-input
                 id="input-3"
                 type="number"
                 v-model="this.izabranLek.promotivnaCena"
                 min = "0"
+                readOnly
             ></b-form-input>
             <br>
           <b-button type="submit" variant="primary">Sacuvaj</b-button>

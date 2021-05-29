@@ -39,8 +39,8 @@ Vue.component("UrediFarmaceute", {
           sortable: true,
           label: "Kraj radnogVremena",
           //formatter: (value, key, item) => {
-            //return moment(value).format("HH:mm");
-         // },
+          //return moment(value).format("HH:mm");
+          // },
         },
         {
           key: "obrisiFarmaceuta",
@@ -99,16 +99,16 @@ Vue.component("UrediFarmaceute", {
         </b-collapse>
       </b-navbar>
       <router-view/>
-     <b-alert style="text-align: center;" v-model="this.imaZakazeno" variant="danger">Ima zakazane preglede, ne moze se obrisati!!</b-alert>
-      <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
+    <b-alert style="text-align: center;" v-model="this.imaZakazeno" variant="danger">Ima zakazane preglede, ne moze se obrisati!!</b-alert>
+    <!--<link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css"> -->
     <b-card style="margin: 40px auto; max-width: 2000px">
         <b-container>
-          <b-row>
+          <b-row align="center">
             <b-col>
-              <b-form-input v-model="pretragaIme" placeholder="Pretrazite po imenu"></b-form-input>
+              <b-form-input v-model="pretragaIme" placeholder="Pretrazite po imenu" align="right"></b-form-input>
             </b-col>
             <b-col>
-              <b-form-input v-model="pretragaPrezime" placeholder="Pretrazite po prezimenu"></b-form-input>
+              <b-form-input v-model="pretragaPrezime" placeholder="Pretrazite po prezimenu" align="right"></b-form-input>
             </b-col>
             <b-col>
               <b-button v-on:click="pretraga" style="float: right">Pretrazi</b-button>
@@ -127,15 +127,40 @@ Vue.component("UrediFarmaceute", {
 
         
         </b-row>
-        
         <b-row>
-          <b-col><b-form-input type= "time" v-model="pocetakRadnog" @change="handlePocetakChange($event)":max=this.krajRadnog ></b-form-input></b-col>
-          <b-col><b-form-input type= "time" v-model="krajRadnog" @change="handleKrajChange($event)" :min=pocetakRadnog></b-form-input></b-col>
+          <b-col><b-form-input type= "time"   sm="5" v-model="pocetakRadnog" @change="handlePocetakChange($event)":max=this.krajRadnog ></b-form-input></b-col>
+          <b-col><b-form-input type= "time" sm="5" v-model="krajRadnog" @change="handleKrajChange($event)" :min=pocetakRadnog></b-form-input></b-col>
+          <b-col sm="7" md="6" class="my-1">
+            <b-pagination
+              align = "right"
+              v-model="page"
+              :total-rows="count"
+              :per-page="pageSize"
+              align="fill"
+              size="sm"
+              class="my-0"
+              @change="handlePageChange"
+            ></b-pagination>
+          </b-col>
+                   <b-col sm="5" md="6" class="my-1">
+        <b-form-select
+                  id="per-page-select"
+                  v-model="pageSize"
+                  :options="pageSizes"
+                  size="sm"
+                  class="text-right"
+                ></b-form-select>
+                </b-col>
         </b-row>
+        
             <br>
 		          <b-row>
                     <b-table
-                        striped
+                    	striped 
+                    	borderless 
+                    	outlined 
+                    	head-variant="light"
+                        stacked="md"
                         id="farmaceuti-tabela"
                         hover
                         :items="itemProvider"
