@@ -43,7 +43,8 @@ public class ZdravstveniRadnikService {
         }
         return z;
     }
-
+    
+    
     //svi dermatolozi u apoteci page
     public Page<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId, Pageable page) {
 
@@ -54,6 +55,14 @@ public class ZdravstveniRadnikService {
     public Dermatolog findOneByUsername(String username) {
 
         return dermatologRepository.findOneByUsername(username);
+    }
+    
+    public ZdravstveniRadnik findZdravstveniRadnikByUsername(String username) {
+    	ZdravstveniRadnik zr = dermatologRepository.findOneByUsername(username);
+    	if(zr == null) {
+    		zr = farmaceutRepository.findOneByUsername(username);
+    	}
+        return zr;
     }
 
     public ZdravstveniRadnik findOneByCookie(String cookie) {

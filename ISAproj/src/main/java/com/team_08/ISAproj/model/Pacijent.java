@@ -144,6 +144,10 @@ public class Pacijent extends Korisnik {
     public void addAlergija(Lek l) {
         this.alergije.add(l);
     }
+    
+    public void removeAlergija(Lek l) {
+        this.alergije.remove(l);
+    }
 
     public Set<Pregled> getSavetovanja() {
         return savetovanja;

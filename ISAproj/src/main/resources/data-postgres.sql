@@ -118,6 +118,11 @@ insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, tra
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-16T13:00:01.0', false, 0, '2021-05-16T11:45:01.0', '1', '4', '9', 550);
 
 
+-- obavljen pregled
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, 'Pacijent ima vijetnamski sindrom.', '2021-04-13T13:00:01.0', true, 660000, '2021-04-13T12:45:01.0', '4', '1', '2', 1200);
+
+
+
 --ocene lekova
 insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 11, 2);
 insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),4,'2021-05-16T11:45:01.0', 11, 6);

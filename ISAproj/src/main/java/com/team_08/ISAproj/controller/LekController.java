@@ -587,6 +587,28 @@ public class LekController {
         return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
+	@GetMapping(value="/otkaziAlergija")
+	public ResponseEntity<Void> otkaziAlergija(@RequestParam String cookie,
+											@RequestParam String id){
+		Lek l = lekService.findOneBySifra(id);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+		
+		System.out.println("========================================================================================================================");
+		System.out.println(p.getAlergije().size());
+		
+		
+		for(Lek lek : p.getAlergije()) {
+			//if(lek.getId()==Long.getLong(id))
+				p.removeAlergija(lek);
+		}
+		System.out.println(p.getAlergije().size());
+		
+		korisnikService.saveUser(p);
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 	@GetMapping(value="/getOcena")
 	public ResponseEntity<Map<String, Object>> getOcena(@RequestParam String cookie,
 										 				@RequestParam String id){

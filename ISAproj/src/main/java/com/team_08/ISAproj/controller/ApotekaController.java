@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.controller;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -110,9 +111,6 @@ public class ApotekaController {
 				if(a.getProsecnaOcena() >= fromGrade && a.getProsecnaOcena() <= toGrade) {
 					ApotekaDTO ad = new ApotekaDTO(a);
 					ad.setProsecnaOcena(ocenaService.findProsecnaOcenaApotekeByID(a.getId()));
-					if(ad.getProsecnaOcena()==null) {
-						ad.setProsecnaOcena((double) 0);
-					}
 					ad.setBrojOcena(ocenaService.findOceneApotekeByID(a.getId()).size());
 					
 					if(rezervacijaService.findRezervacijaLekFromKorisnikByApoteka(p.getId(), a.getId()).size() != 0) {
@@ -190,9 +188,10 @@ public class ApotekaController {
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         
         List<ApotekaDTO> apotekeDTO = new ArrayList<ApotekaDTO>();
-        
+        DecimalFormat df = new DecimalFormat("###.##");
         boolean slobodan = false;
         for(Apoteka a: apotekaService.findAll()) {
+        	
         	for(Farmaceut f : zdravstveniRadnikService.fetchFarmaceutsByApotekaId(a.getId())) {
                 if (pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, f.getCookieToken()).isEmpty()) {
                 	if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), f.getCookieToken(), a.getId())!=null)
@@ -202,8 +201,10 @@ public class ApotekaController {
                 }
         	}
         	if(slobodan) {
-        		//a.setNaziv(f.getIme() + " " + f.getPrezime());
-        		apotekeDTO.add(new ApotekaDTO(a));
+        		ApotekaDTO apotekaDTO = new ApotekaDTO(a);
+        		apotekaDTO.setProsecnaOcena(Double.valueOf(df.format(ocenaService.findProsecnaOcenaApotekeByID(a.getId()))));
+
+        		apotekeDTO.add(apotekaDTO);
         	}
         	slobodan = false;
         }

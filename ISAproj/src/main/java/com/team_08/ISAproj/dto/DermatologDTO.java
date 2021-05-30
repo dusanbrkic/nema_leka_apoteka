@@ -19,7 +19,16 @@ public class DermatologDTO {
     private LocalTime radnoVremePocetak;
     private LocalTime radnoVremeKraj;
     private Double prosecnaOcena;
+    private boolean pravoOcene = false;
 
+	public boolean isPravoOcene() {
+		return pravoOcene;
+	}
+
+	public void setPravoOcene(boolean pravoOcene) {
+		this.pravoOcene = pravoOcene;
+	}
+    
     public DermatologDTO() {
 
 

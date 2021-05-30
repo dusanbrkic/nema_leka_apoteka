@@ -81,7 +81,9 @@ Vue.component("PacijentLekovi", {
                       type="search"/>
                 </b-col>
               </b-row>
+              
             </b-container>
+            
             <b-container>
               <b-row v-for="chungus in lekovi">
                 <b-col v-for="lek in chungus">
@@ -149,9 +151,12 @@ Vue.component("PacijentLekovi", {
 <br>
 <div class="d-flex justify-content-center">
 				<b-button style="margin: 10px auto;" v-if="!blocked" v-on:click="prikaziLek(lek)" variant="primary">Rezervisi</b-button>
-				<b-button style="margin: 10px auto;" v-if="!blocked && lek.pravoOcene" v-on:click="pokaziOceniModal(lek)" variant="success">Oceni</b-button>
-				<b-button style="margin: 10px auto;" v-if="!blocked && !lek.pravoOcene" v-on:click="pokaziOceniModal(lek)" variant="success" disabled>Oceni</b-button>
-                <b-button style="margin: 10px auto;" v-if="!blocked" v-on:click="alergican(lek)" variant="danger">Alergija</b-button>
+				<b-button style="margin: 10px auto;" v-if="blocked" v-on:click="prikaziLek(lek)" variant="primary" disabled>Rezervisi</b-button>
+				
+				<b-button style="margin: 10px auto;" v-if="lek.pravoOcene" v-on:click="pokaziOceniModal(lek)" variant="success">Oceni</b-button>
+				<b-button style="margin: 10px auto;" v-if="!lek.pravoOcene" variant="success" disabled>Oceni</b-button>
+				
+                <b-button style="margin: 10px auto;" v-on:click="alergican(lek)" variant="danger">Alergija</b-button>
 </div>
 
                     <p class="card-text text-left"><small class="text-muted">
@@ -159,6 +164,10 @@ Vue.component("PacijentLekovi", {
                     </small></p> 
                     
                   </b-card>
+
+
+
+		      <!-- ALERGICAN LEK-->
 
                   <b-card
                       style="margin: 10px auto; max-width: 300px"
@@ -174,6 +183,10 @@ Vue.component("PacijentLekovi", {
                       <div class="card-footer bg-transparent border-light"/>
 					  Opis: {{ lek.sastav }}
              		</b-card-text>
+                    
+<div class="d-flex justify-content-center">		
+                <b-button style="margin: 10px auto;" v-on:click="otkaziAlergiju(lek)" variant="light">Otkazi Alergiju</b-button>
+</div>
                     
                   </b-card>
 
@@ -426,7 +439,6 @@ Vue.component("PacijentLekovi", {
         },
         
         alergican(lek) {
-	  		console.log(lek.sifra);
        	 	axios.get("lekovi/setAlergija", 
 			 {
 			 	params: {
@@ -442,6 +454,24 @@ Vue.component("PacijentLekovi", {
 			  console.log(e);
 			});
 		},
+		
+		otkaziAlergiju(lek) {
+       	 	axios.get("lekovi/otkaziAlergija", 
+			 {
+			 	params: {
+			                'cookie': this.cookie,
+			                'id': lek.sifra
+			            }
+			 })
+			.then((response) => {
+			this.loadLekovi();
+
+			})
+			.catch((e) => {
+			  console.log(e);
+			});
+		},
+		
 		pokaziOceniModal(lek) {
 		  	this.izabranLek = JSON.parse(JSON.stringify(lek));
 		  	this.prethodna_ocena = 0;

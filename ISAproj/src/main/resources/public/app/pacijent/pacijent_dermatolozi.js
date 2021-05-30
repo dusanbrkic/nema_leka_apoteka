@@ -55,6 +55,9 @@ Vue.component("PacijentDermatolozi", {
           },
         },
       ],
+      izabranRadnik: "",
+      prethodna_ocena: -1,
+      ocenaRadnika: 0,
     };
   },
   mounted() {
@@ -141,9 +144,15 @@ Vue.component("PacijentDermatolozi", {
                         responsive="sm"
                         :sort-desc.sync="sortDesc">
                     <template #cell(obrisiDermatologa)="row">
-                    <b-button @click="obrisiDermatologa(row.item)"  variant="primary">Obrisi</b-button>
+                    	<b-button @click="obrisiDermatologa(row.item)"  variant="primary">Obrisi</b-button>
+			    	</template>
+			    	
+			    	<template #cell(prosecnaOcena)="row">
+			    		{{row.item.prosecnaOcena}}/5
+                    	<b-button v-if="row.item.pravoOcene" @click="pokaziOceniModal(row.item)"  variant="light">Oceni</b-button>
+                    	<b-button v-if="!row.item.pravoOcene" variant="light" disabled>Oceni</b-button>
+			    	</template>
                     
-                    </template>
                     <template  #cell(izmeniRadnoVreme)="row">
                     <b-button v-on:click="izmeniDermatologa(row.item)" variant="primary">Izmeni</b-button></template> </b-table>
          </b-row>
@@ -166,6 +175,83 @@ Vue.component("PacijentDermatolozi", {
          </b-row>
                  </b-containter>
       </b-card>
+      
+      
+      
+                <!-- Modal Ocenjivanja Radnika-->
+     
+     <b-modal ref="oceni-modal" hide-footer :title="this.izabranRadnik.ime + this.izabranRadnik.prezime">
+      <b-card style="max-width: 500px; margin: 30px auto;" >
+        <b-form @submit.prevent="pokaziOceniModal">
+
+       <div class="d-flex justify-content-center">
+    <div class="text-center">
+        <div class="ratings" style="max-height: 190px"> 
+        	<div style="margin: -55px auto;">
+	        	<span class="product-rating">{{ this.izabranRadnik.prosecnaOcena }}</span><span>/5</span>
+		            <div class="stars">
+
+			            <div v-if="this.izabranRadnik.star == 5">
+			            	 <five class="fa fa-star"></i>
+			            	 <five class="fa fa-star"></i>
+			            	 <five class="fa fa-star"></i>
+			            	 <five class="fa fa-star"></i> 
+			            	 <five class="fa fa-star"></i> 
+			           	</div>
+			           	
+			           	<div v-if="this.izabranRadnik.star == 4">
+			            	 <four class="fa fa-star"></i>
+			            	 <four class="fa fa-star"></i>
+			            	 <four class="fa fa-star"></i>
+			            	 <four class="fa fa-star"></i> 
+			           	</div>
+			           	
+			           	<div v-if="this.izabranRadnik.star == 3">
+			            	 <three class="fa fa-star"></i>
+			            	 <three class="fa fa-star"></i>
+			            	 <three class="fa fa-star"></i>
+			           	</div>
+			           	
+			           	<div v-if="this.izabranRadnik.star == 2">
+			            	 <two class="fa fa-star"></i>
+			            	 <two class="fa fa-star"></i>
+			           	</div>
+			           	
+			           	<div v-if="this.izabranRadnik.star == 1">
+			            	 <one class="fa fa-star"></i>
+			           	</div>
+		           	
+		           	</div>
+            </div>
+        </div>
+    </div>
+</div>
+       <br>
+       
+       
+        <div class="d-flex justify-content-center">      
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 0 || this.prethodna_ocena != 1" variant="light" v-on:click="setJedan">1</b-button>
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 1" variant="danger" v-on:click="setJedan">1</b-button>
+       	  
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 0 || this.prethodna_ocena != 2" variant="light" v-on:click="setDva">2</b-button>
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 2" variant="danger" v-on:click="setDva">2</b-button>
+       	  
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 0 || this.prethodna_ocena != 3" variant="light" v-on:click="setTri">3</b-button>
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 3" variant="danger" v-on:click="setTri">3</b-button>
+       	  
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 0 || this.prethodna_ocena != 4" variant="light" v-on:click="setCetiri">4</b-button>
+       	  <b-button type="submit" v-if="this.prethodna_ocena == 4" variant="danger" v-on:click="setCetiri">4</b-button>
+       	  
+          <b-button type="submit" v-if="this.prethodna_ocena == 0 || this.prethodna_ocena != 5" variant="light" v-on:click="setPet">5</b-button>
+          <b-button type="submit" v-if="this.prethodna_ocena == 5" variant="danger" v-on:click="setPet">5</b-button>
+          
+        </div>
+           </b-form>
+      	</b-card>
+    	</b-modal>	
+      
+      
+      
       </div>
       `,
   methods: {
@@ -214,8 +300,8 @@ Vue.component("PacijentDermatolozi", {
           pretraziIme: pretragaIme,
           pretraziPrezime: pretragaPrezime,
           ocena: this.ocena,
-          pocetak: "2008-01-01T" + this.pocetakRadnog + ":00.000Z",
-          kraj: "2008-01-01T" + this.krajRadnog + ":00.000Z",
+          pocetak: this.pocetakRadnog + ":00.000Z",
+          kraj: this.krajRadnog + ":00.000Z",
           apoteka: this.apoteka,
         },
       };
@@ -225,6 +311,27 @@ Vue.component("PacijentDermatolozi", {
         .get("zdravstveniradnik/getAllDermatologPage/", info)
         .then((response) => {
           this.dermatolozi = response.data["content"];
+          
+          for(var i = 0; i < this.dermatolozi.length; i++){
+          			this.dermatolozi[i].prosecnaOcena = Math.round(this.dermatolozi[i].prosecnaOcena * 10) / 10
+                            
+                            if(this.dermatolozi[i].prosecnaOcena > 4.5) {
+                            	this.dermatolozi[i].star = 5;
+                            }
+                            else if(this.dermatolozi[i].prosecnaOcena > 3.5) {
+                            	this.dermatolozi[i].star = 4;
+                            }
+                            else if(this.dermatolozi[i].prosecnaOcena > 2.5) {
+                            	this.dermatolozi[i].star = 3;
+                            }
+                            else if(this.dermatolozi[i].prosecnaOcena > 1.5) {
+                            	this.dermatolozi[i].star = 2;
+                            }
+                            else {
+                            	this.dermatolozi[i].star = 1;
+                            }	
+          }
+          
           this.count = response.data["totalElements"];
           console.log(this.dermatolozi);
         })
@@ -283,5 +390,56 @@ Vue.component("PacijentDermatolozi", {
         console.log(this.naziviApoteka);
       });
     },
+    
+    
+    pokaziOceniModal(lek) {
+		  	this.izabranRadnik = JSON.parse(JSON.stringify(lek));
+		  	this.prethodna_ocena = 0;
+		    this.getOcena();
+	        this.$refs['oceni-modal'].show()
+		},
+		
+		oceni() {
+       	 	axios.get("zdravstveniradnik/oceni", 
+			 {
+			 	params: {
+			                'cookie': this.cookie,
+			                'username': this.izabranRadnik.username,
+			                'ocena': this.ocenaRadnika
+			            }
+			 })
+			.then((response) => {
+			this.$refs['oceni-modal'].hide();
+			this.apotekeNazivi();
+			this.$root.$emit("bv::refresh::table", "dermatolozi-tabela");
+
+			})
+			.catch((e) => {
+			  console.log(e);
+			});
+		},
+		getOcena() {
+		
+			if(this.izabranRadnik.username != null) {
+	       	 	axios.get("zdravstveniradnik/getOcena", 
+				 {
+				 	params: {
+				                'cookie': this.cookie,
+				                'username': this.izabranRadnik.username,
+				            }
+				 })
+				.then((response) => {
+				this.prethodna_ocena = response.data.ocena;
+				})
+				.catch((e) => {
+				  console.log(e);
+				});
+			}
+		},
+		setJedan() { this.ocenaRadnika = 1; this.oceni(); },
+		setDva() { this.ocenaRadnika = 2; this.oceni();},
+		setTri() { this.ocenaRadnika = 3; this.oceni();},
+		setCetiri() { this.ocenaRadnika = 4; this.oceni();},
+		setPet() { this.ocenaRadnika = 5; this.oceni(); },
   },
 });

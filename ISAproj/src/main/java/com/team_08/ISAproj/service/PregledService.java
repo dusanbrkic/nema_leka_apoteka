@@ -4,6 +4,7 @@ import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
+import com.team_08.ISAproj.repository.DermatologRepository;
 import com.team_08.ISAproj.repository.PregledRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,10 @@ public class PregledService {
             sort = Sort.by(sortBy).ascending();
         return pregledRepository.findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(
                 cookie, PageRequest.of(page, size, sort), pretragaIme, pretragaPrezime);
+    }
+    
+    public List<Pregled> findPreglediFromKorisnikByZdravstveniRadnikID(Long idPacijent, Long idDermatolog) {
+	    return pregledRepository.findPreglediFromKorisnikByZdravstveniRadnikID(idPacijent, idDermatolog);
     }
 
     public List<Pregled> fetchAllWithPreporuceniLekoviInDateRangeByZdravstveniRadnik(

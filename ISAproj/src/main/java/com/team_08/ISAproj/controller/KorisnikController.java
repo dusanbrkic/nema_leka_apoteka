@@ -11,6 +11,7 @@ import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.OcenaService;
 import com.team_08.ISAproj.service.PacijentService;
 
 import java.util.Random;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,6 +61,8 @@ public class KorisnikController {
     private PacijentService pacijentService;
     @Autowired
     private ZdravstveniRadnikService zdravstveniRadnikService;
+    @Autowired
+    private OcenaService ocenaService;
 
     //change password
     @PostMapping(value = "/updatePass", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -259,7 +263,7 @@ public class KorisnikController {
     {
     	LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        
+        DecimalFormat df = new DecimalFormat("###.##");
         List<FarmaceutDTO> farmaceutiDTO = new ArrayList<FarmaceutDTO>();
         
         boolean slobodan = false;
@@ -269,6 +273,8 @@ public class KorisnikController {
             		if (zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(f.getCookieToken(), start, end)==null) {
             			FarmaceutDTO fdto = new FarmaceutDTO(f);
             			fdto.setUsername(Long.toString(f.getId()));
+        				fdto.setProsecnaOcena(Double.valueOf(df.format(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(f.getId()))));
+        				
             			farmaceutiDTO.add(fdto);
             		}
             	}

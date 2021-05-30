@@ -35,7 +35,11 @@ public class OcenaService {
     private OcenaRepository ocenaRepository;
     
     public Double findProsecnaOcenaLekaByID(Long id) {
-    	return ocenaRepository.findProsecnaOcenaLekaByID(id);
+    	double d = 0;
+    	try {
+    		d = ocenaRepository.findProsecnaOcenaLekaByID(id);
+		} catch (Exception e) { d = 0;}
+    	return d;
     }
     
     public List<Ocena> findOceneLekaByID(Long id) {
@@ -51,13 +55,24 @@ public class OcenaService {
     }
     
     public Double findProsecnaOcenaApotekeByID(Long id) {
-    	return ocenaRepository.findProsecnaOcenaApotekaByID(id);
+    	double d = 0;
+    	try {
+			d = ocenaRepository.findProsecnaOcenaApotekaByID(id);
+		} catch (Exception e) { d = 0;}
+    	return d;
     }
     
     public List<Ocena> findOceneApotekeByID(Long id) {
     	return ocenaRepository.findOceneApotekaByID(id);
     }
     
+    public Double findProsecnaOcenaZdravstvenogRadnikaByID(Long id) {
+    	double d = 0;
+    	try {
+    		d = ocenaRepository.findProsecnaOcenaZdravstvenogRadnikaByID(id);
+		} catch (Exception e) { d = 0;}
+    	return d;
+    }
     
     public void saveOcena(Ocena o) {
         if (o instanceof OcenaLek)
@@ -68,4 +83,11 @@ public class OcenaService {
         	ocenaRepository.save((OcenaZdravstveniRadnik) o);
 
     }
+    
+    
+    public OcenaZdravstveniRadnik findOcenaZdravstvenogRadnikaByPacijentID(Long idRadnika, Long idPacijenta) {
+    	return ocenaRepository.findZdravstveniRadnikByPacijentID(idRadnika, idPacijenta);
+    }
+    
+    
 }

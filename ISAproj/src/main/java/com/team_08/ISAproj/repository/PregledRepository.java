@@ -51,4 +51,10 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
 
     @Query(value = "SELECT p from PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and :start >= p.vreme and :start <= p.kraj and p.pregledObavljen=false and p.pregledZakazan=true")
     Pregled findOneStartsNow(String cookie, LocalDateTime start);
+    
+    
+    
+	@Query(value = "select p from PREGLED p where p.zdravstveniRadnik.id = :idDermatolog and p.pacijent.id = :idPacijent")
+	List<Pregled> findPreglediFromKorisnikByZdravstveniRadnikID(@Param("idPacijent") Long idPacijent, @Param("idDermatolog") Long idDermatolog);
+
 }

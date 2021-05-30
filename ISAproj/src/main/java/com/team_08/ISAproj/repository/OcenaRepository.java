@@ -15,6 +15,7 @@ import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.model.Ocena;
 import com.team_08.ISAproj.model.OcenaApoteka;
 import com.team_08.ISAproj.model.OcenaLek;
+import com.team_08.ISAproj.model.OcenaZdravstveniRadnik;
 
 
 @Repository
@@ -40,4 +41,14 @@ public interface OcenaRepository extends JpaRepository<Ocena, Long> {
 	
 	@Query(value = "select o from OCENA_APOTEKA o where o.apoteka.id = :id")
 	List<Ocena> findOceneApotekaByID(@Param("id") Long id);
+	
+	
+	
+	// pronadji prosecnu ocenu zdravstvenog radnika
+	@Query(value = "select AVG(o.ocena) from OCENA_ZDRAVSTVENI_RADNIK o where o.zdravstveniRadnik.id = :id")
+	Double findProsecnaOcenaZdravstvenogRadnikaByID(@Param("id") Long id);
+	
+	@Query(value = "select o from OCENA_ZDRAVSTVENI_RADNIK o where o.zdravstveniRadnik.id = :idRadnika and o.pacijent.id = :idPacijenta")
+	OcenaZdravstveniRadnik findZdravstveniRadnikByPacijentID(@Param("idRadnika") Long idRadnika, @Param("idPacijenta") Long idPacijenta);
+
 }

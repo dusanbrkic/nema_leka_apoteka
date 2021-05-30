@@ -6,7 +6,9 @@ import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.OcenaService;
 import com.team_08.ISAproj.service.OdsustvoService;
+import com.team_08.ISAproj.service.PacijentService;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -54,6 +56,11 @@ public class ZdravstveniRadnikController {
     private OdsustvoService odsustvoService;
     @Autowired
     private EmailService sendEmailService;
+    @Autowired
+    private OcenaService ocenaService;
+    @Autowired
+    private PacijentService pacijentService;
+    
     @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
                                               @RequestParam("end") String endDate,
@@ -270,6 +277,7 @@ public class ZdravstveniRadnikController {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
             	DermatologDTO dermaDTO = new DermatologDTO(da);
+            	dermaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(da.getId()));
                 return dermaDTO;
             }
         });
@@ -304,6 +312,10 @@ public class ZdravstveniRadnikController {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
             	DermatologDTO dermaDTO = new DermatologDTO(da);
+            	dermaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(da.getId()));
+				if(pregledService.findPreglediFromKorisnikByZdravstveniRadnikID(p.getId(), da.getId()).size() != 0) {
+					dermaDTO.setPravoOcene(true);
+				}
                 return dermaDTO;
             }
         });
@@ -337,6 +349,7 @@ public class ZdravstveniRadnikController {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
             	FarmaceutDTO farmaDTO = new FarmaceutDTO(f);
+            	farmaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(f.getId()));
                 return farmaDTO;
             }
         });
@@ -370,6 +383,10 @@ public class ZdravstveniRadnikController {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
             	FarmaceutDTO farmaDTO = new FarmaceutDTO(f);
+            	farmaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(f.getId()));
+				if(pregledService.findPreglediFromKorisnikByZdravstveniRadnikID(p.getId(), f.getId()).size() != 0) {
+					farmaDTO.setPravoOcene(true);
+				}
                 return farmaDTO;
             }
         });
@@ -582,4 +599,44 @@ public class ZdravstveniRadnikController {
     	return new ResponseEntity<Void>(HttpStatus.OK);
     	
     }
+    
+	@GetMapping(value="/getOcena")
+	public ResponseEntity<Map<String, Object>> getOcena(@RequestParam String cookie,
+										 				@RequestParam String username){
+		ZdravstveniRadnik radnik = zdravstveniRadnikService.findZdravstveniRadnikByUsername(username);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+		OcenaZdravstveniRadnik ocenaZdravstveniRadnik = ocenaService.findOcenaZdravstvenogRadnikaByPacijentID(radnik.getId(), p.getId());
+		
+		if(ocenaZdravstveniRadnik == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("ocena", ocenaZdravstveniRadnik.getOcena());
+		
+        return new ResponseEntity<Map<String, Object>>( response, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/oceni")
+	public ResponseEntity<Void> setOcena(@RequestParam String cookie,
+										 @RequestParam String username,
+										 @RequestParam Integer ocena){
+		ZdravstveniRadnik radnik = zdravstveniRadnikService.findZdravstveniRadnikByUsername(username);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+
+		OcenaZdravstveniRadnik ocenaZdravstveniRadnik = ocenaService.findOcenaZdravstvenogRadnikaByPacijentID(radnik.getId(), p.getId());
+		
+		if(ocenaZdravstveniRadnik == null) {
+			ocenaZdravstveniRadnik = new OcenaZdravstveniRadnik(radnik, ocena, LocalDateTime.now(), p);
+		}
+		else {
+			ocenaZdravstveniRadnik.setDatum(LocalDateTime.now());
+			ocenaZdravstveniRadnik.setOcena(ocena);
+		}
+
+		ocenaService.saveOcena(ocenaZdravstveniRadnik);
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+	}
 }

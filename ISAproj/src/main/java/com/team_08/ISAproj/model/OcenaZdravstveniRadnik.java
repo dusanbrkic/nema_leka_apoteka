@@ -28,5 +28,7 @@ public class OcenaZdravstveniRadnik extends Ocena{
 	public void setZdravstveniRadnik(ZdravstveniRadnik zdravstveniRadnik) {
 		this.zdravstveniRadnik = zdravstveniRadnik;
 	}
-	
+	public OcenaZdravstveniRadnik() {
+		super();
+	}
 }
