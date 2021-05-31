@@ -56,5 +56,9 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     
 	@Query(value = "select p from PREGLED p where p.zdravstveniRadnik.id = :idDermatolog and p.pacijent.id = :idPacijent")
 	List<Pregled> findPreglediFromKorisnikByZdravstveniRadnikID(@Param("idPacijent") Long idPacijent, @Param("idDermatolog") Long idDermatolog);
+	
+	@Query(value = "select p from PREGLED p where p.apoteka.id = :idApoteka and p.pacijent.id = :idPacijent")
+	List<Pregled> findPreglediFromKorisnikByApotekaID(@Param("idPacijent") Long idPacijent, @Param("idApoteka") Long idApoteka);
 
+	
 }

@@ -272,9 +272,7 @@ public class KorisnikController {
             	if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), f.getCookieToken(), idApoteke)!=null) {
             		if (zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(f.getCookieToken(), start, end)==null) {
             			FarmaceutDTO fdto = new FarmaceutDTO(f);
-            			fdto.setUsername(Long.toString(f.getId()));
-        				fdto.setProsecnaOcena(Double.valueOf(df.format(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(f.getId()))));
-        				
+            			fdto.setUsername(Long.toString(f.getId()));      				
             			farmaceutiDTO.add(fdto);
             		}
             	}

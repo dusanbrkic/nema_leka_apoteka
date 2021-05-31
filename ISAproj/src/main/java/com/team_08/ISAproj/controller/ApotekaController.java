@@ -72,8 +72,49 @@ public class ApotekaController {
     private OcenaService ocenaService;
 	@Autowired
 	private RezervacijaService rezervacijaService;
-    
-	@GetMapping("")
+	
+	
+	@PostMapping(value="getall" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<ApotekaDTO>> getAllApoteke(
+			@RequestBody Map<String, Object> body){
+
+		String pretragaNaziv = (String) body.get("pretragaNaziv");
+		String pretragaAdresa = (String) body.get("pretragaAdresa");
+		boolean desc = (boolean) body.get("smer");
+		Pacijent pacijent = pacijentService.fetchPacijentWithAlergijeByCookie((String) body.get("cookie"));
+		
+		int page = (int) body.get("page");
+		int pageSize = (int) body.get("pageSize");
+		
+		double cenaOD = Double.valueOf((String) body.get("ocenaOD"));
+		double cenaDO = Double.valueOf((String) body.get("ocenaDO"));
+
+		Page<Apoteka> apoteke = apotekaService.getAllApotekePaged(page, pageSize, pretragaNaziv, pretragaAdresa, desc, cenaOD, cenaDO);
+		
+		if (apoteke == null)
+			return new ResponseEntity<Page<ApotekaDTO>>(Page.empty(), HttpStatus.OK);
+
+		Page<ApotekaDTO> apotekeDTO = apoteke.map(new Function<Apoteka, ApotekaDTO>() {
+			@Override
+			public ApotekaDTO apply(Apoteka a) {
+				ApotekaDTO apotekaDTO = new ApotekaDTO(a);
+				apotekaDTO.setBrojOcena(ocenaService.findOceneApotekeByID(a.getId()).size());
+				
+				if(pacijent != null) {
+					if(rezervacijaService.findRezervacijaLekFromKorisnikByApoteka(pacijent.getId(), a.getId()).size() != 0) {
+						apotekaDTO.setPravoOcene(true);
+					}
+					else if(pregledService.findPreglediFromKorisnikByApotekaID(pacijent.getId(), a.getId()).size() != 0) {
+						apotekaDTO.setPravoOcene(true);
+					}
+				}
+				return apotekaDTO;
+			}
+		});
+		return new ResponseEntity<Page<ApotekaDTO>>(apotekeDTO, HttpStatus.OK);
+	}
+	
+	@GetMapping("save")
 	public ResponseEntity<Map<String, Object>> getApoteke(
 			@RequestParam(required = false) String title,
 	        @RequestParam(defaultValue = "0") int page,
@@ -110,10 +151,13 @@ public class ApotekaController {
 			for (Apoteka a : apoteke) {
 				if(a.getProsecnaOcena() >= fromGrade && a.getProsecnaOcena() <= toGrade) {
 					ApotekaDTO ad = new ApotekaDTO(a);
-					ad.setProsecnaOcena(ocenaService.findProsecnaOcenaApotekeByID(a.getId()));
+
 					ad.setBrojOcena(ocenaService.findOceneApotekeByID(a.getId()).size());
 					
 					if(rezervacijaService.findRezervacijaLekFromKorisnikByApoteka(p.getId(), a.getId()).size() != 0) {
+						ad.setPravoOcene(true);
+					}
+					else if(pregledService.findPreglediFromKorisnikByApotekaID(p.getId(), a.getId()).size() != 0) {
 						ad.setPravoOcene(true);
 					}
 					apotekeDTO.add(ad);
@@ -202,8 +246,6 @@ public class ApotekaController {
         	}
         	if(slobodan) {
         		ApotekaDTO apotekaDTO = new ApotekaDTO(a);
-        		apotekaDTO.setProsecnaOcena(Double.valueOf(df.format(ocenaService.findProsecnaOcenaApotekeByID(a.getId()))));
-
         		apotekeDTO.add(apotekaDTO);
         	}
         	slobodan = false;
@@ -249,6 +291,8 @@ public class ApotekaController {
 
 		ocenaService.saveOcena(ocenaApoteka);
 
+    	a.setProsecnaOcena(ocenaService.findProsecnaOcenaApotekeByID(a.getId()));
+    	apotekaService.save(a);
 
         return new ResponseEntity<>(HttpStatus.OK);
 	}

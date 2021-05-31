@@ -40,4 +40,20 @@ public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
     		//+ " JOIN PREGLED p ON "
     		//+ " WHERE :start < p.kraj and :end > p.vreme")
     List<Apoteka> findAllInDateRangeWithFreeZdravstveniRadnik(LocalDateTime start, LocalDateTime end);
+    
+    
+	@Query(value = "SELECT a FROM APOTEKA a"
+				+ " WHERE UPPER(a.naziv) LIKE UPPER(:pretragaNaziv) AND UPPER(a.adresa) LIKE UPPER(:pretragaAdresa)"
+				+ " AND a.prosecnaOcena >= :ocenaOD AND a.prosecnaOcena <= :ocenaDO"
+				+ " ORDER BY"
+				+ " CASE WHEN :smer = true THEN a.prosecnaOcena END DESC,"
+				+ " CASE WHEN :smer = false THEN a.prosecnaOcena END ASC")
+    Page<Apoteka> getAllApotekePaged(
+    		@Param("pretragaNaziv") String pretragaNaziv,
+    		@Param("pretragaAdresa") String pretragaAdresa,
+    		@Param("smer") Boolean smer,
+    		@Param("ocenaOD") Double ocenaOD,
+    		@Param("ocenaDO") Double ocenaDO,
+    		Pageable pageable);
+
 }

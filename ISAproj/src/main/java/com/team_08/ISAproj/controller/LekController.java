@@ -439,10 +439,6 @@ public class LekController {
 			@Override
 			public LekDTO apply(ApotekaLek l) {
 				LekDTO lekDTO = new LekDTO(l);
-				lekDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaLekaByID(l.getId()));
-				if(lekDTO.getProsecnaOcena()==null) {
-					lekDTO.setProsecnaOcena((double) 0);
-				}
 				lekDTO.setBrojOcena(ocenaService.findOceneLekaByID(l.getId()).size());
 				return lekDTO;
 			}
@@ -481,12 +477,7 @@ public class LekController {
 	            		lekDTO.setAlergija(true);
 	            	}
 	            }
-				lekDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaLekaByID(l.getId()));
-				if(lekDTO.getProsecnaOcena()==null) {
-					lekDTO.setProsecnaOcena((double) 0);
-				}
 				lekDTO.setBrojOcena(ocenaService.findOceneLekaByID(l.getId()).size());
-				
 				if(rezervacijaService.findRezervacijaLekFromKorisnikByLek(p.getId(), l.getId()).size() != 0) {
 					lekDTO.setPravoOcene(true);
 				}
@@ -596,12 +587,10 @@ public class LekController {
 		System.out.println("========================================================================================================================");
 		System.out.println(p.getAlergije().size());
 		
-		
 		for(Lek lek : p.getAlergije()) {
-			//if(lek.getId()==Long.getLong(id))
+			if(lek.getId()==l.getId())
 				p.removeAlergija(lek);
 		}
-		System.out.println(p.getAlergije().size());
 		
 		korisnikService.saveUser(p);
 
@@ -642,9 +631,11 @@ public class LekController {
 			ocenaLek.setDatum(LocalDateTime.now());
 			ocenaLek.setOcena(ocena);
 		}
-
 		ocenaService.saveOcena(ocenaLek);
-
+		
+    	// postavi prosecnu ocenu leka
+    	l.setProsecnaOcena(ocenaService.findProsecnaOcenaLekaByID(l.getId()));
+    	lekService.saveLek(l);
 
         return new ResponseEntity<>(HttpStatus.OK);
 	}

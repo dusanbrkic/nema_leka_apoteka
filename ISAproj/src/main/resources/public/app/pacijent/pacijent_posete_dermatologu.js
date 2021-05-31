@@ -18,19 +18,19 @@ Vue.component("PacijentPoseteDermatologu", {
                 },
                 {
                     key: 'datum',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'pocetak',
-                    sortable: false
+                    sortable: true
                 },
                                 {
                     key: 'kraj',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'cena',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'status',
@@ -43,12 +43,16 @@ Vue.component("PacijentPoseteDermatologu", {
            greska: false,
 	       uspeh: false,
 	       
-		   
+        	sortBy: 'cena',
+        	sortDesc: false,
+	       
+		   items: [],
         }
 
     },
     mounted() {
         this.cookie = localStorage.getItem("cookie");
+        this.loadPregledi();
     },
     template: `
       <div>
@@ -59,10 +63,14 @@ Vue.component("PacijentPoseteDermatologu", {
           <b-row>
             <b-table
                 ref="table"
+                id = "table-id"
                 hover
-                :items="itemProvider"
+                :items="items"
                 :fields="fields"
-                :busy.sync="table_is_busy"
+				:busy.sync="table_is_busy"
+				  :sort-by.sync="sortBy"
+				  :sort-desc.sync="sortDesc"
+				  sort-icon-left
             >
             
 	            <template #cell(status)="row">
@@ -133,11 +141,8 @@ Vue.component("PacijentPoseteDermatologu", {
 			       'id_pregleda': this.pregledi[index].id
 			       }
 			    }).then((response) => {
-	          		//this.uspeh = true;
-	          		//this.rezervacije.splice(index, 1);
-   		   			//this.$refs.table.refresh();
-   		   			//localStorage.setItem("uspeh", true);
-   		   			location.reload();
+   		   			this.loadPregledi();
+   		   			this.$root.$emit("bv::refresh::table", "table-id");
 		        })
 		        .catch((e) => {
 		        	this.greska = true;
@@ -146,7 +151,7 @@ Vue.component("PacijentPoseteDermatologu", {
     
         loadPregledi: async function () {
             this.table_is_busy = true
-            let items = []
+            this.items = []
             await axios
                 .get("pregledi/posete_dermatologu", {
                     params:
@@ -162,14 +167,14 @@ Vue.component("PacijentPoseteDermatologu", {
                     	this.pregledi.push(p);
                     	console.log(p);
                     	
-                        items.push({
+                        this.items.push({
                             idPregleda: p.id,
                             apoteka: p.apoteka.naziv,
                             dermatolog: p.username,
                             pocetak: p.start.slice(11, 20),
                             datum: p.start.slice(0, 10),
                             kraj: p.end.slice(11, 20),
-                            cena: p.cena + ' din.',
+                            cena: p.cena + ' RSD',
                           	_rowVariant: p.rowVariant
                             
                         })
@@ -179,10 +184,10 @@ Vue.component("PacijentPoseteDermatologu", {
 		        	console.log(e);
 		        });
             this.table_is_busy = false
-            return items
         },
         itemProvider: function (ctx) {
-            return this.loadPregledi()
+        	this.loadPregledi();
+            return this.items
         },
     },
 });

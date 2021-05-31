@@ -43,6 +43,10 @@ public class PregledService {
     public List<Pregled> findPreglediFromKorisnikByZdravstveniRadnikID(Long idPacijent, Long idDermatolog) {
 	    return pregledRepository.findPreglediFromKorisnikByZdravstveniRadnikID(idPacijent, idDermatolog);
     }
+    
+    public List<Pregled> findPreglediFromKorisnikByApotekaID(Long idPacijent, Long idApoteka) {
+	    return pregledRepository.findPreglediFromKorisnikByApotekaID(idPacijent, idApoteka);
+    }
 
     public List<Pregled> fetchAllWithPreporuceniLekoviInDateRangeByZdravstveniRadnik(
             String cookie, LocalDateTime dateStart, LocalDateTime dateEnd) throws CookieNotValidException {

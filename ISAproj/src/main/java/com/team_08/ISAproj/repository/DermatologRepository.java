@@ -23,6 +23,9 @@ import java.util.List;
 @Repository
 public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
 	
+	@Query(value = "SELECT z FROM ZDRAVSTVENI_RADNIK z")
+	List<ZdravstveniRadnik> findAllZdravstveniRadnici();
+	
     Dermatolog findOneByUsername(String username);
 
     Dermatolog findOneByCookieTokenValue(String cookie);

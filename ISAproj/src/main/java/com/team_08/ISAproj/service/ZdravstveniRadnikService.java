@@ -28,6 +28,17 @@ public class ZdravstveniRadnikService {
     @Autowired
     private DermatologApotekaRepository dermatologApotekaRepository;
 
+    public void saveDermatolog(Dermatolog d) {
+    	dermatologRepository.save(d);
+    }
+    
+    public List<ZdravstveniRadnik> findAll() {
+    	List<ZdravstveniRadnik> l = dermatologRepository.findAllZdravstveniRadnici();
+    	l.addAll(farmaceutRepository.findAllZdravstveniRadnici());
+        return l;
+    }
+    
+    
     public ZdravstveniRadnik fetchZdravstveniRadnikWithOdsustva(String cookie) {
         ZdravstveniRadnik z = dermatologRepository.fetchDermatologWithOdsustva(cookie);
         if (z == null) {

@@ -18,19 +18,19 @@ Vue.component("PacijentSavetovanja", {
                 },
                 {
                     key: 'datum',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'pocetak',
-                    sortable: false
+                    sortable: true
                 },
                                 {
                     key: 'kraj',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'cena',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'status',
@@ -43,12 +43,17 @@ Vue.component("PacijentSavetovanja", {
            greska: false,
 	       uspeh: false,
 	       
-		   
+	       sortBy: 'cena',
+           sortDesc: false,
+		 
+		 
+		 	items: [],  
         }
 
     },
     mounted() {
         this.cookie = localStorage.getItem("cookie");
+        this.loadPregledi();
     },
     template: `
       <div>
@@ -59,10 +64,14 @@ Vue.component("PacijentSavetovanja", {
           <b-row>
             <b-table
                 ref="table"
+                id="table-id"
                 hover
-                :items="itemProvider"
+                :items="items"
                 :fields="fields"
                 :busy.sync="table_is_busy"
+                :sort-by.sync="sortBy"
+				:sort-desc.sync="sortDesc"
+				sort-icon-left
             >
             
 	            <template #cell(status)="row">
@@ -133,11 +142,8 @@ Vue.component("PacijentSavetovanja", {
 			       'id_pregleda': this.pregledi[index].id
 			       }
 			    }).then((response) => {
-	          		//this.uspeh = true;
-	          		//this.rezervacije.splice(index, 1);
-   		   			//this.$refs.table.refresh();
-   		   			//localStorage.setItem("uspeh", true);
-   		   			location.reload();
+   		   			this.loadPregledi();
+   		   			this.$root.$emit("bv::refresh::table", "table-id");
 		        })
 		        .catch((e) => {
 		        	this.greska = true;
@@ -146,7 +152,7 @@ Vue.component("PacijentSavetovanja", {
     
         loadPregledi: async function () {
             this.table_is_busy = true
-            let items = []
+            this.items = []
             await axios
                 .get("pregledi/savetovanja_farmaceuta", {
                     params:
@@ -162,7 +168,7 @@ Vue.component("PacijentSavetovanja", {
                     	this.pregledi.push(p);
                     	console.log(p);
                     	
-                        items.push({
+                        this.items.push({
                             idSavetovanja: p.id,
                             apoteka: p.apoteka.naziv,
                             farmaceut: p.username,
@@ -179,10 +185,9 @@ Vue.component("PacijentSavetovanja", {
 		        	console.log(e);
 		        });
             this.table_is_busy = false
-            return items
         },
         itemProvider: function (ctx) {
-            return this.loadPregledi()
+           // return this.loadPregledi()
         },
     },
 });

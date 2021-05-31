@@ -7,6 +7,7 @@ import java.util.List;
 import com.team_08.ISAproj.repository.ApotekaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.team_08.ISAproj.model.Apoteka;
@@ -23,6 +24,10 @@ public class ApotekaService {
 	@Autowired
 	private ApotekaRepository apotekaRepository;
 
+	public void save(Apoteka a) {
+		apotekaRepository.save(a);
+	}
+	
 	public List<Apoteka> findAll() {
 		List<Apoteka> apoteke = apotekaRepository.findAll();
 		return apoteke;
@@ -57,5 +62,11 @@ public class ApotekaService {
     
     public List<Apoteka> findAllInDateRangeWithFreeZdravstveniRadnik(LocalDateTime start, LocalDateTime end) {
         return apotekaRepository.findAllInDateRangeWithFreeZdravstveniRadnik(start, end);
+    }
+    
+    public Page<Apoteka> getAllApotekePaged(int page, int pageSize, String pretragaNaziv,  String pretragaAdresa, boolean smer, Double cenaOD, Double cenaDO) {
+    	pretragaNaziv = "%" + pretragaNaziv + "%";
+    	pretragaAdresa = "%" + pretragaAdresa + "%";
+    	return apotekaRepository.getAllApotekePaged(pretragaNaziv, pretragaAdresa, smer, cenaOD, cenaDO, PageRequest.of(page, pageSize));
     }
 }

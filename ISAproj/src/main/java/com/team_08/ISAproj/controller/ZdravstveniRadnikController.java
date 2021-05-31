@@ -277,7 +277,6 @@ public class ZdravstveniRadnikController {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
             	DermatologDTO dermaDTO = new DermatologDTO(da);
-            	dermaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(da.getId()));
                 return dermaDTO;
             }
         });
@@ -312,7 +311,6 @@ public class ZdravstveniRadnikController {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
             	DermatologDTO dermaDTO = new DermatologDTO(da);
-            	dermaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(da.getId()));
 				if(pregledService.findPreglediFromKorisnikByZdravstveniRadnikID(p.getId(), da.getId()).size() != 0) {
 					dermaDTO.setPravoOcene(true);
 				}
@@ -349,7 +347,6 @@ public class ZdravstveniRadnikController {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
             	FarmaceutDTO farmaDTO = new FarmaceutDTO(f);
-            	farmaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(f.getId()));
                 return farmaDTO;
             }
         });
@@ -383,7 +380,6 @@ public class ZdravstveniRadnikController {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
             	FarmaceutDTO farmaDTO = new FarmaceutDTO(f);
-            	farmaDTO.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(f.getId()));
 				if(pregledService.findPreglediFromKorisnikByZdravstveniRadnikID(p.getId(), f.getId()).size() != 0) {
 					farmaDTO.setPravoOcene(true);
 				}
@@ -542,9 +538,6 @@ public class ZdravstveniRadnikController {
 		}
 		return new ResponseEntity<List<OdsustvoDTO>>(odsustvoDTO,HttpStatus.OK);
     	
-    	
-    	
-    	
     }
    
     //Odbijanje i prihvatanje odustava za godisnji odmor
@@ -636,6 +629,12 @@ public class ZdravstveniRadnikController {
 
 		ocenaService.saveOcena(ocenaZdravstveniRadnik);
 
+		radnik.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(radnik.getId()));
+		if(radnik instanceof Dermatolog) {
+			zdravstveniRadnikService.saveDermatolog((Dermatolog) radnik);
+		} else {
+			zdravstveniRadnikService.saveFarmaceut((Farmaceut) radnik);
+		}
 
         return new ResponseEntity<>(HttpStatus.OK);
 	}

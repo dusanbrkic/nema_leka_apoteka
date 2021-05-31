@@ -75,6 +75,7 @@ public class LekDTO {
         this.oblikLeka = lek.getOblikLeka();
         this.sastav = lek.getSastav();
         this.dodatneNapomene = lek.getDodatneNapomene();
+        this.prosecnaOcena = lek.getProsecnaOcena();
     }
 
     public LekDTO(ApotekaLek al) {
@@ -91,6 +92,7 @@ public class LekDTO {
         this.promotivnaCena = al.getPromotivnaCena();
         this.istekVazenjaCene = al.getIstekVazenjaCene();
         this.pocetakVazenjaCene = al.getPocetakVazenjaCene();
+        this.prosecnaOcena = al.getLek().getProsecnaOcena();
     }
 
 	public String getCookie() {

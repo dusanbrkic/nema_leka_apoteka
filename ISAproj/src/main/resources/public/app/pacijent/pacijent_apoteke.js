@@ -5,13 +5,15 @@ Vue.component("PacijentApoteke", {
            apoteke: [],
 		   currentTutorial: null,
 		   currentIndex: -1,
-	       searchTitle: "",
+	       searchNaziv: "",
+	       searchAdresa: "",
 	
-	       page: 1,
+	       pageApoteka: 1,
 	       count: 0,
 	       pageSize: 6,
-	
+	       pageSizeApoteka: 6,
 	       pageSizes: [3, 6, 9, 15, 30],
+	       totalApoteke: '',
 	       
 	       redosledi: ["opadajuce", "rastuce"],
 	       redosled: "opadajuce",
@@ -40,73 +42,90 @@ Vue.component("PacijentApoteke", {
     	<div class="container">
     	
     	      <b-alert style="text-align: center;" v-model="blocked" variant="danger"> Nalog je blokiran! </b-alert>
+ 
     	
-    	<!-- PRETRAGA -->
-    	 <div class="form-group">
+    	<!-- PRETRAGA NAZIV-->
+ <div class="form-row">    	  	
+    	 <div class="form-group col-md-6">
             <input
 	          type="text"
 	          class="form-control"
-	          placeholder="Pretraga apoteka"
-	          v-model="searchTitle"
+	          placeholder="Pretrazi naziv"
+	          v-model="searchNaziv"
 	          @input="page = 1; retrieveApoteke();"
 	        />
           </div>
           
           
-     <!-- FILTRIRANJE PO OCENI-->     
-     Minimalna ocena:
-      <select v-model="fromGrade" @change="handleGradeMinChange($event)">
-          <option v-for="g in gradeValues">
-            {{ g }}
-          </option>
-      </select>
-     Maksimalna ocena:
-      <select v-model="toGrade" @change="handleGradeMaxChange($event)">
-          <option v-for="g2 in gradeValues">
-            {{ g2 }}
-          </option>
-      </select>     
+         <!-- PRETRAGA ADRESA-->
+    	 <div class="form-group col-md-6">
+            <input
+	          type="text"
+	          class="form-control"
+	          placeholder="Pretrazi adresu"
+	          v-model="searchAdresa"
+	          @input="page = 1; retrieveApoteke();"
+	        />
+          </div>  
+</div>
+          
+     <!-- FILTRIRANJE PO OCENI-->       
+          
+         <form>
+		  <div class="form-group row " style="margin: 2px auto;" >
+		    <h6 for="ocenaOD" class="col-sm-2 col-form-label">Raspon ocena:</h6>
+		    <div class="col-sm-1">
+			    <b-select id="ocenaOD" class="form-control" v-model="fromGrade" @change="handleGradeMinChange($event)">
+			      <option v-for="g in gradeValues">
+			        {{ g }}
+			      </option>
+				</b-select>
+			</div>
+			<div class="col-sm-1">		
+				<b-select id="ocenaDO" class="form-control" v-model="toGrade" @change="handleGradeMaxChange($event)">
+		          <option v-for="g2 in gradeValues">
+		            {{ g2 }}
+		          </option>
+				</b-select>
+				
+		    </div>
+		  </div>
+		</form>
           
           
           
-     <br>     
-     <br>     
-          
-          
-     <!-- POLJE SORTIRANJA -->
-    	Sortiraj po:
-      <select v-model="sortirajPo" @change="handleSortChange($event)">
-          <option v-for="p in polja">
-            {{ p }}
-          </option>
-      </select>
           
        <!-- REDOSLED SORTIRANJA -->
-    	Redosled:
-      <select v-model="redosled" @change="handleSortOrderChange($event)">
-          <option v-for="s in redosledi" :key="s" :value="s">
-            {{ s }}
-          </option>
-      </select>
       
-	<br>
-	
-	
-		      <!-- BIRANJE VELICINE STRANE -->
-	        Apoteka po strani:
-		    <select v-model="pageSize" @change="handlePageSizeChange($event)">
-		      <option v-for="size in pageSizes" :key="size" :value="size">
-		        {{ size }}
-		      </option>
-			</select>
-		
-		 <!-- NAVIGACIJA PO STRANAMA -->
-	      <b-pagination
-	        v-model="page"
-	        :total-rows="count"
-	        :per-page="pageSize"
-	        @change="handlePageChange"
-	      ></b-pagination>
+  		 <form>
+		  <div class="form-group row " style="margin: 2px auto;" >
+		    <h6 for="red" class="col-sm-2 col-form-label">Redosled:</h6>
+		    <div class="col-sm-2">
+			    <b-select id="red" class="form-control" v-model="redosled" @change="handleSortOrderChange($event)">
+			      <option v-for="s in redosledi" :key="s" :value="s">
+			        {{ s }}
+			      </option>
+				</b-select>
+		    </div>
+		  </div>
+		</form>
+      
+			
+				      <!-- BIRANJE VELICINE STRANE -->  
+		 <form>
+			  <div class="form-group row " style="margin: 2px auto;">
+			    <h6 for="size" class="col-sm-2 col-form-label">Apoteka po strani:</h6>
+			    <div class="col-sm-1">
+				    <b-select id="size" class="form-control" v-model="pageSizeApoteka" @change="handlePageSizeChange">
+				      <option v-for="size in pageSizes" :key="size" :value="size">
+				        {{ size }}
+				      </option>
+					</b-select>
+			    </div>
+			  </div>
+		</form>
+          
+       
 	
 
 		<!-- PRIKAZ APOTEKA -->
@@ -261,6 +280,21 @@ Vue.component("PacijentApoteke", {
     	</b-modal>	
 
 
+            <!-- SELECT PAGE -->           
+            <b-pagination
+                v-if="totalApoteke>0"
+                pills
+                align="center"
+                style="margin: 10px auto;"
+                v-model="pageApoteka"
+                :total-rows="totalApoteke"
+                :per-page="pageSizeApoteka"
+                @change="handlePageChange"
+            ></b-pagination>
+            <h6 align="center" style="margin: 10px;" v-if="totalApoteke==0">Nema apoteka za prikaz</h6>
+          
+     
+
 
       </div>
     `
@@ -270,38 +304,36 @@ Vue.component("PacijentApoteke", {
         redirectToHome: function () {
             app.$router.push("/")
         },
-        
-	    getRequestParams(searchTitle, page, pageSize, sortirajPo, redosled, fromGrade, toGrade) {
-	      let params = {};
-	
-	      if (searchTitle) { params["title"] = searchTitle; }
-	      if (page) { params["page"] = page - 1; }
-	      if (pageSize) { params["size"] = pageSize; }
-	      if(sortirajPo) {	params["sort"] = sortirajPo; }
-		  if(redosled) { params["smer"] = redosled; }
-		  if(fromGrade) { params["fromGrade"] = fromGrade; }
-	 	  if(toGrade) { params["toGrade"] = toGrade; }
-	 	  
-	      return params;
-	    },
     
 	    retrieveApoteke() {
-	      const params = this.getRequestParams(this.searchTitle,this.page,this.pageSize, this.sortirajPo, this.redosled, this.fromGrade, this.toGrade);
-	
-		  params["cookie"] = this.cookie;
-	
-		  axios.get("apoteke", {params})
-	        .then((response) => {
-	          const { app, totalItems } = response.data;
-	          this.apoteke = [];
-	          let tmp = response.data.apoteke;
-	          console.log(tmp);
-	          this.count = totalItems;
+        
+        	console.log(this.fromGrade);
+        	console.log(this.toGrade);
+        
+	       axios.post("/apoteke/getall", {
+                    'pretragaNaziv': this.searchNaziv,
+                    'pretragaAdresa': this.searchAdresa,
+                    'cookie': this.cookie,
+                    'page': this.pageApoteka - 1,
+                    'pageSize': this.pageSizeApoteka,
+                    'smer': (() => {
+                    	if(this.redosled == "opadajuce") {
+                    		return true
+                    	}
+                            return false
+                    })(),
+                    'ocenaOD': this.fromGrade + ".0",
+                    'ocenaDO': this.toGrade + ".0",
+                })
+                .then(response => {
+                
+	          	this.apoteke = [];
+				this.totalApoteke = response.data['totalElements']
 
-		  		for (let i = 0; i < this.count/3; i = i + 1) {
+		  		for (let i = 0; i < this.totalApoteke/3; i = i + 1) {
                     this.apoteke.push([])
                     for (let j = 0; j < 3; j = j + 1) {
-                        let item = tmp[j + i * 3]
+                        let item = response.data.content[j + i * 3]
                         if (typeof item === 'undefined')
                             return
                         item.prosecnaOcena = Math.round(item.prosecnaOcena * 10) / 10
@@ -332,45 +364,48 @@ Vue.component("PacijentApoteke", {
                         this.apoteke[i].push(item)
                     }
                 }
-	        })
-	        .catch((e) => {
-	          console.log(e);
-	        });
+                })
+		        .catch((e) => {
+		          console.log(e);
+		        });
+	        
 	    },
 	    handleSortChange(value) {
-	      this.sortirajPo = event.target.value;
-	      this.page = 1;
+	      this.sortirajPo = value;
+	      this.pageApoteka = 1;
 	      this.retrieveApoteke();
 	    },
 	    
 		handleSortOrderChange(value) {
-	      this.redosled = event.target.value;
-	      this.page = 1;
+	      this.redosled = value;
+	      this.pageApoteka = 1;
 	      this.retrieveApoteke();
 	    },
 	    
 	   	handleGradeMinChange(value) {
-	      this.fromGrade = event.target.value;
-	      this.page = 1;
+	      this.fromGrade = value;
+	      this.pageApoteka = 1;
 	      this.retrieveApoteke();
 	    },
 	    
 	    handleGradeMaxChange(value) {
-	      this.toGrade = event.target.value;
-	      this.page = 1;
+	      this.toGrade = value;
+	      this.pageApoteka = 1;
 	      this.retrieveApoteke();
 	    },
 
 	    handlePageChange(value) {
-	      this.page = value;
+	      this.pageApoteka = value;
 	      this.retrieveApoteke();
 	    },
 	
-	    handlePageSizeChange(event) {
-	      this.pageSize = event.target.value;
-	      this.page = 1;
+	    handlePageSizeChange(value) {
+	      this.pageSizeApoteka = value;
+	      this.pageApoteka = 1;
 	      this.retrieveApoteke();
 	    },
+	    
+	    
 	    prikaziLekove(apoteka){
 	    	localStorage.setItem('apotekaID', apoteka.id);
 	    	app.$router.push("/home-pacijent/rezervacija");

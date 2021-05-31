@@ -22,6 +22,10 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
                     sortable: false
                 },
                 {
+                	key: 'adresa',
+                	sortable: false
+                },
+                {
                     key: 'cenaSavetovanja',
                     sortable: true
                 },
@@ -41,7 +45,7 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
         	sortByfarmaceuti: 'ocenaFarmaceuta',
         	sortDescfarmaceuti: false,
         	selectedApoteka: -1,
-        	selectedFarmaceut: 0,
+        	selectedFarmaceut: -1,
         	farmaceuti_fields: [
                 {
                     key: 'id',
@@ -236,6 +240,7 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
                         this.items.push({
                             id: a.id,
                             apoteka: a.naziv,
+                            adresa: a.adresa,
                             cenaSavetovanja: a.cenaSavetovanja,
                             ocenaApoteke: a.prosecnaOcena,
                           	_rowVariant: "info"
@@ -256,18 +261,18 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
       	myRowClickHandler(record, index) {
       		this.selectedApoteka = this.items[index].id;
       		this.loadFarmaceute();
-      		console.log("doso");
       		$("#modal").modal();
 		},
 		myRowFarmaceuti(record, index){
-			
+		
 			this.selectedFarmaceut = index;
-		
+			
 			for(let i = 0; i < this.farmaceuti.length; i++){
-				this.farmaceuti[i]._rowVariant = 'none';
+				this.farmaceuti[i]._rowVariant = 'light';
 			}
-		
+			
 			this.farmaceuti[index]._rowVariant = 'success';
+
 		},
 		setInfoFilled() {
            this.infoFilled = true;
@@ -302,7 +307,8 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
                             
                         })
                     }
-                    this.farmaceuti[0]._rowVariant = "success";
+                    selectedFarmaceut = -1;
+                    //this.farmaceuti[0]._rowVariant = "success";
                 })
        	        .catch((e) => {
 		        	console.log(e);

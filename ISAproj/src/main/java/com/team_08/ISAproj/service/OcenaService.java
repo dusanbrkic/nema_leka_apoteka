@@ -35,10 +35,13 @@ public class OcenaService {
     private OcenaRepository ocenaRepository;
     
     public Double findProsecnaOcenaLekaByID(Long id) {
-    	double d = 0;
+    	Double d = 0.0;
     	try {
     		d = ocenaRepository.findProsecnaOcenaLekaByID(id);
-		} catch (Exception e) { d = 0;}
+			if(d == null) {
+				d = 0.0;
+			}
+		} catch (Exception e) { d = 0.0;}
     	return d;
     }
     
@@ -55,10 +58,13 @@ public class OcenaService {
     }
     
     public Double findProsecnaOcenaApotekeByID(Long id) {
-    	double d = 0;
+    	Double d = 0.0;
     	try {
 			d = ocenaRepository.findProsecnaOcenaApotekaByID(id);
-		} catch (Exception e) { d = 0;}
+			if(d == null) {
+				d = 0.0;
+			}
+		} catch (Exception e) { d = 0.0;}
     	return d;
     }
     
@@ -67,10 +73,13 @@ public class OcenaService {
     }
     
     public Double findProsecnaOcenaZdravstvenogRadnikaByID(Long id) {
-    	double d = 0;
+    	Double d = 0.0;
     	try {
     		d = ocenaRepository.findProsecnaOcenaZdravstvenogRadnikaByID(id);
-		} catch (Exception e) { d = 0;}
+			if(d == null) {
+				d = 0.0;
+			}
+		} catch (Exception e) { d = 0.0;}
     	return d;
     }
     

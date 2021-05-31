@@ -56,7 +56,6 @@ public class ApotekaLek {
         this.lek = lek;
     }
 
-
 	public void setKolicina(Integer kolicina) {
 		this.kolicina = kolicina;
 	}
