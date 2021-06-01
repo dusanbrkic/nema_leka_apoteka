@@ -153,6 +153,19 @@ public class PregledController {
         return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/updatePregledBezPacijenta", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updatePregledBezPacijenta(@RequestParam Long pregledId,
+                                                            @RequestParam String cookie,
+                                                            @RequestParam Long pacijentId){
+        Pregled pregled = pregledService.findOneById(pregledId);
+        if(pregled == null || !pregled.getZdravstveniRadnik().getCookieToken().equals(cookie))
+            return new ResponseEntity<String>(HttpStatus.OK);
+        pregled.setPregledObavljen(true);
+        pregled.setPacijentSeNijePojavio(true);
+        pregledService.savePregled(pregled);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping(value = "/updatePregled", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updatePregled(@RequestBody PregledDTO pregledDTO) {
         Pregled pregled = pregledService.findOneById(pregledDTO.getId());
@@ -244,6 +257,8 @@ public class PregledController {
                                                        @RequestParam("idApoteke") Long idApoteke) {
         LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        if(zdravstveniRadnikService.findOneByCookie(cookie)==null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         // provera da li je dermatolog ili farmaceut slobodan
         if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
             return new ResponseEntity<String>("Vi ste zauzeti u zadatom terminu!",HttpStatus.BAD_REQUEST);

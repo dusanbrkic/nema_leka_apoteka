@@ -5,6 +5,7 @@ import java.util.List;
 import com.team_08.ISAproj.dto.*;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 import com.team_08.ISAproj.model.*;
+import com.team_08.ISAproj.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,14 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.team_08.ISAproj.service.ApotekaLekService;
-import com.team_08.ISAproj.service.ApotekaService;
-import com.team_08.ISAproj.service.EmailService;
-import com.team_08.ISAproj.service.KorisnikService;
-import com.team_08.ISAproj.service.LekService;
-import com.team_08.ISAproj.service.NarudzbenicaService;
-import com.team_08.ISAproj.service.ZahtevLekService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,7 +45,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/lekovi")
 public class LekController {
 
-
+	@Autowired
+	private ZdravstveniRadnikService zdravstveniRadnikService;
     @Autowired
     private ApotekaLekService apotekaLekService;
     @Autowired
@@ -388,6 +382,9 @@ public class LekController {
 		Long apotekaID = ((Number) body.get("apotekaID")).longValue();
 
 		vecPreporuceniSifre.add("");
+
+		if(zdravstveniRadnikService.findOneByCookie(cookie)==null)
+			return new ResponseEntity<Page<LekDTO>>(Page.empty(), HttpStatus.BAD_REQUEST);
 
 		Page<Lek> lekovi = null;
 		if(nedostupanLekSifra == null)

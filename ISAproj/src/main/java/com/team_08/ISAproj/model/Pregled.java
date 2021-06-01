@@ -20,6 +20,8 @@ public class Pregled {
     private LocalDateTime vreme;
     @Column(name = "TRAJANJE")
     private Long trajanje;
+    @Column(name = "PACIJENT_SE_NIJE_POJAVIO")
+    private Boolean pacijentSeNijePojavio;
     @Column(name = "KRAJ")
     private LocalDateTime kraj;
     @Column(name = "DIJAGNOZA")
@@ -170,5 +172,13 @@ public class Pregled {
 
     public void setZdravstveniRadnik(ZdravstveniRadnik zdravstveniRadnik) {
         this.zdravstveniRadnik = zdravstveniRadnik;
+    }
+
+    public Boolean getPacijentSeNijePojavio() {
+        return pacijentSeNijePojavio;
+    }
+
+    public void setPacijentSeNijePojavio(Boolean pacijentSeNijePojavio) {
+        this.pacijentSeNijePojavio = pacijentSeNijePojavio;
     }
 }

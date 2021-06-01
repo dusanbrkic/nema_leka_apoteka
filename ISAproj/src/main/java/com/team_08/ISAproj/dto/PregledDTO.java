@@ -9,6 +9,7 @@ import java.util.Set;
 public class PregledDTO {
     private Long id;
 
+    private Boolean pacijentSeNijePojavio;
     private LocalDateTime start;
     private LocalDateTime end;
     private String dijagnoza;
@@ -38,6 +39,7 @@ public class PregledDTO {
         this.trajanje = pregled.getTrajanje();
         this.cena = pregled.getCena();
         this.preporuceniLekovi = new HashSet<PregledLekDTO>();
+        this.pacijentSeNijePojavio = pregled.getPacijentSeNijePojavio();
     }
     
     public PregledDTO(Long id, LocalDateTime start, LocalDateTime end, Double cena, String username) {
@@ -155,5 +157,13 @@ public class PregledDTO {
 
     public void setPregledZakazan(boolean pregledZakazan) {
         this.pregledZakazan = pregledZakazan;
+    }
+
+    public Boolean getPacijentSeNijePojavio() {
+        return pacijentSeNijePojavio;
+    }
+
+    public void setPacijentSeNijePojavio(Boolean pacijentSeNijePojavio) {
+        this.pacijentSeNijePojavio = pacijentSeNijePojavio;
     }
 }
