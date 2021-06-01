@@ -1,8 +1,6 @@
 package com.team_08.ISAproj.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.model.*;
@@ -107,30 +105,33 @@ public class ApotekaLekService {
         return apotekaLekRepository.findAllApotekaLekoviSortedAndSearchedAndDone(PageRequest.of(page, size, sort), title, apotekaId);
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
     public void updateKolicinaLekovaKonkurentno(Set<PregledLek> preporuceniLekovi, Long idApoteke) throws LekNijeNaStanjuException {
-		System.out.println("----------------------------USAO SAM U TRANSAKCIJU I POKUSAVAM DA UZMEM LEK!------------------------------");
-		List<ApotekaLek> apotekaLekovi = new ArrayList<>();
-
-		
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] USAO SAM U TRANSAKCIJU I POKUSAVAM DA UZMEM LEK!------------------------------");
+		Map<Long, Integer> kolicineLekova = new HashMap<>();
 
 		for (PregledLek pregledLek : preporuceniLekovi) {
-			ApotekaLek apotekaLek = apotekaLekRepository.findApotekaLekByIdWithLock(pregledLek.getLek().getId(), idApoteke);
-			System.out.println("----------------------------ZAKLJUCAO SAM OBJEKAT!------------------------------");
+			kolicineLekova.put(pregledLek.getId(), pregledLek.getKolicina());
+		}
 
-			if (pregledLek.getKolicina() > apotekaLek.getKolicina())
+		List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findApotekaLekoviByIdWithLock(kolicineLekova.keySet(), idApoteke);
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] ZAKLJUCAO SAM OBJEKAT!------------------------------");
+
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		for (ApotekaLek apotekaLek : apotekaLekovi) {
+			if (kolicineLekova.get(apotekaLek.getId()) > apotekaLek.getKolicina())
 				throw  new LekNijeNaStanjuException();
-
-			apotekaLek.setKolicina(apotekaLek.getKolicina() - pregledLek.getKolicina());
-			apotekaLekovi.add(apotekaLek);
+			apotekaLek.setKolicina(apotekaLek.getKolicina() - kolicineLekova.get(apotekaLek.getId()));
 		}
 		apotekaLekRepository.saveAll(apotekaLekovi);
-		System.out.println("----------------------------SACUVAO SAM OBJEKAT!------------------------------");
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] SACUVAO SAM OBJEKAT!------------------------------");
 
-//		entityManager.getTransaction().commit();
-//		entityManager.close();
-
-		System.out.println("----------------------------ZAVRSIO SAM SA PREUZIMANJEM LEKA!------------------------------");
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] ZAVRSIO SAM SA PREUZIMANJEM LEKA!------------------------------");
 
 
 	}
