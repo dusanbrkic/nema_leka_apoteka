@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
-import java.sql.Date;
 
 @Entity(name = "ADMIN_APOTEKE")
 public class AdminApoteke extends Korisnik {
@@ -35,9 +34,9 @@ public class AdminApoteke extends Korisnik {
 
     }
 
-    void slobodniTerminDermatolog(Dermatolog dermatolog, Date datumPregleda, Date kraj, int cena) {
-        // to do
-    }
+//    void slobodniTerminDermatolog(Dermatolog dermatolog, Date datumPregleda, Date kraj, int cena) {
+//        // to do
+//    }
 
     void pretraziLekove(String sifra) {
         // to do

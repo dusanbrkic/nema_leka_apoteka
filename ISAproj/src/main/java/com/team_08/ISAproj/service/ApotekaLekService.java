@@ -86,7 +86,7 @@ public class ApotekaLekService {
 	public Page<ApotekaLek> findAllApotekaLekoviSortedAndSearchedAndDone(Integer page, Integer size,
 			String sortBy, Boolean sortDesc, String title,Long apotekaId) {
 		title = "%" + title + "%";
-		if(!(sortBy.equals("kolicina") || sortBy.equals("cena") || sortBy.equals("istekVazenjaCene"))) {
+		if(!(sortBy.equals("promotivnaCena") || sortBy.equals("kolicina") || sortBy.equals("cena") || sortBy.equals("istekVazenjaCene"))) {
 			sortBy = "l." + sortBy;
 		}
 		Sort sort;

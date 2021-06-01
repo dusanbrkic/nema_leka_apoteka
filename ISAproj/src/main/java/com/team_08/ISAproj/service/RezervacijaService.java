@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -83,8 +84,18 @@ public class RezervacijaService {
     public List<RezervacijaLek> findRezervacijaLekFromKorisnikByApoteka(Long idPacijent, Long idApoteke) {
 	    return rezervacijaRepository.findRezervacijaLekFromKorisnikByApoteka(idPacijent, idApoteke);
     }
-    
+    public List<Rezervacija> findAllRezervacijeFinishedYear(Long id,int godina){
+    	
+    	return rezervacijaRepository.findAllRezervacijeFinishedYear(id,godina);
+    	
+    }
+    	
     public Rezervacija fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
 	    return rezervacijaRepository.fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
+    }
+    public List<Rezervacija> findAllRezervacijeFinishedDateRange(Long id,LocalDateTime start, LocalDateTime end){
+    	
+    	return rezervacijaRepository.findAllRezervacijeFinishedDateRange(id, start, end);
+    	
     }
 }

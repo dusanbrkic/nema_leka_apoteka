@@ -59,24 +59,33 @@ Vue.component("DodajFarmaceuta", {
       <router-view/>
       <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
       <b-container id="page_content">
-      	      <b-card style="max-width: 500px; margin: 30px auto;" title="Registracija">
+
+
+
+
+
+      <b-card style="max-width: 500px; margin: 30px auto;">
       <b-alert style="text-align: center;" v-model="this.postojiMail" variant="danger">Vec postoji nalog sa ovom email adresom!</b-alert>
       <b-alert style="text-align: center;" v-model="this.postojiKorisnicko" variant="danger">Vec postoji nalog sa ovim korisnickim imenom!</b-alert>
+      <div class="text-center"><h2>Registracija farmaceuta</h2></div>
         <b-form @submit.prevent="onSubmit">
           <b-form-group id="input-group-1" label="Email adresa:" label-for="input-1">
             <b-form-input
+                required
                 id="input-1"
                 v-model="farmaceutDTO.emailAdresa"
             ></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-2" label="Korisnicko ime:" label-for="input-2">
             <b-form-input
+                required
                 id="input-2"
                 v-model="farmaceutDTO.username"
             ></b-form-input>
           </b-form-group>
 		  <b-form-group id="input-group-10" label="Lozinka:" label-for="input-2">
             <b-form-input
+                required
                 id="input-10"
                 v-model="farmaceutDTO.password"
                 type="password"
@@ -84,18 +93,21 @@ Vue.component("DodajFarmaceuta", {
           </b-form-group>
           <b-form-group id="input-group-3" label="Ime:" label-for="input-3">
             <b-form-input
+                required
                 id="input-3"
                 v-model="farmaceutDTO.ime"
             ></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-4" label="Prezime:" label-for="input-4">
             <b-form-input
+                required
                 id="input-4"
                 v-model="farmaceutDTO.prezime"
             ></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-5" label="Datum rodjenja:" label-for="input-5">
             <b-form-input
+                required
                 id="input-5"
                 type="date"
                 v-model="farmaceutDTO.datumRodjenja"
@@ -103,30 +115,35 @@ Vue.component("DodajFarmaceuta", {
           </b-form-group>
           <b-form-group id="input-group-6" label="Adresa:" label-for="input-6">
             <b-form-input
+                required
                 id="input-6"
                 v-model="farmaceutDTO.adresa"
             ></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-7" label="Grad:" label-for="input-7">
             <b-form-input
+                required
                 id="input-7"
                 v-model="farmaceutDTO.grad"
             ></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-8" label="Drzava:" label-for="input-8">
             <b-form-input
+                required
                 id="input-8"
                 v-model="farmaceutDTO.drzava"
             ></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-9" label="Broj telefona:" label-for="input-9">
             <b-form-input
+                required
                 id="input-9"
                 v-model="farmaceutDTO.brojTelefona"
             ></b-form-input>
 		
 		<b-form-group id="input-group-10" label="Pocetak radnog vremena:" label-for="input-10">
             <b-form-input
+                required
                 id="input-10"
                 v-model="farmaceutDTO.radnoVremePocetak"
                 type="time"
@@ -134,6 +151,7 @@ Vue.component("DodajFarmaceuta", {
             ></b-form-input>
 		<b-form-group id="input-group-11" label="Kraj radnog vremena:" label-for="input-11">
             <b-form-input
+                required
                 id="input-11"
                 v-model="farmaceutDTO.radnoVremeKraj"
                 type="time"
@@ -153,16 +171,22 @@ Vue.component("DodajFarmaceuta", {
       app.$router.push("/");
     },
     onSubmit: function () {
-      this.farmaceutDTO.radnoVremePocetak =
-        "2008-01-01T" + this.farmaceutDTO.radnoVremePocetak + ":00.000Z";
-      this.farmaceutDTO.radnoVremeKraj =
-        "2008-01-01T" + this.farmaceutDTO.radnoVremeKraj + ":00.000Z";
+      this.farmaceutDTO.radnoVremePocetak = this.farmaceutDTO.radnoVremePocetak;
+      this.farmaceutDTO.radnoVremeKraj = this.farmaceutDTO.radnoVremeKraj;
       this.postojiMail = false;
       this.postojiKorisnicko = false;
       console.log(this.farmaceutDTO);
       axios
         .post("zdravstveniradnik/addFarmaceut", this.farmaceutDTO)
-        .then((response) => console.log(response.data))
+        .then((response) => {
+          this.$bvToast.toast(`Registrovan novi farmaceut`, {
+            toaster: "b-toaster-top-center",
+            variant: "success",
+            solid: true,
+            autoHideDelay: 4000,
+            noCloseButton: true,
+          });
+        })
         .catch((error) => {
           if (error.request.status == 400) {
             this.postojiMail = true;
@@ -170,6 +194,7 @@ Vue.component("DodajFarmaceuta", {
             this.postojiKorisnicko = true;
           }
         });
+      this.farmaceutDTO = [];
     },
   },
 });

@@ -76,6 +76,9 @@ public class PregledService {
     public List<Pregled> findAllFromApoteka(Long apoteka_id){
     	return pregledRepository.findAllfromApoteka(apoteka_id);
     }
+    public List<Pregled> findAllFromApotekaFinished(Long apoteka_id){
+    	return pregledRepository.findAllFromApotekaFinished(apoteka_id);
+    }
     public List<Pregled> findAllByPacijent(Pacijent p){
     	return pregledRepository.findAllByPacijent(p);
     }
@@ -92,4 +95,23 @@ public class PregledService {
     public Pregled findOneStartsNow(String cookie, LocalDateTime start) {
         return pregledRepository.findOneStartsNow(cookie, start);
     }
+
+	public List<Pregled> findAllFromApotekaFinishedYearMonth(Long id, int godina, int mesec) {
+		// TODO Auto-generated method stub
+		return pregledRepository.findAllFromApotekaFinishedYearMonth(id,godina,mesec);
+	}
+	public List<Pregled> findAllFromApotekaFinishedYear(Long id, int godina) {
+		// TODO Auto-generated method stub
+		return pregledRepository.findAllFromApotekaFinishedYear(id,godina);
+	}
+	public List<Pregled> findAllFromApotekaFinishedYearQuartal(Long id, int godina, int kvartal) {
+		// TODO Auto-generated method stub
+		return pregledRepository.findAllFromApotekaFinishedYearQuartal(id,godina,kvartal);
+	}
+	public List<Pregled> findAllFromApotekaFinishedDateRange(Long id, LocalDateTime start, LocalDateTime end) {
+		// TODO Auto-generated method stub
+		return pregledRepository.findAllFromApotekaFinishedDateRange(id,start,end);
+	}
+	
+
 }

@@ -131,13 +131,15 @@ Vue.component("AdminPromocija", {
 		<b-card style="margin: 40px auto; max-width: 2000px" >
       <b-container id="page_content">
       <div class="text-center"><h2>Dodavanje promocije</h2></div>
-          <br>		
+          <br>
+    <b-form @submit.prevent="onDodajPromociju">
       <b-row class="mt-2">
       <b-col sm="2">
         <label for="textarea-default">Opis promocije:</label>
       </b-col>
       <b-col sm="10">
         <b-form-textarea
+          required
           v-model = "tekstPromocije"
           id="textarea-default"
           placeholder="Unesite opis promocije"
@@ -149,21 +151,33 @@ Vue.component("AdminPromocija", {
         <b-col sm="2">
         <label>Pocetak promocije:</label>
         </b-col>
-        <b-col sm="2"><b-form-datepicker v-model = "pocetakVazenja" required :min="min" type= "date"></<b-form-datepicker></b-col>
-                <b-col sm="2">
+        <b-col sm="2"><b-form-datepicker required="true" v-model = "pocetakVazenja" required :min="min" type= "date"></<b-form-datepicker></b-col>
+        <b-col sm="2">
         <label>Kraj promocije:</label>
         </b-col>
-        <b-col sm="2"><b-form-datepicker v-model = "krajVazenja" :min="min" type= "date"></<b-form-datepicker></b-col>
+        <b-col sm="2"><b-form-datepicker required="true" v-model = "krajVazenja" :min="min"></<b-form-datepicker></b-col>
+        <b-col>
+         <div v-if="lekoviPromocija.length != 0">
+        <b-button class="text-right" style="float: right" type="submit" variant="primary">Dodaj promociju</b-button>
+          </div>
+        </b-col>
         </b-row>
+
+                </b-form>
         <br>
-    <b-tabs content-class="mt-3">
+    <hr>
+    <b-tabs content-class="mt-3" fill>
 
       <b-tab title="Lekovi" active>
          <!-- Tabela ostalih -->
         <b-row>
           <b-table
               id="lekovi-tabela"
-              hover
+              striped 
+              borderless 
+              outlined 
+              head-variant="light"
+              stacked="md"
               :items="lekovi"
               :fields="fields"
               :per-page="pageSize"
@@ -174,7 +188,7 @@ Vue.component("AdminPromocija", {
               responsive="sm"
               :sort-desc.sync="sortDesc">
           <template #cell(dodajPromociju)="row">
-            <b-button v-on:click="dodajLekPromociju(row)" variant="primary">Dodaj lek u promociju</b-button>
+            <b-button v-on:click="dodajLekPromociju(row)" variant="primary">Dodaj u promociju</b-button>
           </template>
         </b-table>
         </b-row>
@@ -197,15 +211,20 @@ Vue.component("AdminPromocija", {
           </b-col>
          </b-row>
          </b-tab>
-      <b-tab title="Dodate promocije">
+      <b-tab title="Lekovi u promociji">
 
       <!-- Tabela dodatih -->
         <div class="text-center">
             <b-row >
+            <div v-if="lekoviPromocija.length != 0">
         <b-table
-            striped
             id="promocija-tabela"
-            hover
+            style="min-width: 1000px;"
+            striped 
+            borderless 
+            outlined 
+            head-variant="light"
+            stacked="md"
             :items="lekoviPromocija"
             :fields="fieldsPromocija"
             :per-page="pageSize"
@@ -219,13 +238,11 @@ Vue.component("AdminPromocija", {
             <b-button v-on:click="obrisiIzPromocije(row.index)" variant="danger">Obrisi</b-button>
           </template>
           </b-table>
+          </div>
           </b-row>
         <br>
-        <b-row>
-         <div v-if="lekoviPromocija.length != 0">
-        <b-button class="text-right" v-on:click="onDodajPromociju"variant="primary">Dodaj promociju</b-button>
-          </div>
-        </b-row>
+
+
         <br>
       </div>
       </b-tab>
@@ -282,7 +299,7 @@ Vue.component("AdminPromocija", {
         this.lekoviPromocija[i].krajVazenja =
           this.krajVazenja + "T" + "00:00:00.000Z";
         this.lekoviPromocija[i].tekstPromocije = this.tekstPromocije;
-        console.log(this.lekoviPromocija[i]);
+        console.log(this.pocetakVazenja);
         this.$root.$emit("bv::refresh::table", "lekovi-tabela");
       }
       axios
@@ -291,6 +308,14 @@ Vue.component("AdminPromocija", {
           JSON.parse(JSON.stringify(this.lekoviPromocija))
         )
         .then((response) => console.log(response.data));
+
+      this.$bvToast.toast(`Dodata nova promocija`, {
+        toaster: "b-toaster-top-center",
+        variant: "success",
+        solid: true,
+        autoHideDelay: 4000,
+        noCloseButton: true,
+      });
       this.lekoviPromocija = [];
     },
     obrisiIzPromocije(index) {
@@ -299,7 +324,6 @@ Vue.component("AdminPromocija", {
       console.log(this.lekovi);
       this.lekoviPromocija.splice(index, 1);
       this.$root.$emit("bv::refresh::table", "lekovi-tabela");
-      
     },
     dodajLekPromociju(row) {
       console.log(row);
@@ -311,8 +335,13 @@ Vue.component("AdminPromocija", {
     onDodajLekPromociju() {
       this.lekoviPromocija.push(this.izabranLek);
       this.izabranLek.cookie = this.cookie;
-      this.lekovi.splice(this.lekIndex, 1);
-      console.log(this.lekIndex);
+      for (i = 0; i < this.lekovi.length; i++) {
+        if (this.lekovi[i].sifra === this.izabranLek.sifra) {
+          this.lekovi.splice(i, 1);
+        }
+      }
+      //this.lekovi.splice(this.lekIndex, 1);
+      //console.log(this.lekIndex);
       this.izabranLek = "";
       this.$root.$emit("bv::refresh::table", "lekovi-tabela");
       this.$refs["my-modal"].hide();

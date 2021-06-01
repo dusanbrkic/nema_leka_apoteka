@@ -23,12 +23,12 @@ public class OdsustvoService {
 	}
 	public List<Odsustvo> fetchOdsustvaByApotekaId(Long apotekaId){
 		
-		List<Odsustvo> odsustvaDerma = odsustvoRepository.findAllDermaOdsustvoApotekaId(apotekaId,"cekanju");
+		//List<Odsustvo> odsustvaDerma = odsustvoRepository.findAllDermaOdsustvoApotekaId(apotekaId,"cekanju");
 		List<Odsustvo> odsustvaFarma = odsustvoRepository.findAllFarmaOdsustvoApotekaId(apotekaId,"cekanju");
-		for(Odsustvo o: odsustvaFarma) {
-			odsustvaDerma.add(o);
-		}
-		return odsustvaDerma;
+//		for(Odsustvo o: odsustvaFarma) {
+//			odsustvaDerma.add(o);
+//		}
+		return odsustvaFarma;
 		
 	}
 	public Odsustvo findOne(Long id) {

@@ -561,6 +561,7 @@ public class LekController {
                 return zahteviLekDTO;
             }
         });
+        System.out.println(zahteviLekDTO);
         return new ResponseEntity<Page<ZahtevLekDTO>>(zahteviLekDTO, HttpStatus.OK);
 		
 		
