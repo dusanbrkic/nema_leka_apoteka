@@ -15,6 +15,8 @@ public class Rezervacija {
 	private Long id;
 	@Column(name = "ROK_PONUDE")
 	private LocalDateTime rokPonude;
+	@Column(name = "DATUM_PONUDE")
+	private LocalDateTime datumPonude;
 	
 	// connections
 	@OneToMany(mappedBy = "rezervacija", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -110,5 +112,13 @@ public class Rezervacija {
 
 	public Long getId() {
 		return id;
+	}
+
+	public LocalDateTime getDatumPonude() {
+		return datumPonude;
+	}
+
+	public void setDatumPonude(LocalDateTime datumPonude) {
+		this.datumPonude = datumPonude;
 	}
 }

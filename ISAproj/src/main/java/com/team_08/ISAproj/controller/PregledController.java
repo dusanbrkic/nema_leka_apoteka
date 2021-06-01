@@ -191,6 +191,7 @@ public class PregledController {
         Rezervacija rezervacija = new Rezervacija();
         rezervacija.setPreuzeto(false);
         rezervacija.setApoteka(pregled.getApoteka());
+        rezervacija.setDatumPonude(LocalDateTime.now());
         rezervacija.setRokPonude(LocalDateTime.now().plusDays(7));
         rezervacija.setPacijent(pregled.getPacijent());
         rezervacija.setIsteklo(false);
@@ -214,7 +215,6 @@ public class PregledController {
             //upit koji izvlaci pojedinacnu cena leka sa datim ID-jem
             double trenutnaCenaLeka = apotekaLekService.findInApotekaLek(pregledLek.getLek().getId(), pregled.getApoteka().getId()).getCena();
 
-            //TO DO ovde treba cenu
             rezervacija.getLekovi()
                     .add(new RezervacijaLek(pregledLek.getKolicina(), rezervacija, pregledLek.getLek(), trenutnaCenaLeka));
             double cenaLeka = pregledLek.getKolicina() * trenutnaCenaLeka;
