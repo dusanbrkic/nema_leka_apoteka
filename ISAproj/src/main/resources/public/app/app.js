@@ -90,6 +90,10 @@ const router = new VueRouter({
                     path: 'pregledani-pacijenti',
                     component: PregledaniPacijenti
                 },
+                {
+                    path: 'odsustvo-forma',
+                    component: OdsustvoForma
+                },
             ]},
         {path: '/home-farmaceut', component: HomeFarmaceut,  children: [
                 {
@@ -107,9 +111,12 @@ const router = new VueRouter({
                 {
                     path: 'pregledani-pacijenti',
                     component: PregledaniPacijenti
-                }
+                },
+                {
+                    path: 'odsustvo-forma',
+                    component: OdsustvoForma
+                },
             ]},
-        {path: '/odsustvo-forma', component: OdsustvoForma},
         {path: '/home-admin_apoteke', component : HomeAdminApoteke},
 	    {path: '/home-pacijent', component: HomePacijent,  children: [
 	        {

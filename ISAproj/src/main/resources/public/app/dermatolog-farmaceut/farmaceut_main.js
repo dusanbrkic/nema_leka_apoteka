@@ -43,7 +43,7 @@ Vue.component("FarmaceutMain", {
               <b-card-text>
                 Idi na stranicu za kreiranje zahteva za godisnji odmor
               </b-card-text>
-              <a href="#/odsustvo-forma" class="stretched-link"></a>
+              <a href="#/home-farmaceut/odsustvo-forma" class="stretched-link"></a>
             </b-card>
           </b-col>
           <b-col>

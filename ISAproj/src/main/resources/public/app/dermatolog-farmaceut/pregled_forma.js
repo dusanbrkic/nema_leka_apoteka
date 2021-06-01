@@ -307,9 +307,14 @@ Vue.component("PregledForma", {
         onSubmit: async function () {
             await axios
                 .put("pregledi/updatePregled", this.pregled)
-            localStorage.removeItem("pregled")
-            if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
-            else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
+                .then(response => {
+                    localStorage.removeItem("pregled")
+                    if (this.rola == "FARMACEUT") app.$router.push("/home-farmaceut/calendar-view")
+                    else if (this.rola == "DERMATOLOG") app.$router.push("/home-dermatolog/calendar-view")
+                })
+                .catch(reason => {
+                    alert(reason.request.response)
+                })
         },
         zakazivanje_forma: function () {
             this.$bvModal.show('zakazivanjeModal')

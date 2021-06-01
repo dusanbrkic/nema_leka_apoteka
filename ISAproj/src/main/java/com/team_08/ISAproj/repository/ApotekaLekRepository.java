@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import com.team_08.ISAproj.model.Apoteka;
 import com.team_08.ISAproj.model.ApotekaLek;
 import com.team_08.ISAproj.model.Lek;
+
+import javax.persistence.LockModeType;
 
 @Repository
 public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
@@ -44,6 +47,12 @@ public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
     @Query(value = "select al from APOTEKA_LEK al where al.lek.id = :l_id and al.apoteka.id = :ap_id")
     ApotekaLek findApotekaLekById(@Param("l_id") Long id, @Param("ap_id") Long apotekaId);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select al from APOTEKA_LEK al where al.lek.id = :l_id and al.apoteka.id = :ap_id")
+    ApotekaLek findApotekaLekByIdWithLock(@Param("l_id") Long id, @Param("ap_id") Long apotekaId);
+
     @Query(value = "select al from APOTEKA_LEK al inner join LEK l on l.id = al.lek.id where al.apoteka.id = :ap_id and UPPER(l.naziv) LIKE UPPER(:pretragaLek)")
 	Page<ApotekaLek> findAllApotekaLekoviSortedAndSearchedAndDone(Pageable pageable,@Param("pretragaLek") String title,@Param("ap_id") Long apotekaId);
+
+
 }

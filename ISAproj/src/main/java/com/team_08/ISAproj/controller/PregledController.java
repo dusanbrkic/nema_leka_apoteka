@@ -6,6 +6,7 @@ import com.team_08.ISAproj.dto.PregledLekDTO;
 import com.team_08.ISAproj.dto.RezervacijaDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 
+import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.service.*;
 
@@ -186,24 +187,27 @@ public class PregledController {
 
         double ukupnaCena = 0;
 
+        //konkurentno odredi novu kolicinu
+        try {
+            apotekaLekService.updateKolicinaLekovaKonkurentno(pregled.getPreporuceniLekovi(), pregled.getApoteka().getId());
+        } catch (LekNijeNaStanjuException e) {
+            return new ResponseEntity<String>("Lek nije na stanju zbog konflikta!", HttpStatus.BAD_REQUEST);
+        }
+
+        //obracunaj cenu
         for (PregledLek pregledLek : pregled.getPreporuceniLekovi()) {
-            ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(pregledLek.getLek().getId(), rezervacija.getApoteka().getId());
-
-            if (pregledLek.getKolicina() <= 0)
-                return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-
-            apotekaLek.setKolicina(apotekaLek.getKolicina() - pregledLek.getKolicina());
-            apotekaLekService.saveAL(apotekaLek);
+            //upit koji izvlaci pojedinacnu cena leka sa datim ID-jem
+            double trenutnaCenaLeka = apotekaLekService.findInApotekaLek(pregledLek.getLek().getId(), pregled.getApoteka().getId()).getCena();
 
             //TO DO ovde treba cenu
             rezervacija.getLekovi()
-                    .add(new RezervacijaLek(pregledLek.getKolicina(), rezervacija, pregledLek.getLek(), apotekaLek.getCena()));
-            double cenaLeka = pregledLek.getKolicina() * apotekaLek.getCena();
+                    .add(new RezervacijaLek(pregledLek.getKolicina(), rezervacija, pregledLek.getLek(), trenutnaCenaLeka));
+            double cenaLeka = pregledLek.getKolicina() * trenutnaCenaLeka;
             ukupnaCena += cenaLeka;
             body += "	- " + pregledLek.getLek().getNaziv() + " x " + pregledLek.getKolicina() + "kom - " + cenaLeka + "din. \n";
-
         }
 
+        //sacuvaj
         rezervacijaService.saveRezervacija(rezervacija);
         pregledService.savePregled(pregled);
 
