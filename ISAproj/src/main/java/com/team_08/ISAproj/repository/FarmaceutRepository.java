@@ -20,6 +20,10 @@ import java.util.List;
 
 @Repository
 public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
+	
+	@Query(value = "SELECT z FROM ZDRAVSTVENI_RADNIK z")
+	List<ZdravstveniRadnik> findAllZdravstveniRadnici();
+	
     Farmaceut findOneByUsername(String username);
 
     Farmaceut findOneByCookieTokenValue(String cookie);

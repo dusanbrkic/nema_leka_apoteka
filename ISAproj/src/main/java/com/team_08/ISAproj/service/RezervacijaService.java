@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.team_08.ISAproj.dto.LekDTO;
@@ -75,7 +77,25 @@ public class RezervacijaService {
 	    return rezervacijaRepository.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
     }
 
+    public List<RezervacijaLek> findRezervacijaLekFromKorisnikByLek(Long idPacijent, Long idLeka) {
+	    return rezervacijaRepository.findRezervacijaLekFromKorisnikByLek(idPacijent, idLeka);
+    }
+    
+    public List<RezervacijaLek> findRezervacijaLekFromKorisnikByApoteka(Long idPacijent, Long idApoteke) {
+	    return rezervacijaRepository.findRezervacijaLekFromKorisnikByApoteka(idPacijent, idApoteke);
+    }
+    public List<Rezervacija> findAllRezervacijeFinishedYear(Long id,int godina){
+    	
+    	return rezervacijaRepository.findAllRezervacijeFinishedYear(id,godina);
+    	
+    }
+    	
     public Rezervacija fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
 	    return rezervacijaRepository.fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
+    }
+    public List<Rezervacija> findAllRezervacijeFinishedDateRange(Long id,LocalDateTime start, LocalDateTime end){
+    	
+    	return rezervacijaRepository.findAllRezervacijeFinishedDateRange(id, start, end);
+    	
     }
 }

@@ -82,7 +82,6 @@ Vue.component("PretragaLekAdmin", {
           formatter: (value, key, item) => {
             return moment(value).format("DD/MM/YYYY");
           },
-        
         },
         {
           key: "istekVazenjaCene",
@@ -94,12 +93,12 @@ Vue.component("PretragaLekAdmin", {
         },
         {
           key: "obrisiLek",
-          label : "",
+          label: "",
           sortable: false,
         },
         {
           key: "izmeniLek",
-          label : "",
+          label: "",
           sortable: false,
         },
       ],
@@ -155,8 +154,9 @@ Vue.component("PretragaLekAdmin", {
     <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
     <b-card style="margin: 40px auto; max-width: 2000px">
         <b-container>
-          <b-tabs content-class="mt-3">
+          <b-tabs content-class="mt-3" fill>
             <b-tab title="Lekovi" active>
+              <div class="text-center"><h2>Lekovi u apoteci</h2></div>
           <b-row>
             <b-col>
               <b-form-input v-model="searchTitle" placeholder="Pretrazite lekove"></b-form-input>
@@ -169,6 +169,11 @@ Vue.component("PretragaLekAdmin", {
             <br>
 		          <b-row>
                     <b-table
+                        striped 
+                    	  borderless 
+                    	  outlined 
+                    	  head-variant="light"
+                        stacked="md"
                         id="lekovi-tabela"
                         hover
                         :items="itemProvider"
@@ -181,7 +186,7 @@ Vue.component("PretragaLekAdmin", {
                         responsive="sm"
                         :sort-desc.sync="sortDesc">
                     <template #cell(obrisiLek)="row">
-                    <b-button @click="deleteLek(row.item)"  variant="primary">Obrisi</b-button>
+                    <b-button @click="deleteLek(row.item)"  variant="danger">Obrisi</b-button>
                     </template>
                     <template  #cell(izmeniLek)="row">
                     <b-button v-on:click="prikaziPromeniLek(row.item)" variant="primary">Izmeni</b-button></template>
@@ -205,20 +210,30 @@ Vue.component("PretragaLekAdmin", {
           </b-col>
          </b-row>
          </b-tab>
-         <b-tab title="Zahtevi">
-         		          <b-row>
+         <b-tab title="Zahtevi za lekove">
+                <div class="text-center"><h2>Zahtevi za lekove koji nisu bili na stanju </h2></div>
+         		    <b-row>
+                 <b-container class="text-center">
                     <b-table
-                        id="zahtevi-tabela"
+                        striped 
+                    	  borderless 
+                    	  outlined 
+                    	  head-variant="light"
+                        stacked="md"
+                        id="lekovi-tabela"
                         hover
+                        id="zahtevi-tabela"
                         :items="itemProviderZahtev"
                         :fields="fieldsZahtev"
                         :per-page="pageSizeZahtev"
                         :current-page="pageZahtev"
                         :busy.sync="table_is_busy"
-                        responsive="sm">
+                        responsive="sm" >
                      </b-table>
-         </b-row>
+                     </b-container>
+                  </b-row>
          </b-tab>
+          </b-tabs>
         </b-containter>
       </b-card>
 
@@ -243,19 +258,13 @@ Vue.component("PretragaLekAdmin", {
                 v-model="izabranLek.kolicina"
                 min = "0"
             ></b-form-input>
-        <b-form-group id="input-group-2" label="Datum isteka vazenja cene:" label-for="input-2">
-            <b-form-input
-                id="input-2"
-                type="date"
-                v-model="izabranLek.istekVazenjaCene"
-            ></b-form-input>
-
        <b-form-group id="input-group-3" label="Promotivna cena:" label-for="input-3">
             <b-form-input
                 id="input-3"
                 type="number"
                 v-model="this.izabranLek.promotivnaCena"
                 min = "0"
+                readOnly
             ></b-form-input>
             <br>
           <b-button type="submit" variant="primary">Sacuvaj</b-button>
@@ -313,7 +322,6 @@ Vue.component("PretragaLekAdmin", {
         },
       };
       await axios.get("lekovi/zahteviZaLek", info).then((response) => {
-        console.log(response.data);
         this.zahtevLekovi = response.data["content"];
         this.countZahtev = response.data["totalElements"];
         console.log(this.zahtevLekovi);
@@ -357,7 +365,7 @@ Vue.component("PretragaLekAdmin", {
       return this.lekovi;
     },
     pretraga: function () {
-      this.page = 0;
+      this.page = 1;
       this.$root.$emit("bv::refresh::table", "lekovi-tabela");
     },
     handlePageChange(value) {

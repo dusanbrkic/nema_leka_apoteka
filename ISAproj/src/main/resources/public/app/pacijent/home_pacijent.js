@@ -23,7 +23,6 @@ Vue.component("HomePacijent", {
             <b-nav-item href="#/home-pacijent/">Home</b-nav-item>
             <b-nav-item href="#/home-pacijent/apoteke">Apoteke</b-nav-item>
             <b-nav-item href="#/home-pacijent/lekovi">Lekovi</b-nav-item>
-            <b-nav-item href="#/home-pacijent/pregledi">Pregledi</b-nav-item>
             <b-nav-item href="#/pacijent_dermatolozi">Dermatolozi</b-nav-item>
             <b-nav-item href="#/pacijent_farmaceuti">Farmaceuti</b-nav-item>
           </b-navbar-nav>

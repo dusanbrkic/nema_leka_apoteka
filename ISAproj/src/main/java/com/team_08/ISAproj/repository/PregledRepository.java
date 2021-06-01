@@ -51,4 +51,33 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
 
     @Query(value = "SELECT p from PREGLED p where p.zdravstveniRadnik.cookieTokenValue = :cookie and :start >= p.vreme and :start <= p.kraj and p.pregledObavljen=false and p.pregledZakazan=true")
     Pregled findOneStartsNow(String cookie, LocalDateTime start);
+    
+
+    
+    
+	@Query(value = "select p from PREGLED p where p.zdravstveniRadnik.id = :idDermatolog and p.pacijent.id = :idPacijent")
+	List<Pregled> findPreglediFromKorisnikByZdravstveniRadnikID(@Param("idPacijent") Long idPacijent, @Param("idDermatolog") Long idDermatolog);
+	
+	@Query(value = "select p from PREGLED p where p.apoteka.id = :idApoteka and p.pacijent.id = :idPacijent")
+	List<Pregled> findPreglediFromKorisnikByApotekaID(@Param("idPacijent") Long idPacijent, @Param("idApoteka") Long idApoteka);
+
+
+    @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and p.pregledZakazan = true and p.pregledObavljen = true order by p.kraj")
+	List<Pregled> findAllFromApotekaFinished(Long apoteka_id);
+
+    //svi zavrseni pregledi za izabranu godinu
+    @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and EXTRACT(YEAR from p.kraj) = :godina and p.pregledZakazan = true and p.pregledObavljen = true ")
+	List<Pregled> findAllFromApotekaFinishedYear(Long apoteka_id, Integer godina);
+    
+    //svi zavrseni pregledi za izabranu godinu i mesec
+    @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and EXTRACT(YEAR from p.kraj) = :godina and EXTRACT(MONTH from p.kraj) = :mesec and p.pregledZakazan = true and p.pregledObavljen = true")
+	List<Pregled> findAllFromApotekaFinishedYearMonth(Long apoteka_id, Integer godina, Integer mesec);
+    
+    //svi zavrseni pregledi za izabranu godinu i kvartal
+    @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and EXTRACT(YEAR from p.kraj) = :godina and EXTRACT(QUARTER from p.kraj) = :kvartal and p.pregledZakazan = true and p.pregledObavljen = true")
+	List<Pregled> findAllFromApotekaFinishedYearQuartal(Long apoteka_id, Integer godina,Integer kvartal);
+    
+    //svi zavrseni pregledi u date rangeu
+    @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and p.kraj > :start and  p.kraj < :end and p.pregledZakazan = true and p.pregledObavljen = true")
+	List<Pregled> findAllFromApotekaFinishedDateRange(Long apoteka_id, LocalDateTime start,LocalDateTime end);
 }

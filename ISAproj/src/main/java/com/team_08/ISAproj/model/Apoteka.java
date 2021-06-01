@@ -236,6 +236,8 @@ public class Apoteka {
         this.prosecnaOcena = apotekaDTO.getProsecnaOcena();
         this.cenaPregleda = apotekaDTO.getCenaPregleda();
         this.cenaSavetovanja = apotekaDTO.getCenaSavetovanja();
+        this.longitude = apotekaDTO.getLongitude();
+        this.latitude = apotekaDTO.getLatitude();
     }
 
     public Apoteka() {
@@ -247,5 +249,16 @@ public class Apoteka {
         return "Apoteka [id=" + id + ", naziv=" + naziv + ", adresa=" + adresa + ", prosecnaOcena=" + prosecnaOcena
                 + ", opis=" + opis + ", dermatolozi=" + dermatolozi + ", farmaceuti=" + farmaceuti + "]";
     }
+
+	public void updateInfo(ApotekaDTO apotekaDTO) {
+        this.naziv = apotekaDTO.getNaziv();
+        this.adresa = apotekaDTO.getAdresa();
+        this.opis = apotekaDTO.getOpis();
+        this.prosecnaOcena = apotekaDTO.getProsecnaOcena();
+        this.cenaPregleda = apotekaDTO.getCenaPregleda();
+        this.cenaSavetovanja = apotekaDTO.getCenaSavetovanja();
+        this.longitude = apotekaDTO.getLongitude();
+        this.latitude = apotekaDTO.getLatitude();
+	}
 
 }

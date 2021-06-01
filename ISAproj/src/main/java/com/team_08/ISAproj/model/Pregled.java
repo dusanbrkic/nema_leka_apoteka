@@ -5,7 +5,6 @@ import org.hibernate.annotations.Formula;
 import com.team_08.ISAproj.dto.PregledDTO;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Set;

@@ -1,7 +1,6 @@
 package com.team_08.ISAproj.model;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity(name = "PROMOCIJA")

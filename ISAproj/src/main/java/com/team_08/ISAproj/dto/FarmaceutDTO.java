@@ -24,6 +24,15 @@ public class FarmaceutDTO {
     private LocalTime radnoVremeKraj;
     private Double prosecnaOcena;
     private Double cena;
+    private boolean pravoOcene = false;
+
+    public boolean isPravoOcene() {
+		return pravoOcene;
+	}
+
+	public void setPravoOcene(boolean pravoOcene) {
+		this.pravoOcene = pravoOcene;
+	}
 
     public FarmaceutDTO(Farmaceut f) {
 

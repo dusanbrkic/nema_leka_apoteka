@@ -28,4 +28,8 @@ public class PacijentService {
     public List<Pacijent> findAll(){
     	return pacijentRepository.findAll();
     }
+    
+    public Pacijent fetchPacijentWithAlergijeByCookie(String cookie){
+    	return pacijentRepository.fetchPacijentWithAlergijeByCookie(cookie);
+    }
 }

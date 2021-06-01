@@ -5,6 +5,8 @@ import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.DermatologApoteka;
 import com.team_08.ISAproj.model.FarmaceutApoteka;
 import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Pregled;
+import com.team_08.ISAproj.model.RezervacijaLek;
 import com.team_08.ISAproj.model.ZdravstveniRadnik;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +22,9 @@ import java.util.List;
 
 @Repository
 public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
+	
+	@Query(value = "SELECT z FROM ZDRAVSTVENI_RADNIK z")
+	List<ZdravstveniRadnik> findAllZdravstveniRadnici();
 	
     Dermatolog findOneByUsername(String username);
 
@@ -65,4 +70,6 @@ public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
 
     @Query(value = "SELECT d FROM DERMATOLOG d join DERMATOLOG_APOTEKA da on da.dermatolog.id=d.id where d.cookieTokenValue=:cookie and da.apoteka.id=:idApoteke and (:start > da.radnoVremePocetak and :end > da.radnoVremePocetak) and (:start< da.radnoVremeKraj and :end < da.radnoVremeKraj)")
     Dermatolog checkRadnoVreme(LocalTime start, LocalTime end, String cookie, Long idApoteke);
+    
+
 }

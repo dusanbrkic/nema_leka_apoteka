@@ -124,11 +124,8 @@ Vue.component("PacijentNarudzbenice", {
 			       'id_rezervacije': this.rezervacije[index].id
 			       }
 			    }).then((response) => {
-	          		//this.uspeh = true;
-	          		//this.rezervacije.splice(index, 1);
-   		   			//this.$refs.table.refresh();
-   		   			//localStorage.setItem("uspeh", true);
-   		   			location.reload();
+   		   			//location.reload();
+   		   			this.$root.$emit("bv::refresh::table", "table");
 		        })
 		        .catch((e) => {
 		        	this.greska = true;

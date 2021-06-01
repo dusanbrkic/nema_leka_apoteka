@@ -76,7 +76,7 @@ Vue.component("AdminOdsustvo", {
     <b-form @submit.prevent="onOdbijOdsustvo">
     <h3>Odbijanja Odsustva</h3>
    <b-form-group id="input-group-3" label="Razlog odbijanja: ">
-        <b-form-input required v-model="izabranoOdsustvo.razlog"></b-form-input>
+        <b-form-textarea required v-model="izabranoOdsustvo.razlog"></b-form-textarea>
 		<br>
       <b-button type="submit" variant="primary">Odbij</b-button>
        </b-form>
@@ -86,7 +86,7 @@ Vue.component("AdminOdsustvo", {
 	
 	`,
   methods: {
-    odobriOdsustvo(odsustvo) {
+    odobriOdsustvo: function(odsustvo) {
       console.log(odsustvo);
       odsustvo.status = "odobreno";
       odsustvo.cookie = this.cookie;
@@ -95,14 +95,14 @@ Vue.component("AdminOdsustvo", {
         .then((response) => {
           console.log(response.data);
         });
-             this.odsustva = []
+      this.odsustva = []
       this.loadOdsustva();
     },
-    odbijOdsustvo(odsustvo) {
+    odbijOdsustvo: async function(odsustvo) {
       this.izabranoOdsustvo = odsustvo;
       this.$refs["my-modal"].show();
     },
-    onOdbijOdsustvo() {
+    onOdbijOdsustvo: function() {
       this.izabranoOdsustvo.status = "odbijeno";
       this.izabranoOdsustvo.cookie = this.cookie;
       axios
@@ -121,7 +121,7 @@ Vue.component("AdminOdsustvo", {
       localStorage.clear();
       app.$router.push("/");
     },
-    loadOdsustva() {
+    loadOdsustva: function() {
       let info = {
         params: {
           cookie: this.cookie,

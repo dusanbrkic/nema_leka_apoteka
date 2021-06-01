@@ -11,6 +11,7 @@ import com.team_08.ISAproj.service.ApotekaLekService;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.OcenaService;
 import com.team_08.ISAproj.service.PacijentService;
 
 import java.util.Random;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,6 +61,8 @@ public class KorisnikController {
     private PacijentService pacijentService;
     @Autowired
     private ZdravstveniRadnikService zdravstveniRadnikService;
+    @Autowired
+    private OcenaService ocenaService;
 
     //change password
     @PostMapping(value = "/updatePass", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -100,12 +105,6 @@ public class KorisnikController {
             k.setCookieTokenValue(ck);
             korisnikService.saveUser(k);
             KorisnickaRola korisnickaRola = null;
-            
-    		if(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1) {
-    			for(Pacijent p : pacijentService.findAll()) {
-    				p.setBrPenala(0);
-    			}
-    		}
             
             if(k instanceof Pacijent) 
             {
@@ -264,7 +263,7 @@ public class KorisnikController {
     {
     	LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        
+        DecimalFormat df = new DecimalFormat("###.##");
         List<FarmaceutDTO> farmaceutiDTO = new ArrayList<FarmaceutDTO>();
         
         boolean slobodan = false;
@@ -273,7 +272,7 @@ public class KorisnikController {
             	if (zdravstveniRadnikService.checkRadnoVreme(start.toLocalTime(), end.toLocalTime(), f.getCookieToken(), idApoteke)!=null) {
             		if (zdravstveniRadnikService.fetchZdravstveniRadnikWithOdsustvaInDateRange(f.getCookieToken(), start, end)==null) {
             			FarmaceutDTO fdto = new FarmaceutDTO(f);
-            			fdto.setUsername(Long.toString(f.getId()));
+            			fdto.setUsername(Long.toString(f.getId()));      				
             			farmaceutiDTO.add(fdto);
             		}
             	}
@@ -283,4 +282,16 @@ public class KorisnikController {
         return new ResponseEntity<List<FarmaceutDTO>>(farmaceutiDTO, HttpStatus.OK);
 
     }
+    
+    //@Scheduled(cron = "1 0 1 * * ?") // svakog prvog u mesecu
+    @Scheduled(cron = "1 * * * * ?") // provera svaki minut
+	public void cronJob() {
+		
+    	System.out.println("BRISANJE PENALA");
+
+		for(Pacijent p : pacijentService.findAll()) {
+			p.setBrPenala(0);
+			korisnikService.saveUser(p);
+		}
+	}
 }

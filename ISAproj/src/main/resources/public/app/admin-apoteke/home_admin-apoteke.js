@@ -24,7 +24,7 @@ Vue.component("HomeAdminApoteke", {
             <b-nav-item href="#/home-admin_apoteke">Home</b-nav-item>
             <b-nav-item href="#/dodaj-lek-admin">Dodaj lek</b-nav-item>
             <b-nav-item href="#/pretraga-lek-admin">Pretrazi, obrisi i uredi lekove</b-nav-item>
-            <b-nav-item >Izmeni podatke o apoteci</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-apoteka">Izmeni podatke o apoteci</b-nav-item>
             <b-nav-item href="#/admin-apoteke-narudzbina">Naruci lekove</b-nav-item>
             <b-nav-item href="#/admin-apoteke-dodaj-farmaceuta">Dodaj farmaceuta</b-nav-item>
             <b-nav-item href="#/admin-apoteke-dodaj-dermatologa">Dodaj dermatologa</b-nav-item>
@@ -33,6 +33,7 @@ Vue.component("HomeAdminApoteke", {
             <b-nav-item href="#/admin-apoteke-narudzbenice">Narudzbine</b-nav-item>
             <b-nav-item href="#/admin-apoteke-promocija">Promocije</b-nav-item>
             <b-nav-item href="#/admin-apoteke-odsustvo">Odsustva</b-nav-item>
+            <b-nav-item href="#/admin-apoteke-izvestaji">Izvestaji</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -132,6 +133,7 @@ Vue.component("HomeAdminApoteke", {
           </b-card>
         </b-row>
       </b-container>
+
     </div>
     `,
   methods: {

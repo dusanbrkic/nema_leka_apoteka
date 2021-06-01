@@ -1,5 +1,7 @@
 package com.team_08.ISAproj.dto;
 
+import javax.persistence.Column;
+
 import com.team_08.ISAproj.model.Apoteka;
 
 public class ApotekaDTO {
@@ -11,11 +13,40 @@ public class ApotekaDTO {
     private String opis;
     private Double cenaPregleda;
     private Double cenaSavetovanja;
+    private int brojOcena;
+    private boolean pravoOcene = false;
+    private String cookie;
     private Double longitude;
     private Double latitude;
-    public ApotekaDTO() {
+    
+    public String getCookie() {
+		return cookie;
+	}
+
+	public void setCookie(String cookie) {
+		this.cookie = cookie;
+	}
+
+	public int getBrojOcena() {
+		return brojOcena;
+	}
+
+	public void setBrojOcena(int brojOcena) {
+		this.brojOcena = brojOcena;
+	}
+
+	public boolean isPravoOcene() {
+		return pravoOcene;
+	}
+
+	public void setPravoOcene(boolean pravoOcene) {
+		this.pravoOcene = pravoOcene;
+	}
+
+	public ApotekaDTO() {
 
     }
+
 
     public ApotekaDTO(Long id, String naziv, String adresa, Double prosecnaOcena, String opis, Double cenaPregleda, Double cenaSavetovanja,Double longitude, Double latitude) {
         super();

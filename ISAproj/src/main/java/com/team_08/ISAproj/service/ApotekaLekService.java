@@ -94,7 +94,7 @@ public class ApotekaLekService {
 	public Page<ApotekaLek> findAllApotekaLekoviSortedAndSearchedAndDone(Integer page, Integer size,
 			String sortBy, Boolean sortDesc, String title,Long apotekaId) {
 		title = "%" + title + "%";
-		if(!(sortBy.equals("kolicina") || sortBy.equals("cena") || sortBy.equals("istekVazenjaCene"))) {
+		if(!(sortBy.equals("promotivnaCena") || sortBy.equals("kolicina") || sortBy.equals("cena") || sortBy.equals("istekVazenjaCene"))) {
 			sortBy = "l." + sortBy;
 		}
 		Sort sort;
@@ -135,4 +135,9 @@ public class ApotekaLekService {
 
 
 	}
+
+    public Page<ApotekaLek> getAllLekovi(int page, int pageSize, String pretraga) {
+    	pretraga = "%" + pretraga + "%";
+    	return apotekaLekRepository.getAllLekovi(pretraga, PageRequest.of(page, pageSize));
+    }
 }

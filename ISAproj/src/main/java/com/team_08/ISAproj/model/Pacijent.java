@@ -5,6 +5,7 @@ import com.team_08.ISAproj.model.enums.KorisnickaRola;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "PACIJENT")
@@ -139,6 +140,13 @@ public class Pacijent extends Korisnik {
 
     public void setAlergije(Set<Lek> alergije) {
         this.alergije = alergije;
+    }
+    public void addAlergija(Lek l) {
+        this.alergije.add(l);
+    }
+    
+    public void removeAlergija(Lek l) {
+        this.alergije.remove(l);
     }
 
     public Set<Pregled> getSavetovanja() {

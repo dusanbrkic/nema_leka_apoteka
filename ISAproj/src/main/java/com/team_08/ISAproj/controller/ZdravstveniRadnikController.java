@@ -6,7 +6,9 @@ import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.ApotekaService;
 import com.team_08.ISAproj.service.EmailService;
 import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.OcenaService;
 import com.team_08.ISAproj.service.OdsustvoService;
+import com.team_08.ISAproj.service.PacijentService;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -54,6 +56,11 @@ public class ZdravstveniRadnikController {
     private OdsustvoService odsustvoService;
     @Autowired
     private EmailService sendEmailService;
+    @Autowired
+    private OcenaService ocenaService;
+    @Autowired
+    private PacijentService pacijentService;
+
     @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
                                               @RequestParam("end") String endDate,
@@ -70,12 +77,10 @@ public class ZdravstveniRadnikController {
             if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            if (!odsustvoService.fetchOdsustvaByZdravstveniRadnikCookieInDateRange(cookie, start, end).isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            odsustvoService.saveOdsustvo(new Odsustvo(start, end,"cekanju",z));
-            
-           // z.getOdsustva().add(new Odsustvo(start, end,"cekanju"));
+            Odsustvo o = new Odsustvo(start, end,"cekanju",z);
+            odsustvoService.saveOdsustvo(o);
+
+          // z.getOdsustva().add(o);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -256,7 +261,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("ocena") Double ocena,
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj){
-    	
+
     	AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
     	if(aa == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -267,7 +272,7 @@ public class ZdravstveniRadnikController {
     	System.out.println(dermatoloziApoteke);
     	if (dermatoloziApoteke == null)
             return new ResponseEntity<Page<DermatologDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<DermatologDTO> dermatoloziDTO = dermatoloziApoteke.map(new Function<DermatologApoteka, DermatologDTO>() {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
@@ -290,7 +295,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj,
             @RequestParam String apoteka){
-    	
+
     	Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
     	if(p == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -301,11 +306,14 @@ public class ZdravstveniRadnikController {
     	System.out.println(dermatoloziApoteke);
     	if (dermatoloziApoteke == null)
             return new ResponseEntity<Page<DermatologDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<DermatologDTO> dermatoloziDTO = dermatoloziApoteke.map(new Function<DermatologApoteka, DermatologDTO>() {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
             	DermatologDTO dermaDTO = new DermatologDTO(da);
+				if(pregledService.findPreglediFromKorisnikByZdravstveniRadnikID(p.getId(), da.getId()).size() != 0) {
+					dermaDTO.setPravoOcene(true);
+				}
                 return dermaDTO;
             }
         });
@@ -323,7 +331,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("ocena") Double ocena,
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj){
-    	
+
     	AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
     	if(aa == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -334,7 +342,7 @@ public class ZdravstveniRadnikController {
     	System.out.println(farmaceuti);
     	if (farmaceuti == null)
             return new ResponseEntity<Page<FarmaceutDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<FarmaceutDTO> farmaceutDTO = farmaceuti.map(new Function<Farmaceut, FarmaceutDTO>() {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
@@ -357,7 +365,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj,
             @RequestParam String apoteka){
-    	
+
     	Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
     	if(p == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -367,11 +375,14 @@ public class ZdravstveniRadnikController {
     	System.out.println(farmaceuti);
     	if (farmaceuti == null)
             return new ResponseEntity<Page<FarmaceutDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<FarmaceutDTO> farmaceutDTO = farmaceuti.map(new Function<Farmaceut, FarmaceutDTO>() {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
             	FarmaceutDTO farmaDTO = new FarmaceutDTO(f);
+				if(pregledService.findPreglediFromKorisnikByZdravstveniRadnikID(p.getId(), f.getId()).size() != 0) {
+					farmaDTO.setPravoOcene(true);
+				}
                 return farmaDTO;
             }
         });
@@ -509,12 +520,12 @@ public class ZdravstveniRadnikController {
         zdravstveniRadnikService.saveFarmaceut(f);
         return new ResponseEntity<FarmaceutDTO>(HttpStatus.OK);
     }
-    //sva odusustva 
+    //sva odusustva
     @GetMapping(value="/allOdsustvo")
     public ResponseEntity<List<OdsustvoDTO>> allOdsustvo(@RequestParam String cookie){
-    	
+
     	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(cookie);
-    	
+
     	if(a == null) {
     		return new ResponseEntity<List<OdsustvoDTO>>(HttpStatus.NOT_FOUND);
     	}
@@ -526,17 +537,14 @@ public class ZdravstveniRadnikController {
 			odsustvoDTO.add(new OdsustvoDTO(o));
 		}
 		return new ResponseEntity<List<OdsustvoDTO>>(odsustvoDTO,HttpStatus.OK);
-    	
-    	
-    	
-    	
+
     }
-   
+
     //Odbijanje i prihvatanje odustava za godisnji odmor
     @PutMapping(value = "/updateOdsustvo")
     public ResponseEntity<Void> updateOdsustvo(@RequestBody OdsustvoDTO odsustvoDTO) throws ParseException{
     	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(odsustvoDTO.getCookie());
-    	
+
     	if(a == null) {
     		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
     	}
@@ -545,7 +553,7 @@ public class ZdravstveniRadnikController {
     		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
     	}
     	String title = "Godisnji odmor - " + a.getApoteka().getNaziv();
-    	String body; 
+    	String body;
     	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     	if(odsustvoDTO.getStatus().equals("odobreno")) {
     		body = "Odobren vam je godisnji odmor.\nTrajace u periodu od " + odsustvoDTO.getPocetak() +  " - " + odsustvoDTO.getKraj();
@@ -582,6 +590,52 @@ public class ZdravstveniRadnikController {
     	o.updateOdustov(odsustvoDTO);
     	odsustvoService.saveOdsustvo(o);
     	return new ResponseEntity<Void>(HttpStatus.OK);
-    	
+
     }
+
+	@GetMapping(value="/getOcena")
+	public ResponseEntity<Map<String, Object>> getOcena(@RequestParam String cookie,
+										 				@RequestParam String username){
+		ZdravstveniRadnik radnik = zdravstveniRadnikService.findZdravstveniRadnikByUsername(username);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+		OcenaZdravstveniRadnik ocenaZdravstveniRadnik = ocenaService.findOcenaZdravstvenogRadnikaByPacijentID(radnik.getId(), p.getId());
+
+		if(ocenaZdravstveniRadnik == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("ocena", ocenaZdravstveniRadnik.getOcena());
+
+        return new ResponseEntity<Map<String, Object>>( response, HttpStatus.OK);
+	}
+
+	@GetMapping(value="/oceni")
+	public ResponseEntity<Void> setOcena(@RequestParam String cookie,
+										 @RequestParam String username,
+										 @RequestParam Integer ocena){
+		ZdravstveniRadnik radnik = zdravstveniRadnikService.findZdravstveniRadnikByUsername(username);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+
+		OcenaZdravstveniRadnik ocenaZdravstveniRadnik = ocenaService.findOcenaZdravstvenogRadnikaByPacijentID(radnik.getId(), p.getId());
+
+		if(ocenaZdravstveniRadnik == null) {
+			ocenaZdravstveniRadnik = new OcenaZdravstveniRadnik(radnik, ocena, LocalDateTime.now(), p);
+		}
+		else {
+			ocenaZdravstveniRadnik.setDatum(LocalDateTime.now());
+			ocenaZdravstveniRadnik.setOcena(ocena);
+		}
+
+		ocenaService.saveOcena(ocenaZdravstveniRadnik);
+
+		radnik.setProsecnaOcena(ocenaService.findProsecnaOcenaZdravstvenogRadnikaByID(radnik.getId()));
+		if(radnik instanceof Dermatolog) {
+			zdravstveniRadnikService.saveDermatolog((Dermatolog) radnik);
+		} else {
+			zdravstveniRadnikService.saveFarmaceut((Farmaceut) radnik);
+		}
+
+        return new ResponseEntity<>(HttpStatus.OK);
+	}
 }

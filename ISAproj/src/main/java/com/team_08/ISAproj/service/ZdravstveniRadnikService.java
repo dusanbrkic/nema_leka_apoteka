@@ -28,6 +28,17 @@ public class ZdravstveniRadnikService {
     @Autowired
     private DermatologApotekaRepository dermatologApotekaRepository;
 
+    public void saveDermatolog(Dermatolog d) {
+    	dermatologRepository.save(d);
+    }
+    
+    public List<ZdravstveniRadnik> findAll() {
+    	List<ZdravstveniRadnik> l = dermatologRepository.findAllZdravstveniRadnici();
+    	l.addAll(farmaceutRepository.findAllZdravstveniRadnici());
+        return l;
+    }
+    
+    
     public ZdravstveniRadnik fetchZdravstveniRadnikWithOdsustva(String cookie) {
         ZdravstveniRadnik z = dermatologRepository.fetchDermatologWithOdsustva(cookie);
         if (z == null) {
@@ -43,7 +54,8 @@ public class ZdravstveniRadnikService {
         }
         return z;
     }
-
+    
+    
     //svi dermatolozi u apoteci page
     public Page<DermatologApoteka> fetchDermatologsByApotekaId(Long ApotekaId, Pageable page) {
 
@@ -54,6 +66,14 @@ public class ZdravstveniRadnikService {
     public Dermatolog findOneByUsername(String username) {
 
         return dermatologRepository.findOneByUsername(username);
+    }
+    
+    public ZdravstveniRadnik findZdravstveniRadnikByUsername(String username) {
+    	ZdravstveniRadnik zr = dermatologRepository.findOneByUsername(username);
+    	if(zr == null) {
+    		zr = farmaceutRepository.findOneByUsername(username);
+    	}
+        return zr;
     }
 
     public ZdravstveniRadnik findOneByCookie(String cookie) {

@@ -52,6 +52,27 @@ Vue.component("PacijentMain", {
 
           <b-col>
             <b-card 
+                title="Savetovanje kod farmaceuta"
+                img-src="https://editiadedimineata.ro/wp-content/uploads/2018/01/farmacisti.jpg"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem;"
+                class="mb-2"
+            >
+              <b-card-text>
+                Zakazi savetovanje kod farmaceuta
+              </b-card-text>
+             
+             <a href="#/home-pacijent/zakazivanje-savetovanja" class="stretched-link"></a>
+
+            </b-card>
+          </b-col>
+
+</b-row>
+<b-row>
+          <b-col>
+            <b-card 
                 title="Posete dermatologu"
                 img-src="https://mediniz-images-2018-100.s3.ap-south-1.amazonaws.com/post-images/dermatologist_1556130488.jpg"
                 img-alt="Image"
@@ -69,25 +90,6 @@ Vue.component("PacijentMain", {
             </b-card>
           </b-col>
           
-          
-          <b-col>
-            <b-card 
-                title="Zakazi savetovanje kod farmaceuta"
-                img-src="https://editiadedimineata.ro/wp-content/uploads/2018/01/farmacisti.jpg"
-                img-alt="Image"
-                img-top
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2"
-            >
-              <b-card-text>
-                Zakazi savetovanje kod farmaceuta
-              </b-card-text>
-             
-             <a href="#/home-pacijent/zakazivanje-savetovanja" class="stretched-link"></a>
-
-            </b-card>
-          </b-col>
           
           
           <b-col>

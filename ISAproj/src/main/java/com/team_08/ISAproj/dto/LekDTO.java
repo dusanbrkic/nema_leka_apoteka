@@ -1,6 +1,6 @@
 package com.team_08.ISAproj.dto;
 
-import java.sql.Date;
+import java.util.ArrayList;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -24,8 +24,45 @@ public class LekDTO {
     private LocalDateTime pocetakVazenjaCene;
     private Double promotivnaCena;
     private String cookie;
+    private Double prosecnaOcena;
+    private int brojOcena;
+    private boolean pravoOcene = false;
 
-    public LekDTO() {
+    public boolean isPravoOcene() {
+		return pravoOcene;
+	}
+
+	public void setPravoOcene(boolean pravoOcene) {
+		this.pravoOcene = pravoOcene;
+	}
+
+	public int getBrojOcena() {
+		return brojOcena;
+	}
+
+	public void setBrojOcena(int brojOcena) {
+		this.brojOcena = brojOcena;
+	}
+
+	public Double getProsecnaOcena() {
+		return prosecnaOcena;
+	}
+
+	public void setProsecnaOcena(Double prosecnaOcena) {
+		this.prosecnaOcena = prosecnaOcena;
+	}
+
+	private boolean alergija = false;
+
+    public boolean isAlergija() {
+		return alergija;
+	}
+
+	public void setAlergija(boolean alergija) {
+		this.alergija = alergija;
+	}
+
+	public LekDTO() {
 
     }
 
@@ -37,6 +74,7 @@ public class LekDTO {
         this.oblikLeka = lek.getOblikLeka();
         this.sastav = lek.getSastav();
         this.dodatneNapomene = lek.getDodatneNapomene();
+        this.prosecnaOcena = lek.getProsecnaOcena();
     }
 
     public LekDTO(ApotekaLek al) {
@@ -53,6 +91,7 @@ public class LekDTO {
         this.promotivnaCena = al.getPromotivnaCena();
         this.istekVazenjaCene = al.getIstekVazenjaCene();
         this.pocetakVazenjaCene = al.getPocetakVazenjaCene();
+        this.prosecnaOcena = al.getLek().getProsecnaOcena();
     }
 
 	public String getCookie() {

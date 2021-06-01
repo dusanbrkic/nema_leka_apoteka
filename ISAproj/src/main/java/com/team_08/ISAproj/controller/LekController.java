@@ -21,6 +21,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.team_08.ISAproj.service.ApotekaLekService;
+import com.team_08.ISAproj.service.ApotekaService;
+import com.team_08.ISAproj.service.EmailService;
+import com.team_08.ISAproj.service.KorisnikService;
+import com.team_08.ISAproj.service.LekService;
+import com.team_08.ISAproj.service.NarudzbenicaService;
+import com.team_08.ISAproj.service.OcenaService;
+import com.team_08.ISAproj.service.PacijentService;
+import com.team_08.ISAproj.service.RezervacijaService;
+import com.team_08.ISAproj.service.ZahtevLekService;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +41,7 @@ import org.springframework.data.domain.Sort.Order;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -61,19 +73,12 @@ public class LekController {
     private NarudzbenicaService narudzbenicaService;
     @Autowired
     private ZahtevLekService zahtevLekService;
-
-//    @RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<List<LekDTO>> getLekovi1() {
-//        List<ApotekaLek> apotekeLekovi = apotekaLekService.findAll();
-//        if(apotekeLekovi == null) {
-//        	return new ResponseEntity<List<LekDTO>>(HttpStatus.NOT_FOUND);
-//        }
-//        List<LekDTO> lekovi = new ArrayList<LekDTO>();
-//        for(ApotekaLek a : apotekeLekovi) {
-//        	lekovi.add(new LekDTO(a.getLek()));
-//        }
-//        return new ResponseEntity<List<LekDTO>>(lekovi, HttpStatus.OK);
-//    }
+    @Autowired
+    private PacijentService pacijentService;
+    @Autowired
+    private OcenaService ocenaService;
+	@Autowired
+	private RezervacijaService rezervacijaService;
 
 
     @GetMapping(value = "/sviLek", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -104,8 +109,9 @@ public class LekController {
         }
     }
 
-    @GetMapping("")
-    public ResponseEntity<Map<String, Object>> getLekovi(
+    @GetMapping("lekoviSaAlergijom")
+    public ResponseEntity<Map<String, Object>> getLekoviSaAlergijom(
+    		@RequestParam String cookie,
             @RequestParam(required = false) String title,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size) {
@@ -119,8 +125,21 @@ public class LekController {
                 apotekeLekovi = apotekaLekService.findByLekContaining(null, paging); //todo
 
             List<LekDTO> lekovi = new ArrayList<LekDTO>();
+            int i = 0;
+
+            Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+
             for (ApotekaLek a : apotekeLekovi) {
                 lekovi.add(new LekDTO(a));
+                for(Lek l : p.getAlergije())
+                {
+                	if(l.getId() == a.getLek().getId())
+                	{
+                		lekovi.get(i).setAlergija(true);
+                	}
+                }
+
+                i++;
             }
 
             Map<String, Object> response = new HashMap<>();
@@ -367,6 +386,7 @@ public class LekController {
 
 	}
 
+
 	@PostMapping(value="/getAllByPacijentNotAllergic" , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<LekDTO>> getAllByPacijentNotAllergic(
 			@RequestBody Map<String, Object> body){
@@ -404,7 +424,75 @@ public class LekController {
 		});
 		return new ResponseEntity<Page<LekDTO>>(lekoviDTO, HttpStatus.OK);
 	}
-	
+
+	@PostMapping(value="/getAllLekovi" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<LekDTO>> getAllLekovi(
+			@RequestBody Map<String, Object> body){
+
+		String pretraga = (String) body.get("pretraga");
+		int page = (int) body.get("page");
+		int pageSize = (int) body.get("pageSize");
+
+		Page<ApotekaLek> lekovi = null;
+		lekovi = apotekaLekService.getAllLekovi(page, pageSize, pretraga);
+
+
+		if (lekovi == null)
+			return new ResponseEntity<Page<LekDTO>>(Page.empty(), HttpStatus.OK);
+
+		Page<LekDTO> lekoviDTO = lekovi.map(new Function<ApotekaLek, LekDTO>() {
+			@Override
+			public LekDTO apply(ApotekaLek l) {
+				LekDTO lekDTO = new LekDTO(l);
+				lekDTO.setBrojOcena(ocenaService.findOceneLekaByID(l.getId()).size());
+				return lekDTO;
+			}
+		});
+		return new ResponseEntity<Page<LekDTO>>(lekoviDTO, HttpStatus.OK);
+	}
+
+	@PostMapping(value="/getAllLekoviAlergican" , produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<LekDTO>> getAllLekoviAlergican(
+			@RequestBody Map<String, Object> body){
+
+		String pretraga = (String) body.get("pretraga");
+
+		int page = (int) body.get("page");
+		int pageSize = (int) body.get("pageSize");
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie((String) body.get("cookie"));
+
+
+		Page<ApotekaLek> lekovi = null;
+		lekovi = apotekaLekService.getAllLekovi(page, pageSize, pretraga);
+
+
+		if (lekovi == null)
+			return new ResponseEntity<Page<LekDTO>>(Page.empty(), HttpStatus.OK);
+
+
+
+		Page<LekDTO> lekoviDTO = lekovi.map(new Function<ApotekaLek, LekDTO>() {
+			@Override
+			public LekDTO apply(ApotekaLek l) {
+				LekDTO lekDTO = new LekDTO(l);
+				for(Lek lek : p.getAlergije())
+	            {
+	            	if(l.getId() == lek.getId())
+	            	{
+	            		lekDTO.setAlergija(true);
+	            	}
+	            }
+				lekDTO.setBrojOcena(ocenaService.findOceneLekaByID(l.getId()).size());
+				if(rezervacijaService.findRezervacijaLekFromKorisnikByLek(p.getId(), l.getId()).size() != 0) {
+					lekDTO.setPravoOcene(true);
+				}
+
+				return lekDTO;
+			}
+		});
+		return new ResponseEntity<Page<LekDTO>>(lekoviDTO, HttpStatus.OK);
+	}
+
 	//dostupnost leka
 	@GetMapping(value="/proveriDostupnostLeka" , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> proveriDostupnostLeka(
@@ -454,7 +542,7 @@ public class LekController {
 			return new ResponseEntity<>(true, HttpStatus.OK);
 		}
 	}
-	
+
 	//svi zahtevi za lekove koji nisu na stanju za apoteku
 	@GetMapping(value="/zahteviZaLek")
 	public ResponseEntity<Page<ZahtevLekDTO>> getZahtevLekByApotekaId(@RequestParam String cookie,
@@ -462,7 +550,7 @@ public class LekController {
             @RequestParam("size") Integer size){
 
 		AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(cookie);
-		
+
 		if(a == null) {
 			return new ResponseEntity<Page<ZahtevLekDTO>>(HttpStatus.NOT_FOUND);
 		}
@@ -478,9 +566,83 @@ public class LekController {
                 return zahteviLekDTO;
             }
         });
+        System.out.println(zahteviLekDTO);
         return new ResponseEntity<Page<ZahtevLekDTO>>(zahteviLekDTO, HttpStatus.OK);
-		
-		
+
+
 	}
-	
+
+	@GetMapping(value="/setAlergija")
+	public ResponseEntity<Void> setAlergija(@RequestParam String cookie,
+											@RequestParam String id){
+		Lek l = lekService.findOneBySifra(id);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+
+		p.addAlergija(l);
+		korisnikService.saveUser(p);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping(value="/otkaziAlergija")
+	public ResponseEntity<Void> otkaziAlergija(@RequestParam String cookie,
+											@RequestParam String id){
+		Lek l = lekService.findOneBySifra(id);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+
+		System.out.println("========================================================================================================================");
+		System.out.println(p.getAlergije().size());
+
+		for(Lek lek : p.getAlergije()) {
+			if(lek.getId()==l.getId())
+				p.removeAlergija(lek);
+		}
+
+		korisnikService.saveUser(p);
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping(value="/getOcena")
+	public ResponseEntity<Map<String, Object>> getOcena(@RequestParam String cookie,
+										 				@RequestParam String id){
+		Lek l = lekService.findOneBySifra(id);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+		OcenaLek ocenaLek = ocenaService.findOcenaLekaByPacijentID(l.getId(), p.getId());
+
+		if(ocenaLek == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("ocena", ocenaLek.getOcena());
+
+        return new ResponseEntity<Map<String, Object>>( response, HttpStatus.OK);
+	}
+
+	@GetMapping(value="/oceni")
+	public ResponseEntity<Void> setOcena(@RequestParam String cookie,
+										 @RequestParam String id,
+										 @RequestParam Integer ocena){
+		Lek l = lekService.findOneBySifra(id);
+		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
+
+		OcenaLek ocenaLek = ocenaService.findOcenaLekaByPacijentID(l.getId(), p.getId());
+
+		if(ocenaLek == null) {
+			ocenaLek = new OcenaLek(l, ocena, LocalDateTime.now(), p);
+		}
+		else {
+			ocenaLek.setDatum(LocalDateTime.now());
+			ocenaLek.setOcena(ocena);
+		}
+		ocenaService.saveOcena(ocenaLek);
+
+    	// postavi prosecnu ocenu leka
+    	l.setProsecnaOcena(ocenaService.findProsecnaOcenaLekaByID(l.getId()));
+    	lekService.saveLek(l);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+	}
 }

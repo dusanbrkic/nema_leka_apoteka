@@ -1,6 +1,5 @@
 package com.team_08.ISAproj.model;
 import javax.persistence.*;
-import java.sql.Date;
 
 @Entity(name = "PRETPLATA")
 public class Pretplata {

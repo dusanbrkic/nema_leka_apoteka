@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.IsoFields;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -491,4 +493,49 @@ public class PregledController {
     	}
     	return new ResponseEntity<List<PregledDTO>>(savetovanja, HttpStatus.OK);
 	}
+    @GetMapping(value = "/pregledIzvestaj")
+    public ResponseEntity<Map<Integer,Integer>> pregledIzvestaj(@RequestParam("cookie") String cookie,
+    		@RequestParam("vremenskiPeriod") String vremenskiPeriod,
+    		@RequestParam(required = false) int godina){
+    	
+    	Korisnik k = korisnikService.findUserByToken(cookie);
+    	if(k == null) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	AdminApoteke a = (AdminApoteke) k;
+    	Map<Integer,Integer> izvestaj = new HashMap<Integer,Integer>();	
+    	if(vremenskiPeriod.equals("Mesecni")) {
+    		List<Pregled> pregledi = pregledService.findAllFromApotekaFinishedYear(a.getApoteka().getId(),godina);
+        	Map<LocalDateTime, List<Pregled>> data = pregledi.stream().collect(Collectors.groupingBy(d -> d.getVreme().withDayOfMonth(1)));
+        	
+        	for(int i = 1; i<13;i++) {
+        		izvestaj.put(i, 0);
+        	}
+        	for (LocalDateTime date : data.keySet()) {
+        		izvestaj.put(date.toLocalDate().getMonth().getValue(), data.get(date).size());
+        	}
+    	}
+    	else if(vremenskiPeriod.equals("Godisnji")) {
+    		for(int i = 0;i<5;i++) {
+    			izvestaj.put(2018+i, pregledService.findAllFromApotekaFinishedYear(a.getApoteka().getId(),2018+i).size());
+    		}
+    	}
+    	else if(vremenskiPeriod.equals("Kvartalni")) {
+    		List<Pregled> pregledi = pregledService.findAllFromApotekaFinishedYear(a.getApoteka().getId(),godina);
+    		Map<Object, List<Pregled>> data = pregledi.stream().collect(Collectors.groupingBy(d -> d.getVreme().get(IsoFields.QUARTER_OF_YEAR)));
+    		//System.out.print(data);
+    		for(int i = 1;i<5;i++) {
+    			izvestaj.put(i,0);
+    		}
+    		for (Object date : data.keySet()) {
+    			System.out.println(date);
+    			izvestaj.put((Integer) date, data.get(date).size());
+        	}
+    	}
+    	
+    	//System.out.println(izvestaj);
+
+    	return new ResponseEntity<Map<Integer,Integer>> (izvestaj, HttpStatus.OK);
+    }
 }
+
