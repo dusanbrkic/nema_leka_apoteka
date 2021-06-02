@@ -122,7 +122,7 @@ public class ZdravstveniRadnikService {
     }
 
     //provera radnog vremena dermatolog
-    public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username, LocalDateTime start, LocalDateTime end) {
+    public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username, LocalTime start, LocalTime end) {
 
         return dermatologRepository.findIfDermatologTimesOverlap(username, start, end);
     }
@@ -141,7 +141,7 @@ public class ZdravstveniRadnikService {
     }
 
     //provera za termine rada osim za izabranu apoteku
-    public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username, Long apotekaId, LocalDateTime start, LocalDateTime end) {
+    public List<DermatologApoteka> checkIfGivenWorkHoursAreOk(String username, Long apotekaId, LocalTime start, LocalTime end) {
         return dermatologRepository.findIfDermatologTimesOverlapNotInApoteka(username, apotekaId, start, end);
     }
 

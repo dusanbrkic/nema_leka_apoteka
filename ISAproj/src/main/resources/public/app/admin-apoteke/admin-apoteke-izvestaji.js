@@ -75,8 +75,9 @@ Vue.component("AdminIzvestaji", {
 
      <b-card style="margin:40px auto; max-width: 2000px">
       			      <div class="text-center"><h2>Izvestaji</h2></div>
-          <br>
-      		<h3> Prosecna ocena Apoteke: {{apoteka.prosecnaOcena}}<h3>
+          <hr>
+      		<h3> Prosecna ocena Apoteke:  {{apoteka.prosecnaOcena}}<h3>
+          <hr>
       		    	<label>Prosecne ocene Farmaceuta:</label>
       		    	
 		<b-col>
@@ -84,7 +85,7 @@ Vue.component("AdminIzvestaji", {
 		</b-list-group-item>
         </b-list-group>
 
-        <b-list-group flush style="max-height: 200px;
+        <b-list-group flush style="max-height: 200px; max-width : 300 px;
 	        overflow:scroll; 
 	        margin-bottom: 10px;
 	         overflow:scroll;
@@ -97,7 +98,7 @@ Vue.component("AdminIzvestaji", {
 
       			<b-col>
 			        <label>Prosecne ocene Dermatologa:</label>
-			        <b-list-group flush style="max-height: 200px;
+			        <b-list-group flush style="max-height: 200px; max-width : 300 px;
 				        overflow:scroll; 
 				        margin-bottom: 10px;
 			    		-webkit-overflow-scrolling: touch;">
@@ -123,6 +124,7 @@ Vue.component("AdminIzvestaji", {
       <div v-if="isPrihod">
       <b-form-datepicker   class="mb-2" v-model="kraj" @input="handleYearChange"></b-form-datepicker>
       </div>
+
       <div v-else>
       <div v-if="isNotGodisnji">
       <b-form-select class="mb-2" v-if="checkType" v-model="izabranaGodina" :options="godine" @change="handleYearChange"></b-form-select>

@@ -38,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -416,7 +417,6 @@ public class ZdravstveniRadnikController {
     public ResponseEntity<DermatologDTO> addDermatologApoteka(
             @RequestParam("start") String startDate,
             @RequestParam("end") String endDate,
-            @RequestParam String cena,
             @RequestParam("cookie") String cookie,
             @RequestParam String username) {
 
@@ -426,8 +426,8 @@ public class ZdravstveniRadnikController {
         }
         if (k instanceof AdminApoteke) {
             AdminApoteke aa = (AdminApoteke) k;
-            LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-            LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            LocalTime start = LocalTime.parse(startDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+            LocalTime end = LocalTime.parse(endDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
             List<DermatologApoteka> proveraRadnogVremana = zdravstveniRadnikService.checkIfGivenWorkHoursAreOk(username, start, end);
             System.out.println(proveraRadnogVremana);
             if (!proveraRadnogVremana.isEmpty()) {
@@ -437,7 +437,7 @@ public class ZdravstveniRadnikController {
             if (d == null) {
                 return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
             }
-            DermatologApoteka da = new DermatologApoteka(d, aa.getApoteka(), start.toLocalTime(), end.toLocalTime());
+            DermatologApoteka da = new DermatologApoteka(d, aa.getApoteka(), start, end	);
             zdravstveniRadnikService.addDermatologApoteke(da);
             return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
         }
@@ -472,7 +472,6 @@ public class ZdravstveniRadnikController {
     @GetMapping(value = "/changeDermatolog")
     public ResponseEntity<DermatologDTO> changeDermatolog(@RequestParam("start") String startDate,
                                                           @RequestParam("end") String endDate,
-                                                          @RequestParam String cena,
                                                           @RequestParam("cookie") String cookie,
                                                           @RequestParam String username) {
 
@@ -480,10 +479,9 @@ public class ZdravstveniRadnikController {
         if (aa == null) {
             return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
         }
-        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalTime start = LocalTime.parse(startDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+        LocalTime end = LocalTime.parse(endDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
         List<DermatologApoteka> proveraRadnogVremana = zdravstveniRadnikService.checkIfGivenWorkHoursAreOk(username, aa.getApoteka().getId(), start, end);
-        System.out.println(proveraRadnogVremana);
         if (!proveraRadnogVremana.isEmpty()) {
             return new ResponseEntity<DermatologDTO>(HttpStatus.BAD_REQUEST);
         }
@@ -492,8 +490,8 @@ public class ZdravstveniRadnikController {
             return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
         }
         DermatologApoteka da1 = zdravstveniRadnikService.findDermatologApoteka(d.getId(), aa.getApoteka().getId());
-        da1.setRadnoVremeKraj(end.toLocalTime());
-        da1.setRadnoVremePocetak(start.toLocalTime());
+        da1.setRadnoVremeKraj(end);
+        da1.setRadnoVremePocetak(start);
         zdravstveniRadnikService.addDermatologApoteke(da1);
         return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
     }
@@ -508,15 +506,15 @@ public class ZdravstveniRadnikController {
         if (aa == null) {
             return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
         }
-        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalTime start = LocalTime.parse(startDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+        LocalTime end = LocalTime.parse(endDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
 
         Farmaceut f = (Farmaceut) korisnikService.findUser(username);
         if (f == null) {
             return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
         }
-        f.setRadnoVremePocetak(start.toLocalTime());
-        f.setRadnoVremeKraj(end.toLocalTime());
+        f.setRadnoVremePocetak(start);
+        f.setRadnoVremeKraj(end);
         zdravstveniRadnikService.saveFarmaceut(f);
         return new ResponseEntity<FarmaceutDTO>(HttpStatus.OK);
     }
