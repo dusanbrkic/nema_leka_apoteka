@@ -59,10 +59,10 @@ Vue.component("PregledForma", {
           <b-modal size="sm" id="odabirKolicineModal" title="Odredi terapiju">
             <b-alert variant="danger" v-model="showPraznaPoljaAlert">Imate prazna polja!</b-alert>
             <label for="unos_kolicine">Kolicina za rezervaciju:</label>
-            <b-form-input id="unos_kolicine" type="number" v-model="kolicinaLeka">
+            <b-form-input id="unos_kolicine" min="1" type="number" v-model="kolicinaLeka">
             </b-form-input>
             <label for="unos_kolicine">Trajanje terapije u danima:</label>
-            <b-form-input id="unos_trajanja" type="number" v-model="trajanjeTerapijeLeka">
+            <b-form-input id="unos_trajanja" min="1" type="number" v-model="trajanjeTerapijeLeka">
             </b-form-input>
             <template #modal-footer="{ ok }">
               <b-button @click="ok()">
@@ -491,6 +491,14 @@ Vue.component("PregledForma", {
                         }
                     })
             else if (this.optionPicked == 'TERM')
+                if (this.selectedTerm === null){
+                    this.showZakazivanjeAlert = true
+                    this.zakazivanjeAlertReason = "Niste izabrali termin!"
+                    return
+                } else {
+                    this.showZakazivanjeAlert = false
+                    this.zakazivanjeAlertReason = ""
+                }
                 axios
                     .post("pregledi/updateZakazanPregled", null, {
                         params: {
@@ -499,8 +507,18 @@ Vue.component("PregledForma", {
                             'idTermina': this.selectedTerm
                         }
                     })
-                    .then()
-                    .catch()
+                    .then(response => {
+                        this.showZakazivanjeAlert = false
+                        this.datumUnesen()
+                        this.selectedTerm = this.nullTerm
+                        this.$bvModal.hide('zakazivanjeModal')
+                    })
+                    .catch(reason => {
+                        if(reason.request.status === 400){
+                            this.showZakazivanjeAlert = true
+                            this.zakazivanjeAlertReason = reason.request.response
+                        }
+                    })
         }
     }
 });

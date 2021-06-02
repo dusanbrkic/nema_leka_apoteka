@@ -117,11 +117,11 @@ public class ApotekaLekService {
 		List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findApotekaLekoviByIdWithLock(kolicineLekova.keySet(), idApoteke);
 		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] ZAKLJUCAO SAM OBJEKAT!------------------------------");
 
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(10000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 
 		for (ApotekaLek apotekaLek : apotekaLekovi) {
 			if (kolicineLekova.get(apotekaLek.getId()) > apotekaLek.getKolicina())
