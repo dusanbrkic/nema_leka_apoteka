@@ -54,4 +54,5 @@ public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> 
 	//izvuci sve rezervacija za izvestaj u date rangeu
 	@Query(value = "select r from REZERVACIJA r join fetch r.lekovi l where r.apoteka.id = :apoteka_id and  r.rokPonude > :start and r.rokPonude < :end and r.preuzeto = true")
 	List<Rezervacija> findAllRezervacijeFinishedDateRange(Long apoteka_id, LocalDateTime start, LocalDateTime end);
+
 }

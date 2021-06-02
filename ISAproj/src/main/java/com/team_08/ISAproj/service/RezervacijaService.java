@@ -48,7 +48,10 @@ public class RezervacijaService {
     	
     	return rezervacijaRepository.findAll();
     }
-    
+    public List<RezervacijaLek> findAllRezervacijaLekNotFinished(Long id,Long lek) {
+    	
+    	return rezervacijaLekRepository.findAllRezervacijaLekNotFinished(id,lek);
+    }
     public List<RezervacijaLek> findAllRezervacijaLek() {
     	
     	return rezervacijaLekRepository.findAll();

@@ -108,6 +108,10 @@ Vue.component("UrediDermatologe", {
       <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
     <b-card style="margin: 40px auto; max-width: 2000px">
         <b-container>
+        <b-tabs fill>
+        <b-tab title="Dermatolozi" active>
+        </b-tab>
+        <b-tab title= "Dodaj dermatologa"></b-tab></b-tabs>
                                 <br>
                     <div class="text-center"><h2>Dermatolozi</h2></div>
           <hr>  
@@ -142,6 +146,7 @@ Vue.component("UrediDermatologe", {
       </b-row>
             <br>
 		          <b-row>
+              <b-container class="text-center">
                     <b-table
                       striped 
                     	borderless 
@@ -165,6 +170,7 @@ Vue.component("UrediDermatologe", {
                     </template>
                     <template  #cell(izmeniRadnoVreme)="row">
                     <b-button v-on:click="izmeniDermatologa(row.item)" variant="primary">Izmeni</b-button></template> </b-table>
+                    </b-container>
          </b-row>
          <b-row>
           <b-col>

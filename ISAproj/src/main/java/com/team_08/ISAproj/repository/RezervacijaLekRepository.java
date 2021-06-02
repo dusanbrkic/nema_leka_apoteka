@@ -16,4 +16,7 @@ public interface RezervacijaLekRepository extends JpaRepository<RezervacijaLek, 
 
     @Query(value = "select rl from REZERVACIJA_LEK rl where rl.rezervacija.id = :rezervacija_id")
     List<RezervacijaLek> findAllRezervacijaLekFromRezervacija(@Param("rezervacija_id") Long id);
+   
+    @Query(value = "select rl from REZERVACIJA_LEK rl where rl.rezervacija.apoteka.id = :id and rl.lek.id = :lek_id and rl.rezervacija.preuzeto = false ")
+    List<RezervacijaLek> findAllRezervacijaLekNotFinished(Long id, Long lek_id);
 }

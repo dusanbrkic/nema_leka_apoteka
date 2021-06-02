@@ -350,7 +350,7 @@ Vue.component("UrediFarmaceute", {
 
 
   <!-- forma za odsustvo -->
-	    <b-modal ref="my-modal" hide-footer>
+	    <b-modal ref="my-modal1" hide-footer>
   <b-card style="max-width: 500px; margin: 30px auto;">
     <b-form @submit.prevent="onOdbijOdsustvo">
     <h3>Odbijanja Odsustva</h3>
@@ -498,10 +498,10 @@ Vue.component("UrediFarmaceute", {
     },
     izmeniFarmaceuta(farmaceut) {
       this.farmaceutDTO = farmaceut;
-      // this.farmaceutDTO.radnoVremePocetak = this.fixTime(
-      //   farmaceut.radnoVremePocetak
-      // );
-      // this.farmaceutDTO.radnoVremeKraj = this.fixTime(farmaceut.radnoVremeKraj);
+      this.farmaceutDTO.radnoVremePocetak = this.fixTime(
+        farmaceut.radnoVremePocetak
+      );
+      this.farmaceutDTO.radnoVremeKraj = this.fixTime(farmaceut.radnoVremeKraj);
       this.$refs["my-modal"].show();
     },
     pretraga: function () {
@@ -593,7 +593,7 @@ Vue.component("UrediFarmaceute", {
     },
     odbijOdsustvo: async function (odsustvo) {
       this.izabranoOdsustvo = odsustvo;
-      this.$refs["my-modal"].show();
+      this.$refs["my-modal1"].show();
     },
     onOdbijOdsustvo: function () {
       this.izabranoOdsustvo.status = "odbijeno";
@@ -605,7 +605,7 @@ Vue.component("UrediFarmaceute", {
         });
       this.odsustva = [];
       this.loadOdsustva();
-      this.$refs["my-modal"].hide();
+      this.$refs["my-modal1"].hide();
     },
     fixDate(date) {
       return moment(date).format("DD/MM/YYYY");

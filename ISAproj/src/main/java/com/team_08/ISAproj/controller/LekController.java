@@ -280,8 +280,15 @@ public class LekController {
 
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-			apotekaLekService.removeBySifra(l.getId(),aa.getApoteka().getId());
-			return new ResponseEntity<>(HttpStatus.OK);
+			List<RezervacijaLek> rezervacijaLek = rezervacijaService.findAllRezervacijaLekNotFinished(aa.getApoteka().getId(),l.getId());
+			System.out.println(rezervacijaLek);
+			//List<RezervacijaLek> rezervacijaLek = null;
+			if(rezervacijaLek.isEmpty()) {
+				apotekaLekService.removeBySifra(l.getId(),aa.getApoteka().getId());
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+			
+			
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}

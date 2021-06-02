@@ -234,6 +234,7 @@ Vue.component("AdminApoteka", {
       };
       axios.get("apoteke/getByAdmin/", info).then((response) => {
         this.apoteka = response.data;
+        console.log(this.apoteka);
         (this.center = [this.apoteka.latitude, this.apoteka.longitude]),
           (this.location = this.center);
         //this.fixAdresu();
