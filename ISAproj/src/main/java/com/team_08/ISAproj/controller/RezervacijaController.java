@@ -19,6 +19,8 @@ import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.RezervacijaLekDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
+import com.team_08.ISAproj.repository.RezervacijaLekRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -147,13 +149,14 @@ public class RezervacijaController {
 			
 			Lek l = lekService.findOneBySifra(nDTO.getSifraLeka());
 			RezervacijaLek rl = new RezervacijaLek(nDTO.getKolicina(), n, l);
-			rezervacijaService.saveRezervacijaLek(rl);
+			
 			
 			ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(l.getId(), Long.parseLong(rezervacije.get(0).getApotekaId()));
 			
 			apotekaLek.setKolicina(apotekaLek.getKolicina()-nDTO.getKolicina());
 			apotekaLekService.saveAL(apotekaLek);
-			
+			rl.setCena(apotekaLek.getCena());
+			rezervacijaService.saveRezervacijaLek(rl);
 			
 			double cena_leka = nDTO.getKolicina()*apotekaLek.getCena();
 			ukupnaCena += cena_leka;
@@ -225,7 +228,7 @@ public class RezervacijaController {
 					
 					
 					RezervacijaLek nl = new RezervacijaLek(kolicina, n,lek);
-					
+					nl.setCena(al.getCena());
 					n.addRezervacijaLek(nl);
 					n.setApoteka(a.getApoteka());
 					n.setPacijent(k);
