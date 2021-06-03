@@ -490,8 +490,8 @@ Vue.component("PregledForma", {
                             this.zakazivanjeAlertReason = reason.request.response
                         }
                     })
-            else if (this.optionPicked == 'TERM')
-                if (this.selectedTerm === null){
+            else if (this.optionPicked == 'TERM') {
+                if (this.selectedTerm === null) {
                     this.showZakazivanjeAlert = true
                     this.zakazivanjeAlertReason = "Niste izabrali termin!"
                     return
@@ -514,11 +514,12 @@ Vue.component("PregledForma", {
                         this.$bvModal.hide('zakazivanjeModal')
                     })
                     .catch(reason => {
-                        if(reason.request.status === 400){
+                        if (reason.request.status === 400) {
                             this.showZakazivanjeAlert = true
                             this.zakazivanjeAlertReason = reason.request.response
                         }
                     })
+            }
         }
     }
 });
