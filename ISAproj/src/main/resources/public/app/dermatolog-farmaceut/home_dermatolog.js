@@ -22,7 +22,7 @@ Vue.component("HomeDermatolog", {
           <b-navbar-nav>
             <b-nav-item href="#/home-dermatolog">Home</b-nav-item>
             <b-nav-item href="#/home-dermatolog/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
-            <b-nav-item href="#/odsustvo-forma">Godisnji odmor</b-nav-item>
+            <b-nav-item href="#/home-dermatolog/odsustvo-forma">Godisnji odmor</b-nav-item>
             <b-nav-item v-on:click="loadPregledStartsNow">Zapocni pregled</b-nav-item>
             <b-nav-item href="#/home-dermatolog/calendar-view">Radni kalendar</b-nav-item>
           </b-navbar-nav>
@@ -54,7 +54,7 @@ Vue.component("HomeDermatolog", {
                 .then(response => {
                     localStorage.setItem("pregled", JSON.stringify(response.data))
                     this.showNemaPregledaAlert = false
-                    app.$router.push("/pregled-forma");
+                    app.$router.push("/home-dermatolog/pregled-forma");
                 })
                 .catch(reason => {
                     if (reason.request.status === 400){

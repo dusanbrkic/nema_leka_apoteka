@@ -24,9 +24,6 @@ public class ApotekaService {
 	@Autowired
 	private ApotekaRepository apotekaRepository;
 
-	public void save(Apoteka a) {
-		apotekaRepository.save(a);
-	}
 	
 	public List<Apoteka> findAll() {
 		List<Apoteka> apoteke = apotekaRepository.findAll();
@@ -69,4 +66,9 @@ public class ApotekaService {
     	pretragaAdresa = "%" + pretragaAdresa + "%";
     	return apotekaRepository.getAllApotekePaged(pretragaNaziv, pretragaAdresa, smer, cenaOD, cenaDO, sortBy, PageRequest.of(page, pageSize));
     }
+
+	public void save(Apoteka a) {
+		apotekaRepository.save(a);
+		
+	}
 }

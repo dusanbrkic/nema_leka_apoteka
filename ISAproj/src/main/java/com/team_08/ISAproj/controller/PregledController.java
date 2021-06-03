@@ -6,6 +6,7 @@ import com.team_08.ISAproj.dto.PregledLekDTO;
 import com.team_08.ISAproj.dto.RezervacijaDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 
+import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.service.*;
 
@@ -27,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.IsoFields;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -152,6 +155,19 @@ public class PregledController {
         return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/updatePregledBezPacijenta", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updatePregledBezPacijenta(@RequestParam Long pregledId,
+                                                            @RequestParam String cookie,
+                                                            @RequestParam Long pacijentId){
+        Pregled pregled = pregledService.findOneById(pregledId);
+        if(pregled == null || !pregled.getZdravstveniRadnik().getCookieToken().equals(cookie))
+            return new ResponseEntity<String>(HttpStatus.OK);
+        pregled.setPregledObavljen(true);
+        pregled.setPacijentSeNijePojavio(true);
+        pregledService.savePregled(pregled);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping(value = "/updatePregled", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updatePregled(@RequestBody PregledDTO pregledDTO) {
         Pregled pregled = pregledService.findOneById(pregledDTO.getId());
@@ -175,6 +191,7 @@ public class PregledController {
         Rezervacija rezervacija = new Rezervacija();
         rezervacija.setPreuzeto(false);
         rezervacija.setApoteka(pregled.getApoteka());
+        rezervacija.setDatumPonude(LocalDateTime.now());
         rezervacija.setRokPonude(LocalDateTime.now().plusDays(7));
         rezervacija.setPacijent(pregled.getPacijent());
         rezervacija.setIsteklo(false);
@@ -186,24 +203,26 @@ public class PregledController {
 
         double ukupnaCena = 0;
 
-        for (PregledLek pregledLek : pregled.getPreporuceniLekovi()) {
-            ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(pregledLek.getLek().getId(), rezervacija.getApoteka().getId());
-
-            if (pregledLek.getKolicina() <= 0)
-                return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-
-            apotekaLek.setKolicina(apotekaLek.getKolicina() - pregledLek.getKolicina());
-            apotekaLekService.saveAL(apotekaLek);
-
-            //TO DO ovde treba cenu
-            rezervacija.getLekovi()
-                    .add(new RezervacijaLek(pregledLek.getKolicina(), rezervacija, pregledLek.getLek(), apotekaLek.getCena()));
-            double cenaLeka = pregledLek.getKolicina() * apotekaLek.getCena();
-            ukupnaCena += cenaLeka;
-            body += "	- " + pregledLek.getLek().getNaziv() + " x " + pregledLek.getKolicina() + "kom - " + cenaLeka + "din. \n";
-
+        //konkurentno odredi novu kolicinu
+        try {
+            apotekaLekService.updateKolicinaLekovaKonkurentno(pregled.getPreporuceniLekovi(), pregled.getApoteka().getId());
+        } catch (LekNijeNaStanjuException e) {
+            return new ResponseEntity<String>("Lek nije na stanju zbog konflikta!", HttpStatus.BAD_REQUEST);
         }
 
+        //obracunaj cenu
+        for (PregledLek pregledLek : pregled.getPreporuceniLekovi()) {
+            //upit koji izvlaci pojedinacnu cena leka sa datim ID-jem
+            double trenutnaCenaLeka = apotekaLekService.findInApotekaLek(pregledLek.getLek().getId(), pregled.getApoteka().getId()).getCena();
+
+            rezervacija.getLekovi()
+                    .add(new RezervacijaLek(pregledLek.getKolicina(), rezervacija, pregledLek.getLek(), trenutnaCenaLeka));
+            double cenaLeka = pregledLek.getKolicina() * trenutnaCenaLeka;
+            ukupnaCena += cenaLeka;
+            body += "	- " + pregledLek.getLek().getNaziv() + " x " + pregledLek.getKolicina() + "kom - " + cenaLeka + "din. \n";
+        }
+
+        //sacuvaj
         rezervacijaService.saveRezervacija(rezervacija);
         pregledService.savePregled(pregled);
 
@@ -240,6 +259,8 @@ public class PregledController {
                                                        @RequestParam("idApoteke") Long idApoteke) {
         LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        if(zdravstveniRadnikService.findOneByCookie(cookie)==null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         // provera da li je dermatolog ili farmaceut slobodan
         if (!pregledService.findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty())
             return new ResponseEntity<String>("Vi ste zauzeti u zadatom terminu!",HttpStatus.BAD_REQUEST);
@@ -488,4 +509,49 @@ public class PregledController {
     	}
     	return new ResponseEntity<List<PregledDTO>>(savetovanja, HttpStatus.OK);
 	}
+    @GetMapping(value = "/pregledIzvestaj")
+    public ResponseEntity<Map<Integer,Integer>> pregledIzvestaj(@RequestParam("cookie") String cookie,
+    		@RequestParam("vremenskiPeriod") String vremenskiPeriod,
+    		@RequestParam(required = false) int godina){
+    	
+    	Korisnik k = korisnikService.findUserByToken(cookie);
+    	if(k == null) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	AdminApoteke a = (AdminApoteke) k;
+    	Map<Integer,Integer> izvestaj = new HashMap<Integer,Integer>();	
+    	if(vremenskiPeriod.equals("Mesecni")) {
+    		List<Pregled> pregledi = pregledService.findAllFromApotekaFinishedYear(a.getApoteka().getId(),godina);
+        	Map<LocalDateTime, List<Pregled>> data = pregledi.stream().collect(Collectors.groupingBy(d -> d.getVreme().withDayOfMonth(1)));
+        	
+        	for(int i = 1; i<13;i++) {
+        		izvestaj.put(i, 0);
+        	}
+        	for (LocalDateTime date : data.keySet()) {
+        		izvestaj.put(date.toLocalDate().getMonth().getValue(), data.get(date).size());
+        	}
+    	}
+    	else if(vremenskiPeriod.equals("Godisnji")) {
+    		for(int i = 0;i<5;i++) {
+    			izvestaj.put(2018+i, pregledService.findAllFromApotekaFinishedYear(a.getApoteka().getId(),2018+i).size());
+    		}
+    	}
+    	else if(vremenskiPeriod.equals("Kvartalni")) {
+    		List<Pregled> pregledi = pregledService.findAllFromApotekaFinishedYear(a.getApoteka().getId(),godina);
+    		Map<Object, List<Pregled>> data = pregledi.stream().collect(Collectors.groupingBy(d -> d.getVreme().get(IsoFields.QUARTER_OF_YEAR)));
+    		//System.out.print(data);
+    		for(int i = 1;i<5;i++) {
+    			izvestaj.put(i,0);
+    		}
+    		for (Object date : data.keySet()) {
+    			System.out.println(date);
+    			izvestaj.put((Integer) date, data.get(date).size());
+        	}
+    	}
+    	
+    	//System.out.println(izvestaj);
+
+    	return new ResponseEntity<Map<Integer,Integer>> (izvestaj, HttpStatus.OK);
+    }
 }
+

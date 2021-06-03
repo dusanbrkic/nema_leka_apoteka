@@ -52,14 +52,14 @@ insert into apoteka_lek (id,cena,kolicina,promotivna_cena,apoteka_id,lek_id) val
 insert into dermatolog (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,prosecna_ocena) values (nextval('korisnik_seq'), 'dusan', 'dusan', 'Dusan', 'Brkic', 'dusanbrk@gmail.com', 'dusan-dusan', false, 'Alekse Santica 14', 'Novi Sad', 'Kraljevina Srbija', '0640857676','4');
 insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'token','10.3.1999','hajdukdusan99@gmail.com','Dusan','dule','Hajduk','dule',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
 insert into admin_apoteke (id,username,password,ime,prezime,email_adresa,first_login, apoteka_id, adresa, grad, drzava, broj_telefona,token) values (nextval('korisnik_seq'),'nikola','nikola','Nikola','Petrovic','dusanbrk@gmail.com','false',1,'Milana Mice Petrovica 55', 'Kraljevo', 'Kraljevina Srbija', '0651212333','nikola-nikola');
-insert into farmaceut (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,apoteka_id,prosecna_ocena,radno_vreme_pocetak,radno_vreme_kraj) values (nextval('korisnik_seq'), 'dzon', 'dzon', 'Dzon', 'Bosnic', 'johnbosnitch@gmail.com', 'dzon-dzon', false, 'The Chetnik immigration 133 Block 14/33', 'Toronto', 'Canada', '+1/250-5550199','1','3.5','2008-01-01 09:00:01','2008-01-01 17:00:01');
+insert into farmaceut (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,apoteka_id,prosecna_ocena,radno_vreme_pocetak,radno_vreme_kraj) values (nextval('korisnik_seq'), 'dzon', 'dzon', 'Dzon', 'Bosnic', 's.nino.petrovic+7@gmail.com', 'dzon-dzon', false, 'The Chetnik immigration 133 Block 14/33', 'Toronto', 'Canada', '+1/250-5550199','1','3.5','2008-01-01 09:00:01','2008-01-01 17:00:01');
 
 --dermatolog_apoteka
 insert into dermatolog_apoteka(id,radno_vreme_kraj,radno_vreme_pocetak,apoteka_id,dermatolog_id) values (nextval('dermatolog_apoteka_seq'),'2008-01-01 17:00:01','2008-01-01 09:00:01',1,1);
 
 --pacijenti
-insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'osman-osman','1998.3.15.','dusanbrk@gmail.com','Semir','osman','Osmanagic','osman',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
-insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'token2','11.4.1999','dusanbrk@gmail.com','Miloslav','miloslav','Samardzic','miloslav',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
+insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'osman-osman','1998.3.15.','s.nino.petrovic+5@gmail.com','Semir','osman','Osmanagic','osman',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
+insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'token2','11.4.1999','s.nino.petrovic+6@gmail.com','Miloslav','miloslav','Samardzic','miloslav',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
 insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'token3','10.11.1955','mojEmail3@gmail.com','Miroljub','miroljub','Petrovic','miroljub',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
 insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'tesa-tesa','4.7.1944','dusanbrk@gmail.com','Tesa','tesa','Tesanovic','tesa',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
 insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'token4','3.1.1988','dusanbrk@gmail.com','Slavisa','slavisa','Miljkovic','slavisa',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');
@@ -67,7 +67,7 @@ insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,
 insert into dermatolog (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,prosecna_ocena) values (nextval('korisnik_seq'), 'dusan1', 'dusan1', 'Dusan', 'Brkic', 'dusanbrk1@gmail.com', 'dusan1-dusan1', true, 'Alekse Santica 14', 'Novi Sad', 'Kraljevina Srbija', '0640857676','4.5');
 insert into dermatolog (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,prosecna_ocena) values (nextval('korisnik_seq'), 'dusan2', 'dusan2', 'Nikola', 'Brkic', 'dusanbrk2@gmail.com', 'dusan2-dusan2', true, 'Alekse Santica 14', 'Novi Sad', 'Kraljevina Srbija', '0640857676','1.5');
 insert into dermatolog_apoteka(id,radno_vreme_kraj,radno_vreme_pocetak,apoteka_id,dermatolog_id) values (nextval('dermatolog_apoteka_seq'),'2008-01-01 17:00:01','2008-01-01 09:00:01',2,10);
-insert into farmaceut (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,apoteka_id,prosecna_ocena,radno_vreme_pocetak,radno_vreme_kraj) values (nextval('korisnik_seq'), 'dzon1', 'dzon1', 'Nikola', 'Pera', 'johnbosnitch1@gmail.com', 'dzon1-dzon1', false, 'The Chetnik immigration 133 Block 14/33', 'Toronto', 'Canada', '+1/250-5550199','1','2.5','2008-01-01 02:00:01','2008-01-01 08:00:01');
+insert into farmaceut (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,apoteka_id,prosecna_ocena,radno_vreme_pocetak,radno_vreme_kraj) values (nextval('korisnik_seq'), 'dzon1', 'dzon1', 'Nikola', 'Pera', 's.nino.petrovic+1@gmail.com', 'dzon1-dzon1', false, 'The Chetnik immigration 133 Block 14/33', 'Toronto', 'Canada', '+1/250-5550199','1','2.5','2008-01-01 02:00:01','2008-01-01 08:00:01');
 insert into farmaceut (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,apoteka_id,prosecna_ocena,radno_vreme_pocetak,radno_vreme_kraj) values (nextval('korisnik_seq'), 'dzon12', 'dzon12', 'Nikola', 'Pera', 'johnbosnitch2@gmail.com', 'dzon12-dzon12', false, 'The Chetnik immigration 133 Block 14/33', 'Toronto', 'Canada', '+1/250-5550199','2','2.5','2008-01-01 02:00:01','2008-01-01 08:00:01');
 insert into farmaceut (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,apoteka_id,prosecna_ocena,radno_vreme_pocetak,radno_vreme_kraj) values (nextval('korisnik_seq'), 'mitar', 'mitrovic', 'Mitar', 'Mitrovic', 'johnbosnitch1@gmail.com', 'mitar-mitrovic', false, 'The Chetnik immigration 133 Block 14/33', 'Toronto', 'Canada', '+1/250-5550199','1','4.5','2008-01-01 02:00:01','2008-01-01 08:00:01');
 --alergije
@@ -114,14 +114,24 @@ insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, tra
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-15T13:15:01.0', false, 0, '2021-05-15T12:45:01.0', '4', '1', '8', 250);
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-16T13:00:01.0', false, 0, '2021-05-16T11:45:01.0', '1', '1', '9', 550);
 
-insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-15T13:15:01.0', false, 0, '2021-05-15T12:45:01.0', '4', '4', '8', 250);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-15T13:15:01.0', false, 0, '2021-05-15T12:45:01.0', '1', '4', '8', 250);
 insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-05-16T13:00:01.0', false, 0, '2021-05-16T11:45:01.0', '1', '4', '9', 550);
 
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-06-16T13:00:01.0', true, 0, '2021-06-16T11:45:01.0', '1', '4', '9', 550);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-06-16T13:00:01.0', true, 0, '2021-06-16T11:45:01.0', '1', '4', '9', 550);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-06-16T13:00:01.0', true, 0, '2021-06-16T11:45:01.0', '1', '4', '9', 550);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-08-16T13:00:01.0', true, 0, '2021-08-16T11:45:01.0', '1', '4', '9', 550);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-04-16T13:00:01.0', true, 0, '2021-04-16T11:45:01.0', '1', '4', '9', 550);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-09-16T13:00:01.0', true, 0, '2021-09-16T11:45:01.0', '1', '4', '9', 550);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2021-07-16T13:00:01.0', true, 0, '2021-07-16T11:45:01.0', '1', '4', '9', 550);
 
 -- obavljen pregled
-insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, 'Pacijent ima vijetnamski sindrom.', '2021-04-13T13:00:01.0', true, 660000, '2021-04-13T12:45:01.0', '4', '1', '2', 1200);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, 'Pacijent ima vijetnamski sindrom.', '2020-07-13T13:00:01.0', true, 660000, '2020-07-13T12:45:01.0', '4', '1', '2', 2000);
 
 
+
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2020-12-16T13:00:01.0', true, 0, '2020-12-16T11:45:01.0', '1', '4', '9', 550);
+insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, trajanje, vreme, apoteka_id, zdravstveni_radnik_id, pacijent_id, cena) values (nextval('pregled_seq'), true, '', '2020-01-16T13:00:01.0', true, 0, '2020-01-16T11:45:01.0', '1', '4', '9', 550);
 
 --ocene lekova
 insert into ocena_lek (id,ocena,datum,lek_id, pacijent_id) values (nextval('ocena_seq'),5,'2021-05-16T11:45:01.0', 11, 2);
@@ -176,12 +186,14 @@ insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, tra
 insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'false', 'false', '2021-05-15 02:00:00', '1', '2');
 insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'true', 'false', '2021-05-20 02:00:00', '1', '2');
 insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'true', 'false', '2021-04-15 02:00:00', '1', '2');
+insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'true', 'false', '2020-07-15 02:00:00', '1', '2');
+insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'true', 'false', '2020-01-15 02:00:00', '1', '2');
 
-insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id) values (nextval('rezervacija_lek_seq'), '2', '2', '1');
-insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id) values (nextval('rezervacija_lek_seq'), '5', '1', '1');
-insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id) values (nextval('rezervacija_lek_seq'), '1', '3', '2');
-insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id) values (nextval('rezervacija_lek_seq'), '2', '1', '3');
-
+insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id,cena) values (nextval('rezervacija_lek_seq'), '2', '2', '1',300);
+insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id,cena) values (nextval('rezervacija_lek_seq'), '5', '1', '1',450);
+insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id,cena) values (nextval('rezervacija_lek_seq'), '10', '3', '2',350);
+insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id,cena) values (nextval('rezervacija_lek_seq'), '2', '1', '3',700);
+insert into rezervacija_lek (id, kolicina, lek_id, rezervacija_id,cena) values (nextval('rezervacija_lek_seq'), '13', '4', '5',700);
 --narudzbine
 insert into narudzbenica(id,preuzet,rok_ponude,apoteka_id) values (nextval('narudzbenica_seq'),'true','2021-05-16 02:00:00','1');
 insert into narudzbenica(id,preuzet,rok_ponude,apoteka_id) values (nextval('narudzbenica_seq'),'true','2021-05-17 03:00:00','1');

@@ -22,7 +22,7 @@ Vue.component("HomeFarmaceut", {
           <b-navbar-nav>
             <b-nav-item href="#/home-farmaceut">Home</b-nav-item>
             <b-nav-item href="#/home-farmaceut/pregledani-pacijenti">Pregledani pacijenti</b-nav-item>
-            <b-nav-item href="#/odsustvo-forma">Godisnji odmor</b-nav-item>
+            <b-nav-item href="#/home-farmaceut/odsustvo-forma">Godisnji odmor</b-nav-item>
             <b-nav-item v-on:click="loadPregledStartsNow">Zapocni savetovanje</b-nav-item>
             <b-nav-item href="#/home-farmaceut/calendar-view">Radni kalendar</b-nav-item>
             <b-nav-item href="#/home-farmaceut/izdaj-lek">Izdaj lek</b-nav-item>
@@ -55,7 +55,7 @@ Vue.component("HomeFarmaceut", {
                 .then(response => {
                     localStorage.setItem("pregled", JSON.stringify(response.data))
                     this.showNemaPregledaAlert = false
-                    app.$router.push("/pregled-forma");
+                    app.$router.push("/home-farmaceut/pregled-forma");
                 })
                 .catch(reason => {
                     if (reason.request.status === 400){

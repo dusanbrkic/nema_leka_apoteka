@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -45,4 +46,13 @@ public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> 
 
 	@Query(value = "select r from REZERVACIJA r join fetch r.lekovi l where r.apoteka.id = :idApoteke and r.id=:idRezervacije and r.rokPonude>:tommorow and r.preuzeto=false")
 	Rezervacija fetchRezervacijaWithLekoviByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow);
+	
+	//izvuci sve rezervacija za izvestaj u godini
+	@Query(value = "select r from REZERVACIJA r join fetch r.lekovi l where r.apoteka.id = :apoteka_id and EXTRACT(YEAR from r.rokPonude) = :godina and r.preuzeto = true")
+	List<Rezervacija> findAllRezervacijeFinishedYear(Long apoteka_id,Integer godina);
+	
+	//izvuci sve rezervacija za izvestaj u date rangeu
+	@Query(value = "select r from REZERVACIJA r join fetch r.lekovi l where r.apoteka.id = :apoteka_id and  r.rokPonude > :start and r.rokPonude < :end and r.preuzeto = true")
+	List<Rezervacija> findAllRezervacijeFinishedDateRange(Long apoteka_id, LocalDateTime start, LocalDateTime end);
+
 }

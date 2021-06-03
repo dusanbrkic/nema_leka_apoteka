@@ -78,7 +78,7 @@ Vue.component("PregledaniPacijenti", {
               <b-form-input v-model="pretragaIme" placeholder="Pretrazite ime"></b-form-input>
             </b-col>
             <b-col>
-              <b-button v-on:click="pretraga" style="float: right">Pretrazi</b-button>
+              <b-button v-on:click="pretraga" style="float: right; margin-left: 5px;" variant="primary">Pretrazi</b-button>
               <b-button v-on:click="obrisiPretragu" style="float: right" variant="danger">Resetuj</b-button>
             </b-col>
           </b-row>

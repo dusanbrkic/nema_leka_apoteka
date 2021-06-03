@@ -70,8 +70,13 @@ Vue.component("AdminNarudzbenice", {
 			      <div class="text-center"><h2>Narudzbenice</h2></div>
           <br>	
       <b-row>
+      <b-container class="text-center">
                     <b-table
-                        striped
+                        striped 
+                        borderless 
+                        outlined 
+                        head-variant="light"
+                        stacked="md"
                         id="narudzbine-tabela"
                         hover
                         :items="itemProvider"
@@ -92,6 +97,7 @@ Vue.component("AdminNarudzbenice", {
                     </div>
                     </template>
           </b-table>
+          </b-container>
          </b-row>
          </b-containter>
       </b-card>

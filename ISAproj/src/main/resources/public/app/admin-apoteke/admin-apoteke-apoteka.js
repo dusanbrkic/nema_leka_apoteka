@@ -13,6 +13,9 @@ Vue.component("AdminApoteka", {
         zoom: 2,
       }),
     });
+    map.on("click", function (evt) {
+      console.log("asda");
+    });
     return {
       apoteka: {
         id: "",
@@ -30,7 +33,7 @@ Vue.component("AdminApoteka", {
       cookie: "",
       zoom: 15,
       center: "",
-      location: [20.391395129936356, 45.38985699678626],
+      location: "",
       rotation: 0,
     };
   },
@@ -69,15 +72,12 @@ Vue.component("AdminApoteka", {
   </b-navbar>
   <router-view/>
 
-
-
-
-
-
 	<b-container id="page_content">
       <b-card style="margin: 30px auto;">
+            
+          <br>
         <b-form @submit.prevent="onSubmit">
-	        <h2>Izmena podataka apoteke</h2>
+	        <div class="text-center"><h2>Izmena podataka apoteke</h2></div>
 	        <form @submit.prevent="saveApoteka">
 	
 	          <div class="form-group">
@@ -92,7 +92,7 @@ Vue.component("AdminApoteka", {
 	            	<input type="text" class="form-control" id="adresa" v-model="apoteka.adresa">
 				 </b-col>
 				 <b-col>
-				     <vl-map data-projection="EPSG:4326" style="height: 500px; width: 500px">
+				 <vl-map data-projection="EPSG:4326" @click="changeLocation($event.coordinate)" style="height: 500px; width: 500px">
 					<vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
 
 					<vl-layer-tile>
@@ -119,7 +119,8 @@ Vue.component("AdminApoteka", {
 	
 	          <div class="form-group">
 	            <label>Opis:</label>
-	            <input type="text" class="form-control" id="opis" v-model="apoteka.opis">
+	            <b-form-textarea v-model="apoteka.opis">
+              </b-form-textarea>
 	          </div>
 			  <div class="form-group">
   				<label>Cena pregleda:</label>
@@ -190,24 +191,23 @@ Vue.component("AdminApoteka", {
     	</b-list-group>
 			</b-col>
 		</b-row>
-		        	<b-row align-v="right" >
+		      <b-row align-v="right" >
         	<div class="col-md-12 bg-light text-right">
         	<b-button size="sm" variant="primary" href="#/admin-apoteke-farmaceuti"> Uredi farmaceute </b-button>
         	</div>
         	</b-row>
 	    </div>
-			<b-button type="button" size="sm" v-on:click="redirectToHome()" variant="primary">Povratak na glavnu stranu</b-button>
-			<b-button type="button" size="sm" v-on:click="saveApoteka()" variant="primary">Sacuvaj podatke</b-button>
-        <div>
-
-      </div>
-
-	        </form>
+      <b-button type="button" size="sm" style="float: right" v-on:click="redirectToHome()" variant="primary">Povratak na glavnu stranu</b-button>
+			<b-button type="button" size="sm" style="float: right" v-on:click="saveApoteka()" variant="primary">Sacuvaj podatke</b-button>
+        </form>
 		</b-card>
 		</b-containter>
 		      </div>
     `,
   methods: {
+    changeLocation(evt) {
+      this.location = evt;
+    },
     loadLekoveApoteka: function () {
       let info = {
         params: {
@@ -218,7 +218,14 @@ Vue.component("AdminApoteka", {
         .get("lekovi/basic/", info)
         .then((response) => (this.lekovi = response.data));
     },
-    saveApoteka: function () {},
+    saveApoteka: function () {
+      this.apoteka.cookie = this.cookie;
+      this.apoteka.longitude = this.location[1];
+      this.apoteka.latitude = this.location[0];
+      axios
+        .post("apoteke/saveApoteka", this.apoteka)
+        .then((response) => console.log(response.data));
+    },
     loadApoteka() {
       let info = {
         params: {
@@ -227,8 +234,9 @@ Vue.component("AdminApoteka", {
       };
       axios.get("apoteke/getByAdmin/", info).then((response) => {
         this.apoteka = response.data;
-        this.center = [this.apoteka.latitude, this.apoteka.longitude],
-        this.location = this.center
+        console.log(this.apoteka);
+        (this.center = [this.apoteka.latitude, this.apoteka.longitude]),
+          (this.location = this.center);
         //this.fixAdresu();
       });
     },
@@ -266,7 +274,6 @@ Vue.component("AdminApoteka", {
       localStorage.clear();
       app.$router.push("/");
     },
-    fixAdresu() {
-    },
+    fixAdresu() {},
   },
 });

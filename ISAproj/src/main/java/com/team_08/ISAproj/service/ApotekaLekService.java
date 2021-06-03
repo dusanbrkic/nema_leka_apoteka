@@ -1,22 +1,30 @@
 package com.team_08.ISAproj.service;
 
-import java.util.List;
+import java.util.*;
 
+import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
+import com.team_08.ISAproj.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.team_08.ISAproj.model.Apoteka;
-import com.team_08.ISAproj.model.ApotekaLek;
-import com.team_08.ISAproj.model.Lek;
 import com.team_08.ISAproj.repository.ApotekaLekRepository;
 import com.team_08.ISAproj.repository.LekRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.*;
 
 @Service
 public class ApotekaLekService {
+	@PersistenceUnit
+	private EntityManagerFactory entityManagerFactory;
 	@Autowired
 	private ApotekaLekRepository apotekaLekRepository;
 	@Autowired
@@ -86,7 +94,7 @@ public class ApotekaLekService {
 	public Page<ApotekaLek> findAllApotekaLekoviSortedAndSearchedAndDone(Integer page, Integer size,
 			String sortBy, Boolean sortDesc, String title,Long apotekaId) {
 		title = "%" + title + "%";
-		if(!(sortBy.equals("kolicina") || sortBy.equals("cena") || sortBy.equals("istekVazenjaCene"))) {
+		if(!(sortBy.equals("promotivnaCena") || sortBy.equals("kolicina") || sortBy.equals("cena") || sortBy.equals("istekVazenjaCene"))) {
 			sortBy = "l." + sortBy;
 		}
 		Sort sort;
@@ -96,7 +104,38 @@ public class ApotekaLekService {
             sort = Sort.by(sortBy).ascending();
         return apotekaLekRepository.findAllApotekaLekoviSortedAndSearchedAndDone(PageRequest.of(page, size, sort), title, apotekaId);
 	}
-	
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+    public void updateKolicinaLekovaKonkurentno(Set<PregledLek> preporuceniLekovi, Long idApoteke) throws LekNijeNaStanjuException {
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] USAO SAM U TRANSAKCIJU I POKUSAVAM DA UZMEM LEK!------------------------------");
+		Map<Long, Integer> kolicineLekova = new HashMap<>();
+
+		for (PregledLek pregledLek : preporuceniLekovi) {
+			kolicineLekova.put(pregledLek.getId(), pregledLek.getKolicina());
+		}
+
+		List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findApotekaLekoviByIdWithLock(kolicineLekova.keySet(), idApoteke);
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] ZAKLJUCAO SAM OBJEKAT!------------------------------");
+
+//		try {
+//			Thread.sleep(10000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+
+		for (ApotekaLek apotekaLek : apotekaLekovi) {
+			if (kolicineLekova.get(apotekaLek.getId()) > apotekaLek.getKolicina())
+				throw  new LekNijeNaStanjuException();
+			apotekaLek.setKolicina(apotekaLek.getKolicina() - kolicineLekova.get(apotekaLek.getId()));
+		}
+		apotekaLekRepository.saveAll(apotekaLekovi);
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] SACUVAO SAM OBJEKAT!------------------------------");
+
+		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] ZAVRSIO SAM SA PREUZIMANJEM LEKA!------------------------------");
+
+
+	}
+
     public Page<ApotekaLek> getAllLekovi(int page, int pageSize, String pretraga) {
     	pretraga = "%" + pretraga + "%";
     	return apotekaLekRepository.getAllLekovi(pretraga, PageRequest.of(page, pageSize));

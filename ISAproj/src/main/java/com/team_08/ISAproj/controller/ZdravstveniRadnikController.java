@@ -38,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class ZdravstveniRadnikController {
     private OcenaService ocenaService;
     @Autowired
     private PacijentService pacijentService;
-    
+
     @GetMapping(value = "/putOdsustvo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> putOdsustvo(@RequestParam("start") String startDate,
                                               @RequestParam("end") String endDate,
@@ -79,7 +80,7 @@ public class ZdravstveniRadnikController {
             }
             Odsustvo o = new Odsustvo(start, end,"cekanju",z);
             odsustvoService.saveOdsustvo(o);
-            
+
           // z.getOdsustva().add(o);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -261,7 +262,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("ocena") Double ocena,
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj){
-    	
+
     	AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
     	if(aa == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -272,7 +273,7 @@ public class ZdravstveniRadnikController {
     	System.out.println(dermatoloziApoteke);
     	if (dermatoloziApoteke == null)
             return new ResponseEntity<Page<DermatologDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<DermatologDTO> dermatoloziDTO = dermatoloziApoteke.map(new Function<DermatologApoteka, DermatologDTO>() {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
@@ -295,7 +296,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj,
             @RequestParam String apoteka){
-    	
+
     	Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
     	if(p == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -306,7 +307,7 @@ public class ZdravstveniRadnikController {
     	System.out.println(dermatoloziApoteke);
     	if (dermatoloziApoteke == null)
             return new ResponseEntity<Page<DermatologDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<DermatologDTO> dermatoloziDTO = dermatoloziApoteke.map(new Function<DermatologApoteka, DermatologDTO>() {
             @Override
             public DermatologDTO apply(DermatologApoteka da) {
@@ -331,7 +332,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("ocena") Double ocena,
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj){
-    	
+
     	AdminApoteke aa = (AdminApoteke) korisnikService.findUserByToken(cookie);
     	if(aa == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -342,7 +343,7 @@ public class ZdravstveniRadnikController {
     	System.out.println(farmaceuti);
     	if (farmaceuti == null)
             return new ResponseEntity<Page<FarmaceutDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<FarmaceutDTO> farmaceutDTO = farmaceuti.map(new Function<Farmaceut, FarmaceutDTO>() {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
@@ -365,7 +366,7 @@ public class ZdravstveniRadnikController {
             @RequestParam("pocetak") String pocetak,
             @RequestParam("kraj") String kraj,
             @RequestParam String apoteka){
-    	
+
     	Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
     	if(p == null) {
     		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -375,7 +376,7 @@ public class ZdravstveniRadnikController {
     	System.out.println(farmaceuti);
     	if (farmaceuti == null)
             return new ResponseEntity<Page<FarmaceutDTO>>(Page.empty(), HttpStatus.OK);
-    	
+
         Page<FarmaceutDTO> farmaceutDTO = farmaceuti.map(new Function<Farmaceut, FarmaceutDTO>() {
             @Override
             public FarmaceutDTO apply(Farmaceut f) {
@@ -416,7 +417,6 @@ public class ZdravstveniRadnikController {
     public ResponseEntity<DermatologDTO> addDermatologApoteka(
             @RequestParam("start") String startDate,
             @RequestParam("end") String endDate,
-            @RequestParam String cena,
             @RequestParam("cookie") String cookie,
             @RequestParam String username) {
 
@@ -426,8 +426,8 @@ public class ZdravstveniRadnikController {
         }
         if (k instanceof AdminApoteke) {
             AdminApoteke aa = (AdminApoteke) k;
-            LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-            LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            LocalTime start = LocalTime.parse(startDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+            LocalTime end = LocalTime.parse(endDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
             List<DermatologApoteka> proveraRadnogVremana = zdravstveniRadnikService.checkIfGivenWorkHoursAreOk(username, start, end);
             System.out.println(proveraRadnogVremana);
             if (!proveraRadnogVremana.isEmpty()) {
@@ -437,7 +437,7 @@ public class ZdravstveniRadnikController {
             if (d == null) {
                 return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
             }
-            DermatologApoteka da = new DermatologApoteka(d, aa.getApoteka(), start.toLocalTime(), end.toLocalTime());
+            DermatologApoteka da = new DermatologApoteka(d, aa.getApoteka(), start, end	);
             zdravstveniRadnikService.addDermatologApoteke(da);
             return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
         }
@@ -472,7 +472,6 @@ public class ZdravstveniRadnikController {
     @GetMapping(value = "/changeDermatolog")
     public ResponseEntity<DermatologDTO> changeDermatolog(@RequestParam("start") String startDate,
                                                           @RequestParam("end") String endDate,
-                                                          @RequestParam String cena,
                                                           @RequestParam("cookie") String cookie,
                                                           @RequestParam String username) {
 
@@ -480,10 +479,9 @@ public class ZdravstveniRadnikController {
         if (aa == null) {
             return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
         }
-        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalTime start = LocalTime.parse(startDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+        LocalTime end = LocalTime.parse(endDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
         List<DermatologApoteka> proveraRadnogVremana = zdravstveniRadnikService.checkIfGivenWorkHoursAreOk(username, aa.getApoteka().getId(), start, end);
-        System.out.println(proveraRadnogVremana);
         if (!proveraRadnogVremana.isEmpty()) {
             return new ResponseEntity<DermatologDTO>(HttpStatus.BAD_REQUEST);
         }
@@ -492,8 +490,8 @@ public class ZdravstveniRadnikController {
             return new ResponseEntity<DermatologDTO>(HttpStatus.NOT_FOUND);
         }
         DermatologApoteka da1 = zdravstveniRadnikService.findDermatologApoteka(d.getId(), aa.getApoteka().getId());
-        da1.setRadnoVremeKraj(end.toLocalTime());
-        da1.setRadnoVremePocetak(start.toLocalTime());
+        da1.setRadnoVremeKraj(end);
+        da1.setRadnoVremePocetak(start);
         zdravstveniRadnikService.addDermatologApoteke(da1);
         return new ResponseEntity<DermatologDTO>(HttpStatus.OK);
     }
@@ -508,24 +506,24 @@ public class ZdravstveniRadnikController {
         if (aa == null) {
             return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
         }
-        LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-        LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        LocalTime start = LocalTime.parse(startDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
+        LocalTime end = LocalTime.parse(endDate, DateTimeFormatter.ofPattern("HH:mm:ss.SSS'Z'"));
 
         Farmaceut f = (Farmaceut) korisnikService.findUser(username);
         if (f == null) {
             return new ResponseEntity<FarmaceutDTO>(HttpStatus.NOT_FOUND);
         }
-        f.setRadnoVremePocetak(start.toLocalTime());
-        f.setRadnoVremeKraj(end.toLocalTime());
+        f.setRadnoVremePocetak(start);
+        f.setRadnoVremeKraj(end);
         zdravstveniRadnikService.saveFarmaceut(f);
         return new ResponseEntity<FarmaceutDTO>(HttpStatus.OK);
     }
-    //sva odusustva 
+    //sva odusustva
     @GetMapping(value="/allOdsustvo")
     public ResponseEntity<List<OdsustvoDTO>> allOdsustvo(@RequestParam String cookie){
-    	
+
     	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(cookie);
-    	
+
     	if(a == null) {
     		return new ResponseEntity<List<OdsustvoDTO>>(HttpStatus.NOT_FOUND);
     	}
@@ -537,14 +535,14 @@ public class ZdravstveniRadnikController {
 			odsustvoDTO.add(new OdsustvoDTO(o));
 		}
 		return new ResponseEntity<List<OdsustvoDTO>>(odsustvoDTO,HttpStatus.OK);
-    	
+
     }
-   
+
     //Odbijanje i prihvatanje odustava za godisnji odmor
     @PutMapping(value = "/updateOdsustvo")
     public ResponseEntity<Void> updateOdsustvo(@RequestBody OdsustvoDTO odsustvoDTO) throws ParseException{
     	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(odsustvoDTO.getCookie());
-    	
+
     	if(a == null) {
     		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
     	}
@@ -553,7 +551,7 @@ public class ZdravstveniRadnikController {
     		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
     	}
     	String title = "Godisnji odmor - " + a.getApoteka().getNaziv();
-    	String body; 
+    	String body;
     	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     	if(odsustvoDTO.getStatus().equals("odobreno")) {
     		body = "Odobren vam je godisnji odmor.\nTrajace u periodu od " + odsustvoDTO.getPocetak() +  " - " + odsustvoDTO.getKraj();
@@ -590,26 +588,26 @@ public class ZdravstveniRadnikController {
     	o.updateOdustov(odsustvoDTO);
     	odsustvoService.saveOdsustvo(o);
     	return new ResponseEntity<Void>(HttpStatus.OK);
-    	
+
     }
-    
+
 	@GetMapping(value="/getOcena")
 	public ResponseEntity<Map<String, Object>> getOcena(@RequestParam String cookie,
 										 				@RequestParam String username){
 		ZdravstveniRadnik radnik = zdravstveniRadnikService.findZdravstveniRadnikByUsername(username);
 		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
 		OcenaZdravstveniRadnik ocenaZdravstveniRadnik = ocenaService.findOcenaZdravstvenogRadnikaByPacijentID(radnik.getId(), p.getId());
-		
+
 		if(ocenaZdravstveniRadnik == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("ocena", ocenaZdravstveniRadnik.getOcena());
-		
+
         return new ResponseEntity<Map<String, Object>>( response, HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value="/oceni")
 	public ResponseEntity<Void> setOcena(@RequestParam String cookie,
 										 @RequestParam String username,
@@ -618,7 +616,7 @@ public class ZdravstveniRadnikController {
 		Pacijent p = pacijentService.fetchPacijentWithAlergijeByCookie(cookie);
 
 		OcenaZdravstveniRadnik ocenaZdravstveniRadnik = ocenaService.findOcenaZdravstvenogRadnikaByPacijentID(radnik.getId(), p.getId());
-		
+
 		if(ocenaZdravstveniRadnik == null) {
 			ocenaZdravstveniRadnik = new OcenaZdravstveniRadnik(radnik, ocena, LocalDateTime.now(), p);
 		}

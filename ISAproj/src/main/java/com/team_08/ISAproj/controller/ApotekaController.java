@@ -176,7 +176,26 @@ public class ApotekaController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+	@PostMapping(value = "/saveApoteka")
+	public ResponseEntity<ApotekaDTO> saveApoteka(@RequestBody ApotekaDTO aDTO){
+		
+		Korisnik k = korisnikService.findUserByToken(aDTO.getCookie());
+		
+        if(k == null) {
+            return new ResponseEntity<ApotekaDTO>(HttpStatus.NOT_FOUND);
+        }
+        if(k instanceof AdminApoteke) {
+        	AdminApoteke aa = (AdminApoteke) k;
+        	Apoteka a = aa.getApoteka();
+        	a.updateInfo(aDTO);
+        	apotekaService.save(a);
+        }
+		return new ResponseEntity<ApotekaDTO>(aDTO,HttpStatus.OK);
+		
+		
+		
+		
+	}
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApotekaDTO> getApoteka(@PathVariable("id") Long id) {
 		Apoteka apoteka = apotekaService.findOne(id);
@@ -296,5 +315,21 @@ public class ApotekaController {
     	apotekaService.save(a);
 
         return new ResponseEntity<>(HttpStatus.OK);
+	}
+	@GetMapping(value="/prihodIzvestaj")
+	public ResponseEntity<Map<Integer,Integer>> prihodiIzvestaj(@RequestParam("cookie") String cookie,
+    		@RequestParam("vremenskiPeriod") String vremenskiPeriod,
+    		@RequestParam(required = false) int godina,
+    		@RequestParam("pocetak") LocalDateTime pocetak,
+    		@RequestParam("kraj") LocalDateTime kraj){
+		
+    	Korisnik k = korisnikService.findUserByToken(cookie);
+    	if(k == null) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	AdminApoteke a = (AdminApoteke) k;
+    	Map<Integer,Integer> izvestaj = new HashMap<Integer,Integer>();	
+    	
+		return new ResponseEntity<Map<Integer,Integer>> (izvestaj, HttpStatus.OK);
 	}
 }

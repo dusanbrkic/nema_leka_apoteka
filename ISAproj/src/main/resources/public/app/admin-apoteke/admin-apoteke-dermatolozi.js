@@ -42,17 +42,11 @@ Vue.component("UrediDermatologe", {
           key: "radnoVremePocetak",
           sortable: true,
           label: "Pocetak radnog vremena",
-          formatter: (value, key, item) => {
-            return moment(value).format("HH:mm");
-          },
         },
         {
           key: "radnoVremeKraj",
           sortable: true,
           label: "Kraj radnogVremena",
-          formatter: (value, key, item) => {
-            return moment(value).format("HH:mm");
-          },
         },
         {
           key: "obrisiDermatologa",
@@ -114,7 +108,14 @@ Vue.component("UrediDermatologe", {
       <link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css">
     <b-card style="margin: 40px auto; max-width: 2000px">
         <b-container>
-          <b-row>
+        <b-tabs fill>
+        <b-tab title="Dermatolozi" active>
+        </b-tab>
+        <b-tab title= "Dodaj dermatologa"></b-tab></b-tabs>
+                                <br>
+                    <div class="text-center"><h2>Dermatolozi</h2></div>
+          <hr>  
+        <b-row>
             <b-col>
               <b-form-input v-model="pretragaIme" placeholder="Pretrazite po imenu"></b-form-input>
             </b-col>
@@ -131,7 +132,7 @@ Vue.component("UrediDermatologe", {
               <label for="range-2">Prosecna ocena:
               <b-form-input id="range-2" v-model="ocena" @change="handleOcenaChange($event)" type="range" size = "sm" min="0" max="5" step="0.5"></b-form-input>
               
-              <div class="mt-2">Farmaceuti sa prosecnom ocenom vecom od: {{ ocena }}</div>
+              <div class="mt-2">Dermatolozi sa prosecnom ocenom vecom od: {{ ocena }}</div>
               </label>
               </div>
 
@@ -141,11 +142,17 @@ Vue.component("UrediDermatologe", {
               <b-row>
                 <b-col><b-form-input type= "time" v-model="pocetakRadnog" @change="handlePocetakChange($event)":max=this.krajRadnog ></b-form-input></b-col>
                 <b-col><b-form-input type= "time" v-model="krajRadnog" @change="handleKrajChange($event)" :min=pocetakRadnog></b-form-input></b-col>
+
       </b-row>
             <br>
 		          <b-row>
+              <b-container class="text-center">
                     <b-table
-                        striped
+                      striped 
+                    	borderless 
+                    	outlined 
+                    	head-variant="light"
+                        stacked="md"
                         id="dermatolozi-tabela"
                         hover
                         :items="itemProvider"
@@ -163,6 +170,7 @@ Vue.component("UrediDermatologe", {
                     </template>
                     <template  #cell(izmeniRadnoVreme)="row">
                     <b-button v-on:click="izmeniDermatologa(row.item)" variant="primary">Izmeni</b-button></template> </b-table>
+                    </b-container>
          </b-row>
          <b-row>
           <b-col>
@@ -205,13 +213,6 @@ Vue.component("UrediDermatologe", {
     	</b-list-group-item>
 		</b-list-group>
         <b-form @submit.prevent="onIzmeniDermatologa">
-          <b-form-group id="input-group-3" label="Cena:" label-for="input-3">
-            <b-form-input
-            	required
-            	type = "number"
-				v-model="dermatologDTO.cena"
-				:min = 0 
-            />
           <b-form-group id="input-group-3" label="Pocetak radnog vremena:" label-for="input-3">
             <b-form-input
             	required
@@ -246,10 +247,8 @@ Vue.component("UrediDermatologe", {
       this.preklopRadnogVremena = false;
       let info = {
         params: {
-          start:
-            this.dermatologDTO.radnoVremePocetak + ":00.000Z",
+          start: this.dermatologDTO.radnoVremePocetak + ":00.000Z",
           end: this.dermatologDTO.radnoVremeKraj + ":00.000Z",
-          cena: this.dermatologDTO.cena,
           cookie: this.cookie,
           username: this.dermatologDTO.username,
         },
@@ -368,7 +367,7 @@ Vue.component("UrediDermatologe", {
           pretraziPrezime: pretragaPrezime,
           ocena: this.ocena,
           pocetak: this.pocetakRadnog + ":00.000Z",
-          kraj:  this.krajRadnog + ":00.000Z",
+          kraj: this.krajRadnog + ":00.000Z",
         },
       };
       console.log("123");

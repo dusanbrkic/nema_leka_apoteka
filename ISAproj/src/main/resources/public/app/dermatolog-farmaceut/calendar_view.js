@@ -134,6 +134,9 @@ Vue.component("CalendarView", {
                 <br>
                 <p>Ovo je dodeljen termin od strane apoteke. Mozete zakazati pregled u ovom terminu.</p>
               </b-row>
+              <b-row v-if="selectedEvent.pacijentSeNijePojavio">
+                <b-col style="text-align: center;"><strong>Pacijent se nije pojavio!</strong></b-col>
+              </b-row>
             </b-container>
             <template #modal-footer="{ ok }">
               <b-button
@@ -166,23 +169,14 @@ Vue.component("CalendarView", {
         `
     ,
     methods: {
-        pacijent_pobegao: function () {
-            let pregled = {
-                id: this.selectedEvent.id,
-                start: this.selectedEvent.start,
-                end: this.selectedEvent.end,
-                apoteka: this.selectedEvent.apoteka,
-                pacijent: this.selectedEvent.pacijent,
-                preporuceniLekovi: this.selectedEvent.preporuceniLekovi,
-                dijagnoza: this.selectedEvent.dijagnoza,
-                pregledZakazan: this.selectedEvent.pregledZakazan,
-                pregledObavljen: this.selectedEvent.pregledObavljen,
-            }
-            axios
-                .put("pregledi/updatePregledBezPacijenta", {
-                    'pregled': pregled,
-                    'cookie': this.cookie
-                })
+        pacijent_pobegao: async function () {
+            await axios
+                .post("pregledi/updatePregledBezPacijenta", null, {params:{
+                    'pregledId': this.selectedEvent.id,
+                    'cookie': this.cookie,
+                    'pacijentId': this.selectedEvent.pacijent.id
+                }})
+            this.calendar.refetchEvents()
         },
 
         zapocni_pregled: function () {
@@ -232,6 +226,8 @@ Vue.component("CalendarView", {
                             end: new Date(event.end + ".000Z"),
                             event: event,
                             color: (() => {
+                                if (event.pacijentSeNijePojavio)
+                                    return 'purple'
                                 if (event.pregledZakazan) {
                                     if (event.pregledObavljen)
                                         return "gray"
@@ -293,6 +289,7 @@ Vue.component("CalendarView", {
                 this.selectedEvent.dijagnoza = event.dijagnoza
                 this.selectedEvent.pregledZakazan = event.pregledZakazan
                 this.selectedEvent.pregledObavljen = event.pregledObavljen
+                this.selectedEvent.pacijentSeNijePojavio = event.pacijentSeNijePojavio
                 this.$bvModal.show('eventModal')
             }
         }

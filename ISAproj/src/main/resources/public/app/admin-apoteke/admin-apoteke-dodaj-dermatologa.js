@@ -1,34 +1,28 @@
-Vue.component("DodajDermatologa", { 
-	
-	data: function () {
-		return {
-			cookie:"",
-			apotekaID : "",
-			dermatolozi : [],
-			radnaVremena: [],
-			preklopRadnogVremena: false,
-			dermatologDTO :{
-				
-				"cookie": "",
-				"cena"  : "",
-				"radnoVremePocetak" : "",
-				"radnoVremeKraj" : ""
-				}
-			}
-		},
-		
-		mounted(){
-			
-			    this.cookie = localStorage.getItem("cookie");
-    			this.apotekaID = localStorage.getItem("apotekaID");
-    			this.dermatologDTO.cookie = localStorage.getItem("cookie");
-				this.loadDermatologe();
-			
-		},
-		
-		template:
-		
-		`
+Vue.component("DodajDermatologa", {
+  data: function () {
+    return {
+      cookie: "",
+      apotekaID: "",
+      dermatolozi: [],
+      radnaVremena: [],
+      preklopRadnogVremena: false,
+      dermatologDTO: {
+        cookie: "",
+        cena: "",
+        radnoVremePocetak: "",
+        radnoVremeKraj: "",
+      },
+    };
+  },
+
+  mounted() {
+    this.cookie = localStorage.getItem("cookie");
+    this.apotekaID = localStorage.getItem("apotekaID");
+    this.dermatologDTO.cookie = localStorage.getItem("cookie");
+    this.loadDermatologe();
+  },
+
+  template: `
 			<div>
 	<link rel="stylesheet" href="css/dermatolog-farmaceut/home_dermatolog.css" type="text/css">
       <b-navbar toggleable="lg" href="#/home-admin_apoteke" type="dark" variant="dark">
@@ -98,18 +92,11 @@ Vue.component("DodajDermatologa", {
         class="list-group-item px-0">
         <b-row align-v="centar" >
             <b-col md="auto">
-			{{fixDate(radnoVreme.radnoVremePocetak)}} - {{fixDate(radnoVreme.radnoVremeKraj)}}
+			{{radnoVreme.radnoVremePocetak}} - {{radnoVreme.radnoVremeKraj}}
 			
     	</b-list-group-item>
 		</b-list-group>
         <b-form @submit.prevent="onDodajTermin">
-          <b-form-group id="input-group-3" label="Cena:" label-for="input-3">
-            <b-form-input
-            	required
-            	type = "number"
-				v-model="dermatologDTO.cena"
-				:min = 0 
-            />
           <b-form-group id="input-group-3" label="Pocetak radnog vremena:" label-for="input-3">
             <b-form-input
             	required
@@ -132,69 +119,65 @@ Vue.component("DodajDermatologa", {
 		 	 </div> 
 
 		`,
-		
-		
-	methods: {
-		fixDate(date){
-   			
-   			return moment(date).format('HH:mm')
-   		
-   		},	
-	    logout: function () {
-	      localStorage.clear();
-	      app.$router.push("/");
-	    },
-		onDodajTermin(){
-			this.preklopRadnogVremena = false;
-			let info = {
-				params:{
-					'start': "2008-01-01T" + this.dermatologDTO.radnoVremePocetak + ":00.000Z",
-					'end' : "2008-01-01T" + this.dermatologDTO.radnoVremeKraj + ":00.000Z",
-					'cena' : this.dermatologDTO.cena,
-					'cookie': this.cookie,
-					'username':this.dermatologDTO.username,		
-				}
-			}
-			console.log(info);
-			axios.get("/zdravstveniradnik/addDermatologApoteke",info)
-			.then(response => {
-			this.$refs["my-modal"].hide()
-			})
-	        .catch((error) => {
-	          if (error.request.status == 400) {
-	            this.preklopRadnogVremena = true;
-	          }
-	        });
-	        this.loadDermatologe();
-		},
-		dodajDerma(dermatolog){
-						let info = {
-				params:{
-					'username':dermatolog.username
-				}
-			}
-			axios.get("/zdravstveniradnik/getDermaWorkingHours",info).then(response => this.radnaVremena = response.data);
-			this.dermatologDTO = dermatolog;
 
-			console.log(this.radnaVremena);
-				
-				
-				
-			this.$refs["my-modal"].show();
-			
-		},
-		loadDermatologe(){
-			
-						axios.get("/zdravstveniradnik/allDermaNotInApoteka",{params:
-                            {
-                                'cookie': this.cookie
-                            }}).then(response => {this.dermatolozi = response.data});
-		}
-	
-		},
+  methods: {
+    fixDate(date) {
+      return moment(date).format("HH:mm");
+    },
+    logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
+    onDodajTermin() {
+      this.preklopRadnogVremena = false;
+      console.log(this.dermatologDTO.radnoVremePocetak);
+      let info = {
+        params: {
+          start: this.dermatologDTO.radnoVremePocetak + ":00.000Z",
+          end: this.dermatologDTO.radnoVremeKraj + ":00.000Z",
+          cena: this.dermatologDTO.cena,
+          cookie: this.cookie,
+          username: this.dermatologDTO.username,
+        },
+      };
+      console.log(info);
+      axios
+        .get("/zdravstveniradnik/addDermatologApoteke", info)
+        .then((response) => {
+          this.$refs["my-modal"].hide();
+        })
+        .catch((error) => {
+          if (error.request.status == 400) {
+            this.preklopRadnogVremena = true;
+          }
+        });
+      this.loadDermatologe();
+    },
+    dodajDerma(dermatolog) {
+      let info = {
+        params: {
+          username: dermatolog.username,
+        },
+      };
+      axios
+        .get("/zdravstveniradnik/getDermaWorkingHours", info)
+        .then((response) => (this.radnaVremena = response.data));
+      this.dermatologDTO = dermatolog;
 
-	
-	
-	
-	
+      console.log(this.radnaVremena);
+
+      this.$refs["my-modal"].show();
+    },
+    loadDermatologe() {
+      axios
+        .get("/zdravstveniradnik/allDermaNotInApoteka", {
+          params: {
+            cookie: this.cookie,
+          },
+        })
+        .then((response) => {
+          this.dermatolozi = response.data;
+        });
+    },
+  },
 });

@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 import com.team_08.ISAproj.dto.LekDTO;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity(name = "APOTEKA_LEK")

@@ -1,16 +1,33 @@
 Vue.component("UrediFarmaceute", {
   data: function () {
     return {
+      odsustva: [],
+      izabranoOdsustvo: "",
       imaZakazeno: false,
       farmaceuti: [],
       cookie: "",
       apotekaID: "",
       farmaceutDTO: {
+        username: "",
+        password: "",
         ime: "",
         prezime: "",
+        datumRodjenja: "",
+        emailAdresa: "",
+        cookie: "",
+        firstLogin: "",
+        adresa: "",
+        grad: "",
+        drzava: "",
+        brojTelefona: "",
+        minDate: "",
         radnoVremePocetak: "",
         radnoVremeKraj: "",
+        cena: "",
+        cookie: "",
       },
+      postojiMail: false,
+      postojiKorisnicko: false,
       pageSizes: [2, 6, 10, 20, 50],
       fields: [
         {
@@ -38,16 +55,15 @@ Vue.component("UrediFarmaceute", {
           key: "radnoVremeKraj",
           sortable: true,
           label: "Kraj radnogVremena",
-          //formatter: (value, key, item) => {
-          //return moment(value).format("HH:mm");
-          // },
         },
         {
           key: "obrisiFarmaceuta",
+          label: "",
           sortable: false,
         },
         {
           key: "izmeniRadnoVreme",
+          label: "",
           sortable: false,
         },
       ],
@@ -67,6 +83,8 @@ Vue.component("UrediFarmaceute", {
   mounted() {
     this.cookie = localStorage.getItem("cookie");
     this.apotekaID = localStorage.getItem("apotekaID");
+    this.farmaceutDTO.cookie = localStorage.getItem("cookie");
+    this.loadOdsustva();
   },
 
   template: `
@@ -103,6 +121,11 @@ Vue.component("UrediFarmaceute", {
     <!--<link rel="stylesheet" href="css/dermatolog-farmaceut/dermatolog_main.css" type="text/css"> -->
     <b-card style="margin: 40px auto; max-width: 2000px">
         <b-container>
+        <b-tabs fill>
+        <b-tab title="Farmaceuti" active>
+        <br>
+                    <div class="text-center"><h2>Farmaceuti</h2></div>
+          <hr>
           <b-row align="center">
             <b-col>
               <b-form-input v-model="pretragaIme" placeholder="Pretrazite po imenu" align="right"></b-form-input>
@@ -130,7 +153,7 @@ Vue.component("UrediFarmaceute", {
         <b-row>
           <b-col><b-form-input type= "time"   sm="5" v-model="pocetakRadnog" @change="handlePocetakChange($event)":max=this.krajRadnog ></b-form-input></b-col>
           <b-col><b-form-input type= "time" sm="5" v-model="krajRadnog" @change="handleKrajChange($event)" :min=pocetakRadnog></b-form-input></b-col>
-          <b-col sm="7" md="6" class="my-1">
+         <!-- <b-col sm="7" md="6" class="my-1">
             <b-pagination
               align = "right"
               v-model="page"
@@ -141,8 +164,8 @@ Vue.component("UrediFarmaceute", {
               class="my-0"
               @change="handlePageChange"
             ></b-pagination>
-          </b-col>
-                   <b-col sm="5" md="6" class="my-1">
+           </b-col>
+                 <b-col sm="5" md="6" class="my-1">
         <b-form-select
                   id="per-page-select"
                   v-model="pageSize"
@@ -150,7 +173,7 @@ Vue.component("UrediFarmaceute", {
                   size="sm"
                   class="text-right"
                 ></b-form-select>
-                </b-col>
+                </b-col> -->
         </b-row>
         
             <br>
@@ -195,27 +218,162 @@ Vue.component("UrediFarmaceute", {
               </select>
           </b-col>
          </b-row>
+
+        </b-tab>
+        <b-tab title="Dodaj farmaceuta">
+          <b-alert style="text-align: center;" v-model="this.postojiMail" variant="danger">Vec postoji nalog sa ovom email adresom!</b-alert>
+      <b-alert style="text-align: center;" v-model="this.postojiKorisnicko" variant="danger">Vec postoji nalog sa ovim korisnickim imenom!</b-alert>
+      <br>
+      <div class="text-center"><h2>Registracija farmaceuta</h2></div>
+      <hr>
+        <b-form @submit.prevent="onSubmit">
+          <b-form-group id="input-group-1" label="Email adresa:" label-for="input-1">
+            <b-form-input
+                required
+                id="input-1"
+                v-model="farmaceutDTO.emailAdresa"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-2" label="Korisnicko ime:" label-for="input-2">
+            <b-form-input
+                required
+                id="input-2"
+                v-model="farmaceutDTO.username"
+            ></b-form-input>
+          </b-form-group>
+		  <b-form-group id="input-group-10" label="Lozinka:" label-for="input-2">
+            <b-form-input
+                required
+                id="input-10"
+                v-model="farmaceutDTO.password"
+                type="password"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-3" label="Ime:" label-for="input-3">
+            <b-form-input
+                required
+                id="input-3"
+                v-model="farmaceutDTO.ime"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-4" label="Prezime:" label-for="input-4">
+            <b-form-input
+                required
+                id="input-4"
+                v-model="farmaceutDTO.prezime"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-5" label="Datum rodjenja:" label-for="input-5">
+            <b-form-input
+                required
+                id="input-5"
+                type="date"
+                v-model="farmaceutDTO.datumRodjenja"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-6" label="Adresa:" label-for="input-6">
+            <b-form-input
+                required
+                id="input-6"
+                v-model="farmaceutDTO.adresa"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-7" label="Grad:" label-for="input-7">
+            <b-form-input
+                required
+                id="input-7"
+                v-model="farmaceutDTO.grad"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-8" label="Drzava:" label-for="input-8">
+            <b-form-input
+                required
+                id="input-8"
+                v-model="farmaceutDTO.drzava"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-9" label="Broj telefona:" label-for="input-9">
+            <b-form-input
+                required
+                id="input-9"
+                v-model="farmaceutDTO.brojTelefona"
+            ></b-form-input>
+		
+		<b-form-group id="input-group-10" label="Pocetak radnog vremena:" label-for="input-10">
+            <b-form-input
+                required
+                id="input-10"
+                v-model="farmaceutDTO.radnoVremePocetak"
+                type="time"
+                :max = this.farmaceutDTO.radnoVremeKraj
+            ></b-form-input>
+		<b-form-group id="input-group-11" label="Kraj radnog vremena:" label-for="input-11">
+            <b-form-input
+                required
+                id="input-11"
+                v-model="farmaceutDTO.radnoVremeKraj"
+                type="time"
+                :min = this.farmaceutDTO.radnoVremePocetak
+            ></b-form-input>
+          </b-form-group>
+          <b-button type="submit" variant="primary">Registruj se</b-button>
+        </b-form>
+        </b-tab>
+        <b-tab title="Odsustva farmaceuta">
+                    <br>
+      <div class="text-center"><h2>Odsustva farmaceuta</h2></div>
+      <hr>
+          			<b-list-group flush style="max-height: 200px; 
+	        overflow:scroll; 
+	        margin-bottom: 10px;
+	         overflow:scroll;
+    		-webkit-overflow-scrolling: touch;" >
+            <b-list-group-item v-for="odsustvo in odsustva" :key="odsustvo" class="list-group-item px-0">
+            
+            <b-row align-v="centar" >
+                <b-col md="auto">
+                    <b>{{odsustvo.username}}</b>
+                      <p class="text-sm mb-0"> Pocetak odsustva: {{fixDate(odsustvo.pocetak)}}  </p>
+                      <p class="text-sm mb-0"> Kraj odsustva: {{fixDate(odsustvo.kraj)}}  </p>
+                </b-col>
+                <b-col md="auto" class="float-right">
+  					<b-button type="button" size="sm" v-on:click="odobriOdsustvo(odsustvo)"variant="primary">Odobri</b-button>
+					<b-button type="button" size="sm" v-on:click="odbijOdsustvo(odsustvo)" variant="primary">Odbij</b-button>
+                </b-col>
+        	</b-row>
+        </b-list-group-item>
+        </b-list-group>
+        </b-tab>
+        </b-tabs>
          </b-containter>
       </b-card>
-           	<!-- forma za menjanje farmaceuta -->
+
+
+  <!-- forma za odsustvo -->
+	    <b-modal ref="my-modal1" hide-footer>
+  <b-card style="max-width: 500px; margin: 30px auto;">
+    <b-form @submit.prevent="onOdbijOdsustvo">
+    <h3>Odbijanja Odsustva</h3>
+   <b-form-group id="input-group-3" label="Razlog odbijanja: ">
+        <b-form-textarea required v-model="izabranoOdsustvo.razlog"></b-form-textarea>
+		<br>
+      <b-button type="submit" variant="primary">Odbij</b-button>
+       </b-form>
+    </b-card>
+  </b-modal>
+  
+  <!-- forma za menjanje farmaceuta -->
 	<b-modal ref="my-modal" hide-footer title="Izmeni farmaceuta">
       <b-card style="max-width: 500px; margin: 30px auto;" >
 		<h3>{{this.farmaceutDTO.ime}} {{this.farmaceutDTO.prezime}}</h3>
 		<p> Njegovo radno vremene: </p>
         {{this.farmaceutDTO.radnoVremePocetak}} - {{this.farmaceutDTO.radnoVremeKraj}}
         <b-form @submit.prevent="onIzmeniFarmaceuta">
-          <b-form-group id="input-group-3" label="Cena:" label-for="input-3">
-            <b-form-input
-            	required
-            	type = "number"
-				v-model="farmaceutDTO.cena"
-				:min = 0 
-            />
           <b-form-group id="input-group-3" label="Pocetak radnog vremena:" label-for="input-3">
             <b-form-input
             	required
             	type = "time"
-				v-model="farmaceutDTO.radnoVremePocetak"
+				      v-model="farmaceutDTO.radnoVremePocetak"
 				:max = this.farmaceutDTO.radnoVremeKraj
             />
            <b-form-group id="input-group-3" label="Kraj radnog vremena:" label-for="input-3">
@@ -240,9 +398,8 @@ Vue.component("UrediFarmaceute", {
     onIzmeniFarmaceuta() {
       let info = {
         params: {
-          start:
-            "2008-01-01T" + this.farmaceutDTO.radnoVremePocetak + ":00.000Z",
-          end: "2008-01-01T" + this.farmaceutDTO.radnoVremeKraj + ":00.000Z",
+          start: this.farmaceutDTO.radnoVremePocetak + ":00.000Z",
+          end: this.farmaceutDTO.radnoVremeKraj + ":00.000Z",
           cena: this.farmaceutDTO.cena,
           cookie: this.cookie,
           username: this.farmaceutDTO.username,
@@ -420,6 +577,77 @@ Vue.component("UrediFarmaceute", {
             }
           });
       }
+      this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
+    },
+    odobriOdsustvo: function (odsustvo) {
+      console.log(odsustvo);
+      odsustvo.status = "odobreno";
+      odsustvo.cookie = this.cookie;
+      axios
+        .put("zdravstveniradnik/updateOdsustvo/", odsustvo)
+        .then((response) => {
+          console.log(response.data);
+        });
+      this.odsustva = [];
+      this.loadOdsustva();
+    },
+    odbijOdsustvo: async function (odsustvo) {
+      this.izabranoOdsustvo = odsustvo;
+      this.$refs["my-modal1"].show();
+    },
+    onOdbijOdsustvo: function () {
+      this.izabranoOdsustvo.status = "odbijeno";
+      this.izabranoOdsustvo.cookie = this.cookie;
+      axios
+        .put("zdravstveniradnik/updateOdsustvo/", this.izabranoOdsustvo)
+        .then((response) => {
+          console.log(response.data);
+        });
+      this.odsustva = [];
+      this.loadOdsustva();
+      this.$refs["my-modal1"].hide();
+    },
+    fixDate(date) {
+      return moment(date).format("DD/MM/YYYY");
+    },
+    logout: function () {
+      localStorage.clear();
+      app.$router.push("/");
+    },
+    loadOdsustva: function () {
+      let info = {
+        params: {
+          cookie: this.cookie,
+        },
+      };
+      axios.get("zdravstveniradnik/allOdsustvo/", info).then((response) => {
+        console.log(response.data);
+        this.odsustva = response.data;
+      });
+    },
+    onSubmit: function () {
+      this.postojiMail = false;
+      this.postojiKorisnicko = false;
+      console.log(this.farmaceutDTO);
+      axios
+        .post("zdravstveniradnik/addFarmaceut", this.farmaceutDTO)
+        .then((response) => {
+          this.$bvToast.toast(`Registrovan novi farmaceut`, {
+            toaster: "b-toaster-top-center",
+            variant: "success",
+            solid: true,
+            autoHideDelay: 4000,
+            noCloseButton: true,
+          });
+        })
+        .catch((error) => {
+          if (error.request.status == 400) {
+            this.postojiMail = true;
+          } else if (error.request.status == 404) {
+            this.postojiKorisnicko = true;
+          }
+        });
+      this.farmaceutDTO = [];
       this.$root.$emit("bv::refresh::table", "farmaceuti-tabela");
     },
   },
