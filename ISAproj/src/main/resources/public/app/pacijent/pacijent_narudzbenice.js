@@ -69,6 +69,10 @@ Vue.component("PacijentNarudzbenice", {
 			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'success' " class="mr-1">
 			          Preuzeto
 			        </div>
+			        
+			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'danger'" class="mr-1">
+			          Nije preuzeto
+			        </div>
 
 			    </template>
             </b-table>

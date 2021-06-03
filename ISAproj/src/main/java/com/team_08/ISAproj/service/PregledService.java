@@ -76,8 +76,8 @@ public class PregledService {
     public List<Pregled> findAllFromApoteka(Long apoteka_id){
     	return pregledRepository.findAllfromApoteka(apoteka_id);
     }
-    public List<Pregled> findAllByPacijent(Pacijent p){
-    	return pregledRepository.findAllByPacijent(p);
+    public List<Pregled> findAllByPacijent(Pacijent p, String sortBy, Boolean sortDesc){
+    	return pregledRepository.findAllByPacijent(p, sortBy, sortDesc);
     }
     public List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end)
             throws CookieNotValidException {
@@ -91,5 +91,9 @@ public class PregledService {
 
     public Pregled findOneStartsNow(String cookie, LocalDateTime start) {
         return pregledRepository.findOneStartsNow(cookie, start);
+    }
+    
+    public List<Pregled> getAllPreporuceniLekoviFromPregledID(Long id) {
+        return pregledRepository.getAllPreporuceniLekoviFromPregledID(id);
     }
 }

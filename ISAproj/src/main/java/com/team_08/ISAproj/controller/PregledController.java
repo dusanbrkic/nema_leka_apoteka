@@ -329,7 +329,9 @@ public class PregledController {
     	List<PregledDTO> pregledi = new ArrayList<PregledDTO>();
     	
     	for(Pregled p : pregledService.findAllFromApoteka(id_apoteke)) {
-    		pregledi.add(new PregledDTO(p.getId(), p.getVreme(), p.getKraj(), p.getCena(), p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime()));
+    		if(p.getZdravstveniRadnik() instanceof Dermatolog) {
+    			pregledi.add(new PregledDTO(p.getId(), p.getVreme(), p.getKraj(), p.getCena(), p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime()));
+    		}
     	}
     	return new ResponseEntity<List<PregledDTO>>(pregledi, HttpStatus.OK);
 	}
@@ -375,16 +377,27 @@ public class PregledController {
 	    	return new ResponseEntity<>(HttpStatus.OK);
 	}
     @GetMapping(value = "posete_dermatologu")
-    public ResponseEntity<List<PregledDTO>> getPoseteDermatologu(@RequestParam("cookie") String cookie){
+    public ResponseEntity<List<PregledDTO>> getPoseteDermatologu(
+    		@RequestParam("cookie") String cookie,
+    		@RequestParam("sortBy") String sortBy,
+    		@RequestParam("sortDesc") Boolean sortDesc){
     	
     	List<PregledDTO> pregledi = new ArrayList<PregledDTO>();
     	
     	Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(cookie);
     	
-    	for(Pregled p : pregledService.findAllByPacijent(pacijent)) {
+    	for(Pregled p : pregledService.findAllByPacijent(pacijent, sortBy, sortDesc)) {
     		if (p.getZdravstveniRadnik() instanceof Dermatolog) {
 	    		PregledDTO tmp = new PregledDTO(p);
 	    		tmp.setUsername(p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime());
+	    		
+	    		Set<PregledLekDTO> set = new HashSet<PregledLekDTO>();
+	    		
+	    		for(PregledLek pl : pregledService.getAllPreporuceniLekoviFromPregledID(p.getId()).get(0).getPreporuceniLekovi()) {
+	    			set.add(new PregledLekDTO(pl));
+	    		}
+	    		tmp.setPreporuceniLekovi(set);
+	    		
 	    		pregledi.add(tmp);
     		}
     	}
@@ -457,13 +470,16 @@ public class PregledController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping(value = "savetovanja_farmaceuta")
-    public ResponseEntity<List<PregledDTO>> getSavetovanjaFarmaceuta(@RequestParam("cookie") String cookie){
+    public ResponseEntity<List<PregledDTO>> getSavetovanjaFarmaceuta(
+    		@RequestParam("cookie") String cookie,
+    		@RequestParam("sortBy") String sortBy,
+    		@RequestParam("sortDesc") Boolean sortDesc){
     	
     	List<PregledDTO> savetovanja = new ArrayList<PregledDTO>();
     	
     	Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(cookie);
     	
-    	for(Pregled p : pregledService.findAllByPacijent(pacijent)) {
+    	for(Pregled p : pregledService.findAllByPacijent(pacijent, sortBy, sortDesc)) {
     		if (p.getZdravstveniRadnik() instanceof Farmaceut) {
 	    		PregledDTO tmp = new PregledDTO(p);
 	    		tmp.setUsername(p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime());

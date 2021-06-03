@@ -587,10 +587,15 @@ public class LekController {
 		System.out.println("========================================================================================================================");
 		System.out.println(p.getAlergije().size());
 		
-		for(Lek lek : p.getAlergije()) {
-			if(lek.getId()==l.getId())
-				p.removeAlergija(lek);
+		try {
+			for(Lek lek : p.getAlergije()) {
+				if(lek.getId()==l.getId())
+					p.removeAlergija(lek);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 		}
+
 		
 		korisnikService.saveUser(p);
 

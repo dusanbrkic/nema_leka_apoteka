@@ -236,7 +236,7 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
                     let rez = response.data;
                     for (const a of rez) {
                     	this.apoteke.push(a);
-                    	
+                    	a.prosecnaOcena = Math.round(a.prosecnaOcena * 10) / 10
                         this.items.push({
                             id: a.id,
                             apoteka: a.naziv,
@@ -297,7 +297,7 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
             .then(response => {
                     let rez = response.data;
                     for (const a of rez) {
-                    	
+                    	a.prosecnaOcena = Math.round(a.prosecnaOcena * 10) / 10
                         this.farmaceuti.push({
                         	id: a.username,
                             ime: a.ime,

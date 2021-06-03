@@ -20,6 +20,10 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     @Query(value = "SELECT DISTINCT p FROM PREGLED p LEFT OUTER JOIN FETCH p.preporuceniLekovi l where p.zdravstveniRadnik.cookieTokenValue = :cookie and (:startDate < p.kraj and :endDate > p.vreme)")
     List<Pregled> fetchAllWithPreporuceniLekoviInDateRangeByZdravstveniRadnik(@Param("cookie") String cookie, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
+    @Query(value = "SELECT DISTINCT p FROM PREGLED p LEFT OUTER JOIN FETCH p.preporuceniLekovi l where p.id = :idPregled")
+    List<Pregled> getAllPreporuceniLekoviFromPregledID(@Param("idPregled") Long idPregled);
+
+    
     // za listu pregledanih pacijenata
     @Query(value = "SELECT p FROM PREGLED p JOIN PACIJENT pac ON p.pacijent.id=pac.id where p.zdravstveniRadnik.cookieTokenValue = :cookie and p.pregledObavljen = true and UPPER(p.pacijent.prezime) LIKE UPPER(:pretragaPrezime) and UPPER(p.pacijent.ime) LIKE UPPER(:pretragaIme)")
     Page<Pregled> findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(@Param("cookie") String cookie, Pageable pageable, @Param("pretragaIme") String pretragaIme, @Param("pretragaPrezime") String pretragaPrezime);
@@ -39,12 +43,20 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     List<Pregled> findAllInFutureByZdravstveniRadnik(LocalDateTime start, String username);
     
     // nadji sve preglede jedne apoteke
-    @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and p.pregledZakazan = false and p.pregledObavljen = false")
+    @Query(value = "SELECT p FROM PREGLED p "
+    			+ " inner join DERMATOLOG d on d.id = p.zdravstveniRadnik.id"
+    			+ " where p.apoteka.id = :apoteka_id and p.pregledZakazan = false and p.pregledObavljen = false")
     List<Pregled> findAllfromApoteka(Long apoteka_id);
     
     // nadji sve preglede jednog pacijenta
-    @Query(value = "SELECT p FROM PREGLED p where p.pacijent = :pacijent")
-    List<Pregled> findAllByPacijent(Pacijent pacijent);
+    @Query(value = "SELECT p FROM PREGLED p"
+    			+ " where p.pacijent = :pacijent"
+    			+ " ORDER BY"
+    			+ " CASE WHEN :sortBy = 'datum' and :sortDesc = true THEN p.vreme END DESC,"
+    			+ " CASE WHEN :sortBy = 'datum' and :sortDesc = false THEN p.vreme END ASC,"
+    			+ " CASE WHEN :sortBy = 'cena' and :sortDesc = true THEN p.cena END DESC,"
+    			+ " CASE WHEN :sortBy = 'cena' and :sortDesc = false THEN p.cena END ASC")
+    List<Pregled> findAllByPacijent(Pacijent pacijent, @Param("sortBy") String sortBy, @Param("sortDesc") Boolean sortDesc);
 
     @Query(value = "SELECT p FROM PREGLED p where p.pacijent.id=:idPacijenta and (:vreme < p.kraj and :kraj > p.vreme)")
     List<Pregled> findAllInDateRangeByPacijentId(LocalDateTime vreme, LocalDateTime kraj, Long idPacijenta);

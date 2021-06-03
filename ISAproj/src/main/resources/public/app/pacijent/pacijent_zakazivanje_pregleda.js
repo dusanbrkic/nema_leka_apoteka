@@ -94,6 +94,7 @@ Vue.component("PacijentZakaziPregled", {
 		  })
 		  .then((response) => {
 				this.uspeh = true;
+				this.retrievePregledi();
 	        })
 	        .catch((e) => {
 	          console.log(e);
@@ -104,8 +105,6 @@ Vue.component("PacijentZakaziPregled", {
         
         
     retrievePregledi() {
-	
-			//console.log(this.apoteka);
 	
 		  axios.get("/pregledi/slobodniPregledi", {
 		  		params:

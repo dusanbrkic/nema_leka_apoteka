@@ -64,9 +64,9 @@ public class ApotekaService {
         return apotekaRepository.findAllInDateRangeWithFreeZdravstveniRadnik(start, end);
     }
     
-    public Page<Apoteka> getAllApotekePaged(int page, int pageSize, String pretragaNaziv,  String pretragaAdresa, boolean smer, Double cenaOD, Double cenaDO) {
+    public Page<Apoteka> getAllApotekePaged(int page, int pageSize, String pretragaNaziv,  String pretragaAdresa, boolean smer, Double cenaOD, Double cenaDO, String sortBy) {
     	pretragaNaziv = "%" + pretragaNaziv + "%";
     	pretragaAdresa = "%" + pretragaAdresa + "%";
-    	return apotekaRepository.getAllApotekePaged(pretragaNaziv, pretragaAdresa, smer, cenaOD, cenaDO, PageRequest.of(page, pageSize));
+    	return apotekaRepository.getAllApotekePaged(pretragaNaziv, pretragaAdresa, smer, cenaOD, cenaDO, sortBy, PageRequest.of(page, pageSize));
     }
 }

@@ -283,8 +283,8 @@ public class KorisnikController {
 
     }
     
-    //@Scheduled(cron = "1 0 1 * * ?") // svakog prvog u mesecu
-    @Scheduled(cron = "1 * * * * ?") // provera svaki minut
+    @Scheduled(cron = "1 0 1 * * ?") // svakog prvog u mesecu
+    //@Scheduled(cron = "1 * * * * ?") // provera svaki minut
 	public void cronJob() {
 		
     	System.out.println("BRISANJE PENALA");

@@ -46,14 +46,19 @@ public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 				+ " WHERE UPPER(a.naziv) LIKE UPPER(:pretragaNaziv) AND UPPER(a.adresa) LIKE UPPER(:pretragaAdresa)"
 				+ " AND a.prosecnaOcena >= :ocenaOD AND a.prosecnaOcena <= :ocenaDO"
 				+ " ORDER BY"
-				+ " CASE WHEN :smer = true THEN a.prosecnaOcena END DESC,"
-				+ " CASE WHEN :smer = false THEN a.prosecnaOcena END ASC")
+				+ " CASE WHEN :sortBy = 'ocena' and :smer = true THEN a.prosecnaOcena END DESC,"
+				+ " CASE WHEN :sortBy = 'ocena' and :smer = false THEN a.prosecnaOcena END ASC,"
+				+ " CASE WHEN :sortBy = 'naziv' and :smer = true THEN a.naziv END DESC,"
+				+ " CASE WHEN :sortBy = 'naziv' and :smer = false THEN a.naziv END ASC,"
+				+ " CASE WHEN :sortBy = 'adresa' and :smer = true THEN a.adresa END DESC,"
+				+ " CASE WHEN :sortBy = 'adresa' and :smer = false THEN a.adresa END ASC")
     Page<Apoteka> getAllApotekePaged(
     		@Param("pretragaNaziv") String pretragaNaziv,
     		@Param("pretragaAdresa") String pretragaAdresa,
     		@Param("smer") Boolean smer,
     		@Param("ocenaOD") Double ocenaOD,
     		@Param("ocenaDO") Double ocenaDO,
+    		@Param("sortBy") String sortBy,
     		Pageable pageable);
 
 }

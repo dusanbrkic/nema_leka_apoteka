@@ -37,6 +37,7 @@ Vue.component("PacijentLekovi", {
 	        blocked: false,
 	        ocena: 0,
 	        prethodna_ocena: 0,
+	        kolicina: 0
         }
     },
 
@@ -226,8 +227,10 @@ Vue.component("PacijentLekovi", {
                 id="input-3"
                 type="date"
                 type="number"
+                min="1"
+                max = {{this.izabranLek.kolicina}}
                 @input="kolicinaChange();"
-                v-model="izabranLek.kolicina"
+                v-model="kolicina"
         ></b-form-input>
             
         <b-form-group id="input-group-2" label="Preuzeti do:" label-for="input-2">
@@ -331,7 +334,7 @@ Vue.component("PacijentLekovi", {
     ,
     methods: {
     	kolicinaChange() {
-	      this.ukupnaCena = "Ukupna cena: " + this.izabranLek.cena*this.izabranLek.kolicina;
+	      this.ukupnaCena = "Ukupna cena: " + this.izabranLek.cena*this.kolicina;
 	    },
 
         handlePageChangePreporucenihLekova: function (value) {
@@ -351,12 +354,18 @@ Vue.component("PacijentLekovi", {
 	      this.pageLekova = 1;
 	      this.loadLekovi();
 	    },
-	    rezervacijaLeka() {
+	    async rezervacijaLeka() {
 	
 		  this.losUnos = false;
 		  this.uspeh = false;
+		  
+		  if(this.kolicina > this.izabranLek.kolicina){
+		        	await this.$refs['my-modal'].hide();
+		        	this.losUnos = true;
+		  }
+		  else {
 	        
-	      axios.get("rezervacije/rezervacija-leka/", 
+	      await axios.get("rezervacije/rezervacija-leka/", 
 			    { headers: { "Content-Type": "application/json; charset=UTF-8" },
 			      params: 
 			       { 		
@@ -377,11 +386,12 @@ Vue.component("PacijentLekovi", {
 		        	console.log(e);
 		        });
 		        
+		   }
 		   this.loadLekovi();
 
 	    },
-        loadLekovi: function () {
-            axios
+        async loadLekovi() {
+            await axios
                 .post("/lekovi/getAllLekoviAlergican", {
                     'page': this.pageLekova - 1,
                     'pageSize': this.pageSizeLekova,
@@ -438,8 +448,8 @@ Vue.component("PacijentLekovi", {
 	        this.$refs['my-modal'].show()
         },
         
-        alergican(lek) {
-       	 	axios.get("lekovi/setAlergija", 
+        async alergican(lek) {
+       	 	await axios.get("lekovi/setAlergija", 
 			 {
 			 	params: {
 			                'cookie': this.cookie,
@@ -455,8 +465,8 @@ Vue.component("PacijentLekovi", {
 			});
 		},
 		
-		otkaziAlergiju(lek) {
-       	 	axios.get("lekovi/otkaziAlergija", 
+		async otkaziAlergiju(lek) {
+       	 	await axios.get("lekovi/otkaziAlergija", 
 			 {
 			 	params: {
 			                'cookie': this.cookie,
@@ -468,7 +478,9 @@ Vue.component("PacijentLekovi", {
 
 			})
 			.catch((e) => {
+
 			  console.log(e);
+
 			});
 		},
 		

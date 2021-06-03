@@ -81,6 +81,7 @@ public class ApotekaController {
 		String pretragaNaziv = (String) body.get("pretragaNaziv");
 		String pretragaAdresa = (String) body.get("pretragaAdresa");
 		boolean desc = (boolean) body.get("smer");
+		String sortBy = (String) body.get("sortBy");
 		Pacijent pacijent = pacijentService.fetchPacijentWithAlergijeByCookie((String) body.get("cookie"));
 		
 		int page = (int) body.get("page");
@@ -89,7 +90,7 @@ public class ApotekaController {
 		double cenaOD = Double.valueOf((String) body.get("ocenaOD"));
 		double cenaDO = Double.valueOf((String) body.get("ocenaDO"));
 
-		Page<Apoteka> apoteke = apotekaService.getAllApotekePaged(page, pageSize, pretragaNaziv, pretragaAdresa, desc, cenaOD, cenaDO);
+		Page<Apoteka> apoteke = apotekaService.getAllApotekePaged(page, pageSize, pretragaNaziv, pretragaAdresa, desc, cenaOD, cenaDO, sortBy);
 		
 		if (apoteke == null)
 			return new ResponseEntity<Page<ApotekaDTO>>(Page.empty(), HttpStatus.OK);

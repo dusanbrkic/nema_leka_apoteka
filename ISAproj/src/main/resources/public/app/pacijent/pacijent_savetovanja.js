@@ -43,17 +43,27 @@ Vue.component("PacijentSavetovanja", {
            greska: false,
 	       uspeh: false,
 	       
-	       sortBy: 'cena',
+	       sortBy: '',
            sortDesc: false,
 		 
 		 
 		 	items: [],  
+		    selectedPregled: {
+		   		apoteka: "",
+		   		dermatolog: "",
+		   		datum: "",
+		   		pocetak: "",
+		   		kraj: "",
+		   		cena: "",
+		   		dijagnoza: "",
+		   		preporuceniLekovi: [],
+		   		status: "",
+		   		},
         }
 
     },
     mounted() {
         this.cookie = localStorage.getItem("cookie");
-        this.loadPregledi();
     },
     template: `
       <div>
@@ -66,38 +76,87 @@ Vue.component("PacijentSavetovanja", {
                 ref="table"
                 id="table-id"
                 hover
-                :items="items"
+                :items="itemProvider"
                 :fields="fields"
                 :busy.sync="table_is_busy"
-                :sort-by.sync="sortBy"
+				:sort-by.sync="sortBy"
 				:sort-desc.sync="sortDesc"
 				sort-icon-left
+				@row-clicked="myRowClickHandler"
             >
-            
-	            <template #cell(status)="row">
-
- 					<div size="sm" v-if="pregledi[row.index].rowVariant == 'info' || pregledi[row.index].rowVariant == 'warning'" class="mr-1">
-			          Potrebno obaviti
-			        </div>
-	            	<b-button size="sm" v-if="pregledi[row.index].rowVariant == 'info' " @click="otkazi(row.index)" class="mr-1">
-			          Otkazi
-			        </b-button>
-			        <div size="sm" v-if="pregledi[row.index].rowVariant == 'success' " class="mr-1">
-			          Obavljen
-			        </div>
-			        <div size="sm" v-if="pregledi[row.index].rowVariant == 'danger' " class="mr-1">
-			          Nije obavljen
-			        </div>
-
-			    </template>
             </b-table>
           </b-row>
-
-
-
-
         </b-container>
       </b-card>
+      
+      
+           <!-- PREGLED MODAL -->
+      
+      <div id="modal" class="modal" tabindex="-1">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title">Informacije Pregleda</h5>
+		      </div>
+		      <div class="modal-body">
+
+				<b-row>
+					<b-col>Apoteka: </b-col>
+					<b-col>{{selectedPregled.apoteka}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Farmaceut:</b-col>
+					<b-col>{{selectedPregled.farmaceut}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Datum:</b-col>
+					<b-col>{{selectedPregled.datum}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Početak:</b-col>
+					<b-col>{{selectedPregled.pocetak}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Kraj:</b-col>
+					<b-col>{{selectedPregled.kraj}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Cena: </b-col>
+					<b-col>{{selectedPregled.cena}}</b-col>
+				</b-row>
+				<br>
+				<b-row>
+					<b-col>Dijagnoza:</b-col>
+					<b-col>{{selectedPregled.dijagnoza}}</b-col>
+				</b-row>
+				<br>
+				<b-row>
+					<b-col>Preporučeni lekovi:</b-col>
+					<b-col>
+						<b-row v-for="pregledLek in selectedPregled.preporuceniLekovi">
+                    		<b-col> - {{ pregledLek.lek.naziv }} - {{ pregledLek.trajanjeTerapije }} dana </b-col>
+                  		</b-row>
+                  		<b-row v-if="selectedPregled.preporuceniLekovi.length==0"><b-col>Nema preporucenih lekova</b-col></b-row>
+					</b-col>
+				</b-row>
+				<br>
+				<b-row>
+					<b-col>Status:</b-col>
+					<b-col>{{selectedPregled.status}}</b-col>
+				</b-row>
+		      </div>
+		      <div class="modal-footer">
+					<b-button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</b-button>
+		  		    <b-button v-if="selectedPregled.rowVariant == 'info' " @click="otkazi()" class="mr-1">
+			          Otkazi pregled
+			        </b-button>      	
+		      </div>
+		    </div>
+		  </div>
+		</div>
+      
+      
+      
       </div>
     `,
     methods: {
@@ -113,25 +172,29 @@ Vue.component("PacijentSavetovanja", {
     	
    		if(r.pregledObavljen) {
    			r.rowVariant = 'success';
+   			r.status = 'Obavljen'
    		}
     	else {
     		console.log(nextDay.toISOString().slice(0, 10) + " - " + r.start.slice(0, 10));
 		   	if(nextDay.toISOString().slice(0, 10) > r.start.slice(0, 10)) {
 		   		if(today.toISOString().slice(0, 10) == r.start.slice(0, 10)){
     				r.rowVariant = 'warning';
+    				r.status = 'Potrebno obaviti'
     			}
     			else {	
 					r.rowVariant = 'danger';
+					r.status = 'Nije obavljen'
 				}
 	    	}
 			else {	
 					r.rowVariant = 'info';
+					r.status = 'Potrebno obaviti'
 			}
     	}
 
     },
     otkazi(index) {
-    
+            $('#modal').modal('hide');    
         	this.greska = false;
 		    this.uspeh = false;
 		    
@@ -139,10 +202,9 @@ Vue.component("PacijentSavetovanja", {
 		     axios.get("pregledi/otkazi-pregled", 
 			    {		
 			    params: {
-			       'id_pregleda': this.pregledi[index].id
+			       'id_pregleda': this.selectedPregled.id
 			       }
 			    }).then((response) => {
-   		   			this.loadPregledi();
    		   			this.$root.$emit("bv::refresh::table", "table-id");
 		        })
 		        .catch((e) => {
@@ -152,42 +214,50 @@ Vue.component("PacijentSavetovanja", {
     
         loadPregledi: async function () {
             this.table_is_busy = true
-            this.items = []
+            items = []
+            this.pregledi = [];
             await axios
                 .get("pregledi/savetovanja_farmaceuta", {
                     params:
                         {
                             'cookie': this.cookie,
+                            'sortBy': this.sortBy,
+                            'sortDesc': this.sortDesc,
                         }
                 })
                 .then(response => {
                     let rez = response.data;
+                    console.log(rez);
                     for (const p of rez) {
         
                     	this.checkDate(p);	
-                    	this.pregledi.push(p);
-                    	console.log(p);
+
+                        p.idSavetovanja = p.id,
+                        p.apoteka = p.apoteka.naziv,
+                        p.farmaceut = p.username,
+                        p.pocetak = p.start.slice(11, 20),
+                        p.datum = p.start.slice(0, 10),
+                        p.kraj = p.end.slice(11, 20),
+                        p.cena = p.cena + ' RSD',
+                      	p._rowVariant = p.rowVariant
                     	
-                        this.items.push({
-                            idSavetovanja: p.id,
-                            apoteka: p.apoteka.naziv,
-                            farmaceut: p.username,
-                            pocetak: p.start.slice(11, 20),
-                            datum: p.start.slice(0, 10),
-                            kraj: p.end.slice(11, 20),
-                            cena: p.cena + ' din.',
-                          	_rowVariant: p.rowVariant
-                            
-                        })
+                        items.push(p)
+                        
+                        this.pregledi.push(p);
                     }
                 })
        	        .catch((e) => {
 		        	console.log(e);
 		        });
             this.table_is_busy = false
+            return items;
         },
         itemProvider: function (ctx) {
-           // return this.loadPregledi()
+           return this.loadPregledi();
         },
+        myRowClickHandler(record, index) {
+      		this.selectedPregled = this.pregledi[index];
+      		$("#modal").modal();
+		},
     },
 });

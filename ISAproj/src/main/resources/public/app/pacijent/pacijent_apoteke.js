@@ -31,6 +31,9 @@ Vue.component("PacijentApoteke", {
    	   izabranaApoteka : {
 			naziv: "",
 	   },
+	   
+	   		sortBy: "ocena",
+	   		sortOptions: ["ocena", "naziv", "adresa"],
         }
     },
       mounted () {
@@ -96,7 +99,20 @@ Vue.component("PacijentApoteke", {
           
           
        <!-- REDOSLED SORTIRANJA -->
-      
+       
+        <form>
+		  <div class="form-group row " style="margin: 2px auto;" >
+		    <h6 for="sortBy" class="col-sm-2 col-form-label">Sortiraj Po:</h6>
+		    <div class="col-sm-2">
+			    <b-select id="sortBy" class="form-control" v-model="sortBy" @change="handleSortFieldChange($event)">
+			      <option v-for="s in sortOptions" :key="s" :value="s">
+			        {{ s }}
+			      </option>
+				</b-select>
+		    </div>
+		  </div>
+		</form>
+
   		 <form>
 		  <div class="form-group row " style="margin: 2px auto;" >
 		    <h6 for="red" class="col-sm-2 col-form-label">Redosled:</h6>
@@ -322,6 +338,7 @@ Vue.component("PacijentApoteke", {
                     	}
                             return false
                     })(),
+                    'sortBy': this.sortBy,
                     'ocenaOD': this.fromGrade + ".0",
                     'ocenaDO': this.toGrade + ".0",
                 })
@@ -378,6 +395,12 @@ Vue.component("PacijentApoteke", {
 	    
 		handleSortOrderChange(value) {
 	      this.redosled = value;
+	      this.pageApoteka = 1;
+	      this.retrieveApoteke();
+	    },
+	    
+	    handleSortFieldChange(value) {
+	      this.sortBy = value;
 	      this.pageApoteka = 1;
 	      this.retrieveApoteke();
 	    },

@@ -148,6 +148,7 @@ Vue.component("NaruciPacijent", {
                 id="input-3"
                 type="number"
 				min = "1"
+				max = {{this.izabranLek.kolicina}}
 				v-model="kolicina"
             ></b-form-input>
 		<br>
@@ -250,6 +251,14 @@ Vue.component("NaruciPacijent", {
       this.$refs["my-modal"].show();
     },
     onNaruciLek() {
+    
+    	if(this.kolicina > this.izabranLek.kolicina){
+    		this.losUnos = true;
+    		this.kolicina = "";
+    		this.$refs["my-modal"].hide();
+    		return;
+    	}
+    
       tempLek = {
     //    naziv: this.izabranLek.naziv,
         sifraLeka: this.izabranLek.sifra,
@@ -259,6 +268,7 @@ Vue.component("NaruciPacijent", {
         cenaUkupno: this.izabranLek.cena*this.kolicina,
         cenaJedno: this.izabranLek.cena,
       };
+      //this.izabranLek.kolicina -= this.kolicina
       this.listaNarudzbina.push(tempLek);
       this.datumNarudzbine = "";
       this.kolicina = "";
