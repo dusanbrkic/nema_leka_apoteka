@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.team_08.ISAproj.exceptions.RezervacijaNeispravnaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,9 @@ import com.team_08.ISAproj.repository.NarudzbenicaLekRepository;
 import com.team_08.ISAproj.repository.NarudzbenicaRepository;
 import com.team_08.ISAproj.repository.RezervacijaLekRepository;
 import com.team_08.ISAproj.repository.RezervacijaRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class RezervacijaService {
@@ -73,8 +77,31 @@ public class RezervacijaService {
     	rezervacijaRepository.deleteById(id);
     }
 
-    public Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow) {
-	    return rezervacijaRepository.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Rezervacija obradiRezervacijuKonkurentno(Long idRezervacije, Long idApoteke, LocalDateTime tommorow, boolean wait) throws RezervacijaNeispravnaException {
+
+	    Rezervacija r = rezervacijaRepository.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije, idApoteke, tommorow);
+
+        if(r==null)
+            throw new RezervacijaNeispravnaException();
+
+        System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() +
+                "] ZAKLJUCAO SAM OBJEKAT!------------------------------");
+
+        r.setPreuzeto(true);
+
+        if (wait)
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        rezervacijaRepository.save(r);
+        System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() +
+                "] SACUVAO SAM OBJEKAT!------------------------------");
+
+	    return r;
     }
 
     public List<RezervacijaLek> findRezervacijaLekFromKorisnikByLek(Long idPacijent, Long idLeka) {

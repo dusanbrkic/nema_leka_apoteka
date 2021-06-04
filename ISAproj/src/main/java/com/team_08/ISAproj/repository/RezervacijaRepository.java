@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,8 @@ import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.model.Rezervacija;
 import com.team_08.ISAproj.model.RezervacijaLek;
+
+import javax.persistence.LockModeType;
 
 @Repository
 public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> {
@@ -40,7 +43,8 @@ public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> 
 
 	@Query(value = "select r from REZERVACIJA_LEK r join REZERVACIJA rez on r.rezervacija.id = rez.id where rez.pacijent.id = :idPacijent and rez.apoteka.id = :idApoteke")
 	List<RezervacijaLek> findRezervacijaLekFromKorisnikByApoteka(@Param("idPacijent") Long idPacijent, @Param("idApoteke") Long idApoteke);
-	
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query(value = "select r from REZERVACIJA r where r.apoteka.id = :idApoteke and r.id=:idRezervacije and r.rokPonude>:tommorow and r.preuzeto=false")
     Rezervacija findRezervacijaByIdAndApotekaIdBeforeRok(Long idRezervacije, Long idApoteke, LocalDateTime tommorow);
 

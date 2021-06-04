@@ -57,6 +57,10 @@ public class Lek {
 		this.zamenskiLekovi = new HashSet<Lek>();
 	}
 
+	public Lek(Long id) {
+		this.id = id;
+	}
+
 	public Lek(LekDTO lek) {
 		this.sifra = lek.getSifra();
 		this.naziv = lek.getNaziv();
