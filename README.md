@@ -10,3 +10,5 @@
     <li>Никола Петровић     SW34/2018   https://github.com/nikolapetrovicSIIT</li>
 
 </ul>
+
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=dusanbrkic_nema_leka_apoteka)
