@@ -11,10 +11,12 @@ import java.util.concurrent.Future;
 
 import javax.persistence.OptimisticLockException;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.team_08.ISAproj.app.ISAprojApplication;
 import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.model.ZdravstveniRadnik;
@@ -22,7 +24,7 @@ import com.team_08.ISAproj.service.KorisnikService;
 import com.team_08.ISAproj.service.PregledService;
 import com.team_08.ISAproj.service.ZdravstveniRadnikService;
 
-@SpringBootTest
+@SpringBootTest(classes = ISAprojApplication.class)
 class KonkurentnoKreiranjeSavetovanjaPacijentTest {
 
 	@Autowired
@@ -32,7 +34,7 @@ class KonkurentnoKreiranjeSavetovanjaPacijentTest {
     @Autowired
     private ZdravstveniRadnikService zdravstveniRadnikService;
 
-    @Test
+    @RepeatedTest(20)
     public void testRezervacijaLekova() throws Throwable {
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
