@@ -41,12 +41,38 @@ public class ApotekaLekService {
 	public Apoteka create(ApotekaLekRepository apotekaLek) {
 		return null;
 	}
+	
+	public ApotekaLek findApotekaLekByLekID(Long lekID) {
+		return apotekaLekRepository.findApotekaLekByLekID(lekID);
+	}
 
 	public Page<ApotekaLek> findAll(Pageable page) {
 		return apotekaLekRepository.findAll(page);
 	}
 	public List<ApotekaLek> findAll() {
 		return apotekaLekRepository.findAll();
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public void updateKolicinaSlobodnihLekovaKonkurentno(ArrayList<Long> lekIDs, ArrayList<Integer> kolicine) throws LekNijeNaStanjuException, InterruptedException{
+		Map<Long, Integer> kolicineLekova = new HashMap<>();
+
+		int i = 0;
+		for (Long id : lekIDs) {
+			kolicineLekova.put(id, kolicine.get(i));
+			i++;
+		}
+		
+		List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findAllApotekaLekByIDWithLock(kolicineLekova.keySet());
+		
+		Thread.sleep(2000);
+		
+		for (ApotekaLek apotekaLek : apotekaLekovi) {
+			if (kolicineLekova.get(apotekaLek.getLek().getId()) > apotekaLek.getKolicina())
+				throw  new LekNijeNaStanjuException();
+			apotekaLek.setKolicina(apotekaLek.getKolicina() - kolicineLekova.get(apotekaLek.getLek().getId()));
+		}
+		apotekaLekRepository.saveAll(apotekaLekovi);
 	}
 
 	public Page<ApotekaLek> findByLekContaining(Lek lek, Pageable pageable) {

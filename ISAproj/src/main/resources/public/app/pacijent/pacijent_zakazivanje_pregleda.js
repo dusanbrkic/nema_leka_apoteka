@@ -8,6 +8,7 @@ Vue.component("PacijentZakaziPregled", {
 	       pregledi: [],
         
            selected: "",
+           konkurentnost: false,
         }
     },
       mounted () {
@@ -20,7 +21,7 @@ Vue.component("PacijentZakaziPregled", {
     	<div class="container">
     	
       	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Zakazali ste pregled, pogledajte svoj email.</b-alert>
-    	
+    	<b-alert style="text-align: center;" v-model="this.konkurentnost" variant="danger"> Pregled je rezervisan u medjuvremenu, probajte drugi! </b-alert>
 
 
         
@@ -97,6 +98,10 @@ Vue.component("PacijentZakaziPregled", {
 				this.retrievePregledi();
 	        })
 	        .catch((e) => {
+	               	if (e.request.status == 409) {
+		        		this.konkurentnost = true;
+		        		this.retrievePregledi();
+					}
 	          console.log(e);
 	        });
 	        

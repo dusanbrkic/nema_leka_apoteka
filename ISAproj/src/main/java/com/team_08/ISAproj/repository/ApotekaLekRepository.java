@@ -24,8 +24,20 @@ public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
     Page<ApotekaLek> findAllByApotekaId(Long ApotekaId, Pageable pageable);
 
     List<ApotekaLek> findAllByApotekaId(Long ApotekaId);
+    
+    @Query(value = "select al from APOTEKA_LEK al where al.lek.id = :lekID")
+    ApotekaLek findApotekaLekByLekID(@Param("lekID") Long lekID);
 
     List<ApotekaLek> findAll();
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select al from APOTEKA_LEK al")
+    List<ApotekaLek> findAllWithLock();
+    
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select al from APOTEKA_LEK al where al.lek.id in :l_id_set")
+    List<ApotekaLek> findAllApotekaLekByIDWithLock(@Param("l_id_set") Set<Long> id);
 
     Page<ApotekaLek> findAll(Pageable pageable);
 

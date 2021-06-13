@@ -15,9 +15,12 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.RezervacijaLekDTO;
 import com.team_08.ISAproj.exceptions.RezervacijaNeispravnaException;
+import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
 import com.team_08.ISAproj.repository.RezervacijaLekRepository;
@@ -27,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +54,7 @@ import net.bytebuddy.asm.Advice.Local;
 @RestController
 @RequestMapping("/rezervacije")
 public class RezervacijaController {
-	
+
 	@Autowired
 	private RezervacijaService rezervacijaService;
 	@Autowired
@@ -132,50 +136,64 @@ public class RezervacijaController {
 
 	// rezervacija iz jedne apoteke
 	@PostMapping(value="/pacijent")
-	public ResponseEntity<List<RezervacijaDTO>> dodajRezervaciju(@RequestBody List<RezervacijaDTO> rezervacije){
-		
+	public ResponseEntity<List<RezervacijaDTO>> dodajRezervaciju(@RequestBody List<RezervacijaDTO> rezervacije) throws InterruptedException{
+
+		ArrayList<Long> lekIDs = new ArrayList<Long>();
+		ArrayList<Integer> kolicine = new ArrayList<Integer>();
+
+		for(RezervacijaDTO r: rezervacije) {
+			lekIDs.add(Long.parseLong(r.getSifraLeka()));
+			kolicine.add(r.getKolicina());
+		}
+
+		// zakljucavamo kolicinu
+		try {
+				apotekaLekService.updateKolicinaSlobodnihLekovaKonkurentno(lekIDs, kolicine);
+		} catch (LekNijeNaStanjuException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+
 		Rezervacija n = new Rezervacija();
 		n.setApoteka(apotekaService.findOne(Long.parseLong(rezervacije.get(0).getApotekaId())));
 		n.setRokPonude(rezervacije.get(0).getDatumRezervacije());
-		
+
 		Pacijent pacijent = (Pacijent) korisnikService.findUserByToken(rezervacije.get(0).getPacijent());
 		n.setPacijent(pacijent);
 		rezervacijaService.saveRezervacija(n);
-		
-		String body = "Poštovani, " + pacijent.getIme() + "\n" 
+
+		String body = "Poštovani, " + pacijent.getIme() + "\n"
 					+ "Vasa rezervacija se sastoji iz:\n";
-		
+
 		double ukupnaCena = 0;
-		
+
+
 		for(RezervacijaDTO nDTO: rezervacije) {
-			
+
 			Lek l = lekService.findOneBySifra(nDTO.getSifraLeka());
 			RezervacijaLek rl = new RezervacijaLek(nDTO.getKolicina(), n, l);
-			
-			
+
 			ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(l.getId(), Long.parseLong(rezervacije.get(0).getApotekaId()));
-			
-			apotekaLek.setKolicina(apotekaLek.getKolicina()-nDTO.getKolicina());
-			apotekaLekService.saveAL(apotekaLek);
+
 			rl.setCena(apotekaLek.getCena());
 			rezervacijaService.saveRezervacijaLek(rl);
-			
+
 			double cena_leka = nDTO.getKolicina()*apotekaLek.getCena();
 			ukupnaCena += cena_leka;
 			body +=	"	- " + l.getNaziv() + " x " + nDTO.getKolicina() + "kom - " + cena_leka + "din. \n";
 
 		}
-		
+
 
 		body += "Ukupna cena je: " + ukupnaCena + " dinara \n"
 				+ "Rezervaciju možete pokupiti do datuma: " + rezervacije.get(0).getDatumRezervacije() + "\n\n"
 				+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
 				+ "Srdačan pozdrav.";
-		
+
 		String title = "Potvrda Rezervacije Leka (ID:" + n.getId() + ")";
-	
+
 		String body_tmp = body;
-		
+
 		try
 		{
 			Thread t = new Thread() {
@@ -189,72 +207,72 @@ public class RezervacijaController {
 		catch(Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		
+
 		return new ResponseEntity<List<RezervacijaDTO>>(rezervacije,HttpStatus.OK);
-		
+
 	}
 	// Rezervacija jednog leka
 	@GetMapping(value="/rezervacija-leka")
 	public ResponseEntity<Void> receiveData(
-			@RequestParam("sifra") String sifra,
+			@RequestParam("sifra") Long sifra,
 			@RequestParam("kolicina") int kolicina,
 			@RequestParam("istekRezervacije") String datum,
 			@RequestParam("cookie") String cookie
-			) throws ParseException
+			) throws ParseException, InterruptedException
 		{
-		
-			Lek lek = null;
-			
+
+			//Lek lek = null;
+
 			Pacijent k = (Pacijent) korisnikService.findUserByToken(cookie);
-			
-			ApotekaLek al = null;
-			
+
+
+
 			Long porudzbinaId = (long) 0;
 
 			LocalDateTime dateTime = LocalDateTime.parse(datum);
-			
-			
-			for (ApotekaLek a : apotekaLekService.findAll()) {
-				if(sifra.equals(a.getLek().getSifra())) {
-					lek = a.getLek();
-					al = a;
-					if(kolicina>al.getKolicina()) {
-						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-					}
-					al.setKolicina(al.getKolicina()-kolicina);
-		
-					apotekaLekService.saveAL(al);
-					
-					Rezervacija n = new Rezervacija();
-					n.setRokPonude(dateTime);
-					
-					
-					RezervacijaLek nl = new RezervacijaLek(kolicina, n,lek);
-					nl.setCena(al.getCena());
-					n.addRezervacijaLek(nl);
-					n.setApoteka(a.getApoteka());
-					n.setPacijent(k);
-					
-					rezervacijaService.saveRezervacija(n);
-					rezervacijaService.saveRezervacijaLek(nl);
-					
-					porudzbinaId = n.getId();
-				}
-			}
-		
-			if(lek == null) {
+
+			ArrayList<Long> lekIDs = new ArrayList<Long>();
+			lekIDs.add(sifra);
+
+			ArrayList<Integer> kolicine = new ArrayList<Integer>();
+			kolicine.add(kolicina);
+
+
+			// zakljucavamo kolicinu
+			try {
+					apotekaLekService.updateKolicinaSlobodnihLekovaKonkurentno(lekIDs, kolicine);
+			} catch (LekNijeNaStanjuException e) {
+	            return new ResponseEntity<>(HttpStatus.CONFLICT);
+	        }
+
+			Rezervacija n = new Rezervacija();
+			n.setRokPonude(dateTime);
+
+			ApotekaLek al = apotekaLekService.findApotekaLekByLekID(sifra);
+			if(al == null) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
-		
+
+			RezervacijaLek nl = new RezervacijaLek(kolicina, n, al.getLek());
+			nl.setCena(al.getCena());
+			n.addRezervacijaLek(nl);
+			n.setApoteka(al.getApoteka());
+			n.setPacijent(k);
+
+			rezervacijaService.saveRezervacija(n);
+			rezervacijaService.saveRezervacijaLek(nl);
+
+			porudzbinaId = n.getId();
+
 			String body = "Poštovani, " + k.getIme() + "\n"
-					+ "Rezervisali ste lek " + lek.getNaziv() + " x " + kolicina + "kom" +"\n"
+					+ "Rezervisali ste lek " + al.getLek().getNaziv() + " x " + kolicina + "kom" +"\n"
 					+ "Ukupna cena je: " + al.getCena()*kolicina + " dinara \n"
 					+ "Rezervisani lek možete pokupiti do isteka rezervacije " + datum + "\n\n"
 					+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
 					+ "Srdačan pozdrav.";
-			
+
 			String title = "Potvrda Rezervacije Leka (ID:" + porudzbinaId + ")";
-		
+
 			try
 			{
 				Thread t = new Thread() {
@@ -268,73 +286,84 @@ public class RezervacijaController {
 			catch(Exception e) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
-		
+
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		}
-	
+
 	// dobavljanje rezervacija
 	@GetMapping(value="/moje_rezervacije" , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RezervacijaDTO>> getRezervacije(
 			@RequestParam("cookie") String cookie)
 	{
-		
+
 
     	List<Rezervacija> n = rezervacijaService.findAllRezervacija();
 
     	List<RezervacijaDTO> rezervacije = new ArrayList<RezervacijaDTO>();
-    	
+
     	Korisnik korisnik = korisnikService.findUserByToken(cookie);
-    	
+
     	for(Rezervacija tmp : n) {
-    		
+
     		if(tmp.getPacijent().getId().equals(korisnik.getId())) {
-    		
+
 	    		String lekovi = "";
 	        	boolean first = true;
 
 	    		for(RezervacijaLek rl : rezervacijaService.findAllRezervacijaLek()) {
-	    			
+
 	    			if(rl.getRezervacija().getId() == tmp.getId()) {
-	    				
+
 	    				if(!first) { lekovi += ", "; } else { first = false; }
 	    				lekovi += rl.getLek().getNaziv() + " x " + rl.getKolicina() + " kom";
 	    			}
 	    		}
-	    		
+
 	    		rezervacije.add(new RezervacijaDTO(
 	    				tmp.getId(),
 	    				lekovi,
 	    				tmp.getRokPonude(),
 	    				tmp.getApoteka().getNaziv(),
 	    				tmp.isPreuzeto()));
-    		
+
     		}
     	}
-    	
+
     	return new ResponseEntity<List<RezervacijaDTO>>(rezervacije, HttpStatus.OK);
 
-		
+
 	}
-	
+
 	// rezervacija iz jedne apoteke
 	@GetMapping(value="/otkazi-rezervaciju")
-	public ResponseEntity<Void> otkaziRezervaciju(@RequestParam String id_rezervacije){
-		
+	public ResponseEntity<Void> otkaziRezervaciju(@RequestParam String id_rezervacije) throws InterruptedException{
+
 			Rezervacija r = rezervacijaService.findRezervacijaByID(Long.parseLong(id_rezervacije));
 			if(r==null) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
-	    	
+
 			List<RezervacijaLek> rl = rezervacijaService.findRezervacijaLekByRezervacijaID(Long.parseLong(id_rezervacije));
-			
+
+			ArrayList<Long> lekIDs = new ArrayList<Long>();
+			ArrayList<Integer> kolicine = new ArrayList<Integer>();
+
 			for(RezervacijaLek tmp: rl) {
-				ApotekaLek al = apotekaLekService.findOneBySifra(tmp.getLek(), r.getApoteka().getId());
-				al.setKolicina(al.getKolicina()+tmp.getKolicina());
-				apotekaLekService.saveAL(al);
+
+				lekIDs.add(tmp.getLek().getId());
+				// dodajemo minus kako bi dodali kolicinu
+				kolicine.add(-tmp.getKolicina());
 			}
-			
+
+			// zakljucavamo kolicinu
+			try {
+					apotekaLekService.updateKolicinaSlobodnihLekovaKonkurentno(lekIDs, kolicine);
+			} catch (LekNijeNaStanjuException e) {
+	            return new ResponseEntity<>(HttpStatus.CONFLICT);
+	        }
+
 	    	rezervacijaService.removeRezervacija(r.getId());
-	    	
+
 	    	return new ResponseEntity<>(HttpStatus.OK);
 	}
 	//izvestaji za rezervacije
@@ -342,20 +371,20 @@ public class RezervacijaController {
     public ResponseEntity<Map<Integer,Integer>> lekIzvestaj(@RequestParam("cookie") String cookie,
     		@RequestParam("vremenskiPeriod") String vremenskiPeriod,
     		@RequestParam(required = false) int godina){
-    	
+
     	Korisnik k = korisnikService.findUserByToken(cookie);
     	if(k == null) {
     		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
     	AdminApoteke a = (AdminApoteke) k;
-    	Map<Integer,Integer> izvestaj = new HashMap<Integer,Integer>();	
-    	
+    	Map<Integer,Integer> izvestaj = new HashMap<Integer,Integer>();
+
     	int suma;
     	if(vremenskiPeriod.equals("Mesecni")) {
     		List<Rezervacija> rezervacije = rezervacijaService.findAllRezervacijeFinishedYear(a.getApoteka().getId(),godina);
         	Map<LocalDateTime, List<Rezervacija>> data = rezervacije.stream().collect(Collectors.groupingBy(d -> d.getRokPonude().withDayOfMonth(1)));
         	System.out.println(data);
-        	
+
         	for(int i = 1; i<13;i++) {
         		izvestaj.put(i, 0);
         	}
@@ -405,13 +434,13 @@ public class RezervacijaController {
     		@RequestParam("vremenskiPeriod") String vremenskiPeriod,
     		@RequestParam("pocetak") String pocetak,
     		@RequestParam("kraj") String kraj){
-		
+
     	Korisnik k = korisnikService.findUserByToken(cookie);
     	if(k == null) {
     		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
     	AdminApoteke a = (AdminApoteke) k;
-    	Map<LocalDate,Double> izvestaj = new HashMap<LocalDate,Double>();	
+    	Map<LocalDate,Double> izvestaj = new HashMap<LocalDate,Double>();
     	double suma;
 
     	LocalDateTime start = LocalDateTime.parse(pocetak, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
@@ -419,7 +448,7 @@ public class RezervacijaController {
 		List<Rezervacija> rezervacije = rezervacijaService.findAllRezervacijeFinishedDateRange(a.getApoteka().getId(),start,end);
     	Map<LocalDateTime, List<Rezervacija>> data = rezervacije.stream().collect(Collectors.groupingBy(d -> d.getRokPonude().withDayOfMonth(1)));
     	System.out.println(data);
-    	
+
 //    	for(int i = 1; i<13;i++) {
 //    		izvestaj.put(i, 0.0);
 //    	}
@@ -441,12 +470,12 @@ public class RezervacijaController {
 			}
     		if(izvestaj.containsKey(date.toLocalDate())) {
     			izvestaj.put(date.toLocalDate(), izvestaj.get(date.toLocalDate())+suma);
-    		
+
     		}
     		else {
     			izvestaj.put(date.toLocalDate(),suma);
     		}
-    	}    	
+    	}
 		return new ResponseEntity<Map<LocalDate,Double>> (new TreeMap<LocalDate,Double>(izvestaj), HttpStatus.OK);
 		}
 }

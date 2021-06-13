@@ -28,9 +28,17 @@ Vue.component("PacijentNarudzbenice", {
 
             table_is_busy: false,
             
+            selected: {
+		   		id: "",
+		   		lekovi: "",
+		   		apoteka: "",
+		   		datumIstekaRezervacije: "",
+		   		status: "",
+		   		},
+            
+            
            greska: false,
 	       uspeh: false,
-	       
 		   
         }
 
@@ -47,34 +55,16 @@ Vue.component("PacijentNarudzbenice", {
       	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesno otkazivanje</b-alert>
 
 
-
           <b-row>
             <b-table
                 ref="table"
+                id="table-id"
                 hover
                 :items="itemProvider"
                 :fields="fields"
                 :busy.sync="table_is_busy"
+                @row-clicked="myRowClickHandler"
             >
-            
-	            <template #cell(status)="row">
-	            
-			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'info' || rezervacije[row.index].rowVariant == 'warning'" class="mr-1">
-			          Potrebno preuzeti
-			        </div>
-	            	<b-button size="sm" v-if="rezervacije[row.index].rowVariant == 'info' " @click="otkazi(row.index)" class="mr-1">
-			          Otkazi
-			        </b-button>
-			       
-			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'success' " class="mr-1">
-			          Preuzeto
-			        </div>
-			        
-			        <div size="sm" v-if="rezervacije[row.index].rowVariant == 'danger'" class="mr-1">
-			          Nije preuzeto
-			        </div>
-
-			    </template>
             </b-table>
           </b-row>
 
@@ -83,6 +73,47 @@ Vue.component("PacijentNarudzbenice", {
 
         </b-container>
       </b-card>
+      
+      
+            <!-- PREGLED MODAL -->
+      
+      <div id="modal" class="modal" tabindex="-1">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title">Informacije Rezervacije</h5>
+		      </div>
+		      <div class="modal-body">
+
+				<b-row>
+					<b-col>Apoteka: </b-col>
+					<b-col>{{selected.apoteka}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Lekovi:</b-col>
+					<b-col>{{selected.lekovi}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Datum isteka:</b-col>
+					<b-col>{{selected.datumIstekaRezervacije}}</b-col>
+				</b-row>
+				<b-row>
+					<b-col>Status:</b-col>
+					<b-col>{{selected.status}}</b-col>
+				</b-row>
+		      </div>
+		      <div class="modal-footer">
+					<b-button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</b-button>
+		  		    <b-button v-if="selected.rowVariant == 'info' " @click="otkazi()" class="mr-1">
+			          Otkazi rezervaciju
+			        </b-button>      	
+		      </div>
+		    </div>
+		  </div>
+		</div>
+      
+      
+      
       </div>
     `,
     methods: {
@@ -98,6 +129,7 @@ Vue.component("PacijentNarudzbenice", {
     	
    		if(r.preuzeto) {
    			r.rowVariant = 'success';
+   			r.status = 'Preuzeto';
    		}
     	else {
 	    	if(nextDay.toISOString().slice(0, 10) > r.datumRezervacije.slice(0, 10)) {
@@ -105,19 +137,22 @@ Vue.component("PacijentNarudzbenice", {
 	    		console.log(today.toISOString().slice(0, 10) + " - " + r.datumRezervacije.slice(0, 10));
 	    		if(today.toISOString().slice(0, 10) == r.datumRezervacije.slice(0, 10)){
 	    			r.rowVariant = 'warning';
+	    			r.status = 'Potrebno preuzeti';
 	    		} else {
 	    			r.rowVariant = 'danger';
+	    			r.status = 'Nije preuzeto';
 	    		}
 	    	}
 	    	else {
 	    		r.rowVariant = 'info';
+	    		r.status = 'Potrebno preuzeti';
 	    	}
     	}
 
     },
     
-    otkazi(index) {
-    
+    otkazi() {
+            $('#modal').modal('hide');  
         	this.greska = false;
 		    this.uspeh = false;
 		    
@@ -125,20 +160,24 @@ Vue.component("PacijentNarudzbenice", {
 		     axios.get("rezervacije/otkazi-rezervaciju", 
 			    {		
 			    params: {
-			       'id_rezervacije': this.rezervacije[index].id
+			       'id_rezervacije': this.selected.id
 			       }
 			    }).then((response) => {
-   		   			//location.reload();
-   		   			this.$root.$emit("bv::refresh::table", "table");
+			    		     this.$root.$emit("bv::refresh::table", "table-id");
 		        })
 		        .catch((e) => {
-		        	this.greska = true;
+		        		if (e.request.status == 409) {
+			        		this.$root.$emit("bv::refresh::table", "table-id");
+						} else {
+			        		this.greska = true;
+			        	}
 		        });
       },
     
         loadPregledi: async function () {
             this.table_is_busy = true
             let items = []
+            this.rezervacije = [];
             await axios
                 .get("rezervacije/moje_rezervacije", {
                     params:
@@ -151,17 +190,17 @@ Vue.component("PacijentNarudzbenice", {
                     for (const p of rez) {
         
                     	this.checkDate(p);	
-                    	this.rezervacije.push(p);
-                    	console.log(p);
                     	
-                        items.push({
-                            idRezervacije: p.id,
-                            lekovi: p.sifraLeka,
-                            apoteka: p.apotekaId,
-                            datumIstekaRezervacije: p.datumRezervacije.slice(0, 10),
-                          	_rowVariant: p.rowVariant
-                            
-                        })
+
+                            p.idRezervacije = p.id,
+                            p.lekovi = p.sifraLeka,
+                            p.apoteka = p.apotekaId,
+                            p.datumIstekaRezervacije = p.datumRezervacije.slice(0, 10),
+                          	p._rowVariant = p.rowVariant
+
+                        
+                        items.push(p);
+                        this.rezervacije.push(p);
                     }
                 })
        	        .catch((e) => {
@@ -173,5 +212,11 @@ Vue.component("PacijentNarudzbenice", {
         itemProvider: function (ctx) {
             return this.loadPregledi()
         },
+        myRowClickHandler(record, index) {
+        	if(this.rezervacije[index].rowVariant == 'info') {
+	      		this.selected = this.rezervacije[index];
+	      		$("#modal").modal();
+      		}
+		},
     },
 });
