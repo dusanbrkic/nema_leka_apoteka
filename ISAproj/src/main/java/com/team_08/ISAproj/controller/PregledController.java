@@ -1,5 +1,6 @@
 package com.team_08.ISAproj.controller;
 
+import com.team_08.ISAproj.dto.FarmaceutDTO;
 import com.team_08.ISAproj.dto.LekDTO;
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.PregledLekDTO;
@@ -7,6 +8,7 @@ import com.team_08.ISAproj.dto.RezervacijaDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 
 import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
+import com.team_08.ISAproj.exceptions.PregledRezervisanException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.service.*;
 
@@ -35,6 +37,8 @@ import java.time.temporal.IsoFields;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.persistence.OptimisticLockException;
 
 @RestController
 @RequestMapping("/pregledi")
@@ -360,13 +364,20 @@ public class PregledController {
 	public ResponseEntity<Void> otkaziRezervaciju(
 			@RequestParam("id_pregleda") Long id_pregleda,
 			@RequestParam("cookie") String cookie
-	){
+	) throws InterruptedException{
 			Pacijent p = (Pacijent) korisnikService.findUserByToken(cookie);
 			
-			Pregled pregled = pregledService.findOneById(id_pregleda);
-			pregled.setPacijent(p);
-			pregled.setPregledZakazan(true);
-			pregledService.savePregled(pregled);
+			Pregled pregled = null;
+			
+			
+			// zakljucavamo pregled
+			try {
+					pregled = pregledService.zakaziPregledKonkurentno(id_pregleda, p);
+			} catch (PregledRezervisanException e) {
+	            return new ResponseEntity<>(HttpStatus.CONFLICT);
+	        }
+			
+			//Pregled pregled = pregledService.findOneById(id_pregleda);
 			
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		    String dateTime = pregled.getVreme().format(formatter);
@@ -443,15 +454,15 @@ public class PregledController {
                                                        @RequestParam("end") String endDate,
                                                        @RequestParam("cookie") String cookie,
                                                        @RequestParam("idFarmaceuta") Long idFarmaceuta,
-                                                       @RequestParam("idApoteke") Long idApoteke) {
+                                                       @RequestParam("idApoteke") Long idApoteke) throws InterruptedException {
+    	
         LocalDateTime start = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         LocalDateTime end = LocalDateTime.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         
         ZdravstveniRadnik zdravstveniRadnik = (ZdravstveniRadnik) zdravstveniRadnikService.findOneById(idFarmaceuta);
-        System.out.println(zdravstveniRadnik);
         Pacijent pac = (Pacijent) korisnikService.findUserByToken(cookie);
-        
         Apoteka a = apotekaService.findOne(idApoteke);
+        
         Pregled p = new Pregled();
         p.setVreme(start);
         p.setKraj(end);
@@ -460,9 +471,17 @@ public class PregledController {
         p.setZdravstveniRadnik(zdravstveniRadnik);
         p.setApoteka(a);
         p.setPacijent(pac);
+        
         if (zdravstveniRadnik instanceof Farmaceut)
             p.setCena(a.getCenaSavetovanja());
-        pregledService.savePregled(p);
+        
+        // optimistic save
+        try {
+            pregledService.savePregledAndCheckIfFarmacistsIsFreeConcurent(p, zdravstveniRadnik, start, end);
+        } catch (OptimisticLockException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        
         
         String body = "Poštovani, " + pac.getIme() + "\n"
 				+ "Zakazali ste savetovanje kod farmaceuta. Više informacija u nastavku. \n"

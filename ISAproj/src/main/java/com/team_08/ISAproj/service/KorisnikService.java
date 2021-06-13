@@ -1,12 +1,21 @@
 package com.team_08.ISAproj.service;
 
+import com.team_08.ISAproj.dto.KorisnikDTO;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.AdminApotekeRepository;
 import com.team_08.ISAproj.repository.DermatologRepository;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
 import com.team_08.ISAproj.repository.PacijentRepository;
+
+import javax.persistence.OptimisticLockException;
+
+import org.springframework.aop.ThrowsAdvice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class KorisnikService {
@@ -23,7 +32,7 @@ public class KorisnikService {
     public Korisnik findOne(Long id) {
         return null;
     }
-
+	@Transactional(readOnly = true)
     public Korisnik findUser(String username) {
         Korisnik k = pacijentRepository.findOneByUsername(username);
         if (k == null) k = dermatologRepository.findOneByUsername(username);
@@ -40,6 +49,7 @@ public class KorisnikService {
         return k;
     }
 
+	@Transactional(readOnly = true)
     public Korisnik findUserByEmail(String email) {
         Korisnik k = pacijentRepository.findOneByEmailAdresa(email);
         if (k == null) k = dermatologRepository.findOneByEmailAdresa(email);
@@ -49,6 +59,21 @@ public class KorisnikService {
 
     }
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+    public void savePacijentKonkurentno(Pacijent pacijent) {
+    	
+    	Korisnik k = findUserByEmail(pacijent.getEmailAdresa());
+    	if(k != null) {
+    		throw new OptimisticLockException();
+    	}
+    	if(findUser(pacijent.getUsername()) != null) {
+    		throw new OptimisticLockException();
+    	}
+    	
+        pacijentRepository.save(pacijent);
+    	
+    }
+    
     public void saveUser(Korisnik k) {
         if (k instanceof Pacijent)
             pacijentRepository.save((Pacijent) k);

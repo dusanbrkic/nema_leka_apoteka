@@ -15,8 +15,11 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.RezervacijaLekDTO;
+import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
 import com.team_08.ISAproj.repository.RezervacijaLekRepository;
@@ -25,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -130,7 +134,23 @@ public class RezervacijaController {
 
 	// rezervacija iz jedne apoteke
 	@PostMapping(value="/pacijent")
-	public ResponseEntity<List<RezervacijaDTO>> dodajRezervaciju(@RequestBody List<RezervacijaDTO> rezervacije){
+	public ResponseEntity<List<RezervacijaDTO>> dodajRezervaciju(@RequestBody List<RezervacijaDTO> rezervacije) throws InterruptedException{
+		
+		ArrayList<Long> lekIDs = new ArrayList<Long>();
+		ArrayList<Integer> kolicine = new ArrayList<Integer>();
+		
+		for(RezervacijaDTO r: rezervacije) {
+			lekIDs.add(Long.parseLong(r.getSifraLeka()));
+			kolicine.add(r.getKolicina());
+		}
+		
+		// zakljucavamo kolicinu
+		try {
+				apotekaLekService.updateKolicinaSlobodnihLekovaKonkurentno(lekIDs, kolicine);
+		} catch (LekNijeNaStanjuException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+		
 		
 		Rezervacija n = new Rezervacija();
 		n.setApoteka(apotekaService.findOne(Long.parseLong(rezervacije.get(0).getApotekaId())));
@@ -145,16 +165,14 @@ public class RezervacijaController {
 		
 		double ukupnaCena = 0;
 		
+		
 		for(RezervacijaDTO nDTO: rezervacije) {
 			
 			Lek l = lekService.findOneBySifra(nDTO.getSifraLeka());
-			RezervacijaLek rl = new RezervacijaLek(nDTO.getKolicina(), n, l);
-			
+			RezervacijaLek rl = new RezervacijaLek(nDTO.getKolicina(), n, l);			
 			
 			ApotekaLek apotekaLek = apotekaLekService.findInApotekaLek(l.getId(), Long.parseLong(rezervacije.get(0).getApotekaId()));
 			
-			apotekaLek.setKolicina(apotekaLek.getKolicina()-nDTO.getKolicina());
-			apotekaLekService.saveAL(apotekaLek);
 			rl.setCena(apotekaLek.getCena());
 			rezervacijaService.saveRezervacijaLek(rl);
 			
@@ -194,58 +212,58 @@ public class RezervacijaController {
 	// Rezervacija jednog leka
 	@GetMapping(value="/rezervacija-leka")
 	public ResponseEntity<Void> receiveData(
-			@RequestParam("sifra") String sifra,
+			@RequestParam("sifra") Long sifra,
 			@RequestParam("kolicina") int kolicina,
 			@RequestParam("istekRezervacije") String datum,
 			@RequestParam("cookie") String cookie
-			) throws ParseException
+			) throws ParseException, InterruptedException
 		{
 		
-			Lek lek = null;
+			//Lek lek = null;
 			
 			Pacijent k = (Pacijent) korisnikService.findUserByToken(cookie);
 			
-			ApotekaLek al = null;
+
 			
 			Long porudzbinaId = (long) 0;
 
 			LocalDateTime dateTime = LocalDateTime.parse(datum);
 			
+			ArrayList<Long> lekIDs = new ArrayList<Long>();
+			lekIDs.add(sifra);
 			
-			for (ApotekaLek a : apotekaLekService.findAll()) {
-				if(sifra.equals(a.getLek().getSifra())) {
-					lek = a.getLek();
-					al = a;
-					if(kolicina>al.getKolicina()) {
-						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-					}
-					al.setKolicina(al.getKolicina()-kolicina);
-		
-					apotekaLekService.saveAL(al);
-					
-					Rezervacija n = new Rezervacija();
-					n.setRokPonude(dateTime);
-					
-					
-					RezervacijaLek nl = new RezervacijaLek(kolicina, n,lek);
-					nl.setCena(al.getCena());
-					n.addRezervacijaLek(nl);
-					n.setApoteka(a.getApoteka());
-					n.setPacijent(k);
-					
-					rezervacijaService.saveRezervacija(n);
-					rezervacijaService.saveRezervacijaLek(nl);
-					
-					porudzbinaId = n.getId();
-				}
-			}
-		
-			if(lek == null) {
+			ArrayList<Integer> kolicine = new ArrayList<Integer>();
+			kolicine.add(kolicina);
+			
+			
+			// zakljucavamo kolicinu
+			try {
+					apotekaLekService.updateKolicinaSlobodnihLekovaKonkurentno(lekIDs, kolicine);
+			} catch (LekNijeNaStanjuException e) {
+	            return new ResponseEntity<>(HttpStatus.CONFLICT);
+	        }
+			
+			Rezervacija n = new Rezervacija();
+			n.setRokPonude(dateTime);
+			
+			ApotekaLek al = apotekaLekService.findApotekaLekByLekID(sifra);
+			if(al == null) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
+			
+			RezervacijaLek nl = new RezervacijaLek(kolicina, n, al.getLek());
+			nl.setCena(al.getCena());
+			n.addRezervacijaLek(nl);
+			n.setApoteka(al.getApoteka());
+			n.setPacijent(k);
+			
+			rezervacijaService.saveRezervacija(n);
+			rezervacijaService.saveRezervacijaLek(nl);
+			
+			porudzbinaId = n.getId();
 		
 			String body = "Poštovani, " + k.getIme() + "\n"
-					+ "Rezervisali ste lek " + lek.getNaziv() + " x " + kolicina + "kom" +"\n"
+					+ "Rezervisali ste lek " + al.getLek().getNaziv() + " x " + kolicina + "kom" +"\n"
 					+ "Ukupna cena je: " + al.getCena()*kolicina + " dinara \n"
 					+ "Rezervisani lek možete pokupiti do isteka rezervacije " + datum + "\n\n"
 					+ "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
@@ -316,7 +334,7 @@ public class RezervacijaController {
 	
 	// rezervacija iz jedne apoteke
 	@GetMapping(value="/otkazi-rezervaciju")
-	public ResponseEntity<Void> otkaziRezervaciju(@RequestParam String id_rezervacije){
+	public ResponseEntity<Void> otkaziRezervaciju(@RequestParam String id_rezervacije) throws InterruptedException{
 		
 			Rezervacija r = rezervacijaService.findRezervacijaByID(Long.parseLong(id_rezervacije));
 			if(r==null) {
@@ -325,11 +343,22 @@ public class RezervacijaController {
 	    	
 			List<RezervacijaLek> rl = rezervacijaService.findRezervacijaLekByRezervacijaID(Long.parseLong(id_rezervacije));
 			
+			ArrayList<Long> lekIDs = new ArrayList<Long>();
+			ArrayList<Integer> kolicine = new ArrayList<Integer>();
+			
 			for(RezervacijaLek tmp: rl) {
-				ApotekaLek al = apotekaLekService.findOneBySifra(tmp.getLek(), r.getApoteka().getId());
-				al.setKolicina(al.getKolicina()+tmp.getKolicina());
-				apotekaLekService.saveAL(al);
+				
+				lekIDs.add(tmp.getLek().getId());
+				// dodajemo minus kako bi dodali kolicinu
+				kolicine.add(-tmp.getKolicina());
 			}
+			
+			// zakljucavamo kolicinu
+			try {
+					apotekaLekService.updateKolicinaSlobodnihLekovaKonkurentno(lekIDs, kolicine);
+			} catch (LekNijeNaStanjuException e) {
+	            return new ResponseEntity<>(HttpStatus.CONFLICT);
+	        }
 			
 	    	rezervacijaService.removeRezervacija(r.getId());
 	    	

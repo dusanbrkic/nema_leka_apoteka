@@ -32,6 +32,12 @@ public class Pregled {
     @Column(name = "CENA")
     private Double cena;
 
+    
+    @Version
+    private int version;
+    
+    
+    
     // connections
     @ManyToOne(fetch = FetchType.EAGER)
     private ZdravstveniRadnik zdravstveniRadnik;

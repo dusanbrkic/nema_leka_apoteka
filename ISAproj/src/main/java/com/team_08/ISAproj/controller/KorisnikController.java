@@ -44,6 +44,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.OptimisticLockException;
+
 @RestController
 @RequestMapping("/korisnici")
 public class KorisnikController {
@@ -186,25 +188,26 @@ public class KorisnikController {
     //register user
     @PostMapping(value = "/registerUser")
     public ResponseEntity<KorisnikDTO> registerUser(@RequestBody KorisnikDTO korisnik){
-
-    	Korisnik k = korisnikService.findUserByEmail(korisnik.getEmailAdresa());
-    	if(k != null) {
-    		return new ResponseEntity<KorisnikDTO>(HttpStatus.BAD_REQUEST);
-    	}
-    	if(korisnikService.findUser(korisnik.getUsername()) != null) {
-    		return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
-    	}
+    	
+        Pacijent pacijent = new Pacijent();
+        pacijent.UpdatePacijent(korisnik);
     	Random rand = new Random();
         String verificationCode = "";
         for(int i = 0 ; i < 7 ; i++)
         {
             verificationCode += String.valueOf(rand.nextInt(10));
         }
-        Pacijent pacijent = new Pacijent();
-        pacijent.UpdatePacijent(korisnik);
         pacijent.setCookieTokenValue(verificationCode);
-        korisnikService.saveUser(pacijent);
+        
+    	// konkuretno testiraj i sacuvaj korisnika
+        try {
+        	korisnikService.savePacijentKonkurentno(pacijent);
+        } catch (OptimisticLockException e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 
+        
+        
 		String body = "Poštovani, " + pacijent.getIme() + " vas verifikacioni kod je : " + verificationCode;
 
 		String title = "Verifikacija Apoteka";

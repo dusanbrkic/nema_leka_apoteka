@@ -36,6 +36,7 @@ Vue.component("NaruciPacijent", {
       uspeh: false,
       losUnos: false,
       ukupnaCena: 0,
+      konkurentnost: false,
     };
   },
   mounted() {
@@ -47,6 +48,7 @@ Vue.component("NaruciPacijent", {
     <div>
 
 		<b-alert style="text-align: center;" v-model="this.losUnos" variant="danger"> Los unos podataka! </b-alert>
+		<b-alert style="text-align: center;" v-model="this.konkurentnost" variant="danger"> Lekovi su naručeni u medjuvremenu, količina je pri tome bila prevelika, probajte ponovo! </b-alert>
       	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesna rezervacija, pogledajte svoj email.</b-alert>
       
 
@@ -218,22 +220,27 @@ Vue.component("NaruciPacijent", {
       
       this.uspeh = false;
       this.losUnos = false;
-      
-      axios
-        .post(
+            console.log(JSON.parse(JSON.stringify(this.listaNarudzbina)))
+      axios.post(
           "/rezervacije/pacijent",
           JSON.parse(JSON.stringify(this.listaNarudzbina))
         )
         .then((response) => { 
          	this.retrieveLekove();
+         	this.konkurentnost = false;
         	console.log(response.data);
         	this.uspeh = true; 
         })
        	.catch((e) => {
-        	this.losUnos = true;
+		    if (e.request.status == 409) {
+        		this.konkurentnost = true;
+        		this.retrieveLekove();
+			} else {
+        		this.losUnos = true;
+        	}
         });
         
-      this.retrieveLekove();
+      //this.retrieveLekove();
       this.kolicinaChange();
       this.listaNarudzbina = [];
       this.$refs["my-modal1"].hide();

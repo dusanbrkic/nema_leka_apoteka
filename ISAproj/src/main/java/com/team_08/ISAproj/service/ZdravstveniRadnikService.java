@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -47,6 +48,7 @@ public class ZdravstveniRadnikService {
         return z;
     }
 
+	@Transactional(readOnly = false)
     public ZdravstveniRadnik fetchZdravstveniRadnikWithOdsustvaInDateRange(String cookie, LocalDateTime start, LocalDateTime end) {
         ZdravstveniRadnik z = dermatologRepository.fetchDermatologWithOdsustvaInDateRange(cookie, start, end);
         if (z == null) {
@@ -91,9 +93,8 @@ public class ZdravstveniRadnikService {
         return dermatologRepository.fetchDermatologApotekaByApotekaId(ApotekaId);
     }
 
+	@Transactional(readOnly = false)
     public List<Farmaceut> fetchFarmaceutsByApotekaId(Long ApotekaId) {
-
-
         return farmaceutRepository.findAllByApotekaId(ApotekaId);
     }
     
@@ -191,6 +192,7 @@ public class ZdravstveniRadnikService {
 		return farmaceutRepository.findFarmaceutApotekaByIdSearchedSorted(PageRequest.of(page, size, sort), apotekaId, pretragaIme, pretragaPrezime,ocena,start,end);
     }
 
+	@Transactional(readOnly = false)
     public ZdravstveniRadnik checkRadnoVreme(LocalTime start, LocalTime end, String cookie, Long idApoteke) {
         if (dermatologRepository.findOneByCookieTokenValue(cookie)!=null)
             return dermatologRepository.checkRadnoVreme(start, end, cookie, idApoteke);

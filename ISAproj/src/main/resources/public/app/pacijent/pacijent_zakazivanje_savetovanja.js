@@ -66,6 +66,7 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
             ],
             uspeh: false,
             blocked: false,
+           	konkurentnost: false,
         }
     },
 
@@ -81,6 +82,7 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
         
       	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesna rezervacija, pogledajte svoj email.</b-alert>
       	<b-alert style="text-align: center;" v-model="blocked" variant="danger"> Nalog je blokiran! </b-alert>
+      	<b-alert style="text-align: center;" v-model="this.konkurentnost" variant="danger"> Termin je zakazan u medjuvremenu, pri tome se preklapa sa vašim, probajte drugi! </b-alert>
       	
           <!--modal zakazivanja-->
 
@@ -213,8 +215,12 @@ Vue.component("PacijentZakazivanjeSavetovanja", {
 						this.loadApoteke();
                 })
        	        .catch((e) => {
-       	        this.uspeh = false;
-		        	console.log(e);
+       	        	if (e.request.status == 409) {
+		        		this.konkurentnost = true;
+					} else {
+			   	        this.uspeh = false;
+		        		console.log(e);
+					}
 		        });
         },
         

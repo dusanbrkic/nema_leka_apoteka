@@ -33,6 +33,7 @@ Vue.component("PacijentLekovi", {
             
             ukupnaCena: 0,
 	        losUnos: false,
+	        konkurentnost: false,
 	        uspeh: false,
 	        blocked: false,
 	        ocena: 0,
@@ -52,7 +53,8 @@ Vue.component("PacijentLekovi", {
 
             <b-container>
             
-        <b-alert style="text-align: center;" v-model="this.losUnos" variant="danger"> Los unos podataka! </b-alert>
+        <b-alert style="text-align: center;" v-model="this.losUnos" variant="danger"> Los unos informacija </b-alert>
+        <b-alert style="text-align: center;" v-model="this.konkurentnost" variant="danger"> Lek je naručen u medjuvremenu, količina je pri tome bila prevelika, probajte ponovo! </b-alert>
       	<b-alert style="text-align: center;" v-model="this.uspeh" variant="success"> Uspesna rezervacija, pogledajte svoj email.</b-alert>
     	<b-alert style="text-align: center;" v-model="blocked" variant="danger"> Nalog je blokiran! </b-alert>
 
@@ -186,7 +188,7 @@ Vue.component("PacijentLekovi", {
              		</b-card-text>
                     
 <div class="d-flex justify-content-center">		
-                <b-button style="margin: 10px auto;" v-on:click="otkaziAlergiju(lek)" variant="light">Otkazi Alergiju</b-button>
+                <b-button style="margin: 10px auto;" v-on:click="otkaziAlergiju(lek)" variant="light">Otkaži Alergiju</b-button>
 </div>
                     
                   </b-card>
@@ -370,7 +372,7 @@ Vue.component("PacijentLekovi", {
 			      params: 
 			       { 		
 			       			sifra: this.izabranLek.sifra,
-			      			kolicina: this.izabranLek.kolicina,
+			      			kolicina: this.kolicina,
 			      			istekRezervacije: this.izabranLek.istekRezervacije.toString() + "T02:00:00",
 			      			cookie: this.cookie
 			       },
@@ -378,11 +380,15 @@ Vue.component("PacijentLekovi", {
         			this.$refs['my-modal'].hide();
         			this.loadLekovi();
 	          		this.uspeh = true;
+	          		this.konkurentnost = false;
 		        })
 		        .catch((e) => {
-		        
+		        	if (e.request.status == 409) {
+		        		this.konkurentnost = true;
+					} else {
+		        		this.losUnos = true;
+		        	}
 		        	this.$refs['my-modal'].hide();
-		        	this.losUnos = true;
 		        	console.log(e);
 		        });
 		        
