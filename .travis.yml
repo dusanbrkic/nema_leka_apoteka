@@ -16,4 +16,4 @@ dist: trusty
 deploy:
   provider: heroku
   api_key: $HEROKU_API_KEY
-  app: <naziv_aplikacije>
+  app: <isa-team-08>
