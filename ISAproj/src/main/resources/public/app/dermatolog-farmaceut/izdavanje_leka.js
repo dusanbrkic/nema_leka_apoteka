@@ -96,6 +96,7 @@ Vue.component("IzdavanjeLeka", {
                     this.lekoviIzdati = false
                     this.idUspesnoPoslat = true
                     this.ukupnaCena = 0
+                    this.rezervacije = []
                     for (const lek of response.data) {
                         this.ukupnaCena += lek.cena * lek.kolicina
                         this.rezervacije.push({

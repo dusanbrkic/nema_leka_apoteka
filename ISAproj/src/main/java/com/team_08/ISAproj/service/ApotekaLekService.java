@@ -23,8 +23,6 @@ import javax.persistence.*;
 
 @Service
 public class ApotekaLekService {
-	@PersistenceUnit
-	private EntityManagerFactory entityManagerFactory;
 	@Autowired
 	private ApotekaLekRepository apotekaLekRepository;
 	@Autowired
@@ -106,27 +104,28 @@ public class ApotekaLekService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-    public void updateKolicinaLekovaKonkurentno(Set<PregledLek> preporuceniLekovi, Long idApoteke) throws LekNijeNaStanjuException {
+    public void updateKolicinaLekovaKonkurentno(Set<PregledLek> preporuceniLekovi, Long idApoteke, boolean wait) throws LekNijeNaStanjuException {
 		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] USAO SAM U TRANSAKCIJU I POKUSAVAM DA UZMEM LEK!------------------------------");
 		Map<Long, Integer> kolicineLekova = new HashMap<>();
 
 		for (PregledLek pregledLek : preporuceniLekovi) {
-			kolicineLekova.put(pregledLek.getId(), pregledLek.getKolicina());
+			kolicineLekova.put(pregledLek.getLek().getId(), pregledLek.getKolicina());
 		}
 
 		List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findApotekaLekoviByIdWithLock(kolicineLekova.keySet(), idApoteke);
 		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] ZAKLJUCAO SAM OBJEKAT!------------------------------");
 
-//		try {
-//			Thread.sleep(10000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+		if (wait)
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
 		for (ApotekaLek apotekaLek : apotekaLekovi) {
-			if (kolicineLekova.get(apotekaLek.getId()) > apotekaLek.getKolicina())
+			if (kolicineLekova.get(apotekaLek.getLek().getId()) > apotekaLek.getKolicina())
 				throw  new LekNijeNaStanjuException();
-			apotekaLek.setKolicina(apotekaLek.getKolicina() - kolicineLekova.get(apotekaLek.getId()));
+			apotekaLek.setKolicina(apotekaLek.getKolicina() - kolicineLekova.get(apotekaLek.getLek().getId()));
 		}
 		apotekaLekRepository.saveAll(apotekaLekovi);
 		System.out.println("----------------------------[THREAD " + Thread.currentThread().getId() + "] SACUVAO SAM OBJEKAT!------------------------------");

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.RezervacijaLekDTO;
+import com.team_08.ISAproj.exceptions.RezervacijaNeispravnaException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.FarmaceutRepository;
 import com.team_08.ISAproj.repository.RezervacijaLekRepository;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -95,14 +97,13 @@ public class RezervacijaController {
 	public ResponseEntity<String> izdajLekove(@RequestParam String cookie,
 											  @RequestParam Long idRezervacije){
 		Farmaceut f = farmaceutRepository.findOneByCookieTokenValue(cookie);
-
-		Rezervacija r = rezervacijaService.findRezervacijaByIdAndApotekaIdBeforeRok(idRezervacije,
-				f.getApoteka().getId(), LocalDateTime.now().plusDays(1));
-		if(r==null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-		r.setPreuzeto(true);
-		rezervacijaService.saveRezervacija(r);
+		Rezervacija r = null;
+		try {
+			r = rezervacijaService.obradiRezervacijuKonkurentno(idRezervacije,
+					f.getApoteka().getId(), LocalDateTime.now().plusDays(1), false);
+		} catch (RezervacijaNeispravnaException e) {
+			return new ResponseEntity<>("Rezervacija neispravna", HttpStatus.BAD_REQUEST);
+		}
 
 		String body = "Poštovani, " + r.getPacijent().getIme() + "\n"
 				+ "Vasa rezervacija sa jedinstveni brojem '" + r.getId() + "' je upravo prihvacena i lekovi su Vam izdati.\n" +
@@ -114,16 +115,17 @@ public class RezervacijaController {
 
 		try
 		{
+			Rezervacija finalR = r;
 			Thread t = new Thread() {
 				public void run()
 				{
-					sendEmailService.sendEmail(r.getPacijent().getEmailAdresa(), body_tmp, title);
+					sendEmailService.sendEmail(finalR.getPacijent().getEmailAdresa(), body_tmp, title);
 				}
 			};
 			t.start();
 		}
 		catch(Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Greska u slanju mail-a!", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

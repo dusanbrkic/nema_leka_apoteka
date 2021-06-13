@@ -205,7 +205,7 @@ public class PregledController {
 
         //konkurentno odredi novu kolicinu
         try {
-            apotekaLekService.updateKolicinaLekovaKonkurentno(pregled.getPreporuceniLekovi(), pregled.getApoteka().getId());
+            apotekaLekService.updateKolicinaLekovaKonkurentno(pregled.getPreporuceniLekovi(), pregled.getApoteka().getId(), false);
         } catch (LekNijeNaStanjuException e) {
             return new ResponseEntity<String>("Lek nije na stanju zbog konflikta!", HttpStatus.BAD_REQUEST);
         }
@@ -293,6 +293,35 @@ public class PregledController {
         else if (zdravstveniRadnik instanceof Farmaceut)
             p.setCena(a.getCenaSavetovanja());
         pregledService.savePregled(p);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String dateTime = p.getVreme().format(formatter);
+
+        String body = "Poštovani, " + p.getPacijent().getIme() + "\n"
+                + "Zakazali ste pregled kod dermatologa. Više informacija u nastavku. \n"
+                + "Datum i vreme: " + dateTime + "\n"
+                + "Dermatolog: " + p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime() + "\n"
+                + "Cena: " + p.getCena() + "\n"
+                + "Apoteka: " + p.getApoteka().getNaziv() + "\n"
+                + "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
+                + "Srdačan pozdrav.";
+
+        String title = "Potvrda pregleda (ID:" + p.getId() + ")";
+
+        try
+        {
+            Thread t = new Thread() {
+                public void run()
+                {
+                    sendEmailService.sendEmail(p.getPacijent().getEmailAdresa(), body, title);
+                }
+            };
+            t.start();
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
@@ -311,6 +340,35 @@ public class PregledController {
         p.setCena(p.getApoteka().getCenaPregleda());
         p.setPregledZakazan(true);
         pregledService.savePregled(p);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String dateTime = p.getVreme().format(formatter);
+
+        String body = "Poštovani, " + p.getPacijent().getIme() + "\n"
+                + "Zakazali ste pregled kod dermatologa. Više informacija u nastavku. \n"
+                + "Datum i vreme: " + dateTime + "\n"
+                + "Dermatolog: " + p.getZdravstveniRadnik().getIme() + " " + p.getZdravstveniRadnik().getPrezime() + "\n"
+                + "Cena: " + p.getCena() + "\n"
+                + "Apoteka: " + p.getApoteka().getNaziv() + "\n"
+                + "Za sva dodatna pitanja obratite nam se na ovaj mejl.\n"
+                + "Srdačan pozdrav.";
+
+        String title = "Potvrda pregleda (ID:" + p.getId() + ")";
+
+        try
+        {
+            Thread t = new Thread() {
+                public void run()
+                {
+                    sendEmailService.sendEmail(p.getPacijent().getEmailAdresa(), body, title);
+                }
+            };
+            t.start();
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 

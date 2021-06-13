@@ -229,6 +229,10 @@ public class Apoteka {
         this.opis = opis;
     }
 
+    public Apoteka(Long id) {
+        this.id = id;
+    }
+
     public Apoteka(ApotekaDTO apotekaDTO) {
         this.naziv = apotekaDTO.getNaziv();
         this.adresa = apotekaDTO.getAdresa();
