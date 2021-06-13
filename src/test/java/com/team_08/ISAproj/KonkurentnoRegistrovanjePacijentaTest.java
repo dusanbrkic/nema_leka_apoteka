@@ -33,7 +33,7 @@ class KonkurentnoRegistrovanjePacijentaTest {
     @Autowired
     private KorisnikService korisnikService;
 
-    @RepeatedTest(20)
+    @Test
     public void testRezervacijaLekova() throws Throwable {
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -70,7 +70,7 @@ class KonkurentnoRegistrovanjePacijentaTest {
             @Override
             public void run() {
                 System.out.println("Startovan Thread 2");
-                try { Thread.sleep(100); } catch (InterruptedException e) { }
+                try { Thread.sleep(1500); } catch (InterruptedException e) { }
 
                 try {
                     Pacijent pacijent = new Pacijent();

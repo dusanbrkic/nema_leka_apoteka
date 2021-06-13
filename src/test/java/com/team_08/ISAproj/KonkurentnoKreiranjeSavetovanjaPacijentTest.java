@@ -34,7 +34,7 @@ class KonkurentnoKreiranjeSavetovanjaPacijentTest {
     @Autowired
     private ZdravstveniRadnikService zdravstveniRadnikService;
 
-    @RepeatedTest(20)
+    @Test
     public void testRezervacijaLekova() throws Throwable {
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -70,7 +70,7 @@ class KonkurentnoKreiranjeSavetovanjaPacijentTest {
             @Override
             public void run() {
                 System.out.println("Startovan Thread 2");
-                try { Thread.sleep(100); } catch (InterruptedException e) { }
+                try { Thread.sleep(1500); } catch (InterruptedException e) { }
 
                 try {
                     LocalDateTime start = LocalDateTime.parse("2021-06-16T03:00:00.000Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
