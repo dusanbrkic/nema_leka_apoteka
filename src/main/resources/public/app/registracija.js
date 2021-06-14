@@ -127,7 +127,7 @@ Vue.component("Registracija", {
 					this.postojiMail = true;
                 } else if (error.request.status==404 ) {
                     this.postojiKorisnicko = true;
-                } else{
+                } else if (error.request.status==500 || error.request.status==409){
                 	this.postojiMail = true;
                 }
             });
