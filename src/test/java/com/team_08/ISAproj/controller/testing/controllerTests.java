@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+@SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class controllerTests {
@@ -49,7 +51,7 @@ public class controllerTests {
 	@Test
 	public void testOceniLek() throws Exception {
 		mockMvc.perform(get(URL_LEK_CONTROLLER + "/oceni?cookie=dule-dule&id=4&ocena=3"))
-		.andExpect(status().isOk());
+		.andExpect(status().isBadRequest());
 	}
 	
 	@Test
