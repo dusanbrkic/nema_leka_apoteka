@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 import javax.persistence.Column;
 import javax.transaction.Transactional;
 
+import com.team_08.ISAproj.app.ISAprojApplication;
 import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.exceptions.RezervacijaNeispravnaException;
 import com.team_08.ISAproj.model.*;
@@ -40,6 +41,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -57,7 +59,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
+//@WebMvcTest(ISAprojApplication.class)
+//@SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class serviceTests {

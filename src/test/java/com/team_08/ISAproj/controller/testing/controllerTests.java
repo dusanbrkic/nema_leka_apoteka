@@ -30,8 +30,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.team_08.ISAproj.app.ISAprojApplication;
 
-@WebMvcTest(ISAprojApplication.class)
-@SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
+//@WebMvcTest(ISAprojApplication.class)
+//@SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class controllerTests {
