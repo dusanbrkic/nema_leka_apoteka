@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.service;
 
 import com.team_08.ISAproj.dto.KorisnikDTO;
+import com.team_08.ISAproj.exceptions.KorisnikPostojiException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.repository.AdminApotekeRepository;
 import com.team_08.ISAproj.repository.DermatologRepository;
@@ -41,6 +42,14 @@ public class KorisnikService {
         return k;
     }
 	
+    public Korisnik findUserWithLock(String username) {
+        Korisnik k = pacijentRepository.findOneByUsernameWithLock(username);
+        if (k == null) k = dermatologRepository.findOneByUsernameWithLock(username);
+        if (k == null) k = farmaceutRepository.findOneByUsernameWithLock(username);
+        if (k == null) k = adminApotekeRepository.findOneByUsernameWithLock(username);
+        return k;
+    }
+	
     public Korisnik findUserByToken(String cookie) {
         Korisnik k = pacijentRepository.findOneByCookieTokenValue(cookie);
         if (k == null) k = dermatologRepository.findOneByCookieTokenValue(cookie);
@@ -62,16 +71,24 @@ public class KorisnikService {
         return k;
 
     }
+    public Korisnik findUserByEmailWithLock(String email) {
+        Korisnik k = pacijentRepository.findOneByEmailAdresaWithLock(email);
+        if (k == null) k = dermatologRepository.findOneByEmailAdresaWithLock(email);
+        if (k == null) k = farmaceutRepository.findOneByEmailAdresaWithLock(email);
+        if (k == null) k = adminApotekeRepository.findOneByEmailAdresaWithLock(email);
+        return k;
+
+    }
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-    public void savePacijentKonkurentno(Pacijent pacijent) {
+    public void savePacijentKonkurentno(Pacijent pacijent) throws KorisnikPostojiException {
     	
-    	Korisnik k = findUserByEmail(pacijent.getEmailAdresa());
+    	Korisnik k = findUserByEmailWithLock(pacijent.getEmailAdresa());
     	if(k != null) {
-    		throw new OptimisticLockException();
+    		throw new KorisnikPostojiException();
     	}
-    	if(findUser(pacijent.getUsername()) != null) {
-    		throw new OptimisticLockException();
+    	if(findUserWithLock(pacijent.getUsername()) != null) {
+    		throw new KorisnikPostojiException();
     	}
     	
         pacijentRepository.save(pacijent);

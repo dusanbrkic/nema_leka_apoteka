@@ -5,6 +5,7 @@ import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.DermatologApoteka;
 import com.team_08.ISAproj.model.FarmaceutApoteka;
 import com.team_08.ISAproj.model.Korisnik;
+import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.model.RezervacijaLek;
 import com.team_08.ISAproj.model.ZdravstveniRadnik;
@@ -12,6 +13,7 @@ import com.team_08.ISAproj.model.ZdravstveniRadnik;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 @Repository
 public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
 	
@@ -27,10 +31,19 @@ public interface DermatologRepository extends JpaRepository<Dermatolog, Long> {
 	List<ZdravstveniRadnik> findAllZdravstveniRadnici();
 	
     Dermatolog findOneByUsername(String username);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select p from DERMATOLOG p where p.username = :username")
+    Dermatolog findOneByUsernameWithLock(String username);
+
 
     Dermatolog findOneByCookieTokenValue(String cookie);
 
     Dermatolog findOneByEmailAdresa(String email_adresa);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select p from DERMATOLOG p where p.emailAdresa = :email_adresa")
+    Dermatolog findOneByEmailAdresaWithLock(String email_adresa);
 
     @Query(value = "SELECT d FROM DERMATOLOG d LEFT OUTER JOIN FETCH d.odsustva o where d.cookieTokenValue = :cookie")
     Dermatolog fetchDermatologWithOdsustva(@Param("cookie") String cookie);

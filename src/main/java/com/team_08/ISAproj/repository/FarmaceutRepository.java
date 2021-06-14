@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.repository;
 
 import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.Farmaceut;
 import com.team_08.ISAproj.model.Korisnik;
 import com.team_08.ISAproj.model.Pacijent;
@@ -28,10 +29,18 @@ public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
 	List<ZdravstveniRadnik> findAllZdravstveniRadnici();
 	
     Farmaceut findOneByUsername(String username);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select p from FARMACEUT p where p.username = :username")
+    Farmaceut findOneByUsernameWithLock(String username);
 
     Farmaceut findOneByCookieTokenValue(String cookie);
 
     Farmaceut findOneByEmailAdresa(String email_adresa);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select p from FARMACEUT p where p.emailAdresa = :email_adresa")
+    Farmaceut findOneByEmailAdresaWithLock(String email_adresa);
 
     Farmaceut findOneById(Long id);
     

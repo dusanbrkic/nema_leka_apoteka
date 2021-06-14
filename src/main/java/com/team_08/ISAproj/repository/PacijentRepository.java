@@ -19,6 +19,10 @@ import org.springframework.stereotype.Repository;
 public interface PacijentRepository extends JpaRepository<Pacijent, Long> {
 
     Pacijent findOneByUsername(String username);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select p from PACIJENT p where p.username = :username")
+    Pacijent findOneByUsernameWithLock(String username);
 
     Pacijent findOneByCookieTokenValue(String cookie);
     
@@ -27,6 +31,10 @@ public interface PacijentRepository extends JpaRepository<Pacijent, Long> {
     Pacijent findOneByCookieTokenValueWithLock(String cookie);
 
     Pacijent findOneByEmailAdresa(String email_adresa);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select p from PACIJENT p where p.emailAdresa = :email_adresa")
+    Pacijent findOneByEmailAdresaWithLock(String email_adresa);
 
     Pacijent findOneById(Long id);
     

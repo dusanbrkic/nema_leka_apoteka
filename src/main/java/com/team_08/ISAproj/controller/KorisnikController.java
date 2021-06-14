@@ -4,6 +4,7 @@ import com.team_08.ISAproj.dto.ApotekaDTO;
 import com.team_08.ISAproj.dto.CookieRoleDTO;
 import com.team_08.ISAproj.dto.FarmaceutDTO;
 import com.team_08.ISAproj.dto.KorisnikDTO;
+import com.team_08.ISAproj.exceptions.KorisnikPostojiException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.repository.PacijentRepository;
@@ -202,7 +203,7 @@ public class KorisnikController {
     	// konkuretno testiraj i sacuvaj korisnika
         try {
         	korisnikService.savePacijentKonkurentno(pacijent);
-        } catch (OptimisticLockException e) {
+        } catch (KorisnikPostojiException e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 
