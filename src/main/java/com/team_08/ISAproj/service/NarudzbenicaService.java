@@ -50,7 +50,7 @@ public class NarudzbenicaService {
     }
     public Narudzbenica findNarudzbenica(Long id) {
 
-        return narudzbenicaRepository.findById(id).orElseGet(null);
+        return narudzbenicaRepository.findOneById(id);
     }
 
 //    public Page<Narudzbenica> findAllNarudzbenicePagedAndSorted(
