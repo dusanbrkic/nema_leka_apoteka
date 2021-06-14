@@ -84,7 +84,7 @@ public class KorisnikService {
     public Pacijent savePacijentKonkurentno(KorisnikDTO korisnik, String verificationCode) throws KorisnikPostojiException, InterruptedException {
     	
     	Korisnik k = findUserByEmailWithLock(korisnik.getEmailAdresa());
-    	Korisnik k2 = findUser(korisnik.getUsername());
+    	Korisnik k2 = findUserWithLock(korisnik.getUsername());
     	
     	if(k != null || k2 != null) {
     		throw new KorisnikPostojiException();
