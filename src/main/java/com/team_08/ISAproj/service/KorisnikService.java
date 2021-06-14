@@ -81,13 +81,14 @@ public class KorisnikService {
     }
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-    public void savePacijentKonkurentno(Pacijent pacijent) throws KorisnikPostojiException {
+    public void savePacijentKonkurentno(Pacijent pacijent) throws KorisnikPostojiException, InterruptedException {
     	
     	Korisnik k = findUserByEmailWithLock(pacijent.getEmailAdresa());
-    	if(k != null) {
-    		throw new KorisnikPostojiException();
-    	}
-    	if(findUserWithLock(pacijent.getUsername()) != null) {
+    	Korisnik k2 = findUserWithLock(pacijent.getUsername());
+    	
+    	Thread.sleep(2000);
+    	
+    	if(k != null || k2 != null) {
     		throw new KorisnikPostojiException();
     	}
     	

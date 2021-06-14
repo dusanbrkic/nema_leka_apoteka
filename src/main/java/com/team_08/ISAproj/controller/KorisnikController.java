@@ -188,7 +188,7 @@ public class KorisnikController {
     }
     //register user
     @PostMapping(value = "/registerUser")
-    public ResponseEntity<KorisnikDTO> registerUser(@RequestBody KorisnikDTO korisnik){
+    public ResponseEntity<KorisnikDTO> registerUser(@RequestBody KorisnikDTO korisnik) throws InterruptedException{
     	
         Pacijent pacijent = new Pacijent();
         pacijent.UpdatePacijent(korisnik);
