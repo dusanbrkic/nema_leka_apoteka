@@ -43,11 +43,7 @@ public class KorisnikService {
     }
 	
     public Korisnik findUserWithLock(String username) {
-        Korisnik k = pacijentRepository.findOneByUsernameWithLock(username);
-        if (k == null) k = dermatologRepository.findOneByUsernameWithLock(username);
-        if (k == null) k = farmaceutRepository.findOneByUsernameWithLock(username);
-        if (k == null) k = adminApotekeRepository.findOneByUsernameWithLock(username);
-        return k;
+        return pacijentRepository.findOneByUsernameWithLock(username);
     }
 	
     public Korisnik findUserByToken(String cookie) {
