@@ -48,6 +48,7 @@ public class DermatologFarmaceutTest {
                 try {
                     // dodajemo 30 lekova 'strepsils' iz apoteke markovic, u apoteci se nalazi 43
                     apotekaLekService.updateKolicinaLekovaKonkurentno(new HashSet<PregledLek>(Arrays.asList(new PregledLek(30, null, null, new Lek(2L)))), 1L, true); // izvrsavanje transakcione metode traje oko 200 milisekundi
+                    fail();
                 } catch (LekNijeNaStanjuException e) {
                     fail(); // u apoteci ima dovoljno lekova
                 }
