@@ -81,19 +81,24 @@ public class KorisnikService {
     }
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-    public void savePacijentKonkurentno(Pacijent pacijent) throws KorisnikPostojiException, InterruptedException {
+    public Pacijent savePacijentKonkurentno(KorisnikDTO korisnik, String verificationCode) throws KorisnikPostojiException, InterruptedException {
     	
-    	Korisnik k = findUserByEmailWithLock(pacijent.getEmailAdresa());
-    	Korisnik k2 = findUserWithLock(pacijent.getUsername());
-    	
-    	Thread.sleep(2000);
+    	Korisnik k = findUserByEmailWithLock(korisnik.getEmailAdresa());
+    	Korisnik k2 = findUser(korisnik.getUsername());
     	
     	if(k != null || k2 != null) {
     		throw new KorisnikPostojiException();
     	}
     	
-        pacijentRepository.save(pacijent);
+    	Pacijent pacijent = new Pacijent();
+        pacijent.UpdatePacijent(korisnik);
+        pacijent.setCookieTokenValue(verificationCode);
     	
+    	Thread.sleep(2000);
+    	
+        pacijentRepository.save(pacijent);
+        
+        return pacijent;
     }
     
     public void saveUser(Korisnik k) {

@@ -28,7 +28,7 @@ Vue.component("Registracija", {
       <div>
 
       <b-card style="max-width: 500px; margin: 30px auto;" title="Registracija">
-      <b-alert style="text-align: center;" v-model="this.postojiMail" variant="danger">Vec postoji nalog sa ovom email adresom!</b-alert>
+      <b-alert style="text-align: center;" v-model="this.postojiMail" variant="danger">Vec postoji nalog sa ovom email adresom ili korisnickim imenom!</b-alert>
       <b-alert style="text-align: center;" v-model="this.postojiKorisnicko" variant="danger">Vec postoji nalog sa ovim korisnickim imenom!</b-alert>
         <b-form @submit.prevent="onSubmit">
           <b-form-group id="input-group-1" label="Email adresa:" label-for="input-1">
@@ -125,8 +125,10 @@ Vue.component("Registracija", {
                 .catch(error => {
                 if (error.request.status==400) {
 					this.postojiMail = true;
-                } else if (error.request.status==404 || error.request.status == 409) {
+                } else if (error.request.status==404 ) {
                     this.postojiKorisnicko = true;
+                } else if (error.request.status == 409){
+                	this.postojiMail = true;
                 }
             });
         },

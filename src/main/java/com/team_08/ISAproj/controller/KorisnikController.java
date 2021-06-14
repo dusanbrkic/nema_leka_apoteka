@@ -190,19 +190,19 @@ public class KorisnikController {
     @PostMapping(value = "/registerUser")
     public ResponseEntity<KorisnikDTO> registerUser(@RequestBody KorisnikDTO korisnik) throws InterruptedException{
     	
-        Pacijent pacijent = new Pacijent();
-        pacijent.UpdatePacijent(korisnik);
+        
     	Random rand = new Random();
         String verificationCode = "";
         for(int i = 0 ; i < 7 ; i++)
         {
             verificationCode += String.valueOf(rand.nextInt(10));
         }
-        pacijent.setCookieTokenValue(verificationCode);
+        
+        Pacijent pacijent = null;
         
     	// konkuretno testiraj i sacuvaj korisnika
         try {
-        	korisnikService.savePacijentKonkurentno(pacijent);
+        	pacijent = korisnikService.savePacijentKonkurentno(korisnik, verificationCode);
         } catch (KorisnikPostojiException e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
@@ -218,7 +218,7 @@ public class KorisnikController {
 			Thread t = new Thread() {
 				public void run()
 				{
-					sendEmailService.sendEmail(pacijent.getEmailAdresa(), body, title);
+					sendEmailService.sendEmail(korisnik.getEmailAdresa(), body, title);
 				}
 			};
 			t.start();
