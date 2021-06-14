@@ -62,7 +62,7 @@ public class RezervacijaService {
     }
     public Rezervacija findRezervacija(Long id) {
     	
-    	return rezervacijaRepository.findById(id).orElseGet(null);
+    	return rezervacijaRepository.findOneById(id);
     }
     public Rezervacija findRezervacijaByID(Long id) {
     	return rezervacijaRepository.findByRezervacijaId(id);
@@ -98,6 +98,7 @@ public class RezervacijaService {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
 
         rezervacijaRepository.save(r);

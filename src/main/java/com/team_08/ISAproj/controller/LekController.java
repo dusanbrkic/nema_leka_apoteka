@@ -133,7 +133,7 @@ public class LekController {
                 lekovi.add(new LekDTO(a));
                 for(Lek l : p.getAlergije())
                 {
-                	if(l.getId() == a.getLek().getId())
+                	if(l.getId().equals(a.getLek().getId()))
                 	{
                 		lekovi.get(i).setAlergija(true);
                 	}
@@ -484,7 +484,7 @@ public class LekController {
 				LekDTO lekDTO = new LekDTO(l);
 				for(Lek lek : p.getAlergije())
 	            {
-	            	if(l.getId() == lek.getId())
+	            	if(l.getId().equals(lek.getId()))
 	            	{
 	            		lekDTO.setAlergija(true);
 	            	}
@@ -602,7 +602,7 @@ public class LekController {
 		
 		try {
 			for(Lek lek : p.getAlergije()) {
-				if(lek.getId()==l.getId())
+				if(lek.getId().equals(l.getId()))
 					p.removeAlergija(lek);
 			}
 		} catch (Exception e) {

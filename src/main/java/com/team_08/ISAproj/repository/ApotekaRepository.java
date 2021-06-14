@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApotekaRepository extends JpaRepository<Apoteka, Long> {
 
+	@Query("select a from APOTEKA a where a.id = :Id")
 	Apoteka findOneById(Long Id);
 
 	List<Apoteka> findAll();

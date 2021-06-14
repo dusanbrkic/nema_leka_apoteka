@@ -19,7 +19,9 @@ import javax.persistence.QueryHint;
 
 @Repository
 public interface ApotekaLekRepository extends JpaRepository<ApotekaLek, Long> {
-    ApotekaLek findOneById(String Id);
+	
+	@Query("select al from APOTEKA_LEK al where al.id = :Id")
+    ApotekaLek findOneById(Long Id);
 
     Page<ApotekaLek> findAllByApotekaId(Long ApotekaId, Pageable pageable);
 

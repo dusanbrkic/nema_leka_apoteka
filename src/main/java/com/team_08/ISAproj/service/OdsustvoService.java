@@ -32,9 +32,8 @@ public class OdsustvoService {
 		
 	}
 	public Odsustvo findOne(Long id) {
-		return odsustvoRepository.findById(id).orElseGet(null);
+		return odsustvoRepository.findOneByid(id);
 	}
-
     public Set<Odsustvo> fetchOdsustvaByZdravstveniRadnikCookieInDateRange(String cookie, LocalDateTime start, LocalDateTime end) {
 		return odsustvoRepository.fetchOdsustvaByZdravstveniRadnikCookieInDateRange(cookie, start, end);
     }

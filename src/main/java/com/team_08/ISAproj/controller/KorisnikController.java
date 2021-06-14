@@ -120,7 +120,6 @@ public class KorisnikController {
         		
         		
         		for(Rezervacija r : rezervacije) {
-        			r.getRokPonude().isBefore(currentDate);
         			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().isBefore(currentDate) && !r.getRokPonude().equals(currentDate)) {
         				r.setIsteklo(true);
         				((Pacijent) k).setBrPenala(((Pacijent) k).getBrPenala() + 1);

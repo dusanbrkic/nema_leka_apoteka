@@ -26,6 +26,9 @@ import javax.persistence.LockModeType;
 @Repository
 public interface RezervacijaRepository extends JpaRepository<Rezervacija, Long> {
 
+	@Query("select r from REZERVACIJA r where r.id = :id")
+	Rezervacija findOneById(Long id);
+	
 	List<Rezervacija> findAll();
 	
     // za listu rezervisanih lekova
