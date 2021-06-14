@@ -40,6 +40,8 @@ public class PregledService {
     private ZdravstveniRadnikService zdravstveniRadnikService;
     @Autowired
     private KorisnikService korisnikService;
+    @Autowired
+    private ApotekaService apotekaService;
 
     public Page<Pregled> findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(
             String cookie, Integer page, Integer size, String sortBy, Boolean sortDesc,
@@ -159,20 +161,33 @@ public class PregledService {
 	
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public void savePregledAndCheckIfFarmacistsIsFreeConcurent(Pregled p, Long farmaceut, String cookie,LocalDateTime start, LocalDateTime end) throws FarmaceutZauzetException, InterruptedException{
+	public Pregled savePregledAndCheckIfFarmacistsIsFreeConcurent(Pacijent pac, Long idApoteke, Long farmaceut,LocalDateTime start, LocalDateTime end) throws FarmaceutZauzetException, InterruptedException{
 		
         ZdravstveniRadnik zdravstveniRadnik = (ZdravstveniRadnik) zdravstveniRadnikService.findOneByIdWithLock(farmaceut);
-        Pacijent pac = (Pacijent) korisnikService.findUserByTokenWithLock(cookie);
+        Apoteka a = apotekaService.findOne(idApoteke);
 		
-		Thread.sleep(2000);
-		
-        if (!findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty()) {
+        if (!findAllInDateRangeByZdravstveniRadnik(start, end, zdravstveniRadnik.getCookieTokenValue()).isEmpty()) {
         	throw new FarmaceutZauzetException();
         }
         
+        Pregled p = new Pregled();
+        p.setVreme(start);
+        p.setKraj(end);
+        p.setPregledZakazan(true);
+        p.setPregledObavljen(false);
+        p.setApoteka(a);
         p.setPacijent(pac);
+        
+        if (zdravstveniRadnik instanceof Farmaceut)
+            p.setCena(a.getCenaSavetovanja());
+        
         p.setZdravstveniRadnik(zdravstveniRadnik);
         
+        
+		Thread.sleep(2000);
+        
         pregledRepository.save(p);
+        
+        return p;
 	}
 }

@@ -521,19 +521,11 @@ public class PregledController {
         Pacijent pac = (Pacijent) korisnikService.findUserByToken(cookie);
         Apoteka a = apotekaService.findOne(idApoteke);
         
-        Pregled p = new Pregled();
-        p.setVreme(start);
-        p.setKraj(end);
-        p.setPregledZakazan(true);
-        p.setPregledObavljen(false);
-        p.setApoteka(a);
-        
-        if (zdravstveniRadnik instanceof Farmaceut)
-            p.setCena(a.getCenaSavetovanja());
+        Pregled p = null;
         
         // optimistic save
         try {
-            pregledService.savePregledAndCheckIfFarmacistsIsFreeConcurent(p, idFarmaceuta, cookie, start, end);
+            p = pregledService.savePregledAndCheckIfFarmacistsIsFreeConcurent(pac, idApoteke, idFarmaceuta, start, end);
         } catch (FarmaceutZauzetException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
