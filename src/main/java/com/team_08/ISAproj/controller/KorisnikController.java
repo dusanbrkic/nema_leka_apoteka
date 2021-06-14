@@ -67,6 +67,7 @@ public class KorisnikController {
     @Autowired
     private OcenaService ocenaService;
 
+    private Random rand = new Random();
     //change password
     @PostMapping(value = "/updatePass", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CookieRoleDTO> changePassUser(
@@ -119,7 +120,6 @@ public class KorisnikController {
         		
         		
         		for(Rezervacija r : rezervacije) {
-        			r.getRokPonude().isBefore(currentDate);
         			if(r.isPreuzeto() == false && r.isIsteklo() == false && r.getRokPonude().isBefore(currentDate) && !r.getRokPonude().equals(currentDate)) {
         				r.setIsteklo(true);
         				((Pacijent) k).setBrPenala(((Pacijent) k).getBrPenala() + 1);
@@ -191,7 +191,6 @@ public class KorisnikController {
     public ResponseEntity<KorisnikDTO> registerUser(@RequestBody KorisnikDTO korisnik) throws InterruptedException{
     	
         
-    	Random rand = new Random();
         String verificationCode = "";
         for(int i = 0 ; i < 7 ; i++)
         {

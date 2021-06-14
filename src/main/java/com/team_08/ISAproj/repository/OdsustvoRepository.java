@@ -17,7 +17,8 @@ import com.team_08.ISAproj.model.Odsustvo;
 @Repository
 public interface OdsustvoRepository extends JpaRepository<Odsustvo, Long> {
 
-	
+	@Query("select o from ODSUSTVO o where o.id = :id")
+	Odsustvo findOneByid(Long id);
 	
 	//SELECT o FROM ODSUSTVO o JOIN ZDRAVSTVENI_RADNIK zr on o.zdravstveniRadnik.id = zr.id JOIN DERMATOLOG_APOTEKA da on zr.id = da.dermatolog.id where da.apoteka.id = :ap_id
 	@Query(value = "SELECT o FROM ODSUSTVO o JOIN ZDRAVSTVENI_RADNIK zr on o.zdravstveniRadnik.id = zr.id JOIN DERMATOLOG_APOTEKA da on zr.id = da.dermatolog.id where da.apoteka.id = :ap_id and o.status = :status")

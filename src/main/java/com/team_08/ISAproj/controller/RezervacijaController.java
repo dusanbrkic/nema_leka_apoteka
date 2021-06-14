@@ -312,7 +312,7 @@ public class RezervacijaController {
 
 	    		for(RezervacijaLek rl : rezervacijaService.findAllRezervacijaLek()) {
 
-	    			if(rl.getRezervacija().getId() == tmp.getId()) {
+	    			if(rl.getRezervacija().getId().equals(tmp.getId())) {
 
 	    				if(!first) { lekovi += ", "; } else { first = false; }
 	    				lekovi += rl.getLek().getNaziv() + " x " + rl.getKolicina() + " kom";

@@ -16,6 +16,9 @@ import com.team_08.ISAproj.model.Pregled;
 @Repository
 public interface NarudzbenicaRepository extends JpaRepository<Narudzbenica, Long> {
 
+	@Query("select n from NARUDZBENICA n where n.id = : id")
+	Narudzbenica findOneById(Long id);
+	
     List<Narudzbenica> findAll();
 
 //    // za listu rezervisanih lekova

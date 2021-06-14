@@ -30,7 +30,7 @@ public class ApotekaLekService {
 
 
 	public ApotekaLek findOne(Long id) {
-		return apotekaLekRepository.findById(id).orElseGet(null);
+		return apotekaLekRepository.findOneById(id);
 	}
 	public Page<ApotekaLek> findOneByApoteka(Long id,Pageable pageable) {
 		return apotekaLekRepository.findAllByApotekaId(id, pageable);
@@ -146,6 +146,7 @@ public class ApotekaLekService {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 
 		for (ApotekaLek apotekaLek : apotekaLekovi) {
