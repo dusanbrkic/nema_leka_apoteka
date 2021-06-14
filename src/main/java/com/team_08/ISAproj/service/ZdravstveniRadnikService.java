@@ -97,7 +97,11 @@ public class ZdravstveniRadnikService {
     public List<Farmaceut> fetchFarmaceutsByApotekaId(Long ApotekaId) {
         return farmaceutRepository.findAllByApotekaId(ApotekaId);
     }
-    
+	
+    public Farmaceut findOneByIdWithLock(Long id) {
+        return farmaceutRepository.findOneByIdWithLock(id);
+    }
+	
     public Farmaceut findOneById(Long id) {
         return farmaceutRepository.findOneById(id);
     }

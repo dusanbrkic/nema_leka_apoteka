@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+
+import javax.persistence.LockModeType;
 
 @Repository
 public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
@@ -31,6 +34,10 @@ public interface FarmaceutRepository extends JpaRepository<Farmaceut, Long> {
     Farmaceut findOneByEmailAdresa(String email_adresa);
 
     Farmaceut findOneById(Long id);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "SELECT f FROM FARMACEUT f where f.id = :id")
+    Farmaceut findOneByIdWithLock(@Param("id") Long id);
     
     @Query(value = "SELECT f FROM FARMACEUT f LEFT OUTER JOIN FETCH f.odsustva o where f.cookieTokenValue = :cookie")
     Farmaceut fetchFarmaceutWithOdsustva(@Param("cookie") String cookie);

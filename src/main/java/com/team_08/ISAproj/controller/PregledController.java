@@ -6,7 +6,7 @@ import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.dto.PregledLekDTO;
 import com.team_08.ISAproj.dto.RezervacijaDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
-
+import com.team_08.ISAproj.exceptions.FarmaceutZauzetException;
 import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.exceptions.PregledRezervisanException;
 import com.team_08.ISAproj.model.*;
@@ -526,17 +526,15 @@ public class PregledController {
         p.setKraj(end);
         p.setPregledZakazan(true);
         p.setPregledObavljen(false);
-        p.setZdravstveniRadnik(zdravstveniRadnik);
         p.setApoteka(a);
-        p.setPacijent(pac);
         
         if (zdravstveniRadnik instanceof Farmaceut)
             p.setCena(a.getCenaSavetovanja());
         
         // optimistic save
         try {
-            pregledService.savePregledAndCheckIfFarmacistsIsFreeConcurent(p, zdravstveniRadnik, start, end);
-        } catch (OptimisticLockException e) {
+            pregledService.savePregledAndCheckIfFarmacistsIsFreeConcurent(p, idFarmaceuta, cookie, start, end);
+        } catch (FarmaceutZauzetException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         

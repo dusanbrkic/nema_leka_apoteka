@@ -40,13 +40,17 @@ public class KorisnikService {
         if (k == null) k = adminApotekeRepository.findOneByUsername(username);
         return k;
     }
-
+	
     public Korisnik findUserByToken(String cookie) {
         Korisnik k = pacijentRepository.findOneByCookieTokenValue(cookie);
         if (k == null) k = dermatologRepository.findOneByCookieTokenValue(cookie);
         if (k == null) k = farmaceutRepository.findOneByCookieTokenValue(cookie);
         if (k == null) k = adminApotekeRepository.findOneByCookieTokenValue(cookie);
         return k;
+    }
+    
+    public Korisnik findUserByTokenWithLock(String cookie) {
+    	return pacijentRepository.findOneByCookieTokenValueWithLock(cookie);
     }
 
 	@Transactional(readOnly = true)

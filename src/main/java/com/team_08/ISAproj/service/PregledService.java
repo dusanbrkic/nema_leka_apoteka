@@ -3,6 +3,7 @@ package com.team_08.ISAproj.service;
 import com.team_08.ISAproj.dto.FarmaceutDTO;
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
+import com.team_08.ISAproj.exceptions.FarmaceutZauzetException;
 import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
 import com.team_08.ISAproj.exceptions.PregledRezervisanException;
 import com.team_08.ISAproj.model.Apoteka;
@@ -37,6 +38,8 @@ public class PregledService {
     private PregledRepository pregledRepository;
     @Autowired
     private ZdravstveniRadnikService zdravstveniRadnikService;
+    @Autowired
+    private KorisnikService korisnikService;
 
     public Page<Pregled> findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(
             String cookie, Integer page, Integer size, String sortBy, Boolean sortDesc,
@@ -156,12 +159,19 @@ public class PregledService {
 	
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public void savePregledAndCheckIfFarmacistsIsFreeConcurent(Pregled p, ZdravstveniRadnik farmaceut, LocalDateTime start, LocalDateTime end) throws OptimisticLockException, InterruptedException{
+	public void savePregledAndCheckIfFarmacistsIsFreeConcurent(Pregled p, Long farmaceut, String cookie,LocalDateTime start, LocalDateTime end) throws FarmaceutZauzetException, InterruptedException{
 		
-		//Thread.sleep(2000);		
-        if (!findAllInDateRangeByZdravstveniRadnik(start, end, farmaceut.getCookieToken()).isEmpty()) {
-        	throw new OptimisticLockException();
+        ZdravstveniRadnik zdravstveniRadnik = (ZdravstveniRadnik) zdravstveniRadnikService.findOneByIdWithLock(farmaceut);
+        Pacijent pac = (Pacijent) korisnikService.findUserByTokenWithLock(cookie);
+		
+		Thread.sleep(2000);
+		
+        if (!findAllInDateRangeByZdravstveniRadnik(start, end, cookie).isEmpty()) {
+        	throw new FarmaceutZauzetException();
         }
+        
+        p.setPacijent(pac);
+        p.setZdravstveniRadnik(zdravstveniRadnik);
         
         pregledRepository.save(p);
 	}

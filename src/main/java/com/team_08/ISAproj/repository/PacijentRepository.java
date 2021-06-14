@@ -7,7 +7,10 @@ import com.team_08.ISAproj.model.Pacijent;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +21,10 @@ public interface PacijentRepository extends JpaRepository<Pacijent, Long> {
     Pacijent findOneByUsername(String username);
 
     Pacijent findOneByCookieTokenValue(String cookie);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select p from PACIJENT p where p.cookieTokenValue = :cookie")
+    Pacijent findOneByCookieTokenValueWithLock(String cookie);
 
     Pacijent findOneByEmailAdresa(String email_adresa);
 
