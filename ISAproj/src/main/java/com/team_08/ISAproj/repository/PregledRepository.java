@@ -5,6 +5,7 @@ import com.team_08.ISAproj.model.Pregled;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.LockModeType;
 
 @Repository
 public interface PregledRepository extends JpaRepository<Pregled, Long> {
@@ -92,4 +95,7 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
     //svi zavrseni pregledi u date rangeu
     @Query(value = "SELECT p FROM PREGLED p where p.apoteka.id = :apoteka_id and p.kraj > :start and  p.kraj < :end and p.pregledZakazan = true and p.pregledObavljen = true")
 	List<Pregled> findAllFromApotekaFinishedDateRange(Long apoteka_id, LocalDateTime start,LocalDateTime end);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "SELECT p FROM PREGLED p where p.zdravstveniRadnik.username = :username and p.pregledZakazan=false and (:start < p.kraj and :end > p.vreme)")
+	List<Pregled> findAllTermsInDateRangeByDermatologUser(String username, LocalDateTime start, LocalDateTime end);
 }

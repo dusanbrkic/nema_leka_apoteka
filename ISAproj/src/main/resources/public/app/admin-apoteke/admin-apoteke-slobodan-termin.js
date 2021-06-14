@@ -177,7 +177,11 @@ Vue.component("AdminSlobodniTermini", {
    			this.pregledDTO.pregledZakazan = false;
    			this.pregledDTO.apotekaId = this.apotekaID;
    			this.pregledDTO.username = this.izabranDermatolog.username;
-   			axios.post("pregledi/addSlobodanTermin",this.pregledDTO).then(response => console.log(response.data));
+   			axios.post("pregledi/addSlobodanTermin",this.pregledDTO).then(response => console.log(response.data)).catch((error) => {
+          if (error.request.status == 400) {
+            alert("Vec postoji zakazan termin");
+          }
+        });;
    			this.$refs["my-modal"].hide();
    		},
    		dodajTermin(dermatolog){

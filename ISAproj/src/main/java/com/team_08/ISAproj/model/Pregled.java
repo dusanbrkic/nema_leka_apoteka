@@ -42,6 +42,8 @@ public class Pregled {
     @OneToMany(mappedBy = "pregled", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<PregledLek> preporuceniLekovi;
 
+    @Version
+	private Long version;
     // constructors
     public Pregled(LocalDateTime vreme, Long trajanje, LocalDateTime kraj, String dijagnoza, boolean pregledObavljen,
                    boolean pregledZakazan, ZdravstveniRadnik zdravstveniRadnik, Pacijent pacijent, Apoteka apoteka, Set<PregledLek> preporuceniLekovi) {
@@ -66,6 +68,7 @@ public class Pregled {
         this.kraj = pDTO.getEnd();
         this.pregledObavljen = false;
         this.pregledZakazan = false;
+        this.version = 0L;
     }
     // getters and setters
 
@@ -73,7 +76,15 @@ public class Pregled {
         return pregledZakazan;
     }
 
-    public void setPregledZakazan(boolean pregledZakazan) {
+    public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public void setPregledZakazan(boolean pregledZakazan) {
         this.pregledZakazan = pregledZakazan;
     }
 

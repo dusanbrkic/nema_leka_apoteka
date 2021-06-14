@@ -63,6 +63,8 @@ public class KorisnikController {
     private ZdravstveniRadnikService zdravstveniRadnikService;
     @Autowired
     private OcenaService ocenaService;
+    
+    private Random rand = new Random();
 
     //change password
     @PostMapping(value = "/updatePass", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -194,7 +196,7 @@ public class KorisnikController {
     	if(korisnikService.findUser(korisnik.getUsername()) != null) {
     		return new ResponseEntity<KorisnikDTO>(HttpStatus.NOT_FOUND);
     	}
-    	Random rand = new Random();
+    	
         String verificationCode = "";
         for(int i = 0 ; i < 7 ; i++)
         {

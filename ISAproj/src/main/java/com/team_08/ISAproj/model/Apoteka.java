@@ -244,7 +244,11 @@ public class Apoteka {
         // TODO Auto-generated constructor stub
     }
 
-    @Override
+    public Apoteka(long l) {
+		this.id = l;
+	}
+
+	@Override
     public String toString() {
         return "Apoteka [id=" + id + ", naziv=" + naziv + ", adresa=" + adresa + ", prosecnaOcena=" + prosecnaOcena
                 + ", opis=" + opis + ", dermatolozi=" + dermatolozi + ", farmaceuti=" + farmaceuti + "]";

@@ -49,7 +49,12 @@ public class PregledDTO {
         this.cena = cena;
         this.username = username;
     }
-
+    public PregledDTO(Long id, LocalDateTime start, LocalDateTime end, String username) {
+    	this.start = start;
+        this.id = id;
+        this.end = end;
+        this.username = username;
+    }
     public void loadLekovi(Pregled pregled) {
         for (PregledLek p : pregled.getPreporuceniLekovi())
             this.preporuceniLekovi.add(new PregledLekDTO(p));

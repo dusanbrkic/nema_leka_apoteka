@@ -2,6 +2,8 @@ package com.team_08.ISAproj.service;
 
 import com.team_08.ISAproj.dto.PregledDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
+import com.team_08.ISAproj.model.Apoteka;
+import com.team_08.ISAproj.model.Dermatolog;
 import com.team_08.ISAproj.model.Pacijent;
 import com.team_08.ISAproj.model.Pregled;
 import com.team_08.ISAproj.repository.DermatologRepository;
@@ -10,20 +12,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.OptimisticLockException;
+//import javax.transaction.Transactional;
+
 @Service
-@Transactional
+//@Transactional(readOnly = false)
 public class PregledService {
     @Autowired
     private PregledRepository pregledRepository;
 
+    
+    //@Transactional(readOnly = false, rollbackFor = { SQLException.class })
+    public Pregled dodajSlobTerminKonk(Pregled p) throws OptimisticLockException, CookieNotValidException, InterruptedException {
+    	
+    	//Thread.sleep(2000);
+    	//LOCK
+    	
+    	//provera preklopa
+    	if(!findAllTermsInDateRangeByDermatolog(p.getDermatolog().getCookieToken(), p.getVreme(), p.getKraj()).isEmpty()) {
+    		throw new OptimisticLockException();
+    	}
+    	
+    	
+
+        pregledRepository.save(p);  	
+		return p;
+    	
+    }
+    //@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW,rollbackFor = { SQLException.class })
+    public List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end)
+            throws CookieNotValidException {
+        return pregledRepository.findAllTermsInDateRangeByDermatolog(cookie, start, end);
+
+    }
     public Page<Pregled> findAllByZdravstveniRadnikPagedAndSortedAndSearchedAndDone(
             String cookie, Integer page, Integer size, String sortBy, Boolean sortDesc,
             String pretragaIme, String pretragaPrezime) throws CookieNotValidException {
@@ -79,17 +113,18 @@ public class PregledService {
 
     public List<Pregled> findAllByPacijent(Pacijent p, String sortBy, Boolean sortDesc){
     	return pregledRepository.findAllByPacijent(p, sortBy, sortDesc);
+    	
+    }
 
     public List<Pregled> findAllFromApotekaFinished(Long apoteka_id){
     	return pregledRepository.findAllFromApotekaFinished(apoteka_id);
     }
+
     
-    public List<Pregled> findAllTermsInDateRangeByDermatolog(String cookie, LocalDateTime start, LocalDateTime end)
-            throws CookieNotValidException {
-        return pregledRepository.findAllTermsInDateRangeByDermatolog(cookie, start, end);
+    public List<Pregled> findAllTermsInDateRangeByDermatologUser(String username, LocalDateTime start, LocalDateTime end){
+        return pregledRepository.findAllTermsInDateRangeByDermatologUser(username, start, end);
 
     }
-
     public List<Pregled> findAllInDateRangeByPacijentId(LocalDateTime vreme, LocalDateTime kraj, Long idPacijenta) {
         return pregledRepository.findAllInDateRangeByPacijentId(vreme, kraj, idPacijenta);
     }

@@ -552,7 +552,9 @@ public class ZdravstveniRadnikController {
     	}
     	String title = "Godisnji odmor - " + a.getApoteka().getNaziv();
     	String body;
-    	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    	
+    	o.updateOdustov(odsustvoDTO);
+    	odsustvoService.saveOdsustvo(o);
     	if(odsustvoDTO.getStatus().equals("odobreno")) {
     		body = "Odobren vam je godisnji odmor.\nTrajace u periodu od " + odsustvoDTO.getPocetak() +  " - " + odsustvoDTO.getKraj();
     		try
@@ -585,8 +587,7 @@ public class ZdravstveniRadnikController {
     			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
     		}
     	}
-    	o.updateOdustov(odsustvoDTO);
-    	odsustvoService.saveOdsustvo(o);
+
     	return new ResponseEntity<Void>(HttpStatus.OK);
 
     }

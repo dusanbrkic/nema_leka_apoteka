@@ -7,7 +7,9 @@ import com.team_08.ISAproj.dto.RezervacijaDTO;
 import com.team_08.ISAproj.exceptions.CookieNotValidException;
 
 import com.team_08.ISAproj.exceptions.LekNijeNaStanjuException;
+import com.team_08.ISAproj.exceptions.SlobodanTerminException;
 import com.team_08.ISAproj.model.*;
+import com.team_08.ISAproj.repository.PregledRepository;
 import com.team_08.ISAproj.service.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +39,8 @@ import java.time.temporal.IsoFields;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.persistence.OptimisticLockException;
 
 @RestController
 @RequestMapping("/pregledi")
@@ -313,31 +319,32 @@ public class PregledController {
         pregledService.savePregled(p);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
-
+    
+    
     @PostMapping(value = "addSlobodanTermin")
-    public ResponseEntity<PregledDTO> addSlobodanTermin(@RequestBody PregledDTO pregledDTO) {
+    //@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+    public ResponseEntity<PregledDTO> addSlobodanTermin(@RequestBody PregledDTO pregledDTO) throws CookieNotValidException, InterruptedException {
 
+    	
         String apotekaId = pregledDTO.getApotekaId();
         Apoteka a = apotekaService.findOne(Long.parseLong(apotekaId));
+        if(a==null) {
+        	return new ResponseEntity<PregledDTO>(HttpStatus.NOT_FOUND);
+        }
         Dermatolog d = zdravstveniRadnikService.findOneByUsername(pregledDTO.getUsername());
-        Pregled p = new Pregled(pregledDTO);
+        if(d == null) {
+        	return new ResponseEntity<PregledDTO>(HttpStatus.NOT_FOUND);
+        }
+		Pregled p = new Pregled(pregledDTO);
         p.setApoteka(a);
         p.setDermatolog(d);
+        try {
+    		pregledService.dodajSlobTerminKonk(p);
+        }
 
-
-        pregledService.saveSlobodanTermin(p);
-
-        //Korisnik k = korisnikService.findUserByToken(cookie);
-//    	if(k == null) {
-//    		return new ResponseEntity<PregledDTO>(HttpStatus.NOT_FOUND);
-//    	}
-//    	if(k instanceof AdminApoteke) {
-//    		AdminApoteke aa = (AdminApoteke) k;
-//    		Long ApotekaId = zdravstveniRadnikService.
-//        	Page<DermatologApoteka> dermatoloziApoteke = null;
-//
-//        	dermatoloziApoteke = zdravstveniRadnikService.fetchDermatologsByApotekaId(Long.parseLong(aa.getApoteka().getId()), page);
-//    	}
+		catch (OptimisticLockException e) {
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
 
 
         return new ResponseEntity<PregledDTO>(pregledDTO, HttpStatus.OK);
