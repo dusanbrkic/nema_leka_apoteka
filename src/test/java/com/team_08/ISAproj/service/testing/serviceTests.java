@@ -2,13 +2,24 @@ package com.team_08.ISAproj.service.testing;
 
 
 import com.team_08.ISAproj.model.Lek;
+import com.team_08.ISAproj.model.Ocena;
+import com.team_08.ISAproj.model.OcenaLek;
 import com.team_08.ISAproj.model.Pacijent;
+import com.team_08.ISAproj.model.Pregled;
+import com.team_08.ISAproj.model.Rezervacija;
 import com.team_08.ISAproj.model.enums.OblikLeka;
 import com.team_08.ISAproj.model.enums.TipLeka;
 import com.team_08.ISAproj.repository.LekRepository;
+import com.team_08.ISAproj.repository.OcenaRepository;
 import com.team_08.ISAproj.repository.PacijentRepository;
+import com.team_08.ISAproj.repository.PregledRepository;
+import com.team_08.ISAproj.repository.RezervacijaRepository;
 import com.team_08.ISAproj.service.LekService;
+import com.team_08.ISAproj.service.OcenaService;
 import com.team_08.ISAproj.service.PacijentService;
+import com.team_08.ISAproj.service.PregledService;
+import com.team_08.ISAproj.service.RezervacijaService;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,8 +34,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import static com.team_08.ISAproj.constants.PacijentConstants.*;
 
@@ -44,12 +59,28 @@ public class serviceTests {
 	private Pacijent pacijentMock;
 	@Mock
 	private LekRepository lekRepositoryMock;
-
+	@Mock
+	private OcenaRepository ocenaRepositoryMock;
+	@Mock
+	private PregledRepository pregledRepositoryMock;
+	@Mock
+	private OcenaLek ocenaLekMock;
+	@Mock
+	private RezervacijaRepository rezervacijaRepositoryMock;
+	@Mock
+	private Rezervacija rezervacijaMock;
+	
 	
 	@InjectMocks
 	private PacijentService pacijentService;
 	@InjectMocks
 	private LekService lekService;
+	@InjectMocks
+	private OcenaService ocenaService;
+	@InjectMocks
+	private PregledService pregledService;
+	@InjectMocks
+	private RezervacijaService rezervacijaService;
 	
 	@Test 
 	public void testFindOnePacijentById() {
@@ -63,6 +94,29 @@ public class serviceTests {
         verify(pacijentRepositoryMock, times(1)).findOneById(DB_PACIJENT_ID);
         verifyNoMoreInteractions(pacijentRepositoryMock);
 	}
+	
+	@Test 
+	public void testFindOcenaLekaByPacijentID() {
+		when(ocenaRepositoryMock.findOcenaLekaByPacijentID(DB_LEK_ID, DB_PACIJENT_ID)).thenReturn(ocenaLekMock);
+		OcenaLek ol = ocenaService.findOcenaLekaByPacijentID(DB_LEK_ID, DB_PACIJENT_ID);
+		
+		assertEquals(ocenaLekMock, ol);
+		
+        verify(ocenaRepositoryMock, times(1)).findOcenaLekaByPacijentID(DB_LEK_ID, DB_PACIJENT_ID);
+        verifyNoMoreInteractions(ocenaRepositoryMock);
+	}
+    
+	@Test 
+	public void testfindRezervacijaByID() {
+		when(rezervacijaRepositoryMock.findByRezervacijaId(DB_PREGLED_ID)).thenReturn(rezervacijaMock);
+		Rezervacija r = rezervacijaService.findRezervacijaByID(DB_PREGLED_ID);
+		
+		assertEquals(rezervacijaMock, r);
+		
+        verify(rezervacijaRepositoryMock, times(1)).findByRezervacijaId(DB_PREGLED_ID);
+        verifyNoMoreInteractions(rezervacijaRepositoryMock);
+	}
+	
 	@Test 
 	public void testFindAllLekoviByApotedaIdPage() {
 
