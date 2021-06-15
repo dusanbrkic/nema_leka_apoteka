@@ -183,7 +183,7 @@ insert into pregled (id, pregled_zakazan, dijagnoza, kraj, pregled_obavljen, tra
 
 
 
-insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'false', 'false', '2021-05-15 02:00:00', '1', '2');
+insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'false', 'false', '2021-06-30 02:00:00', '1', '2');
 insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'true', 'false', '2021-05-20 02:00:00', '1', '2');
 insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'true', 'false', '2021-04-15 02:00:00', '1', '2');
 insert into rezervacija (id, preuzeto, isteklo, rok_ponude, apoteka_id, pacijent_id) values (nextval('rezervacija_seq'), 'true', 'false', '2020-07-15 02:00:00', '1', '2');
