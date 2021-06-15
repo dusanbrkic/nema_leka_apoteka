@@ -1,7 +1,0 @@
-insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Brufen','bazinga 2mg','1','Piti jednom dnevno posle obroka', 1);
-insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Strepsils','lozenga 1.2mg+o.6mg, blister 2X8kom','2','Max 3 puta dnevno', 2);
-insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Gynaflor','vaginalna tableta; 1x 10exp8 CFU+0.03mg','3','Koristiti 2 puta', 2);
-insert into lek (id,naziv,sastav,sifra,uputstvo,tip_leka) values (nextval('lek_seq'),'Aspirin','oblozena tableta; 500mg','4','Max 2 puta dnevno',0);
-
-insert into dermatolog (id, username, password, ime, prezime, email_adresa, token, first_login, adresa, grad, drzava, broj_telefona,prosecna_ocena) values (nextval('korisnik_seq'), 'dusan', 'dusan', 'Dusan', 'Brkic', 'dusanbrk@gmail.com', 'dusan-dusan', false, 'Alekse Santica 14', 'Novi Sad', 'Kraljevina Srbija', '0640857676','4');
-insert into pacijent (id,token,datum_rodjenja,email_adresa,ime,password,prezime,username,br_penala,poeni, adresa, grad, drzava, broj_telefona) values (nextval('korisnik_seq'),'token','10.3.1999','hajdukdusan99@gmail.com','Dusan','dule','Hajduk','dule',0,10, 'Tese Tesanovica 12', 'Sid', 'Republika Srbija', '0641212121');

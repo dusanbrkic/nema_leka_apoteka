@@ -1,6 +1,7 @@
 package com.team_08.ISAproj.controller;
 
 import com.team_08.ISAproj.dto.*;
+import com.team_08.ISAproj.exceptions.OdsustvoException;
 import com.team_08.ISAproj.model.*;
 import com.team_08.ISAproj.model.enums.KorisnickaRola;
 import com.team_08.ISAproj.service.ApotekaService;
@@ -540,54 +541,55 @@ public class ZdravstveniRadnikController {
 
     //Odbijanje i prihvatanje odustava za godisnji odmor
     @PutMapping(value = "/updateOdsustvo")
-    public ResponseEntity<Void> updateOdsustvo(@RequestBody OdsustvoDTO odsustvoDTO) throws ParseException{
-    	AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(odsustvoDTO.getCookie());
+    public ResponseEntity<Void> updateOdsustvo(@RequestBody OdsustvoDTO odsustvoDTO){
+        AdminApoteke a = (AdminApoteke) korisnikService.findUserByToken(odsustvoDTO.getCookie());
 
-    	if(a == null) {
-    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-    	}
-    	Odsustvo o = odsustvoService.findOne(odsustvoDTO.getId());
-    	if(o == null) {
-    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-    	}
-    	String title = "Godisnji odmor - " + a.getApoteka().getNaziv();
-    	String body;
-    	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    	if(odsustvoDTO.getStatus().equals("odobreno")) {
-    		body = "Odobren vam je godisnji odmor.\nTrajace u periodu od " + odsustvoDTO.getPocetak() +  " - " + odsustvoDTO.getKraj();
-    		try
-    		{
-    			Thread t = new Thread() {
-    				public void run()
-    				{
-    					sendEmailService.sendEmail(o.getZdravstveniRadnik().getEmailAdresa(), body, title);
-    				}
-    			};
-    			t.start();
-    		}
-    		catch(Exception e) {
-    			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
-    		}
-    	}
-    	else if(odsustvoDTO.getStatus().equals("odbijeno")) {
-    		body = "Odbijen vam je godisnji odmor.\nRazlog: \n" + odsustvoDTO.getRazlog();
-    		try
-    		{
-    			Thread t = new Thread() {
-    				public void run()
-    				{
-    					sendEmailService.sendEmail(o.getZdravstveniRadnik().getEmailAdresa(), body, title);
-    				}
-    			};
-    			t.start();
-    		}
-    		catch(Exception e) {
-    			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
-    		}
-    	}
-    	o.updateOdustov(odsustvoDTO);
-    	odsustvoService.saveOdsustvo(o);
-    	return new ResponseEntity<Void>(HttpStatus.OK);
+        if(a == null) {
+            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+        }
+        String title = "Godisnji odmor - " + a.getApoteka().getNaziv();
+        String body;
+        Odsustvo o;
+        try{
+            o = odsustvoService.saveOdsustvoConc(odsustvoDTO.getId(),odsustvoDTO.getStatus());
+        }
+        catch(OdsustvoException e) {
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+        }
+        if(odsustvoDTO.getStatus().equals("odobreno")) {
+            body = "Odobren vam je godisnji odmor.\nTrajace u periodu od " + odsustvoDTO.getPocetak() +  " - " + odsustvoDTO.getKraj();
+            try
+            {
+                Thread t = new Thread() {
+                    public void run()
+                    {
+                        sendEmailService.sendEmail(o.getZdravstveniRadnik().getEmailAdresa(), body, title);
+                    }
+                };
+                t.start();
+            }
+            catch(Exception e) {
+                return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        else if(odsustvoDTO.getStatus().equals("odbijeno")) {
+            body = "Odbijen vam je godisnji odmor.\nRazlog: \n" + odsustvoDTO.getRazlog();
+            try
+            {
+                Thread t = new Thread() {
+                    public void run()
+                    {
+                        sendEmailService.sendEmail(o.getZdravstveniRadnik().getEmailAdresa(), body, title);
+                    }
+                };
+                t.start();
+            }
+            catch(Exception e) {
+                return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
 
     }
 
