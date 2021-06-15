@@ -44,7 +44,7 @@ public class controllerTests {
 	private static final String URL_KORISNIK_CONTROLLER = "/korisnici";
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf"));
+			MediaType.APPLICATION_JSON.getSubtype());
 
 	private MockMvc mockMvc;
 
