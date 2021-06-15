@@ -13,12 +13,15 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,12 +49,14 @@ import com.team_08.ISAproj.model.Pregled;
 @SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class controllerTests {
 
 	private static final String URL_LEK_CONTROLLER = "/lekovi";
 	private static final String URL_KORISNIK_CONTROLLER = "/korisnici";
 	private static final String URL_APOTEKE_CONTROLLER = "/apoteke";
 	private static final String URL_PREGLED_CONTROLLER = "/pregledi";
+	private static final String URL_REZERVACIJA_CONTROLLER = "/rezervacije";
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype());
@@ -109,5 +114,30 @@ public class controllerTests {
 		mockMvc.perform(get(URL_PREGLED_CONTROLLER + "/createSavetovanje?start="+
 		start+"&end=" + end + "&cookie=token&idFarmaceuta=12&idApoteke=1"))
 		.andExpect(status().isOk());
+	}
+
+	//testovi za dermatologa/farmaceuta
+	@Test
+	public void test1ProveriRezervaciju() throws Exception{
+		mockMvc.perform(get(URL_REZERVACIJA_CONTROLLER + "/proveriRezervaciju?cookie=dzon-dzon&idRezervacije=1"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$", hasSize(2)))
+		;
+	}
+
+	@Test
+	public void test2IzdajLek() throws Exception{
+		mockMvc.perform(get(URL_REZERVACIJA_CONTROLLER + "/izdajLekove?cookie=dzon-dzon&idRezervacije=1"))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void testGetPreglediForCalendar() throws Exception{
+		mockMvc.perform(get(URL_PREGLEDI_CONTROLLER +
+				"/getPreglediByZdravstveniRadnik?cookie=dzon-dzon&start=2021-06-27T22:00:00.000Z&end=2021-08-08T22:00:00.000Z"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$[0].id").value(20));
 	}
 }
