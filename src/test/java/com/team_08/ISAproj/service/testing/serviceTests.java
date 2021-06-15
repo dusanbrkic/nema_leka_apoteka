@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 //@WebMvcTest(ISAprojApplication.class)
-//@SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
+@SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class serviceTests {
