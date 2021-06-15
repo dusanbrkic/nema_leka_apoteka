@@ -29,8 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.team_08.ISAproj.app.ISAprojApplication;
+import com.team_08.ISAproj.controller.LekController;
 
-@WebMvcTest(ISAprojApplication.class)
+@WebMvcTest(LekController.class)
 @SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
