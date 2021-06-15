@@ -11,4 +11,6 @@
 
 </ul>
 
+[![Build Status](https://travis-ci.com/dusanbrkic/nema_leka_apoteka.svg?branch=master)](https://travis-ci.com/dusanbrkic/nema_leka_apoteka)
+
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=dusanbrkic_nema_leka_apoteka)
