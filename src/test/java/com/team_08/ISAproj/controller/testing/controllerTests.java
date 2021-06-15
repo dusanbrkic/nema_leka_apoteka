@@ -55,7 +55,7 @@ public class controllerTests {
 	@Test
 	public void testOceniLek() throws Exception {
 		mockMvc.perform(get(URL_LEK_CONTROLLER + "/oceni?cookie=dule-dule&id=4&ocena=3"))
-		.andExpect(status().isBadRequest());
+		.andExpect(status().isOk());
 	}
 	
 	@Test
