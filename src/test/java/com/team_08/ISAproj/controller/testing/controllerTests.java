@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.team_08.ISAproj.app.ISAprojApplication;
 
-//@WebMvcTest(ISAprojApplication.class)
+@WebMvcTest(ISAprojApplication.class)
 @SpringBootApplication(scanBasePackages={"com.team_08.ISAproj"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
