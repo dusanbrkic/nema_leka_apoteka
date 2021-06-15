@@ -523,7 +523,7 @@ public class PregledController {
         
         Pregled p = null;
         
-        // optimistic save
+        // pessimistic save
         try {
             p = pregledService.savePregledAndCheckIfFarmacistsIsFreeConcurent(pac, idApoteke, idFarmaceuta, start, end);
         } catch (FarmaceutZauzetException e) {

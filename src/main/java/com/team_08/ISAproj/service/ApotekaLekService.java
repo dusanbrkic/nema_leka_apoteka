@@ -65,13 +65,14 @@ public class ApotekaLekService {
 		
 		List<ApotekaLek> apotekaLekovi = apotekaLekRepository.findAllApotekaLekByIDWithLock(kolicineLekova.keySet());
 		
-		Thread.sleep(2000);
-		
 		for (ApotekaLek apotekaLek : apotekaLekovi) {
 			if (kolicineLekova.get(apotekaLek.getLek().getId()) > apotekaLek.getKolicina())
 				throw  new LekNijeNaStanjuException();
 			apotekaLek.setKolicina(apotekaLek.getKolicina() - kolicineLekova.get(apotekaLek.getLek().getId()));
 		}
+		
+		Thread.sleep(2000);
+		
 		apotekaLekRepository.saveAll(apotekaLekovi);
 	}
 

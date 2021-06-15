@@ -91,8 +91,11 @@ public class KorisnikService {
         pacijent.setCookieTokenValue(verificationCode);
     	
     	Thread.sleep(2000);
-    	
-        pacijentRepository.save(pacijent);
+    	try {
+    		pacijentRepository.save(pacijent);
+    	} catch (Exception e) {
+			throw new KorisnikPostojiException();
+		}
         
         return pacijent;
     }
