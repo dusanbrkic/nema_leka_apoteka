@@ -134,7 +134,7 @@ public class controllerTests {
 
 	@Test
 	public void testGetPreglediForCalendar() throws Exception{
-		mockMvc.perform(get(URL_PREGLEDI_CONTROLLER +
+		mockMvc.perform(get(URL_PREGLED_CONTROLLER +
 				"/getPreglediByZdravstveniRadnik?cookie=dzon-dzon&start=2021-06-27T22:00:00.000Z&end=2021-08-08T22:00:00.000Z"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
