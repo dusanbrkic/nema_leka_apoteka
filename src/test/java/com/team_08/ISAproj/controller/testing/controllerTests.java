@@ -81,8 +81,7 @@ public class controllerTests {
 		mockMvc.perform(get(URL_REZERVACIJA_CONTROLLER + "/proveriRezervaciju?cookie=dzon-dzon&idRezervacije=1"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
-				.andExpect(jsonPath("$[0].lek.sifra").value(1))
-				.andExpect(jsonPath("$[1].lek.sifra").value(2))
+				.andExpect(jsonPath("$", hasSize(2)))
 		;
 	}
 
