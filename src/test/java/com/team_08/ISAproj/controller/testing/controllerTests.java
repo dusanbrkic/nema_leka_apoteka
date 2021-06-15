@@ -6,10 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.nio.charset.Charset;
 
 import org.junit.Before;
@@ -68,6 +65,6 @@ public class controllerTests {
 		.andExpect(content().contentType(contentType))
 		.andExpect(jsonPath("$.cookie").value("dule-dule"))
 		.andExpect(jsonPath("$.rola").value("PACIJENT"))
-		.andExpect(jsonPath("$.firstLogin").value(null));
+		.andExpect(jsonPath("$.firstLogin").value(false));
 	}
 }
